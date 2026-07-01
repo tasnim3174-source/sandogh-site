@@ -184,7 +184,7 @@ body.theme-day{background:linear-gradient(135deg,#f0f9ff 0%,#e0e7ff 50%,#ddd6fe 
 body.theme-day .app-page,body.theme-day .login-page,body.theme-day .force-change-page{background:rgba(255,255,255,.95)}
 body.theme-night{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);font-weight:bold}
 body.theme-night *{font-weight:bold!important}
-body.theme-night .app-page,body.theme-night .login-page,body.theme-night .force-change-page,.theme-night .notification-dropdown{background:rgba(30,41,59,.95);color:#fbbf24}
+body.theme-night .app-page,body.theme-night .login-page,body.theme-night .force-change-page,body.theme-night .notification-dropdown{background:rgba(30,41,59,.95);color:#fbbf24}
 body.theme-night .vertical-menu,body.theme-night .content-area{background:rgba(30,41,59,.95);color:#fbbf24}
 body.theme-night .vertical-menu .menu-item{color:#fb923c}
 body.theme-night .vertical-menu .menu-item.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
@@ -264,11 +264,6 @@ body.theme-night .admin-reward-item .reward-info .cost{color:#fbbf24}
 .loading-screen p{color:#718096;margin-top:15px;font-size:1rem}
 .loading-screen .progress-bar{width:300px;height:8px;background:rgba(102,126,234,.2);border-radius:10px;margin:25px auto 0;overflow:hidden}
 .loading-screen .progress-fill{height:100%;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:10px;animation:progressAnim 2s ease-in-out infinite}
-.error-screen{text-align:center;padding:80px 20px;background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:32px;box-shadow:0 25px 50px rgba(0,0,0,.25)}
-.error-screen i{font-size:4rem;color:#e53e3e}
-.error-screen h2{color:#e53e3e;margin-top:25px}
-.error-screen p{color:#718096;margin-top:15px}
-.error-screen button{margin-top:20px;padding:12px 30px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:1rem;font-weight:700}
 @media(max-width:1024px){.header-bar{grid-template-columns:1fr;gap:15px}.datetime-display{justify-content:center}.header-actions{justify-content:center}}
 @media(max-width:768px){body{padding:15px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;display:flex;overflow-x:auto;padding:12px 10px;gap:8px;border-radius:18px}.vertical-menu .menu-item{flex-shrink:0;font-size:.85rem;padding:10px 14px;white-space:nowrap;margin:0}.vertical-menu > div:first-child{display:none}.vertical-menu > div:last-child{width:100%;justify-content:center;padding:10px 0 0;margin-top:10px}.content-area{padding:18px;border-radius:18px;min-height:400px}.header-bar{padding:15px 18px;border-radius:18px;margin-bottom:15px}.datetime-display{flex-direction:column;gap:10px;width:100%}.datetime-card{width:100%;justify-content:center}.clock-card{width:100%;justify-content:center;padding:12px 20px}.clock-card .clock-time{font-size:1.3rem}.header-actions{flex-direction:column;gap:10px;width:100%;align-items:stretch}.theme-buttons{justify-content:center;width:100%}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.85rem}.coin-badge{justify-content:center;width:100%}.notification-bell{align-self:center}.notification-dropdown{right:50%;transform:translateX(50%);min-width:280px;max-width:90vw}.dashboard-section{padding:18px;border-radius:16px;margin-bottom:18px}.dashboard-section h3{font-size:1.05rem}.loan-info{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}.loan-info-item{padding:10px 12px}.loan-info-label{font-size:.75rem}.loan-info-value{font-size:.9rem}table{font-size:.8rem}th,td{padding:8px 6px}.btn-small{font-size:.8rem;padding:8px 14px}.filter-bar{flex-direction:column;gap:8px;padding:12px}.filter-bar input{width:100%;min-width:unset}.filter-bar button{width:100%;justify-content:center}.msg-item{padding:10px 12px}.msg-phone-info{font-size:.7rem;padding:6px 8px}.msg-header{font-size:.75rem}.messenger-section-title{font-size:1rem;padding:8px 12px}.table-wrapper{max-height:400px;border-radius:12px}.search-box{flex-direction:column;gap:8px;padding:10px 14px}.search-box input{width:100%}.search-box .search-label{width:100%;justify-content:center}.info-box{padding:12px 15px;font-size:.9rem}.warning-box{padding:14px 16px;font-size:.9rem}.warning-box i{font-size:1.5rem}.wheel{width:180px;height:180px}.sms-status-item{padding:12px 15px;font-size:.9rem}.supervisor-tabs{gap:8px;padding:10px}.supervisor-tab-btn{padding:8px 16px;font-size:.85rem}.coin-shop-grid{grid-template-columns:1fr}}
 @media(max-width:480px){body{padding:10px}.login-page,.app-page,.force-change-page{padding:22px 16px;border-radius:20px}.btn{font-size:.95rem;padding:12px}.dashboard-section{padding:14px;margin-bottom:14px}.dashboard-section h3{font-size:1rem;gap:8px}.wheel{width:150px;height:150px}.header-bar .theme-btn{padding:6px 10px;font-size:.78rem}.notification-bell{font-size:1.5rem}.input-group input{padding:12px 45px 12px 12px}.clock-card .clock-time{font-size:1.15rem}.datetime-card .dt-value{font-size:.95rem}.datetime-card{padding:10px 15px}.vertical-menu .menu-item{font-size:.78rem;padding:8px 12px;gap:8px}.vertical-menu .menu-item i{font-size:.9rem}.loan-info{grid-template-columns:1fr 1fr;gap:8px}.loan-info-item{padding:8px 10px}.loan-info-label{font-size:.7rem}.loan-info-value{font-size:.85rem}.filter-bar{padding:10px}.msg-item{padding:8px 10px}.msg-header{font-size:.7rem}.table-wrapper{max-height:300px}table{font-size:.72rem}th,td{padding:6px 4px}.btn-small{font-size:.75rem;padding:6px 12px}.sms-status-item{flex-direction:column;gap:8px;text-align:center}.supervisor-tabs{flex-wrap:nowrap;overflow-x:auto}.supervisor-tab-btn{flex-shrink:0;padding:8px 14px;font-size:.8rem}.coin-badge{font-size:.9rem;padding:8px 14px}.public-messages-section{padding:10px 12px !important}.public-messages-section h3{font-size:.9rem !important}.coin-reward-card{padding:16px}.coin-reward-card .reward-icon{width:50px;height:50px}.coin-reward-card .reward-icon i{font-size:1.4rem}.coin-reward-card .reward-title{font-size:1rem}.coin-reward-card .reward-cost{font-size:.95rem}}
@@ -281,12 +276,12 @@ body.theme-night .admin-reward-item .reward-info .cost{color:#fbbf24}
 </head>
 <body>
 <div class="container" id="appContainer">
-  <div class="loading-screen" id="loadingScreen">
-    <i class="fas fa-spinner"></i>
-    <h2>در حال بارگذاری داده‌ها از سرور...</h2>
-    <p>لطفاً چند لحظه صبر کنید</p>
-    <div class="progress-bar"><div class="progress-fill"></div></div>
-  </div>
+<div class="loading-screen" id="loadingScreen">
+<i class="fas fa-spinner"></i>
+<h2>در حال بارگذاری داده‌ها از سرور...</h2>
+<p>لطفاً چند لحظه صبر کنید</p>
+<div class="progress-bar"><div class="progress-fill"></div></div>
+</div>
 </div>
 <script>
 // ========== تنظیمات ==========
@@ -338,10 +333,43 @@ if(nk === q.toLowerCase().replace(/[_\s\-]/g, '')) return raw[k];
 }
 return undefined;
 }
+const DEFAULT_COIN_REWARDS = [
+{id:'r_username', title:'ویرایش نام کاربری', cost:500, icon:'fa-user-edit', type:'username_edit', description:'امکان ویرایش نام کاربری خود با پرداخت سکه', active:true},
+{id:'r_loan_nofee', title:'وام بدون کارمزد', cost:1100, icon:'fa-hand-holding-usd', type:'loan_no_fee', description:'دریافت وام بدون پرداخت کارمزد', active:true},
+{id:'r_loan_priority', title:'وام خارج از نوبت', cost:1500, icon:'fa-bolt', type:'loan_priority', description:'دریافت وام با اولویت خارج از نوبت', active:true}
+];
+class DM{
+constructor(){
+this.users=[];
+this.members=[];
+this.messages=this.ld('messages',[]);
+this.support=this.ld('support',{phone:'',accountNumber:'',address:''});
+this.announcements=this.ld('announcements',[]);
+this.polls=this.ld('polls',[]);
+this.logo=this.ld('logo','');
+this.coinRewards=this.ld('coinRewards',DEFAULT_COIN_REWARDS);
+this.coinRequests=this.ld('coinRequests',[]);
+this.loaded=false;
+}
+ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
+sv(k){localStorage.setItem(k,JSON.stringify(this[k]))}
 
-// ========== پردازش داده‌های اکسل ==========
-function processExcelData(rows){
-if(!rows.length) return null;
+async loadFromGitHub(){
+try{
+const loadingEl=$('#loadingScreen');
+if(loadingEl){
+loadingEl.innerHTML='<i class="fas fa-spinner"></i><h2>در حال اتصال به سرور...</h2><p>لطفاً صبر کنید</p><div class="progress-bar"><div class="progress-fill"></div></div>';
+}
+const response=await fetch(EXCEL_URL+'?t='+Date.now());
+if(!response.ok) throw new Error('فایل اکسل یافت نشد');
+if(loadingEl){
+loadingEl.innerHTML='<i class="fas fa-spinner"></i><h2>در حال پردازش داده‌ها...</h2><p>این مرحله ممکن است چند ثانیه طول بکشد</p><div class="progress-bar"><div class="progress-fill"></div></div>';
+}
+const buffer=await response.arrayBuffer();
+const workbook=XLSX.read(buffer,{type:'array'});
+const sheet=workbook.Sheets[workbook.SheetNames[0]];
+const rows=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
+if(!rows.length) throw new Error('فایل خالی است');
 const headers=Object.keys(rows[0]),fc=(...names)=>U.findCol(names,headers);
 const accCol=fc('شماره حساب','account','accountnumber');
 const dateCol=fc('تاریخ تراکنش','تاریخ واریز','تاریخ برداشت','تاریخ');
@@ -355,9 +383,7 @@ const sessionCol=fc('کد جلسات','code jalasat','session','jalasat');
 const mogmoCol=fc('mogmo','مقرری ماهانه','مقرری','monthly salary');
 const mogmoMosavabCol=fc('مقرری ماهانه مصوب شده هرنفر','mogmo mosavab','monthly salary approved');
 const mojodiTilCol=fc('mojodi ta in lahzeh','موجودی تا این لحظه','current balance');
-
-if(!accCol||!dateCol||!amtCol){console.error('ستون‌های اجباری یافت نشد');return null;}
-
+if(!accCol||!dateCol||!amtCol){console.error('ستون‌های اجباری یافت نشد');return false;}
 const byAcc={};let total=0;
 for(const r of rows){
 const acc=String(r[accCol]||'').trim();if(!acc)continue;
@@ -384,22 +410,19 @@ occasions:U.parseSmsCode(r[fc('kod monasedat','کد مناسبات','kod monaseb
 const tx={id:Date.now()+Math.random(),transactionId:tid,accountNumber:acc,transactionDate:date,amount:amt,monthlySalary:String(r[mogmoCol]||r[fc('مقرری ماهانه','مقرری')]||'').trim(),fishNumber:String(r[fc('شماره فیش')]||'').trim(),transactionName:String(r[fc('نام تراکنش کننده','نام تراکنش','تراکنش کننده')]||'').trim(),installmentAmount:U.parseNum(r[fc('مبلغ قسط واریزی','مبلغ قسط','قسط واریزی')]),installmentDate:String(r[fc('تاریخ قسط واریزی','تاریخ قسط')]||'').trim(),totalDeposit:U.parseNum(r[fc('جمع واریزی','جمع واریز')]),balance:U.parseNum(r[fc('موجودی','balance')]),total:U.parseNum(r[fc('جمع')]),paidInstallments:U.parseNum(r[fc('تعداد قسط پرداخت شده','تعداد قسط پرداخت')]),remainingInstallments:U.parseNum(r[fc('تعداد قسط مانده')]),savingsStatus:String(r[fc('وضعیت پس انداز','وضعیت پس‌انداز')]||'').trim(),smsStatus:sms,openDate:String(r[fc('date ozviyat','تاریخ عضویت','تاریخ افتتاح')]||'').trim(),rawData:{...raw},allHeaders:[...headers]};
 if(!byAcc[acc])byAcc[acc]=[];byAcc[acc].push(tx);total++;
 }
-if(!total) return null;
-
-const members=[];
-const users=[{id:1,username:'admin',password:'admin123',role:'admin',memberId:null}];
+if(!total){console.error('داده معتبری یافت نشد');return false;}
+this.users=[{id:1,username:'admin',password:'admin123',role:'admin',memberId:null}];
+this.members=[];
 let memberId=1;
-
 for(const acc of Object.keys(byAcc)){
 const txs=byAcc[acc];
-const sortedTxs=[...txs].sort((a,b)=>U.parseNum(b.transactionId)-U.parseNum(a.transactionId));
-const latestTx=sortedTxs[0];
+txs.sort((a,b)=>(parseInt(b.transactionId)||0)-(parseInt(a.transactionId)||0));
+const latestTx=txs[0];
 const fn=latestTx.rawData['نام']||'کاربر',ln=latestTx.rawData['نام خانوادگی']||'';
 const member={
-id:memberId,
-firstName:fn,lastName:ln,fullName:fn+' '+ln,
-openDate:latestTx.openDate||'1400/01/01',
-birthDate:'',accountNumber:acc,
+id:memberId,firstName:fn,lastName:ln,fullName:fn+' '+ln,
+openDate:latestTx.openDate||'1400/01/01',birthDate:'',
+accountNumber:acc,
 phone1:latestTx.rawData['تلفن']||'',phone2:latestTx.rawData['تلفن2']||'',
 loginCount:0,coins:0,usedCoins:0,coinHistory:[],
 coinDailyLogin:'',birthdaySetCoinsClaimed:false,lastBirthdayCoinYear:null,
@@ -415,63 +438,16 @@ installmentAmount:0,feeAmount:0,totalInstallments:0,paidInstallments:0,
 remainingInstallments:0,remainingInstallmentAmount:0,overdueInstallments:0,loanBalance:0,
 isSpecial:false,usernameEditUnlocked:false
 };
-member.transactions.sort((a,b)=>(parseInt(b.transactionId)||0)-(parseInt(a.transactionId)||0));
-members.push(member);
-users.push({id:users.length+1,username:acc,password:acc,role:'member',memberId:memberId});
+this.members.push(member);
+this.users.push({id:this.users.length+1,username:acc,password:acc,role:'member',memberId:memberId});
 memberId++;
 }
-return {users, members};
-}
-
-// ========== جوایز پیش‌فرض ==========
-const DEFAULT_COIN_REWARDS = [
-{id:'r_username', title:'ویرایش نام کاربری', cost:500, icon:'fa-user-edit', type:'username_edit', description:'امکان ویرایش نام کاربری خود با پرداخت سکه', active:true},
-{id:'r_loan_nofee', title:'وام بدون کارمزد', cost:1100, icon:'fa-hand-holding-usd', type:'loan_no_fee', description:'دریافت وام بدون پرداخت کارمزد', active:true},
-{id:'r_loan_priority', title:'وام خارج از نوبت', cost:1500, icon:'fa-bolt', type:'loan_priority', description:'دریافت وام با اولویت خارج از نوبت', active:true}
-];
-
-class DM{
-constructor(){
-this.users=[];this.members=[];
-this.messages=this.ld('messages',[]);
-this.support=this.ld('support',{phone:'',accountNumber:'',address:''});
-this.announcements=this.ld('announcements',[]);
-this.polls=this.ld('polls',[]);this.logo=this.ld('logo','');
-this.coinRewards=this.ld('coinRewards',DEFAULT_COIN_REWARDS);
-this.coinRequests=this.ld('coinRequests',[]);
-this.loaded=false;
-}
-ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
-sv(k){localStorage.setItem(k,JSON.stringify(this[k]))}
-
-// ========== بارگذاری از GitHub ==========
-async loadFromGitHub(){
-try{
-const loadingEl=$('#loadingScreen');
-if(loadingEl){
-loadingEl.innerHTML='<i class="fas fa-spinner"></i><h2>در حال اتصال به سرور...</h2><p>لطفاً صبر کنید</p><div class="progress-bar"><div class="progress-fill"></div></div>';
-}
-const response=await fetch(EXCEL_URL+'?t='+Date.now());
-if(!response.ok) throw new Error('فایل اکسل یافت نشد');
-if(loadingEl){
-loadingEl.innerHTML='<i class="fas fa-spinner"></i><h2>در حال پردازش داده‌ها...</h2><p>این مرحله ممکن است چند ثانیه طول بکشد</p><div class="progress-bar"><div class="progress-fill"></div></div>';
-}
-const buffer=await response.arrayBuffer();
-const workbook=XLSX.read(buffer,{type:'array'});
-const sheet=workbook.Sheets[workbook.SheetNames[0]];
-const rows=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
-const result=processExcelData(rows);
-if(result){
-this.users=result.users;
-this.members=result.members;
+this.sv('users');this.sv('members');
 this.loaded=true;
-console.log(`✅ ${this.members.length} عضو از فایل اکسل GitHub بارگذاری شد`);
+console.log(`✅ ${this.members.length} عضو از GitHub بارگذاری شد`);
 return true;
-}
-throw new Error('پردازش اکسل ناموفق بود');
 }catch(e){
-console.error('❌ خطا در بارگذاری از GitHub:', e);
-// fallback به localStorage
+console.error('❌ خطا در بارگذاری از GitHub:',e);
 this.users=this.ld('users',[]);
 this.members=this.ld('members',[]);
 if(!this.users.find(u=>u.username==='admin')){
@@ -668,15 +644,7 @@ isLoggedIn(){return!!this.user;}
 }
 class UI{
 constructor(app){this.app=app;this.el=$('#appContainer');this.tab=localStorage.getItem('activeTab')||'profile';this.sa=0;this.ci=null;this.themeInterval=null;}
-render(){
-if(!this.app.dm.loaded){
-this.el.innerHTML='<div class="loading-screen"><i class="fas fa-spinner"></i><h2>در حال بارگذاری...</h2><p>لطفاً صبر کنید</p><div class="progress-bar"><div class="progress-fill"></div></div></div>';
-return;
-}
-if(this.app.auth.pending){this.el.innerHTML=this.forceHTML();this.bindFC();return;}
-if(!this.app.auth.isLoggedIn()){this.el.innerHTML=this.loginHTML();this.bindLogin();return;}
-this.el.innerHTML=this.appHTML();this.bindApp();this.switchTab(this.tab);this.updUI();this.startClock();this.updNotif();this.updCoinBadge();this.renderPublicMessages();
-}
+render(){if(!this.app.dm.loaded){this.el.innerHTML='<div class="loading-screen"><i class="fas fa-spinner"></i><h2>در حال بارگذاری...</h2><p>لطفاً صبر کنید</p><div class="progress-bar"><div class="progress-fill"></div></div></div>';return;}if(this.app.auth.pending){this.el.innerHTML=this.forceHTML();this.bindFC();return;}if(!this.app.auth.isLoggedIn()){this.el.innerHTML=this.loginHTML();this.bindLogin();return;}this.el.innerHTML=this.appHTML();this.bindApp();this.switchTab(this.tab);this.updUI();this.startClock();this.updNotif();this.updCoinBadge();this.renderPublicMessages();}
 loginHTML(){const logo=this.app.dm.logo;return`<div class="login-page"><div style="text-align:center;margin-bottom:30px">${logo?`<img src="${logo}" class="login-logo" alt="لوگو">`:`<i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px;animation:float 3s ease-in-out infinite"></i>`}<h1 style="color:#2d3748;margin-bottom:10px">سیستم حسابداری صندوق اتحاد</h1><p style="color:#718096">ورود با رمز اختصاصی</p></div><div class="input-group"><label><i class="fas fa-user"></i> نام کاربری</label><input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید"></div><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور</label><input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید"><button class="toggle-password" id="toggleLoginPass"><i class="fas fa-eye"></i></button></div><button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button><button class="btn" id="forgotBtn" style="background:linear-gradient(135deg,#ed8936,#dd6b20);margin-top:12px"><i class="fas fa-key"></i> رمز را فراموش کرده ام</button><div id="loginError" class="error-msg"></div><div id="forgotSuccess" class="success-msg"></div></div>`;}
 forceHTML(){return`<div class="force-change-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-exclamation-triangle" style="font-size:5rem;color:#e53e3e;animation:pulse 2s infinite"></i><div style="font-size:1.8rem;color:#e53e3e;margin:15px 0;font-weight:700">تغییر رمز عبور الزامی است</div><div style="color:#718096;margin-bottom:25px">به دلیل استفاده از رمز پیش‌فرض (1234)، لطفاً رمز خود را تغییر دهید.</div></div><div style="max-width:450px;margin:0 auto"><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور جدید</label><input type="password" id="newPasswordForce" placeholder="رمز جدید"><button class="toggle-password" id="toggleForcePass"><i class="fas fa-eye"></i></button><div id="passwordStrength" style="margin-top:8px;font-weight:600"></div></div><div class="input-group"><label><i class="fas fa-check-circle"></i> تکرار رمز جدید</label><input type="password" id="confirmPasswordForce" placeholder="تکرار رمز جدید"><button class="toggle-password" id="toggleForceConfirm"><i class="fas fa-eye"></i></button></div><button class="btn" id="forceChangeBtn"><i class="fas fa-save"></i> تغییر رمز و ورود</button><div id="forceError" class="error-msg"></div></div></div>`;}
 appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user?.memberId);const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">تاریخ شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="datetime-card"><i class="fas fa-calendar"></i><div><div class="dt-label">تاریخ میلادی</div><div class="dt-value" id="gregorianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn day" data-theme="day"><i class="fas fa-sun"></i> روز</button><button class="theme-btn night" data-theme="night"><i class="fas fa-moon"></i> شب</button><button class="theme-btn auto" data-theme="auto"><i class="fas fa-sync"></i> خودکار</button></div>${!ia?`<div class="coin-badge" id="coinBadge" title="تعداد سکه‌های شما"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>`:''}<div style="position:relative"><button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button><div class="notification-dropdown" id="notificationDropdown"></div></div></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><i class="fas fa-star"></i> خوش آمدید</div><div id="publicMessages"></div><div class="app-layout"><div class="vertical-menu"><div style="font-size:1.3rem;font-weight:700;color:#667eea;padding-bottom:20px;border-bottom:3px solid #edf2f7;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div>${!ia?'<div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div>':''}<div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div><div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> مدیریت اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> مدیریت ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid #edf2f7"><span id="roleBadge" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${ia?'<i class="fas fa-crown"></i> مدیر':isp?'<i class="fas fa-shield-alt"></i> پاسخ‌دهنده':isCouncil?'<i class="fas fa-user-shield"></i> عضو شورا':'<i class="fas fa-user"></i> عضو'}</span><button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px;transition:all .3s ease"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
@@ -1395,7 +1363,6 @@ class App{
 constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.init();}
 async init(){
 this.loadTheme();
-// بارگذاری داده‌ها از GitHub
 await this.dm.loadFromGitHub();
 this.ui.render();
 if(this.ui.themeInterval) clearInterval(this.ui.themeInterval);
@@ -1706,7 +1673,7 @@ saveBirth(mid){const v=$('#nbd')?.value.trim();if(!v){alert('تاریخ را و�
 savePass(mid){const np=$('#npi')?.value.trim(),cp=$('#cpi')?.value.trim();if(!np){alert('رمز را وارد کنید');return;}if(np!==cp){alert('مطابقت ندارند');return;}if(np==='1234'){alert('رمز نمی‌تواند 1234 باشد');return;}if(U.strength(np)==='ضعیف'){alert('رمز ضعیف است');return;}if(!this.dm.changePass(mid,np)){alert('خطا');return;}$('#efc').innerHTML='';alert('✅ تغییر یافت');}
 editMember(mid){const ui=this.dm.gUserByMid(mid);if(!ui)return;const c=$(`#ec_${mid}`);if(!c)return;c.innerHTML=`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input type="text" id="eu_${mid}" value="${U.esc(ui.username)}" style="width:110px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"><input type="text" id="ep_${mid}" value="${U.esc(ui.password)}" style="width:110px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"><button class="btn-small success-btn" id="seb_${mid}"><i class="fas fa-save"></i></button><button class="btn-small danger-btn" id="ceb_${mid}"><i class="fas fa-times"></i></button></div>`;$(`#seb_${mid}`,c).onclick=()=>this.saveEditMember(mid);$(`#ceb_${mid}`,c).onclick=()=>c.innerHTML='';}
 saveEditMember(mid){const nu=$(`#eu_${mid}`).value.trim(),np=$(`#ep_${mid}`).value.trim();if(!nu||!np){alert('پر کنید');return;}if(this.dm.users.some(u=>u.username===nu&&u.memberId!==mid)){alert('نام کاربری تکراری');return;}this.dm.changeUname(mid,nu);this.dm.changePass(mid,np);$(`#ec_${mid}`).innerHTML='';alert('ویرایش شد');this.ui.switchTab('members');}
-viewExcel(mid){const m=this.dm.gMember(mid);if(!m?.transactions?.length){alert('تراکنشی نیست');return;}const txns=m.transactions,ah=txns[0].allHeaders||Object.keys(txns[0].rawData||{});let h=`<table style="border-collapse:separate;border-spacing:0;font-size:.8rem;width:100%"><thead><tr>${ah.map(x=>`<th style="background:linear-gradient(135deg,#2d3748,#1a202c);color:#fff;padding:10px;text-align:right;border:1px solid #4a5568">${U.esc(x)}</th>`).join('')}</tr></thead><tbody>${txns.map(t=>`<tr>${ah.map(k=>{let v=t.rawData?.[k]??'';if(v===''||v===undefined){const m={id:t.transactionId,'شماره حساب':t.accountNumber,'تاریخ تراکنش':t.transactionDate,'مبلغ تراکنش':t.amount,'مقرری ماهانه':t.monthlySalary,'شماره فیش':t.fishNumber,'نام تراکنش کننده':t.transactionName,'مبلغ قسط واریزی':t.installmentAmount,'تاریخ قسط واریزی':t.installmentDate,'جمع واریزی':t.totalDeposit,موجودی:t.balance,جمع:t.total,'تعداد قسط پرداخت شده':t.paidInstallments,'تعداد قسط مانده':t.remainingInstallments,'وضعیت پس انداز':t.savingsStatus,'توضیحات':t.description||''};if(m[k]!==undefined)v=m[k];}return`<td style="padding:8px;text-align:right;border:1px solid #e2e8f0">${U.esc(String(v))}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`;const w=window.open('','_blank','width=900,height:600');w.document.write(`<html><head><meta charset="UTF-8"><title>صورتحساب</title><style>body{font-family:system-ui,sans-serif;padding:20px}table{border-collapse:separate;border-spacing:0}th,td{border:1px solid #ccc;padding:8px;text-align:right}th{background:#333;color:#fff}</style></head><body><h2 style="color:#667eea">${U.esc(m.firstName)} ${U.esc(m.lastName)}</h2>${h}</body></html>`);}
+viewExcel(mid){const m=this.dm.gMember(mid);if(!m?.transactions?.length){alert('تراکنشی نیست');return;}const txns=m.transactions,ah=txns[0].allHeaders||Object.keys(txns[0].rawData||{});let h=`<table style="border-collapse:separate;border-spacing:0;font-size:.8rem;width:100%"><thead><tr>${ah.map(x=>`<th style="background:linear-gradient(135deg,#2d3748,#1a202c);color:#fff;padding:10px;text-align:right;border:1px solid #4a5568">${U.esc(x)}</th>`).join('')}</tr></thead><tbody>${txns.map(t=>`<tr>${ah.map(k=>{let v=t.rawData?.[k]??'';if(v===''||v===undefined){const m={id:t.transactionId,'شماره حساب':t.accountNumber,'تاریخ تراکنش':t.transactionDate,'مبلغ تراکنش':t.amount,'مقرری ماهانه':t.monthlySalary,'شماره فیش':t.fishNumber,'نام تراکنش کننده':t.transactionName,'مبلغ قسط واریزی':t.installmentAmount,'تاریخ قسط واریزی':t.installmentDate,'جمع واریزی':t.totalDeposit,موجودی:t.balance,جمع:t.total,'تعداد قسط پرداخت شده':t.paidInstallments,'تعداد قسط مانده':t.remainingInstallments,'وضعیت پس انداز':t.savingsStatus,'توضیحات':t.description||''};if(m[k]!==undefined)v=m[k];}return`<td style="padding:8px;text-align:right;border:1px solid #e2e8f0">${U.esc(String(v))}</td>`;}).join('')}</tr>`).join('')}</tbody></table>`;const w=window.open('','_blank','width=900,height=600');w.document.write(`<html><head><meta charset="UTF-8"><title>صورتحساب</title><style>body{font-family:system-ui,sans-serif;padding:20px}table{border-collapse:separate;border-spacing:0}th,td{border:1px solid #ccc;padding:8px;text-align:right}th{background:#333;color:#fff}</style></head><body><h2 style="color:#667eea">${U.esc(m.firstName)} ${U.esc(m.lastName)}</h2>${h}</body></html>`);}
 delMember(mid){if(confirm('حذف عضو؟')){this.dm.delMember(mid);alert('حذف شد');this.ui.switchTab('members');}}
 delAllMembers(){this.dm.delAllMembers();alert('همه اعضا حذف شدند');this.ui.switchTab('members');}
 uploadBulk(file){this.dm.uploadBulk(file,(e,tr,up,ad,nm)=>{if(e)alert('❌ '+e);else{alert(`✅ انجام شد\nردیف: ${tr}\nبه‌روز شده: ${up}\nجدید: ${nm}\nتراکنش: ${ad}`);this.ui.switchTab('members');}});}
