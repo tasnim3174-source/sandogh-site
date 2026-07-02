@@ -45,6 +45,9 @@
   .loading { text-align: center; padding: 40px; color: #667eea; font-size: 18px; }
   .empty { text-align: center; padding: 40px; color: #999; }
   .coin-display { display: inline-block; background: #f39c12; color: #fff; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 13px; }
+  .debug-panel { position: fixed; bottom: 0; left: 0; right: 0; background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto; z-index: 9999; }
+  .debug-panel .log-line { margin: 2px 0; }
+  .debug-toggle { position: fixed; bottom: 10px; right: 10px; background: #667eea; color: #fff; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; z-index: 10000; }
 </style>
 </head>
 <body>
@@ -195,6 +198,10 @@
   </div>
 </div>
 
+<!-- Debug Panel -->
+<button class="debug-toggle" onclick="toggleDebug()">🔍 Debug</button>
+<div id="debugPanel" class="debug-panel" style="display:none;"></div>
+
 <script>
 // ================= تنظیمات =================
 const JSONBIN_BIN_ID = '6a46b5f7f5f4af5e2955ca57';
@@ -213,24 +220,62 @@ let appData = {
   users: { 'admin': { password: 'admin123', role: 'admin' } }
 };
 
+// ================= Debug =================
+function debugLog(msg, type = 'info') {
+  const panel = document.getElementById('debugPanel');
+  const time = new Date().toLocaleTimeString('fa-IR');
+  const colors = { info: '#0f0', error: '#f00', warn: '#ff0', success: '#0ff' };
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.style.color = colors[type] || '#0f0';
+  line.textContent = `[${time}] ${msg}`;
+  panel.appendChild(line);
+  panel.scrollTop = panel.scrollHeight;
+  console.log(`[${type.toUpperCase()}]`, msg);
+}
+
+function toggleDebug() {
+  const panel = document.getElementById('debugPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
 // ================= بارگذاری داده =================
 async function loadData() {
+  debugLog('شروع بارگذاری داده‌ها از JSONBin...', 'info');
   try {
+    debugLog(`URL: ${JSONBIN_URL}/latest`, 'info');
     const res = await fetch(`${JSONBIN_URL}/latest`, {
       headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
+    
+    debugLog(`Status: ${res.status} ${res.statusText}`, res.ok ? 'success' : 'error');
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      debugLog(`خطا: ${errorText}`, 'error');
+      return;
+    }
+    
     const data = await res.json();
+    debugLog(`داده دریافتی: ${JSON.stringify(data).substring(0, 200)}...`, 'info');
+    
     if (data.record) {
       appData = { ...appData, ...data.record };
+      debugLog('داده‌ها با موفقیت بارگذاری شدند ✓', 'success');
+    } else {
+      debugLog('داده‌ای در Bin وجود ندارد', 'warn');
     }
   } catch (e) {
-    console.error('خطا در بارگذاری:', e);
+    debugLog(`خطا در بارگذاری: ${e.message}`, 'error');
+    console.error(e);
   }
 }
 
 async function saveData() {
+  debugLog('شروع ذخیره داده‌ها در JSONBin...', 'info');
   try {
-    await fetch(JSONBIN_URL, {
+    debugLog(`URL: ${JSONBIN_URL}`, 'info');
+    const res = await fetch(JSONBIN_URL, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -238,8 +283,18 @@ async function saveData() {
       },
       body: JSON.stringify(appData)
     });
+    
+    debugLog(`Status: ${res.status} ${res.statusText}`, res.ok ? 'success' : 'error');
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      debugLog(`خطا در ذخیره: ${errorText}`, 'error');
+    } else {
+      debugLog('داده‌ها با موفقیت ذخیره شدند ✓', 'success');
+    }
   } catch (e) {
-    console.error('خطا در ذخیره:', e);
+    debugLog(`خطا در ذخیره: ${e.message}`, 'error');
+    console.error(e);
   }
 }
 
@@ -254,13 +309,16 @@ async function login() {
     return;
   }
 
+  debugLog(`تلاش برای ورود با کاربر: ${u}`, 'info');
   await loadData();
 
   if (appData.users[u] && appData.users[u].password === p) {
     currentUser = { username: u, role: appData.users[u].role };
     localStorage.setItem('sandogh_user', JSON.stringify(currentUser));
+    debugLog(`ورود موفق: ${u} (${currentUser.role})`, 'success');
     showDashboard();
   } else {
+    debugLog(`ورود ناموفق: کاربر ${u} پیدا نشد یا رمز اشتباه است`, 'error');
     alertBox.innerHTML = '<div class="alert alert-error">نام کاربری یا رمز عبور اشتباه است</div>';
   }
 }
@@ -270,6 +328,7 @@ function logout() {
   currentUser = null;
   document.getElementById('loginPage').style.display = 'block';
   document.getElementById('dashboard').style.display = 'none';
+  debugLog('خروج از سیستم', 'info');
 }
 
 function showDashboard() {
@@ -527,14 +586,18 @@ function escapeHtml(s) {
 
 // ================= شروع =================
 window.onload = async () => {
+  debugLog('برنامه شروع شد', 'info');
   const saved = localStorage.getItem('sandogh_user');
   if (saved) {
     currentUser = JSON.parse(saved);
+    debugLog(`کاربر ذخیره شده: ${currentUser.username}`, 'info');
     await loadData();
     showDashboard();
+  } else {
+    debugLog('هیچ کاربری ذخیره نشده', 'info');
   }
 };
 </script>
 
 </body>
-</html>
+                         </html>
