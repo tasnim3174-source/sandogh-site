@@ -3,591 +3,538 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سیستم حسابداری صندوق اتحاد</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#667eea">
-<link rel="apple-touch-icon" href="icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="صندوق اتحاد">
+<title>صندوق - Sandogh</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',system-ui,-apple-system,sans-serif}
-@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-body{background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);min-height:100vh;padding:20px;position:relative}
-.container{max-width:1600px;margin:0 auto}
-.login-page,.app-page,.force-change-page{background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-radius:32px;padding:40px;box-shadow:0 25px 50px rgba(0,0,0,.25);animation:fadeIn .6s ease}
-.hidden{display:none!important}
-.btn{width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:16px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s ease}
-.btn:hover{transform:translateY(-3px);box-shadow:0 10px 25px rgba(102,126,234,.4)}
-.btn-small{width:auto;padding:8px 16px;font-size:.85rem;border-radius:20px;border:none;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px}
-.success-btn{background:linear-gradient(135deg,#48bb78,#38a169);color:#fff}
-.danger-btn{background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff}
-.edit-btn{background:linear-gradient(135deg,#ed8936,#dd6b20);color:#fff}
-.info-btn{background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff}
-.app-layout{display:flex;gap:25px;margin-top:25px}
-.vertical-menu{width:240px;background:rgba(255,255,255,.95);border-radius:24px;padding:25px 15px;flex-shrink:0;box-shadow:0 10px 30px rgba(0,0,0,.15)}
-.vertical-menu .menu-item{display:flex;align-items:center;gap:12px;padding:14px 18px;margin:6px 0;border-radius:16px;color:#4a5568;font-weight:600;cursor:pointer;transition:all .3s ease}
-.vertical-menu .menu-item:hover{background:rgba(102,126,234,.1)}
-.vertical-menu .menu-item.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.content-area{flex:1;background:rgba(255,255,255,.95);border-radius:24px;padding:30px;min-height:600px;overflow-y:auto}
-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem}
-th,td{padding:12px 15px;text-align:right;border-bottom:1px solid rgba(226,232,240,.5)}
-th{background:linear-gradient(135deg,#2d3748,#1a202c);font-weight:700;color:#fff;position:sticky;top:0;z-index:10}
-tbody tr:hover{background:rgba(102,126,234,.05)}
-.input-group{margin-bottom:25px}
-.input-group label{display:block;margin-bottom:8px;font-weight:600;color:#4a5568}
-.input-group input{width:100%;padding:14px;border:2px solid #e2e8f0;border-radius:16px;font-size:1rem}
-.input-group input:focus{outline:none;border-color:#667eea}
-.error-msg{color:#e53e3e;text-align:center;margin-top:20px;padding:12px;background:rgba(229,62,62,.1);border-radius:12px}
-.success-msg{color:#38a169;text-align:center;margin-top:20px;padding:12px;background:rgba(56,161,105,.1);border-radius:12px}
-.info-box{background:linear-gradient(135deg,rgba(66,153,225,.1),rgba(66,153,225,.05));border-right:5px solid #4299e1;padding:16px 20px;margin-bottom:25px;border-radius:16px;font-weight:600;display:flex;align-items:center;gap:10px}
-.dashboard-section{background:linear-gradient(135deg,rgba(247,250,252,.8),rgba(237,242,247,.8));border-radius:20px;padding:25px;margin-bottom:25px;border-right:5px solid #667eea;box-shadow:0 5px 15px rgba(0,0,0,.08)}
-.dashboard-section h3{color:#2d3748;margin-bottom:15px;display:flex;align-items:center;gap:10px;font-size:1.2rem}
-.msg-item{background:#fff;border-radius:12px;padding:12px 15px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
-.msg-item.msg-admin{border-right:4px solid #48bb78}
-.msg-item.msg-to-admin{border-right:4px solid #4299e1}
-.msg-item.msg-member{border-right:4px solid #ed8936}
-.msg-item.msg-reply{border-right:4px solid #9f7aea}
-.msg-item.msg-coin-request{border-right:4px solid #d69e2e}
-.msg-header{display:flex;justify-content:space-between;font-size:.8rem;color:#718096;margin-bottom:6px;font-weight:600}
-.msg-sender-badge{display:inline-block;font-size:.7rem;padding:3px 8px;border-radius:10px;font-weight:700;margin-bottom:5px}
-.msg-sender-badge.badge-admin{background:linear-gradient(135deg,#48bb78,#38a169);color:#fff}
-.msg-sender-badge.badge-council{background:linear-gradient(135deg,#38b2ac,#319795);color:#fff}
-.msg-sender-badge.badge-supervisor{background:linear-gradient(135deg,#ed8936,#dd6b20);color:#fff}
-.msg-sender-badge.badge-coin{background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff}
-.messenger-section-title{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:#2d3748;margin:15px 0 12px;padding:10px 15px;background:linear-gradient(135deg,rgba(102,126,234,.08),rgba(118,75,162,.05));border-radius:12px;border-right:4px solid #667eea}
-.messenger-section-title.title-to-admin{border-right-color:#4299e1;color:#2b6cb0}
-.messenger-section-title.title-to-member{border-right-color:#ed8936;color:#c05621}
-.messenger-section-title.title-coin-requests{border-right-color:#d69e2e;color:#975a16}
-.public-messages-section{margin-bottom:15px;padding:12px 15px !important}
-.public-messages-section h3{color:#2f855a;margin-bottom:8px !important;font-size:1rem !important}
-.header-bar{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding:20px 30px;border-radius:24px;margin-bottom:25px;background:rgba(255,255,255,.9);box-shadow:0 8px 25px rgba(0,0,0,.1)}
-.datetime-display{display:flex;gap:15px;align-items:center;flex-wrap:wrap}
-.datetime-card{display:flex;align-items:center;gap:12px;padding:12px 20px;border-radius:16px;background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.05));border:2px solid rgba(102,126,234,.2)}
-.datetime-card i{font-size:1.5rem;color:#667eea}
-.datetime-card .dt-label{font-size:.75rem;color:#718096;font-weight:600}
-.datetime-card .dt-value{font-size:1.1rem;font-weight:700;color:#2d3748}
-.clock-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:15px 25px;border-radius:20px;display:flex;align-items:center;gap:15px}
-.clock-card i{font-size:1.8rem}
-.clock-card .clock-time{font-size:1.5rem;font-weight:700}
-.header-actions{display:flex;gap:15px;align-items:center}
-.coin-badge{display:flex;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;border-radius:20px;font-weight:700}
-.coin-badge i{font-size:1.3rem}
-.notification-bell{position:relative;font-size:1.8rem;cursor:pointer;background:none;border:none;color:#667eea}
-.badge{position:absolute;top:-8px;right:-10px;background:#e53e3e;color:#fff;border-radius:50%;font-size:.7rem;min-width:22px;height:22px;display:flex;align-items:center;justify-content:center}
-.wheel{width:220px;height:220px;border-radius:50%;border:8px solid #667eea;margin:0 auto 25px;background:conic-gradient(#f56565 0deg 60deg,#ed8936 60deg 120deg,#ecc94b 120deg 180deg,#48bb78 180deg 240deg,#4299e1 240deg 300deg,#9f7aea 300deg 360deg)}
-.wheel .pointer{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:2.5rem;color:#e53e3e;z-index:10}
-.wheel .center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#667eea}
-.table-wrapper{overflow-x:auto;max-height:600px;overflow-y:auto;border:2px solid rgba(226,232,240,.5);border-radius:16px;background:#fff}
-.excel-header{background:linear-gradient(135deg,#2d3748,#1a202c)!important;color:#fff!important}
-.password-dots{font-family:monospace;font-size:1.2rem;letter-spacing:3px;cursor:pointer;background:#edf2f7;padding:6px 12px;border-radius:12px}
-.warning-box{background:#fff5f5;border:2px solid #feb2b2;border-radius:16px;padding:18px 20px;color:#c53030;display:flex;align-items:center;gap:12px;margin-top:15px}
-.warning-box strong{display:block;font-size:1.05rem;margin-bottom:5px}
-.loan-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
-.loan-info-item{background:#fff;padding:12px 15px;border-radius:12px;border:2px solid #e2e8f0}
-.loan-info-label{font-size:.8rem;color:#718096;font-weight:600;margin-bottom:5px}
-.loan-info-value{font-size:1rem;font-weight:700;color:#2d3748}
-.login-logo{width:120px;height:120px;margin:0 auto 20px;border-radius:50%;object-fit:cover}
-.logo-upload-section{background:rgba(247,250,252,.8);padding:20px;border-radius:16px;margin-bottom:20px;border:2px dashed #cbd5e0}
-.logo-preview{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:15px auto;display:block}
-.msg-actions-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;padding:12px;background:rgba(247,250,252,.8);border-radius:12px}
-.last-login-info{display:inline-block;font-size:.85rem;color:#4a5568;background:rgba(102,126,234,.08);padding:4px 12px;border-radius:12px;margin-right:10px}
-.coin-shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:15px}
-.coin-reward-card{background:#fff;border-radius:20px;padding:22px;border:2px solid #e2e8f0;transition:all .3s ease}
-.coin-reward-card .reward-icon{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#ecc94b,#d69e2e);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
-.coin-reward-card .reward-icon i{font-size:1.8rem;color:#fff}
-.coin-reward-card .reward-title{font-size:1.1rem;font-weight:700;color:#2d3748;text-align:center;margin-bottom:8px}
-.coin-reward-card .reward-desc{font-size:.85rem;color:#718096;text-align:center;margin-bottom:15px;min-height:40px}
-.coin-reward-card .reward-cost{display:flex;align-items:center;justify-content:center;gap:8px;padding:10px;background:rgba(236,201,75,.15);border-radius:12px;margin-bottom:12px;font-weight:700;color:#975a16}
-.coin-reward-card .buy-btn{width:100%;padding:10px;background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-.coin-reward-card .buy-btn:disabled{opacity:.5;cursor:not-allowed}
-.request-status{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.72rem;font-weight:700;margin-right:6px}
-.request-status.pending{background:#fef3c7;color:#92400e}
-.request-status.approved{background:#c6f6d5;color:#22543d}
-.request-status.rejected{background:#fed7d7;color:#9b2c2c}
-.admin-reward-item{background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px}
-.admin-reward-item .reward-icon-small{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#ecc94b,#d69e2e);display:flex;align-items:center;justify-content:center}
-.admin-reward-item .reward-icon-small i{font-size:1.2rem;color:#fff}
-.admin-reward-item .reward-info{flex:1}
-.admin-reward-item .reward-info .title{font-weight:700;color:#2d3748}
-.admin-reward-item .reward-info .desc{font-size:.78rem;color:#718096}
-.admin-reward-item .reward-info .cost{font-size:.82rem;color:#975a16;font-weight:700}
-.poll-item{background:#fff;border-radius:16px;padding:20px;margin-bottom:15px;border-right:4px solid #667eea}
-.poll-options{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
-.option-btn{padding:8px 18px;border:2px solid #e2e8f0;border-radius:24px;background:#fff;cursor:pointer;font-weight:600}
-.option-btn:hover:not(:disabled){border-color:#667eea;background:rgba(102,126,234,.1)}
-.sms-status-grid{display:flex;flex-direction:column;gap:12px}
-.sms-status-item{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:16px;padding:15px 20px;border-right:5px solid #667eea}
-.status-active{background:#c6f6d5;color:#22543d;padding:6px 18px;border-radius:24px;font-weight:700}
-.status-inactive{background:#fed7d7;color:#9b2c2c;padding:6px 18px;border-radius:24px;font-weight:700}
-.search-box{margin-bottom:20px;display:flex;gap:12px;align-items:center;background:rgba(247,250,252,.8);padding:12px 18px;border-radius:16px}
-.search-box input{flex:1;padding:10px 15px;border:2px solid #e2e8f0;border-radius:12px}
-.filter-bar{display:flex;gap:12px;margin-bottom:25px;flex-wrap:wrap;align-items:center;background:rgba(247,250,252,.8);padding:15px;border-radius:16px}
-.filter-bar input{flex:1;padding:10px 15px;border:2px solid #e2e8f0;border-radius:12px;min-width:200px}
-.theme-buttons{display:flex;gap:10px}
-.theme-btn{padding:8px 16px;border:2px solid #e2e8f0;border-radius:20px;background:#fff;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px}
-.theme-btn.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border-color:transparent}
-.supervisor-tabs{display:flex;gap:12px;margin-bottom:25px;flex-wrap:wrap;background:rgba(247,250,252,.8);padding:12px;border-radius:20px}
-.supervisor-tab-btn{padding:10px 24px;background:#edf2f7;border:none;border-radius:24px;cursor:pointer;font-weight:700;color:#4a5568}
-.supervisor-tab-btn.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
-.delete-all-btn{background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;padding:12px 24px;border:none;border-radius:24px;cursor:pointer;font-weight:700}
-.sync-indicator{position:fixed;bottom:20px;left:20px;background:linear-gradient(135deg,#48bb78,#38a169);color:#fff;padding:10px 18px;border-radius:20px;font-size:.85rem;font-weight:700;box-shadow:0 5px 15px rgba(72,187,120,.4);z-index:9999;display:none;animation:fadeIn .3s ease}
-.sync-indicator.show{display:flex;align-items:center;gap:8px}
-.sync-indicator i{animation:spin 1s linear infinite}
-@media(max-width:768px){.app-layout{flex-direction:column}.vertical-menu{width:100%;display:flex;overflow-x:auto;padding:12px 10px;gap:8px}.vertical-menu .menu-item{flex-shrink:0;font-size:.85rem;padding:10px 14px;white-space:nowrap}.content-area{padding:18px}.header-bar{grid-template-columns:1fr;padding:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{width:100%;justify-content:center}.clock-card{width:100%;justify-content:center}table{font-size:.8rem}th,td{padding:8px 6px}.btn-small{font-size:.8rem;padding:8px 14px}.filter-bar{flex-direction:column;gap:8px}.filter-bar input{width:100%}.msg-item{padding:10px 12px}.loan-info{grid-template-columns:1fr 1fr;gap:8px}.coin-shop-grid{grid-template-columns:1fr}}
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Tahoma, sans-serif; }
+  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+  .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; }
+  .header { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px; text-align: center; }
+  .header h1 { font-size: 28px; }
+  .login-box { max-width: 400px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+  .login-box h2 { text-align: center; margin-bottom: 20px; color: #333; }
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
+  .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
+  .form-group input:focus, .form-group textarea:focus { border-color: #667eea; outline: none; }
+  .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s; }
+  .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; width: 100%; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+  .btn-danger { background: #e74c3c; color: #fff; }
+  .btn-success { background: #27ae60; color: #fff; }
+  .btn-warning { background: #f39c12; color: #fff; }
+  .nav { display: flex; background: #f8f9fa; border-bottom: 2px solid #e9ecef; overflow-x: auto; }
+  .nav button { flex: 1; padding: 15px; border: none; background: transparent; cursor: pointer; font-size: 14px; font-weight: bold; color: #555; transition: all 0.3s; white-space: nowrap; }
+  .nav button.active { background: #fff; color: #667eea; border-bottom: 3px solid #667eea; }
+  .nav button:hover { background: #e9ecef; }
+  .content { padding: 25px; min-height: 500px; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .card { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-right: 4px solid #667eea; }
+  .card h3 { color: #333; margin-bottom: 8px; }
+  .card p { color: #666; line-height: 1.6; }
+  .card .meta { font-size: 12px; color: #999; margin-top: 8px; }
+  .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; }
+  .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+  .alert-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  .alert-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+  .logout-btn { float: left; background: #e74c3c; color: #fff; padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+  .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px; border-radius: 10px; text-align: center; }
+  .stat-card .num { font-size: 32px; font-weight: bold; margin: 10px 0; }
+  .stat-card .label { font-size: 14px; opacity: 0.9; }
+  .loading { text-align: center; padding: 40px; color: #667eea; font-size: 18px; }
+  .empty { text-align: center; padding: 40px; color: #999; }
+  .coin-display { display: inline-block; background: #f39c12; color: #fff; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 13px; }
 </style>
 </head>
 <body>
-<div class="container" id="appContainer"></div>
-<div class="sync-indicator" id="syncIndicator"><i class="fas fa-sync"></i><span id="syncText">در حال همگام‌سازی...</span></div>
+
+<div class="container">
+  <div class="header">
+    <h1>💰 صندوق</h1>
+    <p>سیستم مدیریت صندوق</p>
+  </div>
+
+  <!-- صفحه ورود -->
+  <div id="loginPage" class="login-box">
+    <h2>🔐 ورود به سیستم</h2>
+    <div id="loginAlert"></div>
+    <div class="form-group">
+      <label>نام کاربری</label>
+      <input type="text" id="username" placeholder="نام کاربری">
+    </div>
+    <div class="form-group">
+      <label>رمز عبور</label>
+      <input type="password" id="password" placeholder="رمز عبور">
+    </div>
+    <button class="btn btn-primary" onclick="login()">ورود</button>
+  </div>
+
+  <!-- داشبورد اصلی -->
+  <div id="dashboard" style="display:none;">
+    <div style="padding: 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <span>خوش آمدید، <strong id="currentUser"></strong></span>
+        <span class="coin-display" id="userCoins">0 🪙</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">خروج</button>
+    </div>
+
+    <div class="nav">
+      <button class="active" onclick="showSection('home', this)">🏠 خانه</button>
+      <button onclick="showSection('announcements', this)">📢 اطلاعیه‌ها</button>
+      <button onclick="showSection('messages', this)">💬 پیام‌ها</button>
+      <button onclick="showSection('polls', this)">📊 نظرسنجی</button>
+      <button onclick="showSection('requests', this)">📝 درخواست‌ها</button>
+      <button onclick="showSection('support', this)">🎧 پشتیبانی</button>
+      <button onclick="showSection('rewards', this)">🎁 پاداش‌ها</button>
+      <button id="adminTab" style="display:none;" onclick="showSection('admin', this)">⚙️ مدیریت</button>
+    </div>
+
+    <div class="content">
+      <!-- خانه -->
+      <div id="home" class="section active">
+        <div class="stats">
+          <div class="stat-card"><div class="label">موجودی شما</div><div class="num" id="myCoins">0</div><div class="label">سکه 🪙</div></div>
+          <div class="stat-card"><div class="label">اطلاعیه‌ها</div><div class="num" id="annCount">0</div><div class="label">مورد</div></div>
+          <div class="stat-card"><div class="label">پیام‌ها</div><div class="num" id="msgCount">0</div><div class="label">مورد</div></div>
+          <div class="stat-card"><div class="label">درخواست‌ها</div><div class="num" id="reqCount">0</div><div class="label">مورد</div></div>
+        </div>
+        <h2>📌 آخرین اطلاعیه‌ها</h2>
+        <div id="homeAnnouncements"></div>
+      </div>
+
+      <!-- اطلاعیه‌ها -->
+      <div id="announcements" class="section">
+        <h2>📢 اطلاعیه‌ها</h2>
+        <div id="announcementsList"></div>
+      </div>
+
+      <!-- پیام‌ها -->
+      <div id="messages" class="section">
+        <h2>💬 پیام‌ها</h2>
+        <div class="form-group">
+          <textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:auto;margin-bottom:20px;" onclick="sendMessage()">ارسال پیام</button>
+        <div id="messagesList"></div>
+      </div>
+
+      <!-- نظرسنجی -->
+      <div id="polls" class="section">
+        <h2>📊 نظرسنجی‌ها</h2>
+        <div id="pollsList"></div>
+      </div>
+
+      <!-- درخواست‌ها -->
+      <div id="requests" class="section">
+        <h2>📝 درخواست‌ها</h2>
+        <div class="form-group">
+          <input type="text" id="reqTitle" placeholder="عنوان درخواست">
+        </div>
+        <div class="form-group">
+          <textarea id="reqDesc" rows="3" placeholder="توضیحات..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:auto;margin-bottom:20px;" onclick="sendRequest()">ثبت درخواست</button>
+        <div id="requestsList"></div>
+      </div>
+
+      <!-- پشتیبانی -->
+      <div id="support" class="section">
+        <h2>🎧 پشتیبانی</h2>
+        <div class="form-group">
+          <input type="text" id="supTitle" placeholder="موضوع">
+        </div>
+        <div class="form-group">
+          <textarea id="supMsg" rows="3" placeholder="پیام شما..."></textarea>
+        </div>
+        <button class="btn btn-primary" style="width:auto;margin-bottom:20px;" onclick="sendSupport()">ارسال تیکت</button>
+        <div id="supportList"></div>
+      </div>
+
+      <!-- پاداش‌ها -->
+      <div id="rewards" class="section">
+        <h2>🎁 پاداش‌ها</h2>
+        <div id="rewardsList"></div>
+      </div>
+
+      <!-- مدیریت -->
+      <div id="admin" class="section">
+        <h2>⚙️ پنل مدیریت</h2>
+        <div id="adminAlert"></div>
+
+        <div class="card" style="background:#fff;">
+          <h3>📢 افزودن اطلاعیه</h3>
+          <div class="form-group"><input type="text" id="annTitle" placeholder="عنوان"></div>
+          <div class="form-group"><textarea id="annBody" rows="3" placeholder="متن اطلاعیه"></textarea></div>
+          <button class="btn btn-success" onclick="addAnnouncement()">افزودن</button>
+        </div>
+
+        <div class="card" style="background:#fff;margin-top:15px;">
+          <h3>📊 افزودن نظرسنجی</h3>
+          <div class="form-group"><input type="text" id="pollQ" placeholder="سوال"></div>
+          <div class="form-group"><input type="text" id="pollOpts" placeholder="گزینه‌ها (با , جدا کنید)"></div>
+          <button class="btn btn-success" onclick="addPoll()">افزودن</button>
+        </div>
+
+        <div class="card" style="background:#fff;margin-top:15px;">
+          <h3>🎁 افزودن پاداش</h3>
+          <div class="form-group"><input type="text" id="rewTitle" placeholder="عنوان پاداش"></div>
+          <div class="form-group"><input type="number" id="rewCost" placeholder="هزینه (سکه)"></div>
+          <button class="btn btn-success" onclick="addReward()">افزودن</button>
+        </div>
+
+        <div class="card" style="background:#fff;margin-top:15px;">
+          <h3>🪙 مدیریت سکه کاربران</h3>
+          <div class="form-group"><input type="text" id="coinUser" placeholder="نام کاربری"></div>
+          <div class="form-group"><input type="number" id="coinAmount" placeholder="مقدار (+ یا -)"></div>
+          <button class="btn btn-warning" onclick="updateCoins()">به‌روزرسانی</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-// ========== تنظیمات JSONBin ==========
+// ================= تنظیمات =================
+const JSONBIN_BIN_ID = '6a46b5f7f5f4af5e2955ca57';
 const JSONBIN_API_KEY = '$2a$10$94Aa.jIBYMCsIyVJkgblD.41bpzRmDO0h0i9EC/R2V5puDYzcdy56';
-const JSONBIN_BIN_ID = '6a45ffb9da38895dfe2060a7';
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
-const EXCEL_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-data/main/data.xlsx';
 
-(function(){"use strict";
-const $=(s,p=document)=>p.querySelector(s);
-const $$=(s,p=document)=>p.querySelectorAll(s);
-
-function showSync(text='در حال همگام‌سازی...'){
-  const el=$('#syncIndicator');
-  const txt=$('#syncText');
-  if(el&&txt){
-    txt.textContent=text;
-    el.classList.add('show');
-    setTimeout(()=>el.classList.remove('show'),2000);
-  }
-}
-
-const U={
-  norm(s){if(!s)return'';const m={'ا':'a','آ':'a','ب':'b','پ':'p','ت':'t','ث':'s','ج':'j','چ':'ch','ح':'h','خ':'kh','د':'d','ذ':'z','ر':'r','ز':'z','ژ':'zh','س':'s','ش':'sh','ص':'s','ض':'z','ط':'t','ظ':'z','ع':'a','غ':'gh','ف':'f','ق':'gh','ک':'k','گ':'g','ل':'l','م':'m','ن':'n','و':'v','ه':'h','ی':'y','ئ':'y'};return[...s].map(c=>m[c]||c).join('').toLowerCase();},
-  fmtNum(n){return new Intl.NumberFormat('fa-IR').format(n);},
-  toJalali(g){const d=new Date(g),gy=d.getFullYear(),gm=d.getMonth()+1,gd=d.getDate(),gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy,days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1],jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30),jd=1+(days<186?days%31:(days-186)%30);return`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`;},
-  now(){const n=new Date();return`${this.toJalali(n)} ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;},
-  parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=String(v).replace(/[,\u066C\u200C\s]/g,'');const p='۰۱۲۳۴۵۶۷۸۹',e='0123456789';for(let i=0;i<10;i++)s=s.replaceAll(p[i],e[i]);return isNaN(parseFloat(s))?0:parseFloat(s);},
-  fmtDate(s){if(!s)return'---';const c=s.replace(/\D/g,'');return c.length===8?`${c.slice(0,4)}/${c.slice(4,6)}/${c.slice(6,8)}`:s;},
-  esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;},
-  strength(p){let s=0;if(p.length>=6)s++;if(p.length>=8)s++;if(/[a-z]/.test(p))s++;if(/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^a-zA-Z\d]/.test(p))s++;return s<=2?'ضعیف':s<=4?'متوسط':'قوی';},
-  parseBool(v){if(v==null)return false;return['true','1','yes','فعال','بله'].includes(String(v).trim().toLowerCase());},
-  parseSmsCode(v){if(v==null||v==='')return false;const n=U.parseNum(v);if(n===-1)return true;if(n===0)return false;return['true','1','yes','فعال','بله','-1'].includes(String(v).trim().toLowerCase());},
-  findCol(names,headers){for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers)if(h.toLowerCase().replace(/[_\s\-]/g,'')===nn)return h;}return null;},
-  isValidDate(s){if(!s)return false;const p=s.split('/');if(p.length!==3)return false;const[y,m,d]=p.map(Number);if(isNaN(y)||isNaN(m)||isNaN(d))return false;if(m<1||m>12||d<1||d>31)return false;if(m>6&&d>30)return false;return true;},
-  getMembershipDuration(openDateStr){
-    if(!openDateStr)return'---';const parts=openDateStr.split('/');if(parts.length!==3)return'---';
-    const jy=parseInt(parts[0]),jm=parseInt(parts[1]),jd=parseInt(parts[2]);
-    if(isNaN(jy)||isNaN(jm)||isNaN(jd))return'---';
-    let jy1=jy+1595,days=-355668+365*jy1+~~(jy1/33)*8+~~(((jy1%33)+3)/4);
-    days+=jm<7?(jm-1)*31:(jm-7)*30+186;days+=jd;
-    let gy=400*~~(days/146097);days%=146097;
-    if(days>36524){days--;gy+=100*~~(days/36524);days%=36524;if(days>=365)days++;}
-    gy+=4*~~(days/1461);days%=1461;
-    if(days>365){gy+=~~((days-1)/365);days=(days-1)%365;}
-    let gd=days+1,gm=1;const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];
-    for(let i=1;i<=12;i++){if(gd<=gdm[i]){gm=i;break;}}gd-=gdm[gm-1];
-    const openDate=new Date(gy,gm-1,gd),now=new Date();
-    let dy=now.getFullYear()-openDate.getFullYear(),dm=now.getMonth()-openDate.getMonth(),dd=now.getDate()-openDate.getDate();
-    if(dd<0){const prevMonth=new Date(now.getFullYear(),now.getMonth(),0);dd+=prevMonth.getDate();dm--;}
-    if(dm<0){dm+=12;dy--;}if(dy<0)return'---';
-    let result='';if(dy>0)result+=`${dy} سال `;if(dm>0)result+=`${dm} ماه `;if(dd>0)result+=`${dd} روز`;
-    return result.trim()||'کمتر از یک روز';
-  }
+let currentUser = null;
+let appData = {
+  messages: [],
+  coins: {},
+  announcements: [],
+  polls: [],
+  requests: [],
+  support: [],
+  rewards: [],
+  users: { 'admin': { password: 'admin123', role: 'admin' } }
 };
 
-function findInRaw(raw, keys){
-  if(!raw) return undefined;
-  for(const k of Object.keys(raw)){
-    const nk = k.toLowerCase().replace(/[_\s\-]/g, '');
-    for(const q of keys){
-      if(nk === q.toLowerCase().replace(/[_\s\-]/g, '')) return raw[k];
-    }
-  }
-  return undefined;
-}
-
-const DEFAULT_COIN_REWARDS = [
-  {id:'r_username', title:'ویرایش نام کاربری', cost:500, icon:'fa-user-edit', type:'username_edit', description:'امکان ویرایش نام کاربری خود با پرداخت سکه', active:true},
-  {id:'r_loan_nofee', title:'وام بدون کارمزد', cost:1100, icon:'fa-hand-holding-usd', type:'loan_no_fee', description:'دریافت وام بدون پرداخت کارمزد', active:true},
-  {id:'r_loan_priority', title:'وام خارج از نوبت', cost:1500, icon:'fa-bolt', type:'loan_priority', description:'دریافت وام با اولویت خارج از نوبت', active:true}
-];
-
-class DM{
-  constructor(){
-    this.users=[];
-    this.members=[];
-    this.messages=[];
-    this.support={phone:'',accountNumber:'',address:''};
-    this.announcements=[];
-    this.polls=[];
-    this.logo='';
-    this.coinRewards=DEFAULT_COIN_REWARDS.slice();
-    this.coinRequests=[];
-    this.loaded=false;
-    this.syncing=false;
-    this.syncInterval=null;
-  }
-
-  async loadFromGitHub(){
-    try{
-      showSync('در حال بارگذاری اعضا از GitHub...');
-      const response=await fetch(EXCEL_URL+'?t='+Date.now());
-      if(!response.ok) throw new Error('فایل اکسل یافت نشد');
-      const buffer=await response.arrayBuffer();
-      const workbook=XLSX.read(buffer,{type:'array'});
-      const sheet=workbook.Sheets[workbook.SheetNames[0]];
-      const rows=XLSX.utils.sheet_to_json(sheet,{defval:'',raw:false});
-      if(!rows.length) throw new Error('فایل خالی است');
-      const headers=Object.keys(rows[0]),fc=(...names)=>U.findCol(names,headers);
-      const accCol=fc('شماره حساب','account','accountnumber');
-      const dateCol=fc('تاریخ تراکنش','تاریخ واریز','تاریخ برداشت','تاریخ');
-      const amtCol=fc('مبلغ تراکنش','مبلغ','amount');
-      const nameCol=fc('نام','name','firstname','first name');
-      const lastNameCol=fc('نام خانوادگی','lastname','last name','family');
-      const phone1Col=fc('تلفن','phone','phone1','تلفن1','تلفن ۱');
-      const phone2Col=fc('تلفن2','phone2','تلفن ۲','تلفن۲');
-      const statusCol=fc('وضعیت حساب','active','status','وضعیت');
-      const sessionCol=fc('کد جلسات','code jalasat','session','jalasat');
-      const mogmoCol=fc('mogmo','مقرری ماهانه','مقرری','monthly salary');
-      const mogmoMosavabCol=fc('مقرری ماهانه مصوب شده هرنفر','mogmo mosavab','monthly salary approved');
-      const mojodiTilCol=fc('mojodi ta in lahzeh','موجودی تا این لحظه','current balance');
-      if(!accCol||!dateCol||!amtCol){console.error('ستون‌های اجباری یافت نشد');return false;}
-      const byAcc={};let total=0;
-      for(const r of rows){
-        const acc=String(r[accCol]||'').trim();if(!acc)continue;
-        const date=String(r[dateCol]||'').trim(),amt=U.parseNum(r[amtCol]);if(!date||!amt)continue;
-        const tid=String(r[fc('id','شناسه','ردیف','شماره پیگیری')]||'').trim()||`TRX-${Date.now()}-${Math.random().toString(36).slice(2,6)}`;
-        const raw={};for(const h of headers)raw[h]=r[h]??'';
-        if(nameCol&&r[nameCol])raw['نام']=String(r[nameCol]).trim();
-        if(lastNameCol&&r[lastNameCol])raw['نام خانوادگی']=String(r[lastNameCol]).trim();
-        if(phone1Col&&r[phone1Col])raw['تلفن']=String(r[phone1Col]).trim();
-        if(phone2Col&&r[phone2Col])raw['تلفن2']=String(r[phone2Col]).trim();
-        const sms={
-          general:U.parseSmsCode(r[fc('active','فعال')]),
-          supervisors:U.parseSmsCode(r[fc('kod sarparast','کد سرپرست')]),
-          council:U.parseSmsCode(r[fc('kod','کد')]),
-          overdue:U.parseSmsCode(r[fc('kod moavaghat','کد معوقات','kod moavaghe')]),
-          birthday:U.parseSmsCode(r[fc('kod tavalod','کد تولد')]),
-          newsletter:U.parseSmsCode(r[fc('kod khabarnameh','کد خبرنامه')]),
-          poll:U.parseSmsCode(r[fc('kod mosabegheh','کد مسابقه')]),
-          occasions:U.parseSmsCode(r[fc('kod monasedat','کد مناسبات','kod monasebat')])
-        };
-        const tx={id:Date.now()+Math.random(),transactionId:tid,accountNumber:acc,transactionDate:date,amount:amt,monthlySalary:String(r[mogmoCol]||r[fc('مقرری ماهانه','مقرری')]||'').trim(),fishNumber:String(r[fc('شماره فیش')]||'').trim(),transactionName:String(r[fc('نام تراکنش کننده','نام تراکنش','تراکنش کننده')]||'').trim(),installmentAmount:U.parseNum(r[fc('مبلغ قسط واریزی','مبلغ قسط','قسط واریزی')]),installmentDate:String(r[fc('تاریخ قسط واریزی','تاریخ قسط')]||'').trim(),totalDeposit:U.parseNum(r[fc('جمع واریزی','جمع واریز')]),balance:U.parseNum(r[fc('موجودی','balance')]),total:U.parseNum(r[fc('جمع')]),paidInstallments:U.parseNum(r[fc('تعداد قسط پرداخت شده','تعداد قسط پرداخت')]),remainingInstallments:U.parseNum(r[fc('تعداد قسط مانده')]),savingsStatus:String(r[fc('وضعیت پس انداز','وضعیت پس‌انداز')]||'').trim(),smsStatus:sms,openDate:String(r[fc('date ozviyat','تاریخ عضویت','تاریخ افتتاح')]||'').trim(),rawData:{...raw},allHeaders:[...headers]};
-        if(!byAcc[acc])byAcc[acc]=[];byAcc[acc].push(tx);total++;
-      }
-      if(!total){console.error('داده معتبری یافت نشد');return false;}
-      this.users=[{id:1,username:'admin',password:'admin123',role:'admin',memberId:null}];
-      this.members=[];
-      let memberId=1;
-      for(const acc of Object.keys(byAcc)){
-        const txs=byAcc[acc];
-        txs.sort((a,b)=>(parseInt(b.transactionId)||0)-(parseInt(a.transactionId)||0));
-        const latestTx=txs[0];
-        const fn=latestTx.rawData['نام']||'کاربر',ln=latestTx.rawData['نام خانوادگی']||'';
-        const member={
-          id:memberId,firstName:fn,lastName:ln,fullName:fn+' '+ln,
-          openDate:latestTx.openDate||'1400/01/01',birthDate:'',
-          accountNumber:acc,
-          phone1:latestTx.rawData['تلفن']||'',phone2:latestTx.rawData['تلفن2']||'',
-          loginCount:0,coins:0,usedCoins:0,coinHistory:[],
-          coinDailyLogin:'',birthdaySetCoinsClaimed:false,lastBirthdayCoinYear:null,
-          coinDashboardVisit:'',coinMessageToAdmin:'',coinPollParticipation:'',
-          coinMonthly:'',lastOpeningCoinYear:null,lastLoginDate:'',
-          statusActive:statusCol&&latestTx.rawData[statusCol]!==undefined?U.parseBool(latestTx.rawData[statusCol]):true,
-          sessionActive:sessionCol&&latestTx.rawData[sessionCol]!==undefined?U.parseBool(latestTx.rawData[sessionCol]):false,
-          smsStatus:latestTx.smsStatus||{general:false,supervisors:false,council:false,overdue:false,birthday:false,newsletter:false,poll:false,occasions:false},
-          transactions:txs.map(t=>({...t,rawData:{...t.rawData},allHeaders:[...t.allHeaders]})),
-          balance:0,savingsStatus:0,monthlySalary:0,monthlySalaryApproved:0,currentMonthBalance:0,
-          loanRequestDate:'',loanReceiveDate:'',lastInstallmentDate:'',
-          installmentAmount:0,feeAmount:0,totalInstallments:0,paidInstallments:0,
-          remainingInstallments:0,remainingInstallmentAmount:0,overdueInstallments:0,loanBalance:0,
-          isSpecial:false,usernameEditUnlocked:false
-        };
-        this.members.push(member);
-        this.users.push({id:this.users.length+1,username:acc,password:acc,role:'member',memberId:memberId});
-        memberId++;
-      }
-      console.log(`✅ ${this.members.length} عضو از GitHub بارگذاری شد`);
-      return true;
-    }catch(e){
-      console.error('❌ خطا در بارگذاری از GitHub:',e);
-      return false;
-    }
-  }
-
-  async syncFromJSONBin(){
-    try{
-      showSync('در حال همگام‌سازی داده‌ها...');
-      const response=await fetch(JSONBIN_URL+'/latest',{
-        headers:{'X-Master-Key':JSONBIN_API_KEY}
-      });
-      if(!response.ok) throw new Error('خطا در خواندن از JSONBin');
-      const result=await response.json();
-      const data=result.record;
-      if(data){
-        this.messages=data.messages||[];
-        this.support=data.support||{phone:'',accountNumber:'',address:''};
-        this.announcements=data.announcements||[];
-        this.polls=data.polls||[];
-        this.logo=data.logo||'';
-        this.coinRewards=data.coinRewards||DEFAULT_COIN_REWARDS.slice();
-        this.coinRequests=data.coinRequests||[];
-        const coins=data.coins||{};
-        const coinHistory=data.coinHistory||{};
-        const usernameEditUnlocked=data.usernameEditUnlocked||{};
-        const coinBenefits=data.coinBenefits||{};
-        this.members.forEach(m=>{
-          if(coins[m.id]!==undefined) m.coins=coins[m.id];
-          if(coinHistory[m.id]) m.coinHistory=coinHistory[m.id];
-          if(usernameEditUnlocked[m.id]) m.usernameEditUnlocked=usernameEditUnlocked[m.id];
-          if(coinBenefits[m.id]) m.coinBenefits=coinBenefits[m.id];
-        });
-        console.log('✅ داده‌ها از JSONBin بارگذاری شدند');
-        showSync('✅ همگام‌سازی کامل شد');
-      }
-    }catch(e){
-      console.error('❌ خطا در همگام‌سازی:',e);
-      showSync('⚠️ خطا در همگام‌سازی');
-    }
-  }
-
-  async syncToJSONBin(){
-    if(this.syncing) return;
-    this.syncing=true;
-    try{
-      const coins={},coinHistory={},usernameEditUnlocked={},coinBenefits={};
-      this.members.forEach(m=>{
-        coins[m.id]=m.coins||0;
-        coinHistory[m.id]=m.coinHistory||[];
-        usernameEditUnlocked[m.id]=m.usernameEditUnlocked||false;
-        coinBenefits[m.id]=m.coinBenefits||{};
-      });
-      const data={
-        coins:coins,
-        coinHistory:coinHistory,
-        coinRequests:this.coinRequests,
-        messages:this.messages,
-        announcements:this.announcements,
-        polls:this.polls,
-        support:this.support,
-        logo:this.logo,
-        coinRewards:this.coinRewards,
-        usernameEditUnlocked:usernameEditUnlocked,
-        coinBenefits:coinBenefits
-      };
-      await fetch(JSONBIN_URL,{
-        method:'PUT',
-        headers:{
-          'Content-Type':'application/json',
-          'X-Master-Key':JSONBIN_API_KEY
-        },
-        body:JSON.stringify(data)
-      });
-      console.log('✅ داده‌ها در JSONBin ذخیره شدند');
-      showSync('✅ ذخیره شد');
-    }catch(e){
-      console.error('❌ خطا در ذخیره:',e);
-      showSync('⚠️ خطا در ذخیره');
-    }finally{
-      this.syncing=false;
-    }
-  }
-
-  // ✅ متدهای جدید اضافه شده
-  async syncAllFrom(){
-    await this.syncFromJSONBin();
-  }
-
-  syncSup(){
-    this.syncToJSONBin();
-  }
-
-  gUserByMid(mid){return this.users.find(u=>u.memberId===mid)}
-  gMember(id){return this.members.find(m=>m.id===id)}
-  gMemberByPhone(p){return this.members.find(m=>m.phone1===p)}
-  
-  addCoin(mid,amount,reason,desc=''){
-    const m=this.gMember(mid);
-    if(!m)return false;
-    m.coins=(m.coins||0)+amount;
-    if(!m.coinHistory)m.coinHistory=[];
-    m.coinHistory.push({date:U.now(),amount,reason,description:desc,balance:m.coins});
-    this.syncToJSONBin();
-    return true;
-  }
-  
-  spendCoin(mid,amount,reason,desc=''){
-    const m=this.gMember(mid);
-    if(!m) return {s:false,m:'عضو یافت نشد'};
-    if((m.coins||0) < amount) return {s:false,m:'سکه کافی نیست'};
-    m.coins = (m.coins||0) - amount;
-    if(!m.coinHistory) m.coinHistory=[];
-    m.coinHistory.push({date:U.now(),amount:-amount,reason,description:desc,balance:m.coins});
-    this.syncToJSONBin();
-    return {s:true};
-  }
-  
-  applyCoinRules(m){
-    if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;
-    const add=(a,r,d)=>{this.addCoin(m.id,a,r,d);ch=true;};
-    if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}
-    if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}
-    if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}
-    if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}
-    if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}
-    if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}
-    if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}
-    if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}
-    return ch;
-  }
-  
-  addReward(r){
-    r.id = 'r_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-    this.coinRewards.push(r);
-    this.syncToJSONBin();
-    return r;
-  }
-  
-  updateReward(id, data){
-    const r = this.coinRewards.find(x=>x.id===id);
-    if(!r) return false;
-    Object.assign(r, data);
-    this.syncToJSONBin();
-    return true;
-  }
-  
-  deleteReward(id){
-    this.coinRewards = this.coinRewards.filter(x=>x.id!==id);
-    this.syncToJSONBin();
-  }
-  
-  addCoinRequest(req){
-    req.id = 'cr_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
-    req.status = 'pending';
-    req.timestamp = U.now();
-    this.coinRequests.push(req);
-    this.syncToJSONBin();
-    return req;
-  }
-  
-  updateRequestStatus(id, status, adminNote=''){
-    const r = this.coinRequests.find(x=>x.id===id);
-    if(!r) return false;
-    r.status = status;
-    r.adminNote = adminNote;
-    r.resolvedAt = U.now();
-    this.syncToJSONBin();
-    return true;
-  }
-  
-  getPendingRequestsCount(){
-    return this.coinRequests.filter(r=>r.status==='pending').length;
-  }
-  
-  resetAllCoins(){
-    this.members.forEach(m=>{
-      m.coins = 0;
-      m.usedCoins = 0;
-      m.coinHistory = [];
-      m.coinDailyLogin = '';
-      m.birthdaySetCoinsClaimed = false;
-      m.lastBirthdayCoinYear = null;
-      m.coinDashboardVisit = '';
-      m.coinMessageToAdmin = '';
-      m.coinPollParticipation = '';
-      m.coinMonthly = '';
-      m.lastOpeningCoinYear = null;
-      m.usernameEditUnlocked = false;
+// ================= بارگذاری داده =================
+async function loadData() {
+  try {
+    const res = await fetch(`${JSONBIN_URL}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
-    this.coinRequests = [];
-    this.syncToJSONBin();
+    const data = await res.json();
+    if (data.record) {
+      appData = { ...appData, ...data.record };
+    }
+  } catch (e) {
+    console.error('خطا در بارگذاری:', e);
   }
-  
-  changeUname(mid,nu){const u=this.gUserByMid(mid);if(!u||this.users.some(x=>x.username===nu&&x.memberId!==mid))return false;u.username=nu;return true;}
-  changePass(mid,np){const u=this.gUserByMid(mid);if(!u||!np)return false;u.password=np;return true;}
-  incLogin(mid){const m=this.gMember(mid);if(m){m.loginCount=(m.loginCount||0)+1;m.lastLoginDate=U.now();}}
-  
-  addMsg(msg){this.messages.push(msg);this.syncToJSONBin();}
-  delMsg(id){this.messages=this.messages.filter(m=>m.id!==id&&m.parentId!==id);this.syncToJSONBin();}
-  clrMsgs(type){if(type)this.messages=this.messages.filter(m=>m.type!==type);else this.messages=[];this.syncToJSONBin();}
-  
-  addAnn(a){this.announcements.push(a);this.syncToJSONBin();}
-  delAnn(id){this.announcements=this.announcements.filter(a=>a.id!==id);this.syncToJSONBin();}
-  clrAnn(){this.announcements=[];this.syncToJSONBin();}
-  
-  addPoll(p){this.polls.push(p);this.syncToJSONBin();}
-  delPoll(id){this.polls=this.polls.filter(p=>p.id!==id);this.syncToJSONBin();}
-  clrPolls(){this.polls=[];this.syncToJSONBin();}
-  
-  setLogo(data){this.logo=data;this.syncToJSONBin();}
-}
-class Auth{
-  constructor(dm){this.dm=dm;this.user=null;this.pending=null;}
-  login(un,pw){const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un));if(!u)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};if(u.password!==pw)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};if(pw==='1234'&&u.role!=='admin'){this.pending=u;return{s:true,fc:true};}this.user=u;if(u.memberId){this.dm.incLogin(u.memberId);const m=this.dm.gMember(u.memberId);if(m)this.dm.applyCoinRules(m);}return{s:true,fc:false};}
-  changeForced(np){const u=this.pending;if(!u)return{s:false,m:'خطا'};u.password=np;this.user=u;this.pending=null;return{s:true};}
-  logout(){this.user=null;this.pending=null;}
-  isAdmin(){return this.user?.role==='admin';}
-  isSpecial(){return this.user?.role==='special';}
-  isSupervisor(){if(this.isAdmin())return true;if(this.user?.memberId){const m=this.dm.gMember(this.user.memberId);return m&&(m.sessionActive||(m.smsStatus&&m.smsStatus.council));}return false;}
-  isLoggedIn(){return!!this.user;}
 }
 
-class UI{
-  constructor(app){this.app=app;this.el=$('#appContainer');this.tab=localStorage.getItem('activeTab')||'profile';this.sa=0;this.ci=null;}
-  render(){if(!this.app.dm.loaded){this.el.innerHTML='<div style="text-align:center;padding:80px;background:rgba(255,255,255,.95);border-radius:32px"><i class="fas fa-spinner" style="font-size:4rem;color:#667eea;animation:spin 1.5s linear infinite"></i><h2 style="color:#667eea;margin-top:25px">در حال بارگذاری...</h2></div>';return;}if(this.app.auth.pending){this.el.innerHTML=this.forceHTML();this.bindFC();return;}if(!this.app.auth.isLoggedIn()){this.el.innerHTML=this.loginHTML();this.bindLogin();return;}this.el.innerHTML=this.appHTML();this.bindApp();this.switchTab(this.tab);this.updUI();this.startClock();this.updNotif();this.updCoinBadge();this.renderPublicMessages();}
-  loginHTML(){const l=this.app.dm.logo;return`<div class="login-page"><div style="text-align:center;margin-bottom:30px">${l?`<img src="${l}" class="login-logo">`:`<i class="fas fa-university" style="font-size:4rem;color:#667eea"></i>`}<h1 style="color:#2d3748;margin:10px 0">سیستم حسابداری صندوق اتحاد</h1></div><div class="input-group"><label>نام کاربری</label><input type="text" id="loginUsername"></div><div class="input-group"><label>رمز عبور</label><input type="password" id="loginPassword"></div><button class="btn" id="loginBtn">ورود</button><button class="btn" id="forgotBtn" style="background:linear-gradient(135deg,#ed8936,#dd6b20);margin-top:12px">فراموشی رمز</button><div id="loginError" class="error-msg"></div><div id="forgotSuccess" class="success-msg"></div></div>`;}
-  forceHTML(){return`<div class="force-change-page"><h2 style="color:#e53e3e;text-align:center">تغییر رمز الزامی</h2><div style="max-width:400px;margin:20px auto"><div class="input-group"><label>رمز جدید</label><input type="password" id="newPasswordForce"></div><div class="input-group"><label>تکرار رمز</label><input type="password" id="confirmPasswordForce"></div><button class="btn" id="forceChangeBtn">تغییر رمز</button><div id="forceError" class="error-msg"></div></div></div>`;}
-  appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user?.memberId);return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn day" data-theme="day"><i class="fas fa-sun"></i></button><button class="theme-btn night" data-theme="night"><i class="fas fa-moon"></i></button></div>${!ia?'<div class="coin-badge"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>':''}<button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px"><i class="fas fa-star"></i> خوش آمدید</div><div id="publicMessages"></div><div class="app-layout"><div class="vertical-menu"><div style="font-weight:700;color:#667eea;text-align:center;padding-bottom:15px;border-bottom:2px solid #edf2f7"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div>${!ia?'<div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div>':''}<div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div><div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="padding:15px;border-top:2px solid #edf2f7;margin-top:15px"><button id="logoutBtn" style="background:#e53e3e;color:#fff;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;width:100%"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
-  bindLogin(){$('#loginBtn').onclick=()=>this.app.doLogin();$('#forgotBtn').onclick=()=>this.app.doForgot();$('#loginPassword').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};}
-  bindFC(){$('#forceChangeBtn').onclick=()=>this.app.doForceChange();}
-  bindApp(){$$('.menu-item[data-tab]').forEach(el=>el.onclick=()=>{$$('.menu-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');this.tab=el.dataset.tab;localStorage.setItem('activeTab',this.tab);this.switchTab(this.tab);});$('#logoutBtn').onclick=()=>this.app.doLogout();$$('.theme-btn').forEach(b=>b.onclick=()=>this.app.setTheme(b.dataset.theme));}
-  switchTab(t){const c=$('#dynamicContent');if(!c)return;c.innerHTML='';const fn='render_'+t;if(typeof this[fn]==='function')this[fn](c);}
-  renderPublicMessages(){const c=$('#publicMessages');if(!c)return;const ia=this.app.auth.isAdmin(),has=ia||this.app.auth.isSpecial()||this.app.auth.isSupervisor();const msgs=this.app.dm.messages.filter(m=>m.type==='admin_to_members'&&!m.parentId).sort((a,b)=>(b.timestamp||'').localeCompare(a.timestamp||''));let h='<div class="dashboard-section public-messages-section"><h3><i class="fas fa-bullhorn"></i> پیام‌ها</h3>';if(has)h+='<div style="margin-bottom:10px"><textarea id="adminMsgInput" placeholder="پیام جدید..." style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:10px;min-height:50px"></textarea><button class="btn-small success-btn" id="sendAdminMsgBtn" style="margin-top:5px">ارسال</button></div>';if(!msgs.length)h+='<p style="color:#a0aec0">پیامی نیست</p>';else msgs.forEach(m=>{h+=`<div class="msg-item msg-admin"><div class="msg-header"><span>${U.esc(m.senderName||'مدیر')}</span><span>${U.esc(m.timestamp)}</span></div><div>${U.esc(m.message)}</div>${ia?`<button class="btn-small danger-btn" style="margin-top:5px;font-size:.7rem" onclick="window.app.delMsg('${m.id}')">حذف</button>`:''}</div>`;});h+='</div>';c.innerHTML=h;if(has){const btn=$('#sendAdminMsgBtn',c),inp=$('#adminMsgInput',c);if(btn&&inp)btn.onclick=()=>{if(inp.value.trim()){this.app.sendAdminMsgFromPublic(inp.value.trim());inp.value='';}};}}
-  render_profile(c){if(this.app.auth.isAdmin()){let h='<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت اعضا</div><div class="info-box" style="border-right-color:#48bb78"><i class="fas fa-cloud"></i> همگام‌سازی JSONBin فعال</div><div class="search-box"><input type="text" id="spi" placeholder="جستجو..."></div><div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>خانوادگی</th><th>کاربری</th><th>رمز</th><th>حساب</th><th>عملیات</th></tr></thead><tbody>';this.app.dm.members.forEach(m=>{const ui=this.app.dm.gUserByMid(m.id);h+=`<tr><td><input id="pf_firstName_${m.id}" value="${U.esc(m.firstName||'')}" style="width:80px;padding:4px;border:1px solid #e2e8f0;border-radius:6px"></td><td><input id="pf_lastName_${m.id}" value="${U.esc(m.lastName||'')}" style="width:80px;padding:4px;border:1px solid #e2e8f0;border-radius:6px"></td><td><input id="pfu_${m.id}" value="${U.esc(ui?.username||'')}" style="width:90px;padding:4px;border:1px solid #e2e8f0;border-radius:6px"></td><td><input id="pfp_${m.id}" value="${U.esc(ui?.password||'')}" style="width:90px;padding:4px;border:1px solid #e2e8f0;border-radius:6px"></td><td>${U.esc(m.accountNumber)}</td><td><button class="btn-small success-btn" id="spb_${m.id}">ذخیره</button></td></tr>`;});h+='</tbody></table></div>';c.innerHTML=h;c.querySelectorAll('[id^="spb_"]').forEach(b=>{b.onclick=()=>this.app.saveProf(parseInt(b.id.split('_')[1]));});const si=$('#spi',c);if(si)si.oninput=()=>{const q=si.value.toLowerCase();$('#pt',c).querySelectorAll('tbody tr').forEach(r=>{r.style.display=!q||r.textContent.toLowerCase().includes(q)?'':'none';});};}else{const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<p>خطا</p>';return;}c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="dashboard-section"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div><b>نام:</b> ${U.esc(m.firstName)} ${U.esc(m.lastName)}</div><div><b>حساب:</b> ${U.esc(m.accountNumber)}</div><div><b>تاریخ افتتاح:</b> ${U.fmtDate(m.openDate)}</div><div><b>تلفن:</b> ${U.esc(m.phone1)}</div><div><b>سکه:</b> ${m.coins||0}</div><div><b>ورود:</b> ${m.loginCount||0}</div></div></div>`;}}
-  render_dashboard(c){if(this.app.auth.isAdmin()){c.innerHTML='<p>دسترسی غیرمجاز</p>';return;}const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<p>خطا</p>';return;}this.app.dm.applyCoinRules(m);const txns=[...(m.transactions||[])].sort((a,b)=>(parseInt(b.transactionId)||0)-(parseInt(a.transactionId)||0));const ah=txns.length&&txns[0].allHeaders?txns[0].allHeaders:['شماره حساب','تاریخ تراکنش','مبلغ تراکنش','مقرری ماهانه'];const lt=txns[0];let bal=m.balance,ss=m.savingsStatus,ms=m.monthlySalary;if(lt?.rawData){const b=U.parseNum(findInRaw(lt.rawData,['موجودی','balance']));if(!isNaN(b))bal=b;const s=findInRaw(lt.rawData,['وضعیت پس انداز']);if(s!==undefined)ss=U.parseNum(s);const mg=U.parseNum(findInRaw(lt.rawData,['mogmo','مقرری ماهانه']));if(!isNaN(mg))ms=mg;}let h=`<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px"><div><b>حساب:</b> ${U.esc(m.accountNumber)}</div><div><b>عضویت:</b> ${U.getMembershipDuration(m.openDate)}</div><div><b>تراکنش:</b> ${txns.length}</div><div><b>وضعیت:</b> ${m.statusActive?'✅ فعال':'❌ غیرفعال'}</div></div></div><div class="dashboard-section"><h3>موجودی</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="padding:12px;background:rgba(102,126,234,.1);border-radius:10px"><b>موجودی:</b> ${U.fmtNum(bal)}</div><div style="padding:12px;background:rgba(72,187,120,.1);border-radius:10px"><b>پس‌انداز:</b> ${U.fmtNum(ss)}</div></div></div>`;h+='<div class="dashboard-section"><h3>صورت‌حساب</h3><div class="filter-bar"><input id="mes" placeholder="جستجو..."><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ</button></div><div class="table-wrapper"><table id="met"><thead class="excel-header"><tr>'+ah.map(x=>'<th>'+U.esc(x)+'</th>').join('')+'</tr></thead><tbody>'+txns.map(t=>'<tr>'+ah.map(hd=>{let v=t.rawData?.[hd]??'';return'<td>'+U.esc(String(v))+'</td>';}).join('')+'</tr>').join('')+'</tbody></table></div></div>';c.innerHTML=h;$('#mes',c).oninput=function(){const q=this.value.toLowerCase();$('#met',c).querySelectorAll('tbody tr').forEach(r=>{r.style.display=!q||r.textContent.toLowerCase().includes(q)?'':'none';});};$('#downloadExcel',c).onclick=()=>{const ws=XLSX.utils.json_to_sheet(txns.map(t=>{const row={};ah.forEach(h=>{row[h]=t.rawData?.[h]??'';});return row;}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'صورت');XLSX.writeFile(wb,'صورت.xlsx');};$('#printPDF',c).onclick=()=>window.print();}
-  render_settings(c){if(!this.app.auth.isAdmin()){c.innerHTML='<p>دسترسی غیرمجاز</p>';return;}c.innerHTML='<div class="info-box"><i class="fas fa-cog"></i> تنظیمات</div><div class="info-box" style="border-right-color:#48bb78"><i class="fas fa-cloud"></i> JSONBin فعال</div><div class="dashboard-section"><h3>لوگو</h3><input type="file" id="logoInput" accept="image/*"><button class="btn-small info-btn" id="ulb">آپلود</button></div>';$('#ulb',c).onclick=()=>$('#logoInput',c).click();$('#logoInput',c).onchange=function(){if(this.files[0]){const r=new FileReader();r.onload=e=>{window.app.dm.setLogo(e.target.result);window.app.ui.render();};r.readAsDataURL(this.files[0]);}};}
-  render_coins(c){if(this.app.auth.isAdmin()){let h='<div class="info-box"><i class="fas fa-coins"></i> سکه‌ها</div><div class="dashboard-section"><h3>افزودن سکه</h3><select id="cms" style="padding:8px">'+this.app.dm.members.map(m=>'<option value="'+m.id+'">'+U.esc(m.firstName)+' '+U.esc(m.lastName)+'</option>').join('')+'</select> <input type="number" id="cai" value="5" style="width:80px;padding:8px"> <button class="btn-small success-btn" id="acb">افزودن</button></div><div class="dashboard-section"><h3>اعضا</h3><table><thead><tr><th>نام</th><th>سکه</th></tr></thead><tbody>'+this.app.dm.members.map(m=>'<tr><td>'+U.esc(m.firstName)+'</td><td style="color:#d69e2e;font-weight:700">'+(m.coins||0)+'</td></tr>').join('')+'</tbody></table></div>';c.innerHTML=h;$('#acb',c).onclick=()=>this.app.addCoin();}else{const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<p>خطا</p>';return;}let h=`<div class="dashboard-section"><h3>سکه‌های شما: ${m.coins||0}</h3></div>`;const ar=this.app.dm.coinRewards.filter(r=>r.active!==false);if(ar.length){h+='<div class="dashboard-section"><h3>فروشگاه</h3><div class="coin-shop-grid">';ar.forEach(r=>{h+=`<div class="coin-reward-card"><div class="reward-icon"><i class="fas ${r.icon}"></i></div><div class="reward-title">${U.esc(r.title)}</div><div class="reward-cost"><i class="fas fa-coins"></i> ${r.cost}</div><button class="buy-btn buy-reward-btn" data-rid="${r.id}" ${(m.coins||0)<r.cost?'disabled':''}>خرید</button></div>`;});h+='</div></div>';}c.innerHTML=h;c.querySelectorAll('.buy-reward-btn').forEach(b=>{b.onclick=()=>this.app.buyReward(b.dataset.rid);});}}
-  render_messenger(c){const self=this,ia=this.app.auth.isAdmin(),has=ia||this.app.auth.isSpecial()||this.app.auth.isSupervisor();let h='<div class="info-box"><i class="fas fa-envelope"></i> پیامرسان</div>';if(ia){const pr=this.app.dm.coinRequests.filter(r=>r.status==='pending');h+=`<div class="messenger-section-title title-coin-requests">درخواست‌ها (${pr.length})</div>`;pr.forEach(req=>{const mem=this.app.dm.gMember(req.memberId);h+=`<div class="msg-item msg-coin-request"><b>${U.esc(req.rewardTitle)}</b> - ${U.esc(mem?.firstName||'')} (${req.cost} سکه)<div style="margin-top:8px"><button class="btn-small success-btn approve-req-btn" data-reqid="${req.id}">تأیید</button> <button class="btn-small danger-btn reject-req-btn" data-reqid="${req.id}">رد</button></div></div>`;});}if(!ia)h+='<div style="margin-bottom:10px"><textarea id="mtai" placeholder="پیام به مدیر..." style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:10px;min-height:50px"></textarea><button class="btn-small success-btn" id="sta" style="margin-top:5px">ارسال</button></div>';const msgs=this.app.dm.messages.filter(m=>m.type==='member_to_admin');msgs.sort((a,b)=>(a.timestamp||'').localeCompare(b.timestamp||''));msgs.forEach(m=>{h+=`<div class="msg-item msg-to-admin"><div class="msg-header"><span>${U.esc(m.senderName)}</span><span>${U.esc(m.timestamp)}</span></div>${U.esc(m.message)}${has?` <button class="btn-small danger-btn" style="font-size:.7rem" onclick="window.app.delMsg('${m.id}')">حذف</button>`:''}</div>`;});c.innerHTML=h;$('#sta',c)&&($('#sta',c).onclick=()=>this.app.sendToAdmin());setTimeout(()=>{c.querySelectorAll('.approve-req-btn').forEach(b=>{b.onclick=()=>this.app.approveCoinRequest(b.dataset.reqid);});c.querySelectorAll('.reject-req-btn').forEach(b=>{b.onclick=()=>this.app.rejectCoinRequest(b.dataset.reqid);});},20);}
-  render_cultural(c){const ia=this.app.auth.isAdmin(),has=ia||this.app.auth.isSpecial()||this.app.auth.isSupervisor();let h='<div class="info-box"><i class="fas fa-theater-masks"></i> فرهنگی</div>';if(has)h+='<div style="margin-bottom:10px"><input id="ant" placeholder="عنوان" style="padding:8px;border:2px solid #e2e8f0;border-radius:8px"> <textarea id="anc" placeholder="متن" style="padding:8px;border:2px solid #e2e8f0;border-radius:8px"></textarea> <button class="btn-small success-btn" id="sanb">ارسال</button></div>';this.app.dm.announcements.forEach(a=>{h+=`<div class="msg-item"><b>${U.esc(a.title)}</b><br>${U.esc(a.content)}<br><small>${U.esc(a.timestamp)}</small></div>`;});c.innerHTML=h;$('#sanb',c)&&($('#sanb',c).onclick=()=>this.app.sendAnn());}
-  render_sms(c){const m=this.app.dm.gMember(this.app.auth.user?.memberId);if(!m){c.innerHTML='<p>خطا</p>';return;}const s=m.smsStatus||{};const items=[{k:'general',l:'کلی'},{k:'council',l:'شورا'},{k:'birthday',l:'تولد'},{k:'newsletter',l:'خبرنامه'}];c.innerHTML='<div class="info-box"><i class="fas fa-sms"></i> پیامکی</div><div class="sms-status-grid">'+items.map(i=>'<div class="sms-status-item"><span>'+i.l+'</span><span class="'+(s[i.k]?'status-active':'status-inactive')+'">'+(s[i.k]?'فعال':'غیرفعال')+'</span></div>').join('')+'</div>';}
-  render_support(c){const s=this.app.dm.support;let h='<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی</div><div class="dashboard-section"><div><b>تلفن:</b> '+U.esc(s.phone||'---')+'</div><div><b>آدرس:</b> '+U.esc(s.address||'---')+'</div></div>';if(this.app.auth.isAdmin())h+='<div><input id="spp" value="'+U.esc(s.phone)+'" placeholder="تلفن"><input id="spad" value="'+U.esc(s.address)+'" placeholder="آدرس"><button class="btn-small success-btn" id="ssb">ذخیره</button></div>';c.innerHTML=h;$('#ssb',c)&&($('#ssb',c).onclick=()=>this.app.saveSupport());}
-  render_members(c){this.render_profile(c);}
-  render_supervisor(c){this.render_members(c);}
-  updUI(){const wb=$('#welcomeBanner');if(wb){const m=this.app.auth.isAdmin()?null:this.app.dm.gMember(this.app.auth.user?.memberId);wb.innerHTML=m?'<i class="fas fa-star"></i> خوش آمدید '+U.esc(m.firstName)+' '+U.esc(m.lastName):'<i class="fas fa-star"></i> خوش آمدید';}}
-  updCoinBadge(){const b=$('#coinCount');if(b){const m=this.app.dm.gMember(this.app.auth.user?.memberId);if(m)b.textContent=m.coins||0;}}
-  startClock(){if(this.ci)clearInterval(this.ci);const t=()=>{const n=new Date();const cl=$('#clockDisplay');if(cl)cl.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');const pd=$('#persianDate');if(pd)pd.textContent=U.toJalali(n);};t();this.ci=setInterval(t,1000);}
-  updNotif(){const b=$('#notifBadge');if(!b)return;const n=this.app.dm.messages.length;if(n){b.classList.remove('hidden');b.textContent=n>9?'9+':n;}else b.classList.add('hidden');}
+async function saveData() {
+  try {
+    await fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_API_KEY
+      },
+      body: JSON.stringify(appData)
+    });
+  } catch (e) {
+    console.error('خطا در ذخیره:', e);
+  }
 }
 
-class App{
-  constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.init();}
-  async init(){this.loadTheme();await this.dm.loadFromGitHub();await this.dm.syncAllFrom();this.dm.loaded=true;this.ui.render();setInterval(()=>{if(this.auth.isLoggedIn())this.dm.syncAllFrom().then(()=>this.ui.render());},30000);}
-  loadTheme(){this.setTheme(localStorage.getItem('theme')||'day');}
-  setTheme(t){document.body.classList.remove('theme-night');if(t==='night')document.body.classList.add('theme-night');localStorage.setItem('theme',t);$$('.theme-btn').forEach(b=>{b.classList.toggle('active',b.dataset.theme===t);});}
-  doLogin(){const un=$('#loginUsername').value.trim(),pw=$('#loginPassword').value.trim(),ed=$('#loginError');ed.textContent='';if(!un||!pw){ed.textContent='نام کاربری و رمز را وارد کنید';return;}const r=this.auth.login(un,pw);if(!r.s){ed.textContent=r.m;return;}this.ui.render();}
-  doForgot(){const un=$('#loginUsername').value.trim();if(!un)return;const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un));if(u){u.password='1234';$('#forgotSuccess').textContent='رمز به 1234 تغییر یافت';}}
-  doForceChange(){const np=$('#newPasswordForce').value.trim(),cp=$('#confirmPasswordForce').value.trim();if(np!==cp)return;this.auth.changeForced(np);this.ui.render();}
-  doLogout(){this.auth.logout();localStorage.removeItem('activeTab');this.ui.render();}
-  addCoin(){const mid=parseInt($('#cms').value),amt=parseInt($('#cai').value);if(!amt)return;this.dm.addCoin(mid,amt,'مدیر');alert('اضافه شد');this.ui.switchTab('coins');}
-  buyReward(rid){const r=this.dm.coinRewards.find(x=>x.id===rid),m=this.dm.gMember(this.auth.user.memberId);if(!r||!m)return;if((m.coins||0)<r.cost){alert('سکه کافی نیست');return;}const s=this.dm.spendCoin(m.id,r.cost,'خرید: '+r.title);if(!s.s)return;m.usedCoins=(m.usedCoins||0)+r.cost;this.dm.addCoinRequest({memberId:m.id,rewardTitle:r.title,rewardType:r.type,cost:r.cost,details:{}});alert('درخواست ثبت شد');this.ui.switchTab('coins');}
-  approveCoinRequest(id){this.dm.updateRequestStatus(id,'approved');alert('تأیید شد');this.ui.render_messenger($('#dynamicContent'));}
-  rejectCoinRequest(id){const r=this.dm.coinRequests.find(x=>x.id===id);if(r){const m=this.dm.gMember(r.memberId);if(m)this.dm.addCoin(m.id,r.cost,'بازگشت');}this.dm.updateRequestStatus(id,'rejected');alert('رد شد');this.ui.render_messenger($('#dynamicContent'));}
-  sendAdminMsgFromPublic(txt){this.dm.addMsg({id:'m_'+Date.now(),senderId:this.auth.user.id,senderName:this.auth.isAdmin()?'مدیر':'شورا',senderRole:this.auth.isAdmin()?'admin':'special',message:txt,timestamp:U.now(),type:'admin_to_members',parentId:null});this.ui.renderPublicMessages();}
-  sendToAdmin(){const i=$('#mtai');if(!i?.value.trim())return;const m=this.dm.gMember(this.auth.user.memberId);this.dm.addMsg({id:'m_'+Date.now(),senderId:this.auth.user.id,senderName:m?m.firstName:'',senderRole:'member',message:i.value.trim(),timestamp:U.now(),type:'member_to_admin',parentId:null});i.value='';this.ui.switchTab('messenger');}
-  delMsg(id){if(confirm('حذف؟')){this.dm.delMsg(id);this.ui.render();}}
-  sendAnn(){const t=$('#ant')?.value,c=$('#anc')?.value;if(!t||!c)return;this.dm.addAnn({id:'a_'+Date.now(),title:t,content:c,timestamp:U.now(),sender:'مدیر'});this.ui.switchTab('cultural');}
-  saveProf(mid){const m=this.dm.gMember(mid);if(!m)return;m.firstName=$('#pf_firstName_'+mid)?.value||m.firstName;m.lastName=$('#pf_lastName_'+mid)?.value||m.lastName;m.fullName=m.firstName+' '+m.lastName;const ui=this.dm.gUserByMid(mid);if(ui){ui.username=$('#pfu_'+mid)?.value||ui.username;ui.password=$('#pfp_'+mid)?.value||ui.password;}alert('ذخیره شد');}
-  saveSupport(){this.dm.support={phone:$('#spp')?.value||'',accountNumber:'',address:$('#spad')?.value||''};this.dm.syncSup();alert('ذخیره شد');}
+// ================= احراز هویت =================
+async function login() {
+  const u = document.getElementById('username').value.trim();
+  const p = document.getElementById('password').value.trim();
+  const alertBox = document.getElementById('loginAlert');
+
+  if (!u || !p) {
+    alertBox.innerHTML = '<div class="alert alert-error">لطفاً همه فیلدها را پر کنید</div>';
+    return;
+  }
+
+  await loadData();
+
+  if (appData.users[u] && appData.users[u].password === p) {
+    currentUser = { username: u, role: appData.users[u].role };
+    localStorage.setItem('sandogh_user', JSON.stringify(currentUser));
+    showDashboard();
+  } else {
+    alertBox.innerHTML = '<div class="alert alert-error">نام کاربری یا رمز عبور اشتباه است</div>';
+  }
 }
 
-try{const app=new App();window.app=app;}catch(e){console.error(e);}
+function logout() {
+  localStorage.removeItem('sandogh_user');
+  currentUser = null;
+  document.getElementById('loginPage').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'none';
+}
 
-// PWA Service Worker
-if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/sandogh-site/sw.js').then(r=>console.log('SW OK')).catch(e=>console.log('SW Error'));});}
-})();
+function showDashboard() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('currentUser').textContent = currentUser.username;
+
+  if (currentUser.role === 'admin') {
+    document.getElementById('adminTab').style.display = 'block';
+  }
+
+  refreshUI();
+}
+
+// ================= ناوبری =================
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  refreshUI();
+}
+
+// ================= به‌روزرسانی UI =================
+function refreshUI() {
+  const userCoins = appData.coins[currentUser.username] || 0;
+  document.getElementById('userCoins').textContent = userCoins + ' 🪙';
+  document.getElementById('myCoins').textContent = userCoins;
+  document.getElementById('annCount').textContent = appData.announcements.length;
+  document.getElementById('msgCount').textContent = appData.messages.length;
+  document.getElementById('reqCount').textContent = appData.requests.length;
+
+  renderAnnouncements();
+  renderMessages();
+  renderPolls();
+  renderRequests();
+  renderSupport();
+  renderRewards();
+}
+
+function renderAnnouncements() {
+  const list = document.getElementById('announcementsList');
+  const homeList = document.getElementById('homeAnnouncements');
+  if (appData.announcements.length === 0) {
+    list.innerHTML = '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
+    homeList.innerHTML = '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
+    return;
+  }
+  const html = appData.announcements.slice().reverse().map(a => `
+    <div class="card">
+      <h3>${escapeHtml(a.title)}</h3>
+      <p>${escapeHtml(a.body)}</p>
+      <div class="meta">📅 ${a.date}</div>
+    </div>
+  `).join('');
+  list.innerHTML = html;
+  homeList.innerHTML = appData.announcements.slice(-3).reverse().map(a => `
+    <div class="card">
+      <h3>${escapeHtml(a.title)}</h3>
+      <p>${escapeHtml(a.body)}</p>
+      <div class="meta">📅 ${a.date}</div>
+    </div>
+  `).join('');
+}
+
+function renderMessages() {
+  const list = document.getElementById('messagesList');
+  if (appData.messages.length === 0) {
+    list.innerHTML = '<div class="empty">پیامی وجود ندارد</div>';
+    return;
+  }
+  list.innerHTML = appData.messages.slice().reverse().map(m => `
+    <div class="card">
+      <h3>${escapeHtml(m.user)}</h3>
+      <p>${escapeHtml(m.text)}</p>
+      <div class="meta">📅 ${m.date}</div>
+    </div>
+  `).join('');
+}
+
+function renderPolls() {
+  const list = document.getElementById('pollsList');
+  if (appData.polls.length === 0) {
+    list.innerHTML = '<div class="empty">نظرسنجی‌ای وجود ندارد</div>';
+    return;
+  }
+  list.innerHTML = appData.polls.map((p, i) => `
+    <div class="card">
+      <h3>${escapeHtml(p.question)}</h3>
+      ${p.options.map((opt, j) => {
+        const votes = (p.votes && p.votes[j]) || 0;
+        return `<button class="btn btn-primary" style="width:auto;margin:5px;" onclick="votePoll(${i},${j})">${escapeHtml(opt)} (${votes})</button>`;
+      }).join('')}
+    </div>
+  `).join('');
+}
+
+function renderRequests() {
+  const list = document.getElementById('requestsList');
+  if (appData.requests.length === 0) {
+    list.innerHTML = '<div class="empty">درخواستی وجود ندارد</div>';
+    return;
+  }
+  list.innerHTML = appData.requests.slice().reverse().map(r => `
+    <div class="card">
+      <h3>${escapeHtml(r.title)}</h3>
+      <p>${escapeHtml(r.desc)}</p>
+      <div class="meta">👤 ${escapeHtml(r.user)} | 📅 ${r.date}</div>
+    </div>
+  `).join('');
+}
+
+function renderSupport() {
+  const list = document.getElementById('supportList');
+  const myTickets = appData.support.filter(t => t.user === currentUser.username || currentUser.role === 'admin');
+  if (myTickets.length === 0) {
+    list.innerHTML = '<div class="empty">تیکتی وجود ندارد</div>';
+    return;
+  }
+  list.innerHTML = myTickets.slice().reverse().map(t => `
+    <div class="card">
+      <h3>${escapeHtml(t.title)}</h3>
+      <p>${escapeHtml(t.message)}</p>
+      <div class="meta">👤 ${escapeHtml(t.user)} | 📅 ${t.date}</div>
+    </div>
+  `).join('');
+}
+
+function renderRewards() {
+  const list = document.getElementById('rewardsList');
+  if (appData.rewards.length === 0) {
+    list.innerHTML = '<div class="empty">پاداشی وجود ندارد</div>';
+    return;
+  }
+  list.innerHTML = appData.rewards.map((r, i) => `
+    <div class="card">
+      <h3>${escapeHtml(r.title)}</h3>
+      <p>هزینه: <strong>${r.cost} سکه 🪙</strong></p>
+      <button class="btn btn-success" onclick="claimReward(${i})">دریافت</button>
+    </div>
+  `).join('');
+}
+
+// ================= عملیات کاربر =================
+async function sendMessage() {
+  const text = document.getElementById('newMessage').value.trim();
+  if (!text) return alert('متن پیام خالی است');
+  appData.messages.push({ user: currentUser.username, text, date: new Date().toLocaleString('fa-IR') });
+  document.getElementById('newMessage').value = '';
+  await saveData();
+  refreshUI();
+}
+
+async function sendRequest() {
+  const title = document.getElementById('reqTitle').value.trim();
+  const desc = document.getElementById('reqDesc').value.trim();
+  if (!title || !desc) return alert('همه فیلدها را پر کنید');
+  appData.requests.push({ title, desc, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
+  document.getElementById('reqTitle').value = '';
+  document.getElementById('reqDesc').value = '';
+  await saveData();
+  refreshUI();
+}
+
+async function sendSupport() {
+  const title = document.getElementById('supTitle').value.trim();
+  const message = document.getElementById('supMsg').value.trim();
+  if (!title || !message) return alert('همه فیلدها را پر کنید');
+  appData.support.push({ title, message, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
+  document.getElementById('supTitle').value = '';
+  document.getElementById('supMsg').value = '';
+  await saveData();
+  refreshUI();
+}
+
+async function votePoll(pollIdx, optIdx) {
+  if (!appData.polls[pollIdx].votes) appData.polls[pollIdx].votes = {};
+  const key = currentUser.username;
+  if (appData.polls[pollIdx].voters && appData.polls[pollIdx].voters.includes(key)) {
+    return alert('شما قبلاً رأی داده‌اید');
+  }
+  if (!appData.polls[pollIdx].voters) appData.polls[pollIdx].voters = [];
+  appData.polls[pollIdx].voters.push(key);
+  appData.polls[pollIdx].votes[optIdx] = (appData.polls[pollIdx].votes[optIdx] || 0) + 1;
+  await saveData();
+  refreshUI();
+}
+
+async function claimReward(idx) {
+  const reward = appData.rewards[idx];
+  const userCoins = appData.coins[currentUser.username] || 0;
+  if (userCoins < reward.cost) return alert('سکه کافی ندارید');
+  if (!confirm(`آیا مطمئن هستید؟ هزینه: ${reward.cost} سکه`)) return;
+  appData.coins[currentUser.username] = userCoins - reward.cost;
+  await saveData();
+  refreshUI();
+  alert('پاداش با موفقیت دریافت شد!');
+}
+
+// ================= عملیات ادمین =================
+async function addAnnouncement() {
+  const title = document.getElementById('annTitle').value.trim();
+  const body = document.getElementById('annBody').value.trim();
+  if (!title || !body) return alert('همه فیلدها را پر کنید');
+  appData.announcements.push({ title, body, date: new Date().toLocaleString('fa-IR') });
+  document.getElementById('annTitle').value = '';
+  document.getElementById('annBody').value = '';
+  await saveData();
+  refreshUI();
+  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">اطلاعیه افزوده شد ✓</div>';
+}
+
+async function addPoll() {
+  const question = document.getElementById('pollQ').value.trim();
+  const opts = document.getElementById('pollOpts').value.split(',').map(s => s.trim()).filter(s => s);
+  if (!question || opts.length < 2) return alert('سوال و حداقل 2 گزینه لازم است');
+  appData.polls.push({ question, options: opts, votes: {}, voters: [] });
+  document.getElementById('pollQ').value = '';
+  document.getElementById('pollOpts').value = '';
+  await saveData();
+  refreshUI();
+  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">نظرسنجی افزوده شد ✓</div>';
+}
+
+async function addReward() {
+  const title = document.getElementById('rewTitle').value.trim();
+  const cost = parseInt(document.getElementById('rewCost').value);
+  if (!title || !cost) return alert('همه فیلدها را پر کنید');
+  appData.rewards.push({ title, cost });
+  document.getElementById('rewTitle').value = '';
+  document.getElementById('rewCost').value = '';
+  await saveData();
+  refreshUI();
+  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">پاداش افزوده شد ✓</div>';
+}
+
+async function updateCoins() {
+  const user = document.getElementById('coinUser').value.trim();
+  const amount = parseInt(document.getElementById('coinAmount').value);
+  if (!user || isNaN(amount)) return alert('اطلاعات نامعتبر');
+  appData.coins[user] = (appData.coins[user] || 0) + amount;
+  document.getElementById('coinUser').value = '';
+  document.getElementById('coinAmount').value = '';
+  await saveData();
+  refreshUI();
+  document.getElementById('adminAlert').innerHTML = `<div class="alert alert-success">سکه ${user} به‌روزرسانی شد ✓</div>`;
+}
+
+// ================= ابزار =================
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
+
+// ================= شروع =================
+window.onload = async () => {
+  const saved = localStorage.getItem('sandogh_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    await loadData();
+    showDashboard();
+  }
+};
 </script>
+
 </body>
 </html>
