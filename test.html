@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تست JSONBin</title>
+<style>
+body{font-family:Tahoma;padding:20px;background:#f0f0f0}
+.btn{padding:15px 30px;font-size:16px;border:none;border-radius:10px;cursor:pointer;margin:10px 0;width:100%}
+.btn-write{background:#48bb78;color:#fff}
+.btn-read{background:#4299e1;color:#fff}
+.result{background:#fff;padding:15px;border-radius:10px;margin-top:15px;white-space:pre-wrap;font-size:14px;max-height:400px;overflow-y:auto}
+.success{color:#48bb78;font-weight:bold}
+.error{color:#e53e3e;font-weight:bold}
+</style>
+</head>
+<body>
+<h1> تست JSONBin</h1>
+<button class="btn btn-write" onclick="testWrite()">۱. نوشتن پیام تست</button>
+<button class="btn btn-read" onclick="testRead()">۲. خواندن پیام تست</button>
+<button class="btn" style="background:#ed8936;color:#fff" onclick="testAll()">⚡ تست کامل (نوشتن + خواندن)</button>
+<div id="result" class="result">نتایج اینجا نمایش داده می‌شود...</div>
+
+<script>
+const API_KEY = '$2a$10$94Aa.jIBYMCsIyVJkgblD.41bpzRmDO0h0i9EC/R2V5puDYzcdy56';
+const BINS = {
+  messages: '6a461ea8da38895dfe20fc4a',
+  announcements: '6a461ebbf5f4af5e29528d30',
+  polls: '6a461ed7da38895dfe20fd2a',
+  requests: '6a461eeada38895dfe20fd8a',
+  support: '6a461f00f5f4af5e29528e87',
+  rewards: '6a461f14da38895dfe20fe5e',
+  coins: '6a461e7bf5f4af5e29528bdf'
+};
+
+function log(msg, type='') {
+  const el = document.getElementById('result');
+  const cls = type === 'success' ? 'success' : type === 'error' ? 'error' : '';
+  el.innerHTML += `<div class="${cls}">${msg}</div>`;
+}
+
+async function testWrite() {
+  document.getElementById('result').innerHTML = '';
+  log('🔄 در حال نوشتن...');
+  
+  const testData = {
+    messages: [
+      {id: 'test_' + Date.now(), message: 'این یک پیام تست از گوشی است 📱', timestamp: new Date().toLocaleString('fa-IR'), type: 'admin_to_members'}
+    ]
+  };
+  
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + BINS.messages, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json', 'X-Master-Key': API_KEY},
+      body: JSON.stringify(testData)
+    });
+    
+    if (!res.ok) {
+      const err = await res.text();
+      log('❌ خطا در نوشتن: ' + err, 'error');
+      return;
+    }
+    
+    log('✅ نوشتن موفق بود!', 'success');
+    log('📦 داده ارسالی: ' + JSON.stringify(testData));
+  } catch(e) {
+    log('❌ خطا: ' + e.message, 'error');
+  }
+}
+
+async function testRead() {
+  document.getElementById('result').innerHTML = '';
+  log('🔄 در حال خواندن...');
+  
+  try {
+    const res = await fetch('https://api.jsonbin.io/v3/b/' + BINS.messages + '/latest', {
+      headers: {'X-Master-Key': API_KEY}
+    });
+    
+    if (!res.ok) {
+      const err = await res.text();
+      log('❌ خطا در خواندن: ' + err, 'error');
+      return;
+    }
+    
+    const data = await res.json();
+    log('✅ خواندن موفق بود!', 'success');
+    log('📦 داده‌های خوانده شده:');
+    log(JSON.stringify(data, null, 2));
+    
+    if (data.record && data.record.messages && data.record.messages.length > 0) {
+      log(' JSONBin کار می‌کند!', 'success');
+      log('آخرین پیام: ' + data.record.messages[data.record.messages.length - 1].message);
+    } else {
+      log('️ داده‌ها خالی هستند', 'error');
+    }
+  } catch(e) {
+    log('❌ خطا: ' + e.message, 'error');
+  }
+}
+
+async function testAll() {
+  document.getElementById('result').innerHTML = '';
+  log('⚡ شروع تست کامل...');
+  await testWrite();
+  log('---');
+  await testRead();
+}
+
+// تست همه Binها
+async function testAllBins() {
+  document.getElementById('result').innerHTML = '';
+  log('🔍 تست همه Binها...');
+  
+  for (const [name, id] of Object.entries(BINS)) {
+    try {
+      const res = await fetch('https://api.jsonbin.io/v3/b/' + id + '/latest', {
+        headers: {'X-Master-Key': API_KEY}
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        log(`✅ ${name}: متصل`, 'success');
+      } else {
+        log(`❌ ${name}: خطا ${res.status}`, 'error');
+      }
+    } catch(e) {
+      log(`❌ ${name}: ${e.message}`, 'error');
+    }
+  }
+}
+</script>
+
+<button class="btn" style="background:#9f7aea;color:#fff" onclick="testAllBins()">🔍 تست اتصال همه Binها</button>
+</body>
+</html>
