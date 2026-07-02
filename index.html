@@ -4,7 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سیستم حسابداری صندوق اتحاد</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#667eea">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="صندوق اتحاد">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',system-ui,-apple-system,sans-serif}
@@ -1684,7 +1690,16 @@ try{
 const app=new App();window.app=app;
 document.addEventListener('click',function(e){const t=e.target;if(t.matches('.poll-options .option-btn')&&!t.disabled)app.votePoll(t.dataset.poll,parseInt(t.dataset.opt));});
 }catch(e){console.error('خطا:',e);document.getElementById('appContainer').innerHTML='<div style="text-align:center;padding:40px;color:red;"><i class="fas fa-exclamation-triangle" style="font-size:3rem"></i><p style="margin-top:15px">خطا در بارگذاری. لطفاً صفحه را رفرش کنید.</p></div>';}
-})();
+})();</script>
+<script>
+// ثبت Service Worker برای PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sandogh-site/sw.js')
+      .then(reg => console.log('✅ Service Worker ثبت شد', reg))
+      .catch(err => console.log('❌ خطا:', err));
+  });
+}
 </script>
 </body>
 </html>
