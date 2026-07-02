@@ -183,7 +183,7 @@ body.theme-day{background:linear-gradient(135deg,#f0f9ff 0%,#e0e7ff 50%,#ddd6fe 
 body.theme-day .app-page,body.theme-day .login-page,body.theme-day .force-change-page{background:rgba(255,255,255,.95)}
 body.theme-night{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#334155 100%);font-weight:bold}
 body.theme-night *{font-weight:bold!important}
-body.theme-night .app-page,body.theme-night .login-page,body.theme-night .force-change-page,.theme-night .notification-dropdown{background:rgba(30,41,59,.95);color:#fbbf24}
+body.theme-night .app-page,body.theme-night .login-page,body.theme-night .force-change-page,body.theme-night .notification-dropdown{background:rgba(30,41,59,.95);color:#fbbf24}
 body.theme-night .vertical-menu,body.theme-night .content-area{background:rgba(30,41,59,.95);color:#fbbf24}
 body.theme-night .vertical-menu .menu-item{color:#fb923c}
 body.theme-night .vertical-menu .menu-item.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
@@ -270,7 +270,7 @@ body.theme-night .admin-reward-item .reward-info .cost{color:#fbbf24}
 <body>
 <div class="container" id="appContainer"></div>
 <script>
-// ========== تنظیمات JSONBin با Binهای جداگانه ==========
+// ========== تنظیمات JSONBin با ۷ Bin جداگانه ==========
 const JSONBIN_API_KEY = '$2a$10$94Aa.jIBYMCsIyVJkgblD.41bpzRmDO0h0i9EC/R2V5puDYzcdy56';
 const BINS = {
   coins: '6a461e7bf5f4af5e29528bdf',
@@ -309,7 +309,7 @@ async function writeBin(binId, data) {
     });
     console.log('✅ داده‌ها در Bin ذخیره شدند');
   } catch (e) {
-    console.error('❌ خطا در ذخیره Bin:', e);
+    console.error(' خطا در ذخیره Bin:', e);
   }
 }
 
@@ -321,7 +321,7 @@ norm(s){if(!s)return'';const m={'ا':'a','آ':'a','ب':'b','پ':'p','ت':'t','ث
 fmtNum(n){return new Intl.NumberFormat('fa-IR').format(n);},
 toJalali(g){const d=new Date(g),gy=d.getFullYear(),gm=d.getMonth()+1,gd=d.getDate(),gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy,days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1],jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30),jd=1+(days<186?days%31:(days-186)%30);return`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`;},
 now(){const n=new Date();return`${this.toJalali(n)} ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;},
-parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=String(v).replace(/[,\u066C\u200C\s]/g,'');const p='۰۲۳۴۵۶۸۹',e='0123456789';for(let i=0;i<10;i++)s=s.replaceAll(p[i],e[i]);return isNaN(parseFloat(s))?0:parseFloat(s);},
+parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=String(v).replace(/[,\u066C\u200C\s]/g,'');const p='۰۱۲۳۴۵۶۷۸۹',e='0123456789';for(let i=0;i<10;i++)s=s.replaceAll(p[i],e[i]);return isNaN(parseFloat(s))?0:parseFloat(s);},
 fmtDate(s){if(!s)return'---';const c=s.replace(/\D/g,'');return c.length===8?`${c.slice(0,4)}/${c.slice(4,6)}/${c.slice(6,8)}`:s;},
 esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;},
 strength(p){let s=0;if(p.length>=6)s++;if(p.length>=8)s++;if(/[a-z]/.test(p))s++;if(/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^a-zA-Z\d]/.test(p))s++;return s<=2?'ضعیف':s<=4?'متوسط':'قوی';},
@@ -372,6 +372,7 @@ this.announcements=[];this.polls=[];this.logo='';
 this.coinRewards=DEFAULT_COIN_REWARDS.slice();this.coinRequests=[];
 if(!this.users.find(u=>u.username==='admin')){this.users.push({id:1,username:'admin',password:'admin123',role:'admin',memberId:null});this.sv('users');}
 this.syncing=false;
+this.loadAllFromJSONBin();
 }
 ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
 sv(k){localStorage.setItem(k,JSON.stringify(this[k]))}
@@ -380,14 +381,23 @@ gMember(id){return this.members.find(m=>m.id===id)}
 gMemberByPhone(p){return this.members.find(m=>m.phone1===p)}
 
 // ========== توابع همگام‌سازی جداگانه برای هر بخش ==========
-async syncCoins() {
+async loadAllFromJSONBin() {
   try {
-    const data = await readBin(BINS.coins);
-    if (data) {
-      const coins = data.coins || {};
-      const coinHistory = data.coinHistory || {};
-      const usernameEditUnlocked = data.usernameEditUnlocked || {};
-      const coinBenefits = data.coinBenefits || {};
+    const [coinsData, messagesData, announcementsData, pollsData, requestsData, supportData, rewardsData] = await Promise.all([
+      readBin(BINS.coins),
+      readBin(BINS.messages),
+      readBin(BINS.announcements),
+      readBin(BINS.polls),
+      readBin(BINS.requests),
+      readBin(BINS.support),
+      readBin(BINS.rewards)
+    ]);
+    
+    if (coinsData) {
+      const coins = coinsData.coins || {};
+      const coinHistory = coinsData.coinHistory || {};
+      const usernameEditUnlocked = coinsData.usernameEditUnlocked || {};
+      const coinBenefits = coinsData.coinBenefits || {};
       this.members.forEach(m => {
         if (coins[m.id] !== undefined) m.coins = coins[m.id];
         if (coinHistory[m.id]) m.coinHistory = coinHistory[m.id];
@@ -396,8 +406,44 @@ async syncCoins() {
       });
       console.log('✅ سکه‌ها از JSONBin بارگذاری شدند');
     }
-  } catch (e) { console.error(' خطا در syncCoins:', e); }
+    
+    if (messagesData && messagesData.messages) {
+      this.messages = messagesData.messages;
+      console.log('✅ پیام‌ها بارگذاری شدند');
+    }
+    
+    if (announcementsData && announcementsData.announcements) {
+      this.announcements = announcementsData.announcements;
+      console.log('✅ اطلاعیه‌ها بارگذاری شدند');
+    }
+    
+    if (pollsData && pollsData.polls) {
+      this.polls = pollsData.polls;
+      console.log('✅ نظرسنجی‌ها بارگذاری شدند');
+    }
+    
+    if (requestsData && requestsData.coinRequests) {
+      this.coinRequests = requestsData.coinRequests;
+      console.log('✅ درخواست‌ها بارگذاری شدند');
+    }
+    
+    if (supportData && supportData.support) {
+      this.support = supportData.support;
+      console.log('✅ پشتیبانی بارگذاری شد');
+    }
+    
+    if (rewardsData && rewardsData.coinRewards) {
+      this.coinRewards = rewardsData.coinRewards;
+      console.log('✅ جوایز بارگذاری شدند');
+    }
+    
+    console.log('✅ همه داده‌ها از JSONBin بارگذاری شدند');
+    if (window.app && window.app.ui) window.app.ui.render();
+  } catch (e) {
+    console.error('❌ خطا در بارگذاری از JSONBin:', e);
+  }
 }
+
 async saveCoins() {
   if (this.syncing) return;
   this.syncing = true;
@@ -412,55 +458,13 @@ async saveCoins() {
     await writeBin(BINS.coins, { coins, coinHistory, usernameEditUnlocked, coinBenefits });
   } finally { this.syncing = false; }
 }
-async syncMessages() {
-  try {
-    const data = await readBin(BINS.messages);
-    if (data && data.messages) { this.messages = data.messages; console.log('✅ پیام‌ها بارگذاری شدند'); }
-  } catch (e) { console.error('❌ خطا در syncMessages:', e); }
-}
+
 async saveMessages() { await writeBin(BINS.messages, { messages: this.messages }); }
-async syncAnnouncements() {
-  try {
-    const data = await readBin(BINS.announcements);
-    if (data && data.announcements) { this.announcements = data.announcements; console.log('✅ اطلاعیه‌ها بارگذاری شدند'); }
-  } catch (e) { console.error(' خطا در syncAnnouncements:', e); }
-}
 async saveAnnouncements() { await writeBin(BINS.announcements, { announcements: this.announcements }); }
-async syncPolls() {
-  try {
-    const data = await readBin(BINS.polls);
-    if (data && data.polls) { this.polls = data.polls; console.log('✅ نظرسنجی‌ها بارگذاری شدند'); }
-  } catch (e) { console.error('❌ خطا در syncPolls:', e); }
-}
 async savePolls() { await writeBin(BINS.polls, { polls: this.polls }); }
-async syncRequests() {
-  try {
-    const data = await readBin(BINS.requests);
-    if (data && data.coinRequests) { this.coinRequests = data.coinRequests; console.log('✅ درخواست‌ها بارگذاری شدند'); }
-  } catch (e) { console.error(' خطا در syncRequests:', e); }
-}
 async saveRequests() { await writeBin(BINS.requests, { coinRequests: this.coinRequests }); }
-async syncSupport() {
-  try {
-    const data = await readBin(BINS.support);
-    if (data && data.support) { this.support = data.support; console.log('✅ پشتیبانی بارگذاری شد'); }
-  } catch (e) { console.error('❌ خطا در syncSupport:', e); }
-}
 async saveSupport() { await writeBin(BINS.support, { support: this.support }); }
-async syncRewards() {
-  try {
-    const data = await readBin(BINS.rewards);
-    if (data && data.coinRewards) { this.coinRewards = data.coinRewards; console.log('✅ جوایز بارگذاری شدند'); }
-  } catch (e) { console.error(' خطا در syncRewards:', e); }
-}
 async saveRewards() { await writeBin(BINS.rewards, { coinRewards: this.coinRewards }); }
-async syncAll() {
-  await Promise.all([
-    this.syncCoins(), this.syncMessages(), this.syncAnnouncements(),
-    this.syncPolls(), this.syncRequests(), this.syncSupport(), this.syncRewards()
-  ]);
-  console.log('✅ همه داده‌ها همگام‌سازی شدند');
-}
 
 addCoin(mid,amount,reason,desc=''){
   const m=this.gMember(mid);
@@ -564,7 +568,7 @@ const amtCol=fc('مبلغ تراکنش','مبلغ','amount');
 const nameCol=fc('نام','name','firstname','first name');
 const lastNameCol=fc('نام خانوادگی','lastname','last name','family');
 const phone1Col=fc('تلفن','phone','phone1','تلفن1','تلفن ۱');
-const phone2Col=fc('تلفن2','phone2','تلفن ۲','تلفن');
+const phone2Col=fc('تلفن2','phone2','تلفن ۲','تلفن۲');
 const statusCol=fc('وضعیت حساب','active','status','وضعیت');
 const sessionCol=fc('کد جلسات','code jalasat','session','jalasat');
 const mogmoCol=fc('mogmo','مقرری ماهانه','مقرری','monthly salary');
@@ -630,7 +634,7 @@ delPoll(id){this.polls=this.polls.filter(p=>p.id!==id);this.savePolls();}
 clrPolls(){this.polls=[];this.savePolls();}
 setLogo(data){this.logo=data;this.saveMessages();}
 }
-            class Auth{
+class Auth{
 constructor(dm){this.dm=dm;this.user=null;this.pending=null;}
 login(un,pw){const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un));if(!u)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};if(u.password!==pw)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};if(pw==='1234'&&u.role!=='admin'){this.pending=u;return{s:true,fc:true};}this.user=u;if((u.role==='member'||u.role==='special')&&u.memberId){this.dm.incLogin(u.memberId);const m=this.dm.gMember(u.memberId);if(m)this.dm.applyCoinRules(m);}return{s:true,fc:false};}
 changeForced(np){const u=this.pending;if(!u)return{s:false,m:'خطا در احراز هویت'};if(np==='1234')return{s:false,m:'رمز جدید نمی‌تواند 1234 باشد'};if(U.strength(np)==='ضعیف')return{s:false,m:'رمز عبور بسیار ضعیف است'};u.password=np;this.dm.sv('users');this.user=u;this.pending=null;return{s:true};}
@@ -1362,10 +1366,8 @@ if(n){badge.classList.remove('hidden');badge.textContent=n>9?'9+':n;}else badge.
 }
 class App{
 constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.init();}
-async init(){
+init(){
 this.loadTheme();
-// بارگذاری همه داده‌ها از JSONBin
-await this.dm.syncAll();
 this.ui.render();
 if(this.ui.themeInterval) clearInterval(this.ui.themeInterval);
 this.ui.themeInterval = setInterval(()=>{
@@ -1374,13 +1376,6 @@ if(currentTheme === 'auto'){
 this.setTheme('auto');
 }
 }, 60000);
-// همگام‌سازی خودکار هر ۳۰ ثانیه
-setInterval(async ()=>{
-if(this.auth.isLoggedIn()){
-await this.dm.syncAll();
-this.ui.render();
-}
-}, 30000);
 }
 loadTheme(){this.setTheme(localStorage.getItem('theme')||'auto');}
 setTheme(t){
