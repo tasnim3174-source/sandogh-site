@@ -1325,6 +1325,147 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sandogh-site/sw.js')
       .then(reg => console.log('✅ Service Worker ثبت شد', reg))
       .catch(err => console.log('❌ خطا:', err));
+ // ========== اضافه کردن همگام‌سازی JSONBin ==========
+const JSONBIN_API_KEY = '$2a$10$94Aa.jIBYMCsIyVJkgblD.41bpzRmDO0h0i9EC/R2V5puDYzcdy56';
+const BINS = {
+  coins: '6a461e7bf5f4af5e29528bdf',
+  messages: '6a461ea8da38895dfe20fc4a',
+  announcements: '6a461ebbf5f4af5e29528d30',
+  polls: '6a461ed7da38895dfe20fd2a',
+  requests: '6a461eeada38895dfe20fd8a',
+  support: '6a461f00f5f4af5e29528e87',
+  rewards: '6a461f14da38895dfe20fe5e'
+};
+
+async function fetchBin(name){
+  try{
+    const r=await fetch(`https://api.jsonbin.io/v3/b/${BINS[name]}/latest`,{headers:{'X-Master-Key':JSONBIN_API_KEY}});
+    if(!r.ok) return null;
+    const d=await r.json();
+    return d.record;
+  }catch(e){console.error('خطا در خواندن '+name,e);return null;}
+}
+
+async function saveBin(name,data){
+  try{
+    await fetch(`https://api.jsonbin.io/v3/b/${BINS[name]}`,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_API_KEY},
+      body:JSON.stringify(data)
+    });
+  }catch(e){console.error('خطا در ذخیره '+name,e);}
+}
+
+// Override متدهای DM برای همگام‌سازی
+const _addMsg=DM.prototype.addMsg;
+DM.prototype.addMsg=function(msg){_addMsg.call(this,msg);saveBin('messages',{messages:this.messages});};
+
+const _delMsg=DM.prototype.delMsg;
+DM.prototype.delMsg=function(id){_delMsg.call(this,id);saveBin('messages',{messages:this.messages});};
+
+const _clrMsgs=DM.prototype.clrMsgs;
+DM.prototype.clrMsgs=function(type){_clrMsgs.call(this,type);saveBin('messages',{messages:this.messages});};
+
+const _addAnn=DM.prototype.addAnn;
+DM.prototype.addAnn=function(a){_addAnn.call(this,a);saveBin('announcements',{announcements:this.announcements});};
+
+const _delAnn=DM.prototype.delAnn;
+DM.prototype.delAnn=function(id){_delAnn.call(this,id);saveBin('announcements',{announcements:this.announcements});};
+
+const _clrAnn=DM.prototype.clrAnn;
+DM.prototype.clrAnn=function(){_clrAnn.call(this);saveBin('announcements',{announcements:this.announcements});};
+
+const _addPoll=DM.prototype.addPoll;
+DM.prototype.addPoll=function(p){_addPoll.call(this,p);saveBin('polls',{polls:this.polls});};
+
+const _delPoll=DM.prototype.delPoll;
+DM.prototype.delPoll=function(id){_delPoll.call(this,id);saveBin('polls',{polls:this.polls});};
+
+const _clrPolls=DM.prototype.clrPolls;
+DM.prototype.clrPolls=function(){_clrPolls.call(this);saveBin('polls',{polls:this.polls});};
+
+const _addCoinReq=DM.prototype.addCoinRequest;
+DM.prototype.addCoinRequest=function(req){const r=_addCoinReq.call(this,req);saveBin('requests',{coinRequests:this.coinRequests});return r;};
+
+const _updateReq=DM.prototype.updateRequestStatus;
+DM.prototype.updateRequestStatus=function(id,s,n){const r=_updateReq.call(this,id,s,n);saveBin('requests',{coinRequests:this.coinRequests});return r;};
+
+const _setLogo=DM.prototype.setLogo;
+DM.prototype.setLogo=function(d){_setLogo.call(this,d);};
+
+const _addReward=DM.prototype.addReward;
+DM.prototype.addReward=function(r){const x=_addReward.call(this,r);saveBin('rewards',{coinRewards:this.coinRewards});return x;};
+
+const _updateReward=DM.prototype.updateReward;
+DM.prototype.updateReward=function(id,d){const r=_updateReward.call(this,id,d);saveBin('rewards',{coinRewards:this.coinRewards});return r;};
+
+const _deleteReward=DM.prototype.deleteReward;
+DM.prototype.deleteReward=function(id){_deleteReward.call(this,id);saveBin('rewards',{coinRewards:this.coinRewards});};
+
+const _addCoin=DM.prototype.addCoin;
+DM.prototype.addCoin=function(mid,amount,reason,desc){const r=_addCoin.call(this,mid,amount,reason,desc);
+  const coins={},coinHistory={};
+  this.members.forEach(m=>{coins[m.id]=m.coins||0;coinHistory[m.id]=m.coinHistory||[];});
+  saveBin('coins',{coins,coinHistory});
+  return r;
+};
+
+const _spendCoin=DM.prototype.spendCoin;
+DM.prototype.spendCoin=function(mid,amount,reason,desc){const r=_spendCoin.call(this,mid,amount,reason,desc);
+  const coins={},coinHistory={};
+  this.members.forEach(m=>{coins[m.id]=m.coins||0;coinHistory[m.id]=m.coinHistory||[];});
+  saveBin('coins',{coins,coinHistory});
+  return r;
+};
+
+// بارگذاری اولیه داده‌ها از JSONBin
+async function loadFromJSONBin(){
+  const app=window.app;
+  if(!app||!app.dm) return;
+  const [coinsData, messagesData, announcementsData, pollsData, requestsData, supportData, rewardsData] = await Promise.all([
+    fetchBin('coins'),fetchBin('messages'),fetchBin('announcements'),fetchBin('polls'),fetchBin('requests'),fetchBin('support'),fetchBin('rewards')
+  ]);
+  
+  if(coinsData){
+    const coins=coinsData.coins||{};
+    const coinHistory=coinsData.coinHistory||{};
+    app.dm.members.forEach(m=>{
+      if(coins[m.id]!==undefined) m.coins=coins[m.id];
+      if(coinHistory[m.id]) m.coinHistory=coinHistory[m.id];
+    });
+  }
+  if(messagesData) app.dm.messages=messagesData.messages||[];
+  if(announcementsData) app.dm.announcements=announcementsData.announcements||[];
+  if(pollsData) app.dm.polls=pollsData.polls||[];
+  if(requestsData) app.dm.coinRequests=requestsData.coinRequests||[];
+  if(supportData && supportData.support) app.dm.support=supportData.support;
+  if(rewardsData && rewardsData.coinRewards && rewardsData.coinRewards.length>0) app.dm.coinRewards=rewardsData.coinRewards;
+  
+  console.log('✅ داده‌ها از JSONBin بارگذاری شدند');
+  if(app.ui) app.ui.render();
+}
+
+// اجرای بارگذاری بعد از راه‌اندازی برنامه
+setTimeout(()=>{
+  if(window.app && window.app.dm && window.app.dm.loaded){
+    loadFromJSONBin();
+  }else{
+    const check=setInterval(()=>{
+      if(window.app && window.app.dm && window.app.dm.loaded){
+        loadFromJSONBin();
+        clearInterval(check);
+      }
+    },1000);
+    setTimeout(()=>clearInterval(check),10000);
+  }
+},2000);
+
+// همگام‌سازی خودکار هر ۳۰ ثانیه
+setInterval(()=>{
+  if(window.app && window.app.auth && window.app.auth.isLoggedIn()){
+    loadFromJSONBin();
+  }
+},30000);
   });
 }
 </script>
