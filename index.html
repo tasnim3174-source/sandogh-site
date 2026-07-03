@@ -4,10 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سیستم حسابداری صندوق اتحاد</title>
-
-<!-- کتابخانه XLSX برای خواندن Excel -->
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
 body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
@@ -47,11 +44,11 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 
 <div class="container">
   <div class="header">
-    <h1>🏦 سیستم حسابداری صندوق اتحاد</h1>
+    <h1> سیستم حسابداری صندوق اتحاد</h1>
   </div>
 
   <div id="loginPage" class="login-box">
-    <h2 style="text-align:center;margin-bottom:20px">🔐 ورود</h2>
+    <h2 style="text-align:center;margin-bottom:20px"> ورود</h2>
     <div id="loginAlert"></div>
     <div class="form-group">
       <label>نام کاربری</label>
@@ -79,11 +76,10 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       <button onclick="showSection('messages',this)">💬 پیام</button>
       <button onclick="showSection('announcements',this)">📢 اطلاعیه</button>
       <button onclick="showSection('coins',this)">🪙 سکه</button>
-      <button id="adminTab" style="display:none" onclick="showSection('admin',this)">⚙️ مدیریت</button>
+      <button id="adminTab" style="display:none" onclick="showSection('admin',this)">️ مدیریت</button>
     </div>
 
     <div class="content">
-      <!-- خانه -->
       <div id="home" class="section active">
         <div class="stats">
           <div class="stat-card"><div>موجودی</div><div class="num" id="myCoins">0</div><div>سکه 🪙</div></div>
@@ -94,14 +90,12 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
         <div id="homeAnnouncements"></div>
       </div>
 
-      <!-- صورتحساب -->
       <div id="statements" class="section">
         <h2>📊 صورتحساب</h2>
         <button class="btn btn-primary" style="width:auto;margin:10px 0" onclick="loadStatements()">🔄 بارگذاری صورتحساب</button>
         <div id="statementsList"></div>
       </div>
 
-      <!-- پیام‌ها -->
       <div id="messages" class="section">
         <h2>💬 پیام‌ها</h2>
         <div class="form-group"><textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea></div>
@@ -109,23 +103,18 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
         <div id="messagesList"></div>
       </div>
 
-      <!-- اطلاعیه‌ها -->
       <div id="announcements" class="section">
         <h2>📢 اطلاعیه‌ها</h2>
         <div id="announcementsList"></div>
       </div>
 
-      <!-- سکه -->
       <div id="coins" class="section">
         <h2>🪙 سکه‌های شما</h2>
         <div class="card">
           <h3>موجودی: <span id="coinBalance">0</span> 🪙</h3>
         </div>
-        <h3 style="margin-top:20px">تاریخچه سکه</h3>
-        <div id="coinHistory"></div>
       </div>
 
-      <!-- مدیریت -->
       <div id="admin" class="section">
         <h2>⚙️ پنل مدیریت</h2>
         <div id="adminAlert"></div>
@@ -145,7 +134,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
         </div>
 
         <div class="card" style="background:#fff;margin-top:15px">
-          <h3>🔄 همگام‌سازی</h3>
+          <h3> همگام‌سازی</h3>
           <button class="btn btn-primary" style="width:auto" onclick="syncAll()">همگام‌سازی دستی</button>
         </div>
       </div>
@@ -156,12 +145,10 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 <div id="syncIndicator" class="sync-status" style="display:none"></div>
 
 <script>
-// ================= تنظیمات =================
-const JSONBIN_BIN_ID = '6a46c8e7da38895dfe249a90';
-const JSONBIN_API_KEY = '$2a$10$94Aa.jIBYMCsIyVJkgblD.41bpzRmDO0h0i9EC/R2V5puDYzcdy56';
+// ================= تنظیمات جدید =================
+const JSONBIN_BIN_ID = '6a474da0da38895dfe267fbe';
+const JSONBIN_API_KEY = '$2a$10$XU6ZAUe2GDqmvw0Zkgdh/O1rTz5o20cnnaSY/GjMXdn1bvkpYLBjC';
 const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
-
-// آدرس فایل Excel در GitHub (این رو تغییر بده)
 const EXCEL_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
 
 let currentUser = null;
@@ -173,7 +160,6 @@ let appData = {
   users: { 'admin': { password: 'admin123', role: 'admin' } }
 };
 
-// ================= نمایش وضعیت =================
 function showSyncStatus(msg, type) {
   const ind = document.getElementById('syncIndicator');
   ind.textContent = msg;
@@ -182,25 +168,20 @@ function showSyncStatus(msg, type) {
   setTimeout(() => { ind.style.display = 'none'; }, 3000);
 }
 
-// ================= بارگذاری Excel از GitHub =================
 async function loadExcelFromGitHub() {
-  console.log('📊 بارگذاری Excel...');
+  console.log(' بارگذاری Excel...');
   try {
     const response = await fetch(EXCEL_URL);
     if (!response.ok) {
-      console.warn('⚠️ فایل Excel پیدا نشد');
+      console.warn('️ فایل Excel پیدا نشد');
       return null;
     }
-    
     const arrayBuffer = await response.arrayBuffer();
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    
     const data = {};
     workbook.SheetNames.forEach(sheetName => {
-      const sheet = workbook.Sheets[sheetName];
-      data[sheetName] = XLSX.utils.sheet_to_json(sheet);
+      data[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
     });
-    
     console.log('✅ Excel بارگذاری شد:', data);
     return data;
   } catch (e) {
@@ -209,7 +190,6 @@ async function loadExcelFromGitHub() {
   }
 }
 
-// ================= بارگذاری داده از JSONBin =================
 async function loadData() {
   console.log('🔄 بارگذاری از JSONBin...');
   showSyncStatus('در حال بارگذاری...', 'loading');
@@ -218,6 +198,20 @@ async function loadData() {
     const res = await fetch(`${JSONBIN_URL}/latest`, {
       headers: { 'X-Master-Key': JSONBIN_API_KEY }
     });
+    
+    console.log('Status:', res.status);
+    
+    if (res.status === 404) {
+      console.error('❌ Bin پیدا نشد');
+      showSyncStatus('خطا: Bin پیدا نشد', 'error');
+      return false;
+    }
+    
+    if (res.status === 401) {
+      console.error('❌ API Key اشتباه');
+      showSyncStatus('خطا: API Key اشتباه', 'error');
+      return false;
+    }
     
     if (!res.ok) {
       showSyncStatus('خطا در بارگذاری', 'error');
@@ -239,7 +233,6 @@ async function loadData() {
   }
 }
 
-// ================= ذخیره در JSONBin =================
 async function saveData() {
   console.log('💾 ذخیره در JSONBin...');
   showSyncStatus('در حال ذخیره...', 'loading');
@@ -253,6 +246,8 @@ async function saveData() {
       },
       body: JSON.stringify(appData)
     });
+    
+    console.log('Status:', res.status);
     
     if (!res.ok) {
       showSyncStatus('خطا در ذخیره', 'error');
@@ -269,7 +264,6 @@ async function saveData() {
   }
 }
 
-// ================= بارگذاری صورتحساب =================
 async function loadStatements() {
   const excelData = await loadExcelFromGitHub();
   if (excelData && excelData.Statements) {
@@ -287,7 +281,6 @@ function renderStatements() {
     list.innerHTML = '<div class="empty">صورتحسابی وجود ندارد</div>';
     return;
   }
-  
   list.innerHTML = appData.statements.map(s => `
     <div class="card">
       <h3>${s.title || 'بدون عنوان'}</h3>
@@ -297,7 +290,6 @@ function renderStatements() {
   `).join('');
 }
 
-// ================= احراز هویت =================
 async function login() {
   const u = document.getElementById('username').value.trim();
   const p = document.getElementById('password').value.trim();
@@ -392,7 +384,6 @@ function renderAnnouncements() {
   `).join('') || '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
 }
 
-// ================= عملیات =================
 async function sendMessage() {
   const text = document.getElementById('newMessage').value.trim();
   if (!text) return alert('پیام خالی است');
@@ -448,7 +439,6 @@ async function syncAll() {
   alert('✓ همگام‌سازی انجام شد');
 }
 
-// ================= شروع =================
 window.onload = async () => {
   console.log('🚀 برنامه شروع شد');
   const saved = localStorage.getItem('sandogh_user');
