@@ -94,7 +94,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
         <div id="messagesList"></div>
       </div>
 
-      <div id="polls" class="section"><h2> نظرسنجی‌ها</h2><div id="pollsList"></div></div>
+      <div id="polls" class="section"><h2>📊 نظرسنجی‌ها</h2><div id="pollsList"></div></div>
 
       <div id="requests" class="section">
         <h2>📝 درخواست‌ها</h2>
@@ -115,7 +115,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       <div id="rewards" class="section"><h2>🎁 پاداش‌ها</h2><div id="rewardsList"></div></div>
 
       <div id="admin" class="section">
-        <h2>⚙️ پنل مدیریت</h2>
+        <h2>️ پنل مدیریت</h2>
         <div id="adminAlert"></div>
 
         <div class="card" style="background:#fff"><h3>📢 افزودن اطلاعیه</h3>
@@ -154,7 +154,6 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 <div id="syncIndicator" class="sync-status" style="display:none"></div>
 
 <script>
-// ================= تنظیمات Supabase (REST API مستقیم) =================
 var SUPABASE_URL = 'https://nkswstjsmevrnvksebsr.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3dzdGpzbWV2cm52a3NlYnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMzg5MDksImV4cCI6MjA5ODYxNDkwOX0.EFj6AK2lfAofZOYfW7QwaxN-POgpEjV5T7t7rnWJKGQ';
 
@@ -181,7 +180,6 @@ function showSyncStatus(message, type) {
 async function loadData() {
   console.log('🔄 بارگذاری از Supabase...');
   showSyncStatus('در حال بارگذاری...', 'loading');
-  
   try {
     var response = await fetch(SUPABASE_URL + '/rest/v1/app_data?id=eq.1&select=*', {
       method: 'GET',
@@ -191,28 +189,22 @@ async function loadData() {
         'Content-Type': 'application/json'
       }
     });
-    
     if (!response.ok) {
       console.error('❌ خطا:', response.status);
       showSyncStatus('خطا در بارگذاری', 'error');
       return false;
     }
-    
     var data = await response.json();
     console.log('✅ داده دریافت شد:', data);
-    
     if (data && data.length > 0) {
       var record = data[0];
-      appData = {
-        messages: record.messages || [],
-        coins: record.coins || {},
-        announcements: record.announcements || [],
-        polls: record.polls || [],
-        requests: record.requests || [],
-        support: record.support || [],
-        rewards: record.rewards || [],
-        users: { 'admin': { password: 'admin123', role: 'admin' } }
-      };
+      appData.messages = record.messages || [];
+      appData.coins = record.coins || {};
+      appData.announcements = record.announcements || [];
+      appData.polls = record.polls || [];
+      appData.requests = record.requests || [];
+      appData.support = record.support || [];
+      appData.rewards = record.rewards || [];
       if (record.users) {
         Object.assign(appData.users, record.users);
       }
@@ -220,7 +212,6 @@ async function loadData() {
       showSyncStatus('✓ بارگذاری موفق', 'success');
       return true;
     }
-    
     showSyncStatus('داده‌ای وجود ندارد', 'error');
     return false;
   } catch (e) {
@@ -233,7 +224,6 @@ async function loadData() {
 async function saveData() {
   console.log('💾 ذخیره در Supabase...');
   showSyncStatus('در حال ذخیره...', 'loading');
-  
   try {
     var response = await fetch(SUPABASE_URL + '/rest/v1/app_data?id=eq.1', {
       method: 'PATCH',
@@ -255,14 +245,12 @@ async function saveData() {
         updated_at: new Date().toISOString()
       })
     });
-    
     if (!response.ok) {
       var errorText = await response.text();
       console.error('❌ خطا در ذخیره:', errorText);
       showSyncStatus('خطا در ذخیره', 'error');
       return false;
     }
-    
     console.log('✅ ذخیره موفق');
     showSyncStatus('✓ ذخیره شد', 'success');
     return true;
@@ -286,20 +274,16 @@ async function doLogin() {
   var u = document.getElementById('username').value.trim();
   var p = document.getElementById('password').value.trim();
   var alertBox = document.getElementById('loginAlert');
-
   if (!u || !p) {
     alertBox.innerHTML = '<div class="alert alert-error">لطفاً همه فیلدها را پر کنید</div>';
     return;
   }
-
   console.log('🔐 تلاش برای ورود:', u);
   var success = await loadData();
-  
   if (!success) {
     alertBox.innerHTML = '<div class="alert alert-error">خطا در اتصال به سرور</div>';
     return;
   }
-
   if (appData.users[u] && appData.users[u].password === p) {
     currentUser = { username: u, role: appData.users[u].role };
     localStorage.setItem('sandogh_user', JSON.stringify(currentUser));
