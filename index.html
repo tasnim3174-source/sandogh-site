@@ -3,452 +3,174 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>سیستم حسابداری صندوق اتحاد</title>
-<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<title>صندوق اتحاد</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
 body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
-.container{max-width:1200px;margin:0 auto;background:#fff;border-radius:15px;box-shadow:0 10px 40px rgba(0,0,0,.2);overflow:hidden}
+.container{max-width:800px;margin:0 auto;background:#fff;border-radius:15px;overflow:hidden}
 .header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;text-align:center}
-.login-box{max-width:400px;margin:50px auto;padding:30px;background:#fff;border-radius:15px}
+.login-box{max-width:400px;margin:50px auto;padding:30px}
 .form-group{margin-bottom:15px}
 .form-group label{display:block;margin-bottom:5px;font-weight:bold}
 .form-group input,.form-group textarea{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px}
 .btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;color:#fff}
 .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2)}
 .btn-success{background:#27ae60}
-.btn-warning{background:#f39c12}
-.btn-danger{background:#e74c3c}
-.nav{display:flex;background:#f8f9fa;border-bottom:2px solid #e9ecef;overflow-x:auto}
-.nav button{flex:1;padding:15px;border:none;background:transparent;cursor:pointer;font-weight:bold;color:#555}
-.nav button.active{background:#fff;color:#667eea;border-bottom:3px solid #667eea}
-.content{padding:25px;min-height:500px}
+.nav{display:flex;background:#f8f9fa}
+.nav button{flex:1;padding:15px;border:none;background:transparent;cursor:pointer;font-weight:bold}
+.nav button.active{background:#fff;border-bottom:3px solid #667eea}
+.content{padding:20px}
 .section{display:none}
 .section.active{display:block}
-.card{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:10px;border-right:4px solid #667eea}
-.alert{padding:12px;border-radius:8px;margin-bottom:15px}
-.alert-success{background:#d4edda;color:#155724}
-.alert-error{background:#f8d7da;color:#721c24}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
-.stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center}
-.stat-card .num{font-size:32px;font-weight:bold}
-.empty{text-align:center;padding:40px;color:#999}
-.coin-display{background:#f39c12;color:#fff;padding:4px 10px;border-radius:20px;font-weight:bold}
-.sync-status{position:fixed;top:10px;right:10px;padding:8px 16px;border-radius:20px;font-size:12px;z-index:1000}
-.sync-success{background:#27ae60;color:#fff}
-.sync-error{background:#e74c3c;color:#fff}
-.sync-loading{background:#f39c12;color:#fff}
+.card{background:#f8f9fa;padding:15px;border-radius:10px;margin:10px 0}
+.coin{background:#f39c12;color:#fff;padding:5px 10px;border-radius:20px}
 </style>
 </head>
 <body>
-
 <div class="container">
-  <div class="header">
-    <h1> سیستم حسابداری صندوق اتحاد</h1>
-  </div>
-
+  <div class="header"><h1>💰 صندوق اتحاد</h1></div>
+  
   <div id="loginPage" class="login-box">
-    <h2 style="text-align:center;margin-bottom:20px"> ورود</h2>
-    <div id="loginAlert"></div>
-    <div class="form-group">
-      <label>نام کاربری</label>
-      <input type="text" id="username">
-    </div>
-    <div class="form-group">
-      <label>رمز عبور</label>
-      <input type="password" id="password">
-    </div>
+    <h2 style="text-align:center;margin-bottom:20px">ورود</h2>
+    <div class="form-group"><label>نام کاربری</label><input type="text" id="username"></div>
+    <div class="form-group"><label>رمز عبور</label><input type="password" id="password"></div>
     <button class="btn btn-primary" style="width:100%" onclick="login()">ورود</button>
   </div>
 
   <div id="dashboard" style="display:none">
-    <div style="padding:15px;background:#f8f9fa;display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <strong id="currentUser"></strong>
-        <span class="coin-display" id="userCoins" style="margin-right:10px">0 🪙</span>
-      </div>
-      <button class="btn btn-danger" onclick="logout()">خروج</button>
+    <div style="padding:15px;background:#f8f9fa;display:flex;justify-content:space-between">
+      <div><strong id="currentUser"></strong> <span class="coin" id="userCoins">0🪙</span></div>
+      <button class="btn" style="background:#e74c3c" onclick="logout()">خروج</button>
     </div>
-
+    
     <div class="nav">
-      <button class="active" onclick="showSection('home',this)">🏠 خانه</button>
-      <button onclick="showSection('statements',this)">📊 صورتحساب</button>
-      <button onclick="showSection('messages',this)">💬 پیام</button>
-      <button onclick="showSection('announcements',this)">📢 اطلاعیه</button>
-      <button onclick="showSection('coins',this)">🪙 سکه</button>
-      <button id="adminTab" style="display:none" onclick="showSection('admin',this)">️ مدیریت</button>
+      <button class="active" onclick="show('home')">خانه</button>
+      <button onclick="show('messages')">💬 پیام</button>
+      <button onclick="show('admin')">⚙️ مدیریت</button>
     </div>
-
+    
     <div class="content">
       <div id="home" class="section active">
-        <div class="stats">
-          <div class="stat-card"><div>موجودی</div><div class="num" id="myCoins">0</div><div>سکه 🪙</div></div>
-          <div class="stat-card"><div>پیام‌ها</div><div class="num" id="msgCount">0</div></div>
-          <div class="stat-card"><div>اطلاعیه‌ها</div><div class="num" id="annCount">0</div></div>
-        </div>
-        <h2>📌 آخرین اطلاعیه‌ها</h2>
-        <div id="homeAnnouncements"></div>
+        <h2>خوش آمدید</h2>
+        <div class="card">موجودی: <strong id="balance">0</strong> سکه</div>
       </div>
-
-      <div id="statements" class="section">
-        <h2>📊 صورتحساب</h2>
-        <button class="btn btn-primary" style="width:auto;margin:10px 0" onclick="loadStatements()">🔄 بارگذاری صورتحساب</button>
-        <div id="statementsList"></div>
-      </div>
-
+      
       <div id="messages" class="section">
-        <h2>💬 پیام‌ها</h2>
-        <div class="form-group"><textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea></div>
-        <button class="btn btn-primary" style="width:auto;margin-bottom:20px" onclick="sendMessage()">ارسال پیام</button>
-        <div id="messagesList"></div>
+        <h2>پیام‌ها</h2>
+        <div class="form-group"><textarea id="msg" rows="3"></textarea></div>
+        <button class="btn btn-primary" onclick="sendMsg()">ارسال</button>
+        <div id="msgList"></div>
       </div>
-
-      <div id="announcements" class="section">
-        <h2>📢 اطلاعیه‌ها</h2>
-        <div id="announcementsList"></div>
-      </div>
-
-      <div id="coins" class="section">
-        <h2>🪙 سکه‌های شما</h2>
-        <div class="card">
-          <h3>موجودی: <span id="coinBalance">0</span> 🪙</h3>
-        </div>
-      </div>
-
+      
       <div id="admin" class="section">
-        <h2>⚙️ پنل مدیریت</h2>
-        <div id="adminAlert"></div>
-
-        <div class="card" style="background:#fff">
-          <h3>📢 افزودن اطلاعیه</h3>
-          <div class="form-group"><input type="text" id="annTitle" placeholder="عنوان"></div>
-          <div class="form-group"><textarea id="annBody" rows="3" placeholder="متن"></textarea></div>
-          <button class="btn btn-success" onclick="addAnnouncement()">افزودن</button>
-        </div>
-
-        <div class="card" style="background:#fff;margin-top:15px">
-          <h3>🪙 مدیریت سکه</h3>
-          <div class="form-group"><input type="text" id="coinUser" placeholder="نام کاربری"></div>
-          <div class="form-group"><input type="number" id="coinAmount" placeholder="مقدار"></div>
-          <button class="btn btn-warning" onclick="updateCoins()">به‌روزرسانی</button>
-        </div>
-
-        <div class="card" style="background:#fff;margin-top:15px">
-          <h3> همگام‌سازی</h3>
-          <button class="btn btn-primary" style="width:auto" onclick="syncAll()">همگام‌سازی دستی</button>
+        <h2>مدیریت</h2>
+        <div class="card">
+          <h3>افزودن سکه</h3>
+          <input type="text" id="coinUser" placeholder="نام کاربری" style="padding:8px;margin:5px 0;width:100%">
+          <input type="number" id="coinAmt" placeholder="مقدار" style="padding:8px;margin:5px 0;width:100%">
+          <button class="btn btn-success" onclick="addCoin()">افزودن</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div id="syncIndicator" class="sync-status" style="display:none"></div>
-
 <script>
-// ================= تنظیمات جدید =================
-const JSONBIN_BIN_ID = '6a474da0da38895dfe267fbe';
-const JSONBIN_API_KEY = '$2a$10$XU6ZAUe2GDqmvw0Zkgdh/O1rTz5o20cnnaSY/GjMXdn1bvkpYLBjC';
-const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
-const EXCEL_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
+const BIN = '6a474da0da38895dfe267fbe';
+const KEY = '$2a$10$XU6ZAUe2GDqmvw0Zkgdh/O1rTz5o20cnnaSY/GjMXdn1bvkpYLBjC';
+const URL = `https://api.jsonbin.io/v3/b/${BIN}`;
 
-let currentUser = null;
-let appData = {
-  messages: [],
+let user = null;
+let data = {
   coins: {},
-  announcements: [],
-  statements: [],
-  users: { 'admin': { password: 'admin123', role: 'admin' } }
+  messages: [],
+  users: { admin: { password: 'admin123', role: 'admin' } }
 };
 
-function showSyncStatus(msg, type) {
-  const ind = document.getElementById('syncIndicator');
-  ind.textContent = msg;
-  ind.className = `sync-status sync-${type}`;
-  ind.style.display = 'block';
-  setTimeout(() => { ind.style.display = 'none'; }, 3000);
+async function load() {
+  try {
+    const r = await fetch(URL + '/latest', { headers: { 'X-Master-Key': KEY } });
+    const d = await r.json();
+    if (d.record) data = { ...data, ...d.record };
+  } catch(e) { console.error(e); }
 }
 
-async function loadExcelFromGitHub() {
-  console.log(' بارگذاری Excel...');
+async function save() {
   try {
-    const response = await fetch(EXCEL_URL);
-    if (!response.ok) {
-      console.warn('️ فایل Excel پیدا نشد');
-      return null;
-    }
-    const arrayBuffer = await response.arrayBuffer();
-    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-    const data = {};
-    workbook.SheetNames.forEach(sheetName => {
-      data[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    });
-    console.log('✅ Excel بارگذاری شد:', data);
-    return data;
-  } catch (e) {
-    console.error('❌ خطا در بارگذاری Excel:', e);
-    return null;
-  }
-}
-
-async function loadData() {
-  console.log('🔄 بارگذاری از JSONBin...');
-  showSyncStatus('در حال بارگذاری...', 'loading');
-  
-  try {
-    const res = await fetch(`${JSONBIN_URL}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_API_KEY }
-    });
-    
-    console.log('Status:', res.status);
-    
-    if (res.status === 404) {
-      console.error('❌ Bin پیدا نشد');
-      showSyncStatus('خطا: Bin پیدا نشد', 'error');
-      return false;
-    }
-    
-    if (res.status === 401) {
-      console.error('❌ API Key اشتباه');
-      showSyncStatus('خطا: API Key اشتباه', 'error');
-      return false;
-    }
-    
-    if (!res.ok) {
-      showSyncStatus('خطا در بارگذاری', 'error');
-      return false;
-    }
-    
-    const data = await res.json();
-    if (data.record) {
-      appData = { ...appData, ...data.record };
-      console.log('✅ JSONBin بارگذاری شد');
-      showSyncStatus('✓ بارگذاری موفق', 'success');
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.error('❌ خطا:', e);
-    showSyncStatus('خطا در اتصال', 'error');
-    return false;
-  }
-}
-
-async function saveData() {
-  console.log('💾 ذخیره در JSONBin...');
-  showSyncStatus('در حال ذخیره...', 'loading');
-  
-  try {
-    const res = await fetch(JSONBIN_URL, {
+    await fetch(URL, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify(appData)
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': KEY },
+      body: JSON.stringify(data)
     });
-    
-    console.log('Status:', res.status);
-    
-    if (!res.ok) {
-      showSyncStatus('خطا در ذخیره', 'error');
-      return false;
-    }
-    
-    console.log('✅ ذخیره موفق');
-    showSyncStatus('✓ ذخیره شد', 'success');
-    return true;
-  } catch (e) {
-    console.error('❌ خطا:', e);
-    showSyncStatus('خطا', 'error');
-    return false;
-  }
-}
-
-async function loadStatements() {
-  const excelData = await loadExcelFromGitHub();
-  if (excelData && excelData.Statements) {
-    appData.statements = excelData.Statements;
-    renderStatements();
-    showSyncStatus('✓ صورتحساب بارگذاری شد', 'success');
-  } else {
-    showSyncStatus('خطا در بارگذاری صورتحساب', 'error');
-  }
-}
-
-function renderStatements() {
-  const list = document.getElementById('statementsList');
-  if (!appData.statements || appData.statements.length === 0) {
-    list.innerHTML = '<div class="empty">صورتحسابی وجود ندارد</div>';
-    return;
-  }
-  list.innerHTML = appData.statements.map(s => `
-    <div class="card">
-      <h3>${s.title || 'بدون عنوان'}</h3>
-      <p>مبلغ: ${s.amount || 0} تومان</p>
-      <p>تاریخ: ${s.date || ''}</p>
-    </div>
-  `).join('');
+  } catch(e) { console.error(e); }
 }
 
 async function login() {
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  
-  if (!u || !p) {
-    document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">همه فیلدها را پر کنید</div>';
-    return;
-  }
-
-  await loadData();
-  
-  if (appData.users[u] && appData.users[u].password === p) {
-    currentUser = { username: u, role: appData.users[u].role };
-    localStorage.setItem('sandogh_user', JSON.stringify(currentUser));
-    showDashboard();
+  const u = document.getElementById('username').value;
+  const p = document.getElementById('password').value;
+  await load();
+  if (data.users[u] && data.users[u].password === p) {
+    user = u;
+    localStorage.setItem('u', u);
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('currentUser').textContent = u;
+    update();
   } else {
-    document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">نام کاربری یا رمز اشتباه است</div>';
+    alert('خطا!');
   }
 }
 
 function logout() {
-  localStorage.removeItem('sandogh_user');
-  currentUser = null;
-  document.getElementById('loginPage').style.display = 'block';
-  document.getElementById('dashboard').style.display = 'none';
+  localStorage.removeItem('u');
+  location.reload();
 }
 
-function showDashboard() {
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('currentUser').textContent = currentUser.username;
-  
-  if (currentUser.role === 'admin') {
-    document.getElementById('adminTab').style.display = 'block';
-  }
-  
-  refreshUI();
-}
-
-function showSection(id, btn) {
+function show(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach((b,i,a) => {
+    b.classList.toggle('active', a[i].textContent.includes(id === 'home' ? 'خانه' : id === 'messages' ? 'پیام' : 'مدیریت'));
+  });
   document.getElementById(id).classList.add('active');
-  if (btn) btn.classList.add('active');
-  
-  if (id === 'statements') loadStatements();
 }
 
-function refreshUI() {
-  if (!currentUser) return;
-  
-  const userCoins = appData.coins[currentUser.username] || 0;
-  document.getElementById('userCoins').textContent = userCoins + ' 🪙';
-  document.getElementById('myCoins').textContent = userCoins;
-  document.getElementById('coinBalance').textContent = userCoins;
-  document.getElementById('msgCount').textContent = appData.messages.length;
-  document.getElementById('annCount').textContent = appData.announcements.length;
-  
-  renderMessages();
-  renderAnnouncements();
+function update() {
+  const c = data.coins[user] || 0;
+  document.getElementById('balance').textContent = c;
+  document.getElementById('userCoins').textContent = c + '🪙';
+  const ml = document.getElementById('msgList');
+  ml.innerHTML = data.messages.map(m => `<div class="card"><strong>${m.user}:</strong> ${m.text}</div>`).join('');
 }
 
-function renderMessages() {
-  const list = document.getElementById('messagesList');
-  list.innerHTML = appData.messages.length === 0 ? '<div class="empty">پیامی وجود ندارد</div>' :
-    appData.messages.slice().reverse().map(m => `
-      <div class="card">
-        <h3>${m.user}</h3>
-        <p>${m.text}</p>
-        <div style="font-size:12px;color:#999">${m.date}</div>
-      </div>
-    `).join('');
+async function sendMsg() {
+  const t = document.getElementById('msg').value;
+  if (!t) return;
+  data.messages.push({ user, text: t, date: new Date().toISOString() });
+  document.getElementById('msg').value = '';
+  await save();
+  update();
 }
 
-function renderAnnouncements() {
-  const list = document.getElementById('announcementsList');
-  const homeList = document.getElementById('homeAnnouncements');
-  const html = appData.announcements.length === 0 ? '<div class="empty">اطلاعیه‌ای وجود ندارد</div>' :
-    appData.announcements.slice().reverse().map(a => `
-      <div class="card">
-        <h3>${a.title}</h3>
-        <p>${a.body}</p>
-        <div style="font-size:12px;color:#999">${a.date}</div>
-      </div>
-    `).join('');
-  list.innerHTML = html;
-  homeList.innerHTML = appData.announcements.slice(-3).reverse().map(a => `
-    <div class="card">
-      <h3>${a.title}</h3>
-      <p>${a.body}</p>
-    </div>
-  `).join('') || '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
-}
-
-async function sendMessage() {
-  const text = document.getElementById('newMessage').value.trim();
-  if (!text) return alert('پیام خالی است');
-  
-  appData.messages.push({
-    user: currentUser.username,
-    text,
-    date: new Date().toLocaleString('fa-IR')
-  });
-  
-  document.getElementById('newMessage').value = '';
-  await saveData();
-  refreshUI();
-}
-
-async function addAnnouncement() {
-  const title = document.getElementById('annTitle').value.trim();
-  const body = document.getElementById('annBody').value.trim();
-  if (!title || !body) return alert('همه فیلدها را پر کنید');
-  
-  appData.announcements.push({
-    title,
-    body,
-    date: new Date().toLocaleString('fa-IR')
-  });
-  
-  document.getElementById('annTitle').value = '';
-  document.getElementById('annBody').value = '';
-  await saveData();
-  refreshUI();
-  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">✓ افزوده شد</div>';
-  setTimeout(() => { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
-}
-
-async function updateCoins() {
-  const user = document.getElementById('coinUser').value.trim();
-  const amount = parseInt(document.getElementById('coinAmount').value);
-  if (!user || isNaN(amount)) return alert('اطلاعات نامعتبر');
-  
-  appData.coins[user] = (appData.coins[user] || 0) + amount;
-  document.getElementById('coinUser').value = '';
-  document.getElementById('coinAmount').value = '';
-  await saveData();
-  refreshUI();
-  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">✓ به‌روزرسانی شد</div>';
-  setTimeout(() => { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
-}
-
-async function syncAll() {
-  await loadData();
-  await loadStatements();
-  refreshUI();
-  alert('✓ همگام‌سازی انجام شد');
+async function addCoin() {
+  const u = document.getElementById('coinUser').value;
+  const a = parseInt(document.getElementById('coinAmt').value);
+  if (!u || !a) return;
+  data.coins[u] = (data.coins[u] || 0) + a;
+  await save();
+  alert('✓');
 }
 
 window.onload = async () => {
-  console.log('🚀 برنامه شروع شد');
-  const saved = localStorage.getItem('sandogh_user');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    await loadData();
-    showDashboard();
+  const s = localStorage.getItem('u');
+  if (s) {
+    user = s;
+    await load();
+    document.getElementById('loginPage').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    document.getElementById('currentUser').textContent = user;
+    update();
   }
 };
 </script>
-
 </body>
 </html>
