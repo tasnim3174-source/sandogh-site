@@ -15,34 +15,27 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 .login-box h2{text-align:center;margin-bottom:20px;color:#333}
 .form-group{margin-bottom:15px}
 .form-group label{display:block;margin-bottom:5px;color:#555;font-weight:bold}
-.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:14px}
-.form-group input:focus,.form-group textarea:focus{border-color:#667eea;outline:none}
-.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;transition:all .3s}
+.form-group input,.form-group textarea{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:14px}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold}
 .btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;width:100%}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(102,126,234,.4)}
-.btn-danger{background:#e74c3c;color:#fff}
 .btn-success{background:#27ae60;color:#fff}
 .btn-warning{background:#f39c12;color:#fff}
+.btn-danger{background:#e74c3c;color:#fff}
 .nav{display:flex;background:#f8f9fa;border-bottom:2px solid #e9ecef;overflow-x:auto}
-.nav button{flex:1;padding:15px;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:bold;color:#555;transition:all .3s;white-space:nowrap}
+.nav button{flex:1;padding:15px;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:bold;color:#555;white-space:nowrap}
 .nav button.active{background:#fff;color:#667eea;border-bottom:3px solid #667eea}
-.nav button:hover{background:#e9ecef}
 .content{padding:25px;min-height:500px}
 .section{display:none}
 .section.active{display:block}
 .card{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:10px;border-right:4px solid #667eea}
 .card h3{color:#333;margin-bottom:8px}
-.card p{color:#666;line-height:1.6}
-.card .meta{font-size:12px;color:#999;margin-top:8px}
 .alert{padding:12px;border-radius:8px;margin-bottom:15px}
-.alert-success{background:#d4edda;color:#155724;border:1px solid #c3e6cb}
-.alert-error{background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}
-.alert-info{background:#d1ecf1;color:#0c5460;border:1px solid #bee5eb}
-.logout-btn{float:left;background:#e74c3c;color:#fff;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-weight:bold}
+.alert-success{background:#d4edda;color:#155724}
+.alert-error{background:#f8d7da;color:#721c24}
+.alert-info{background:#d1ecf1;color:#0c5460}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
 .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center}
 .stat-card .num{font-size:32px;font-weight:bold;margin:10px 0}
-.stat-card .label{font-size:14px;opacity:.9}
 .empty{text-align:center;padding:40px;color:#999}
 .coin-display{display:inline-block;background:#f39c12;color:#fff;padding:4px 10px;border-radius:20px;font-weight:bold;font-size:13px}
 .sync-status{position:fixed;top:10px;right:10px;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:bold;z-index:1000}
@@ -77,19 +70,19 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
     <div style="padding:15px;background:#f8f9fa;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
       <div>
         <span>خوش آمدید، <strong id="currentUser"></strong></span>
-        <span class="coin-display" id="userCoins">0 🪙</span>
+        <span class="coin-display" id="userCoins">0 </span>
       </div>
-      <button class="logout-btn" onclick="logout()">خروج</button>
+      <button class="btn btn-danger" onclick="logout()">خروج</button>
     </div>
 
     <div class="nav">
-      <button class="active" onclick="showSection('home',this)">🏠 خانه</button>
-      <button onclick="showSection('announcements',this)"> اطلاعیه‌ها</button>
+      <button class="active" onclick="showSection('home',this)"> خانه</button>
+      <button onclick="showSection('announcements',this)">📢 اطلاعیه‌ها</button>
       <button onclick="showSection('messages',this)">💬 پیام‌ها</button>
       <button onclick="showSection('polls',this)">📊 نظرسنجی</button>
       <button onclick="showSection('requests',this)">📝 درخواست‌ها</button>
       <button onclick="showSection('support',this)">🎧 پشتیبانی</button>
-      <button onclick="showSection('rewards',this)">🎁 پاداش‌ها</button>
+      <button onclick="showSection('rewards',this)"> پاداش‌ها</button>
       <button id="adminTab" style="display:none" onclick="showSection('admin',this)">⚙️ مدیریت</button>
     </div>
 
@@ -120,12 +113,12 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       </div>
 
       <div id="polls" class="section">
-        <h2>📊 نظرسنجی‌ها</h2>
+        <h2> نظرسنجی‌ها</h2>
         <div id="pollsList"></div>
       </div>
 
       <div id="requests" class="section">
-        <h2>📝 درخواست‌ها</h2>
+        <h2> درخواست‌ها</h2>
         <div class="form-group">
           <input type="text" id="reqTitle" placeholder="عنوان درخواست">
         </div>
@@ -149,7 +142,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       </div>
 
       <div id="rewards" class="section">
-        <h2> پاداش‌ها</h2>
+        <h2>🎁 پاداش‌ها</h2>
         <div id="rewardsList"></div>
       </div>
 
@@ -158,7 +151,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
         <div id="adminAlert"></div>
 
         <div class="card" style="background:#fff">
-          <h3>📢 افزودن اطلاعیه</h3>
+          <h3> افزودن اطلاعیه</h3>
           <div class="form-group"><input type="text" id="annTitle" placeholder="عنوان"></div>
           <div class="form-group"><textarea id="annBody" rows="3" placeholder="متن اطلاعیه"></textarea></div>
           <button class="btn btn-success" onclick="addAnnouncement()">افزودن</button>
@@ -172,14 +165,14 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
         </div>
 
         <div class="card" style="background:#fff;margin-top:15px">
-          <h3> افزودن پاداش</h3>
+          <h3>🎁 افزودن پاداش</h3>
           <div class="form-group"><input type="text" id="rewTitle" placeholder="عنوان پاداش"></div>
           <div class="form-group"><input type="number" id="rewCost" placeholder="هزینه (سکه)"></div>
           <button class="btn btn-success" onclick="addReward()">افزودن</button>
         </div>
 
         <div class="card" style="background:#fff;margin-top:15px">
-          <h3>🪙 مدیریت سکه کاربران</h3>
+          <h3> مدیریت سکه کاربران</h3>
           <div class="form-group"><input type="text" id="coinUser" placeholder="نام کاربری"></div>
           <div class="form-group"><input type="number" id="coinAmount" placeholder="مقدار (+ یا -)"></div>
           <button class="btn btn-warning" onclick="updateCoins()">به‌روزرسانی</button>
@@ -201,7 +194,9 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 // ================= تنظیمات Supabase =================
 const SUPABASE_URL = 'https://nkswstjsmevrnvksebsr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3dzdGpzbWV2cm52a3NlYnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMzg5MDksImV4cCI6MjA5ODYxNDkwOX0.EFj6AK2lfAofZOYfW7QwaxN-POgpEjV5T7t7rnWJKGQ';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// تعریف supabase به صورت let (نه const)
+let supabase = null;
 
 let currentUser = null;
 let appData = {
@@ -215,6 +210,16 @@ let appData = {
   users: { 'admin': { password: 'admin123', role: 'admin' } }
 };
 
+// ================= مقداردهی Supabase بعد از لود شدن =================
+function initSupabase() {
+  if (window.supabase && !supabase) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log('✅ Supabase initialized');
+    return true;
+  }
+  return false;
+}
+
 // ================= نمایش وضعیت همگام‌سازی =================
 function showSyncStatus(message, type) {
   const indicator = document.getElementById('syncIndicator');
@@ -226,6 +231,14 @@ function showSyncStatus(message, type) {
 
 // ================= بارگذاری داده از Supabase =================
 async function loadData() {
+  if (!supabase) {
+    if (!initSupabase()) {
+      console.error('❌ Supabase هنوز لود نشده');
+      showSyncStatus('خطا: Supabase لود نشده', 'error');
+      return false;
+    }
+  }
+
   console.log('🔄 شروع بارگذاری داده‌ها از Supabase...');
   showSyncStatus('در حال بارگذاری...', 'loading');
   
@@ -273,6 +286,14 @@ async function loadData() {
 
 // ================= ذخیره داده در Supabase =================
 async function saveData() {
+  if (!supabase) {
+    if (!initSupabase()) {
+      console.error('❌ Supabase هنوز لود نشده');
+      showSyncStatus('خطا: Supabase لود نشده', 'error');
+      return false;
+    }
+  }
+
   console.log('💾 شروع ذخیره داده‌ها در Supabase...');
   showSyncStatus('در حال ذخیره...', 'loading');
   
@@ -357,7 +378,6 @@ function logout() {
   currentUser = null;
   document.getElementById('loginPage').style.display = 'block';
   document.getElementById('dashboard').style.display = 'none';
-  console.log(' خروج از سیستم');
 }
 
 function showDashboard() {
@@ -470,7 +490,7 @@ function renderRequests() {
     <div class="card">
       <h3>${escapeHtml(r.title)}</h3>
       <p>${escapeHtml(r.desc)}</p>
-      <div class="meta">👤 ${escapeHtml(r.user)} |  ${r.date}</div>
+      <div class="meta"> ${escapeHtml(r.user)} | 📅 ${r.date}</div>
     </div>
   `).join('');
 }
@@ -486,7 +506,7 @@ function renderSupport() {
     <div class="card">
       <h3>${escapeHtml(t.title)}</h3>
       <p>${escapeHtml(t.message)}</p>
-      <div class="meta">👤 ${escapeHtml(t.user)} |  ${t.date}</div>
+      <div class="meta"> ${escapeHtml(t.user)} | 📅 ${t.date}</div>
     </div>
   `).join('');
 }
@@ -665,7 +685,24 @@ function escapeHtml(s) {
 // ================= شروع =================
 window.onload = async () => {
   console.log('🚀 برنامه شروع شد');
-  console.log('Supabase URL:', SUPABASE_URL);
+  
+  // صبر کن تا Supabase لود بشه
+  let attempts = 0;
+  const maxAttempts = 50;
+  
+  while (!initSupabase() && attempts < maxAttempts) {
+    await new Promise(resolve => setTimeout(resolve, 100));
+    attempts++;
+  }
+  
+  if (!supabase) {
+    console.error('❌ Supabase لود نشد!');
+    alert('خطا در بارگذاری Supabase. لطفاً صفحه را رفرش کنید.');
+    return;
+  }
+  
+  console.log('✅ Supabase آماده است');
+  
   const saved = localStorage.getItem('sandogh_user');
   if (saved) {
     currentUser = JSON.parse(saved);
