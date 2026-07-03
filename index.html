@@ -31,17 +31,11 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 .alert{padding:12px;border-radius:8px;margin-bottom:15px}
 .alert-success{background:#d4edda;color:#155724}
 .alert-error{background:#f8d7da;color:#721c24}
-.alert-info{background:#d1ecf1;color:#0c5460}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
 .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center}
 .stat-card .num{font-size:32px;font-weight:bold;margin:10px 0}
 .empty{text-align:center;padding:40px;color:#999}
 .coin-display{display:inline-block;background:#f39c12;color:#fff;padding:4px 10px;border-radius:20px;font-weight:bold;font-size:13px}
-.sync-status{position:fixed;top:10px;right:10px;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:bold;z-index:1000}
-.sync-success{background:#27ae60;color:#fff}
-.sync-error{background:#e74c3c;color:#fff}
-.sync-loading{background:#f39c12;color:#fff}
-.sync-offline{background:#95a5a6;color:#fff}
 </style>
 </head>
 <body>
@@ -64,13 +58,13 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
     </div>
 
     <div class="nav">
-      <button class="active" onclick="showSection('home',this)">🏠 خانه</button>
+      <button class="active" onclick="showSection('home',this)"> خانه</button>
       <button onclick="showSection('announcements',this)">📢 اطلاعیه‌ها</button>
       <button onclick="showSection('messages',this)">💬 پیام‌ها</button>
       <button onclick="showSection('polls',this)">📊 نظرسنجی</button>
-      <button onclick="showSection('requests',this)"> درخواست‌ها</button>
+      <button onclick="showSection('requests',this)">📝 درخواست‌ها</button>
       <button onclick="showSection('support',this)">🎧 پشتیبانی</button>
-      <button onclick="showSection('rewards',this)">🎁 پاداش‌ها</button>
+      <button onclick="showSection('rewards',this)"> پاداش‌ها</button>
       <button id="adminTab" style="display:none" onclick="showSection('admin',this)">⚙️ مدیریت</button>
     </div>
 
@@ -98,7 +92,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       <div id="polls" class="section"><h2>📊 نظرسنجی‌ها</h2><div id="pollsList"></div></div>
 
       <div id="requests" class="section">
-        <h2> درخواست‌ها</h2>
+        <h2>📝 درخواست‌ها</h2>
         <div class="form-group"><input type="text" id="reqTitle" placeholder="عنوان درخواست"></div>
         <div class="form-group"><textarea id="reqDesc" rows="3" placeholder="توضیحات..."></textarea></div>
         <button class="btn btn-primary" style="width:auto;margin-bottom:20px" onclick="doSendRequest()">ثبت درخواست</button>
@@ -116,7 +110,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       <div id="rewards" class="section"><h2>🎁 پاداش‌ها</h2><div id="rewardsList"></div></div>
 
       <div id="admin" class="section">
-        <h2>⚙️ پنل مدیریت</h2>
+        <h2>️ پنل مدیریت</h2>
         <div id="adminAlert"></div>
 
         <div class="card" style="background:#fff"><h3>📢 افزودن اطلاعیه</h3>
@@ -143,222 +137,56 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
           <button class="btn btn-warning" onclick="doUpdateCoins()">به‌روزرسانی</button>
         </div>
 
-        <div class="card" style="background:#fff;margin-top:15px"><h3>🔄 همگام‌سازی</h3>
-          <p style="margin:10px 0;color:#666;font-size:13px">داده‌ها هم در سرور و هم در مرورگر ذخیره می‌شوند</p>
-          <button class="btn btn-primary" style="width:auto" onclick="doManualSync()">🔄 همگام‌سازی دستی</button>
-          <div id="syncStatus" style="margin-top:10px"></div>
+        <div class="card" style="background:#fff;margin-top:15px"><h3> پشتیبان‌گیری</h3>
+          <button class="btn btn-primary" style="width:auto;margin:5px" onclick="exportData()">📥 دانلود داده‌ها</button>
+          <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+          <button class="btn btn-success" style="width:auto;margin:5px" onclick="document.getElementById('importFile').click()"> بازیابی داده‌ها</button>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<div id="syncIndicator" class="sync-status" style="display:none"></div>
-
 <script>
-// ================= تنظیمات Supabase =================
-var SUPABASE_URL = 'https://nkswstjsmevrnvksebsr.supabase.co';
-var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3dzdGpzbWV2cm52a3NlYnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMzg5MDksImV4cCI6MjA5ODYxNDkwOX0.EFj6AK2lfAofZOYfW7QwaxN-POgpEjV5T7t7rnWJKGQ';
-var STORAGE_KEY = 'sandogh_data_v2';
-
+var STORAGE_KEY = 'sandogh_data_final';
 var currentUser = null;
-var isOnline = true;
-var appData = getDefaultData();
+var appData = {
+  messages: [],
+  coins: {},
+  announcements: [],
+  polls: [],
+  requests: [],
+  support: [],
+  rewards: [],
+  users: { 'admin': { password: 'admin123', role: 'admin' } }
+};
 
-function getDefaultData() {
-  return {
-    messages: [],
-    coins: {},
-    announcements: [],
-    polls: [],
-    requests: [],
-    support: [],
-    rewards: [],
-    users: { 'admin': { password: 'admin123', role: 'admin' } }
-  };
-}
-
-function showSyncStatus(message, type) {
-  var indicator = document.getElementById('syncIndicator');
-  indicator.textContent = message;
-  indicator.className = 'sync-status sync-' + type;
-  indicator.style.display = 'block';
-  setTimeout(function() { indicator.style.display = 'none'; }, 3000);
-}
-
-// ================= بارگذاری از LocalStorage =================
-function loadFromLocalStorage() {
+function loadFromStorage() {
   try {
     var saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       var parsed = JSON.parse(saved);
-      appData = Object.assign(getDefaultData(), parsed);
-      console.log('✅ داده‌ها از LocalStorage بارگذاری شدند');
+      appData = Object.assign({
+        messages: [], coins: {}, announcements: [], polls: [],
+        requests: [], support: [], rewards: [],
+        users: { 'admin': { password: 'admin123', role: 'admin' } }
+      }, parsed);
+      console.log('✅ داده‌ها بارگذاری شدند');
       return true;
     }
-  } catch (e) {
-    console.error('خطا در خواندن LocalStorage:', e);
-  }
+  } catch (e) { console.error(e); }
   return false;
 }
 
-// ================= ذخیره در LocalStorage =================
-function saveToLocalStorage() {
+function saveToStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-    console.log('✅ داده‌ها در LocalStorage ذخیره شدند');
+    console.log('✅ داده‌ها ذخیره شدند');
     return true;
-  } catch (e) {
-    console.error('خطا در ذخیره LocalStorage:', e);
-    return false;
-  }
+  } catch (e) { console.error(e); return false; }
 }
 
-// ================= بارگذاری از Supabase =================
-async function loadFromSupabase() {
-  console.log('🔄 تلاش برای بارگذاری از Supabase...');
-  try {
-    var response = await fetch(SUPABASE_URL + '/rest/v1/app_data?id=eq.1', {
-      method: 'GET',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    });
-    
-    if (!response.ok) {
-      console.warn('⚠️ Supabase پاسخ نداد:', response.status);
-      isOnline = false;
-      return false;
-    }
-    
-    var data = await response.json();
-    console.log('✅ داده از Supabase دریافت شد');
-    
-    if (data && data.length > 0) {
-      var record = data[0];
-      appData.messages = record.messages || [];
-      appData.coins = record.coins || {};
-      appData.announcements = record.announcements || [];
-      appData.polls = record.polls || [];
-      appData.requests = record.requests || [];
-      appData.support = record.support || [];
-      appData.rewards = record.rewards || [];
-      if (record.users) {
-        Object.assign(appData.users, record.users);
-      }
-      isOnline = true;
-      saveToLocalStorage();
-      console.log('✅ داده‌ها از Supabase بارگذاری و در LocalStorage ذخیره شدند');
-      return true;
-    }
-    return false;
-  } catch (e) {
-    console.warn('⚠️ خطا در اتصال به Supabase:', e.message);
-    isOnline = false;
-    return false;
-  }
-}
-
-// ================= ذخیره در Supabase =================
-async function saveToSupabase() {
-  console.log('💾 تلاش برای ذخیره در Supabase...');
-  try {
-    var response = await fetch(SUPABASE_URL + '/rest/v1/app_data?id=eq.1', {
-      method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        messages: appData.messages,
-        coins: appData.coins,
-        announcements: appData.announcements,
-        polls: appData.polls,
-        requests: appData.requests,
-        support: appData.support,
-        rewards: appData.rewards,
-        users: appData.users,
-        updated_at: new Date().toISOString()
-      })
-    });
-    
-    if (!response.ok) {
-      console.warn('⚠️ خطا در ذخیره Supabase:', response.status);
-      isOnline = false;
-      return false;
-    }
-    
-    isOnline = true;
-    console.log('✅ داده‌ها در Supabase ذخیره شدند');
-    return true;
-  } catch (e) {
-    console.warn('️ خطا در اتصال به Supabase:', e.message);
-    isOnline = false;
-    return false;
-  }
-}
-
-// ================= بارگذاری ترکیبی =================
-async function loadData() {
-  showSyncStatus('در حال بارگذاری...', 'loading');
-  
-  // اول از Supabase تلاش می‌کنیم
-  var supabaseOk = await loadFromSupabase();
-  
-  if (supabaseOk) {
-    showSyncStatus('✓ بارگذاری از سرور', 'success');
-    return true;
-  }
-  
-  // اگه Supabase در دسترس نبود، از LocalStorage
-  var localOk = loadFromLocalStorage();
-  if (localOk) {
-    showSyncStatus('⚠ بارگذاری آفلاین', 'offline');
-    return true;
-  }
-  
-  showSyncStatus('❌ خطا در بارگذاری', 'error');
-  return false;
-}
-
-// ================= ذخیره ترکیبی =================
-async function saveData() {
-  // همیشه در LocalStorage ذخیره می‌کنیم
-  saveToLocalStorage();
-  
-  // سپس تلاش می‌کنیم در Supabase ذخیره کنیم
-  var supabaseOk = await saveToSupabase();
-  
-  if (supabaseOk) {
-    showSyncStatus('✓ ذخیره در سرور', 'success');
-  } else {
-    showSyncStatus('⚠ ذخیره آفلاین', 'offline');
-  }
-  
-  return true;
-}
-
-async function doManualSync() {
-  var statusDiv = document.getElementById('syncStatus');
-  statusDiv.innerHTML = '<div class="alert alert-info">در حال همگام‌سازی با سرور...</div>';
-  
-  var ok = await loadFromSupabase();
-  if (ok) {
-    refreshUI();
-    statusDiv.innerHTML = '<div class="alert alert-success">✓ همگام‌سازی با سرور انجام شد</div>';
-  } else {
-    statusDiv.innerHTML = '<div class="alert alert-error">✗ سرور در دسترس نیست. داده‌های محلی استفاده می‌شود.</div>';
-  }
-  setTimeout(function() { statusDiv.innerHTML = ''; }, 5000);
-}
-
-async function doLogin() {
+function doLogin() {
   var u = document.getElementById('username').value.trim();
   var p = document.getElementById('password').value.trim();
   var alertBox = document.getElementById('loginAlert');
@@ -366,12 +194,7 @@ async function doLogin() {
     alertBox.innerHTML = '<div class="alert alert-error">لطفاً همه فیلدها را پر کنید</div>';
     return;
   }
-  console.log('🔐 تلاش برای ورود:', u);
-  var success = await loadData();
-  if (!success) {
-    alertBox.innerHTML = '<div class="alert alert-error">خطا در بارگذاری داده‌ها</div>';
-    return;
-  }
+  loadFromStorage();
   if (appData.users[u] && appData.users[u].password === p) {
     currentUser = { username: u, role: appData.users[u].role };
     localStorage.setItem('sandogh_user', JSON.stringify(currentUser));
@@ -410,7 +233,7 @@ function showSection(id, btn) {
 function refreshUI() {
   if (!currentUser) return;
   var userCoins = appData.coins[currentUser.username] || 0;
-  document.getElementById('userCoins').textContent = userCoins + ' 🪙';
+  document.getElementById('userCoins').textContent = userCoins + ' ';
   document.getElementById('myCoins').textContent = userCoins;
   document.getElementById('annCount').textContent = appData.announcements.length;
   document.getElementById('msgCount').textContent = appData.messages.length;
@@ -485,7 +308,7 @@ function renderSupport() {
     return;
   }
   list.innerHTML = myTickets.slice().reverse().map(function(t) {
-    return '<div class="card"><h3>' + escapeHtml(t.title) + '</h3><p>' + escapeHtml(t.message) + '</p><div style="font-size:12px;color:#999">👤 ' + escapeHtml(t.user) + ' |  ' + t.date + '</div></div>';
+    return '<div class="card"><h3>' + escapeHtml(t.title) + '</h3><p>' + escapeHtml(t.message) + '</p><div style="font-size:12px;color:#999"> ' + escapeHtml(t.user) + ' | 📅 ' + t.date + '</div></div>';
   }).join('');
 }
 
@@ -500,109 +323,143 @@ function renderRewards() {
   }).join('');
 }
 
-async function doSendMessage() {
+function doSendMessage() {
   var text = document.getElementById('newMessage').value.trim();
   if (!text) return alert('متن پیام خالی است');
   appData.messages.push({ user: currentUser.username, text: text, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('newMessage').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
 }
 
-async function doSendRequest() {
+function doSendRequest() {
   var title = document.getElementById('reqTitle').value.trim();
   var desc = document.getElementById('reqDesc').value.trim();
   if (!title || !desc) return alert('همه فیلدها را پر کنید');
   appData.requests.push({ title: title, desc: desc, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('reqTitle').value = '';
   document.getElementById('reqDesc').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
 }
 
-async function doSendSupport() {
+function doSendSupport() {
   var title = document.getElementById('supTitle').value.trim();
   var message = document.getElementById('supMsg').value.trim();
   if (!title || !message) return alert('همه فیلدها را پر کنید');
   appData.support.push({ title: title, message: message, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('supTitle').value = '';
   document.getElementById('supMsg').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
 }
 
-async function doVotePoll(pollIdx, optIdx) {
+function doVotePoll(pollIdx, optIdx) {
   if (!appData.polls[pollIdx].votes) appData.polls[pollIdx].votes = {};
   var key = currentUser.username;
   if (appData.polls[pollIdx].voters && appData.polls[pollIdx].voters.indexOf(key) !== -1) return alert('شما قبلاً رأی داده‌اید');
   if (!appData.polls[pollIdx].voters) appData.polls[pollIdx].voters = [];
   appData.polls[pollIdx].voters.push(key);
   appData.polls[pollIdx].votes[optIdx] = (appData.polls[pollIdx].votes[optIdx] || 0) + 1;
-  await saveData();
+  saveToStorage();
   refreshUI();
 }
 
-async function doClaimReward(idx) {
+function doClaimReward(idx) {
   var reward = appData.rewards[idx];
   var userCoins = appData.coins[currentUser.username] || 0;
   if (userCoins < reward.cost) return alert('سکه کافی ندارید');
   if (!confirm('آیا مطمئن هستید؟ هزینه: ' + reward.cost + ' سکه')) return;
   appData.coins[currentUser.username] = userCoins - reward.cost;
-  await saveData();
+  saveToStorage();
   refreshUI();
   alert('پاداش با موفقیت دریافت شد!');
 }
 
-async function doAddAnnouncement() {
+function doAddAnnouncement() {
   var title = document.getElementById('annTitle').value.trim();
   var body = document.getElementById('annBody').value.trim();
   if (!title || !body) return alert('همه فیلدها را پر کنید');
   appData.announcements.push({ title: title, body: body, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('annTitle').value = '';
   document.getElementById('annBody').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
   document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">اطلاعیه افزوده شد ✓</div>';
   setTimeout(function() { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
 }
 
-async function doAddPoll() {
+function doAddPoll() {
   var question = document.getElementById('pollQ').value.trim();
   var opts = document.getElementById('pollOpts').value.split(',').map(function(s) { return s.trim(); }).filter(function(s) { return s; });
   if (!question || opts.length < 2) return alert('سوال و حداقل 2 گزینه لازم است');
   appData.polls.push({ question: question, options: opts, votes: {}, voters: [] });
   document.getElementById('pollQ').value = '';
   document.getElementById('pollOpts').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
   document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">نظرسنجی افزوده شد ✓</div>';
   setTimeout(function() { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
 }
 
-async function doAddReward() {
+function doAddReward() {
   var title = document.getElementById('rewTitle').value.trim();
   var cost = parseInt(document.getElementById('rewCost').value);
   if (!title || !cost) return alert('همه فیلدها را پر کنید');
   appData.rewards.push({ title: title, cost: cost });
   document.getElementById('rewTitle').value = '';
   document.getElementById('rewCost').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
   document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">پاداش افزوده شد ✓</div>';
   setTimeout(function() { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
 }
 
-async function doUpdateCoins() {
+function doUpdateCoins() {
   var user = document.getElementById('coinUser').value.trim();
   var amount = parseInt(document.getElementById('coinAmount').value);
   if (!user || isNaN(amount)) return alert('اطلاعات نامعتبر');
   appData.coins[user] = (appData.coins[user] || 0) + amount;
   document.getElementById('coinUser').value = '';
   document.getElementById('coinAmount').value = '';
-  await saveData();
+  saveToStorage();
   refreshUI();
   document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">سکه ' + user + ' به‌روزرسانی شد ✓</div>';
   setTimeout(function() { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
+}
+
+function exportData() {
+  var dataStr = JSON.stringify(appData, null, 2);
+  var blob = new Blob([dataStr], { type: 'application/json' });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'sandogh-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('✓ فایل پشتیبان دانلود شد');
+}
+
+function importData(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var imported = JSON.parse(e.target.result);
+      appData = Object.assign({
+        messages: [], coins: {}, announcements: [], polls: [],
+        requests: [], support: [], rewards: [],
+        users: { 'admin': { password: 'admin123', role: 'admin' } }
+      }, imported);
+      saveToStorage();
+      refreshUI();
+      alert('✓ داده‌ها بازیابی شدند');
+    } catch (err) {
+      alert(' خطا در خواندن فایل');
+    }
+  };
+  reader.readAsText(file);
 }
 
 function escapeHtml(s) {
@@ -611,12 +468,12 @@ function escapeHtml(s) {
   return div.innerHTML;
 }
 
-window.onload = async function() {
+window.onload = function() {
   console.log('🚀 برنامه شروع شد');
   var saved = localStorage.getItem('sandogh_user');
   if (saved) {
     currentUser = JSON.parse(saved);
-    await loadData();
+    loadFromStorage();
     showDashboard();
   }
 };
