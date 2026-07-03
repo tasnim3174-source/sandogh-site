@@ -275,34 +275,41 @@ async function loadDataFromGitHub() {
 
 let lastSyncTime = 0;
 async function autoSync() {
-    const now = Date.now();
-    if (now - lastSyncTime < 30000) return; // هر 30 ثانیه
-    
-    if (window.app && window.app.auth && window.app.auth.isAdmin()) {
-        const data = {
-            members: window.app.dm.members,
-            users: window.app.dm.users,
-            timestamp: now
-        };
-        await syncDataToGitHub(data);
-    } else if (window.app && window.app.auth && window.app.auth.isLoggedIn()) {
-        const data = await loadDataFromGitHub();
-        if (data && data.members) {
-            window.app.dm.members = data.members;
-            window.app.dm.users = data.users;
-            window.app.dm.sv('members');
-            window.app.dm.sv('users');
-            console.log('✅ همگام‌سازی خودکار انجام شد');
-            if (window.app.ui) {
-                window.app.ui.render();
+    try {
+        const now = Date.now();
+        if (now - lastSyncTime < 30000) return; // هر 30 ثانیه
+        
+        if (!window.app) {
+            console.log('⏳ برنامه هنوز آماده نیست');
+            return;
+        }
+        
+        if (window.app.auth && window.app.auth.isAdmin()) {
+            const data = {
+                members: window.app.dm.members,
+                users: window.app.dm.users,
+                timestamp: now
+            };
+            await syncDataToGitHub(data);
+        } else if (window.app.auth && window.app.auth.isLoggedIn()) {
+            const data = await loadDataFromGitHub();
+            if (data && data.members) {
+                window.app.dm.members = data.members;
+                window.app.dm.users = data.users;
+                window.app.dm.sv('members');
+                window.app.dm.sv('users');
+                console.log('✅ همگام‌سازی خودکار انجام شد');
+                if (window.app.ui) {
+                    window.app.ui.render();
+                }
             }
         }
+        
+        lastSyncTime = now;
+    } catch (error) {
+        console.error('❌ خطا در همگام‌سازی:', error);
     }
-    
-    lastSyncTime = now;
 }
-
-setInterval(autoSync, 30000);
 
 class DM{
 constructor(){this.users=this.ld('users',[]);this.members=this.ld('members',[]);this.messages=this.ld('messages',[]);this.support=this.ld('support',{phone:'',accountNumber:'',address:''});this.announcements=this.ld('announcements',[]);this.polls=this.ld('polls',[]);this.logo=this.ld('logo','');if(!this.users.find(u=>u.username==='admin')){this.users.push({id:1,username:'admin',password:'admin123',role:'admin',memberId:null});this.sv('users');}}
@@ -382,7 +389,7 @@ addCoin(){const s=$('#cms'),a=$('#cai');if(!s||!a)return;const mid=parseInt(s.va
 resetCoins(mid){if(!confirm('ریست سکه‌ها؟'))return;const m=this.dm.gMember(mid);if(!m)return;m.coins=m.usedCoins=0;m.coinHistory=[];this.dm.sv('members');alert('ریست شد');this.ui.switchTab('coins');}
 addCoinAdmin(mid){const a=prompt('تعداد سکه:','5');if(!a)return;const n=parseInt(a);if(isNaN(n)||n<=0){alert('عدد معتبر وارد کنید');return;}const m=this.dm.gMember(mid);if(!m){alert('عضو یافت نشد');return;}this.dm.addCoin(mid,n,'افزودن توسط مدیر',`افزودن ${n} سکه`);alert('✅ اضافه شد');this.ui.switchTab('members');}
 spinWheel(){const wh=$('#wheel'),btn=$('#spinBtn'),res=$('#wheelResult');if(!wh||!btn)return;const today=new Date().toDateString();if(localStorage.getItem('lastSpinDate')===today){if(res)res.innerHTML='<i class="fas fa-times-circle"></i> امروز انجام شده';return;}btn.disabled=true;const prize=[1,2,3,4,5][Math.floor(Math.random()*5)],angle=Math.floor(Math.random()*5)*60+30+Math.random()*360+720;this.ui.sa+=angle;wh.style.transition='transform 4s cubic-bezier(.17,.67,.12,.99)';wh.style.transform=`rotate(${this.ui.sa}deg)`;setTimeout(()=>{if(res)res.innerHTML=`<i class="fas fa-trophy"></i> ${prize} سکه`;if(prize>0){const m=this.dm.gMember(this.auth.user.memberId);if(m)this.dm.addCoin(m.id,prize,'چرخش گردونه','گردونه شانس');}localStorage.setItem('lastSpinDate',today);btn.disabled=true;btn.innerHTML='<i class="fas fa-check"></i> امروز انجام شد';btn.style.opacity='.6';this.ui.updCoinBadge();},4000);}
-sendAdminMsg(){const i=$('#ami');if(!i?.value.trim()){alert('متن را وارد کنید');return;}let senderRole='admin',senderName='مدیر';if(this.auth.isSpecial()){senderRole='special';const m=this.dm.gMember(this.auth.user.memberId);senderName=m?`${m.firstName||''} ${m.lastName||''}`:'شورا';}else if(this.auth.isSupervisor() && !this.auth.isAdmin()){senderRole='supervisor';const m=this.dm.gMember(this.auth.user.memberId);senderName=m?`${m.firstName||''} ${m.lastName||''}`:'سرپرست';}this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:senderName,senderRole:senderRole,senderPhone:'',receiverId:null,receiverPhone:'',message:i.value.trim(),timestamp:U.now(),type:'admin_to_members',parentId:null,replyLabel:''});i.value='';this.ui.render();}
+sendAdminMsg(){const i=$('#ami');if(!i?.value.trim()){alert('متن را وارد کنید');return;}let senderRole='admin',senderName='مدیر';if(this.auth.isSpecial()){senderRole='special';const m=this.dm.gMember(this.auth.user.memberId);senderName=m?`${m.firstName||''} ${m.lastName||''}`:'شورا';}else if(this.auth.isSupervisor() && !this.auth.isAdmin()){senderRole='supervisor';const m=this.dm.gMember(this.auth.user.memberId);senderName=m?`${m.firstName||''} ${m.lastName||''}`:'سرپرست';}else if(this.auth.isAdmin()){senderRole='admin';senderName='مدیر';}this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:senderName,senderRole:senderRole,senderPhone:'',receiverId:null,receiverPhone:'',message:i.value.trim(),timestamp:U.now(),type:'admin_to_members',parentId:null,replyLabel:''});i.value='';this.ui.render();}
 sendToAdmin(){const i=$('#mtai');if(!i?.value.trim()){alert('متن را وارد کنید');return;}const m=this.dm.gMember(this.auth.user.memberId);if(!m){alert('اطلاعات یافت نشد');return;}this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:`${m.firstName||''} ${m.lastName||''}`,senderRole:'member',senderPhone:m.phone1||'',receiverId:1,receiverPhone:'',message:i.value.trim(),timestamp:U.now(),type:'member_to_admin',parentId:null,replyLabel:''});i.value='';this.dm.applyCoinRules(m);this.ui.switchTab('messenger');}
 sendToMember(){const pi=$('#mpi'),mi=$('#mtmi');if(!pi||!mi)return;const p=pi.value.trim(),t=mi.value.trim();if(!p||!t){alert('شماره و متن را وارد کنید');return;}const tg=this.dm.gMemberByPhone(p);if(!tg){alert('شماره در سیستم نیست');return;}const cm=this.dm.gMember(this.auth.user.memberId);if(!cm){alert('اطلاعات یافت نشد');return;}this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:`${cm.firstName||''} ${cm.lastName||''}`,senderRole:this.auth.isSpecial()?'special':'member',senderPhone:cm.phone1||'',receiverId:tg.id,receiverPhone:p,message:t,timestamp:U.now(),type:'member_to_member',parentId:null,replyLabel:''});pi.value='';mi.value='';this.ui.switchTab('messenger');}
 sendReply(pid,type,txt){const pm=this.dm.messages.find(m=>m.id===pid);if(!pm){alert('پیام اصلی یافت نشد');return;}const ia=this.auth.isAdmin(),isp=this.auth.isSpecial(),isv=this.auth.isSupervisor();let rl='',sn='',sr='member';if(ia){rl='پاسخ از مدیریت';sn='مدیر';sr='admin';}else if(isp){rl='پاسخ از شورا';const m=this.dm.gMember(this.auth.user.memberId);sn=m?`${m.firstName||''} ${m.lastName||''}`:'شورا';sr='special';}else if(isv){rl='پاسخ از سرپرست';const m=this.dm.gMember(this.auth.user.memberId);sn=m?`${m.firstName||''} ${m.lastName||''}`:'سرپرست';sr='supervisor';}else{const m=this.dm.gMember(this.auth.user.memberId);sn=`${m?.firstName||''} ${m?.lastName||''}`;}const m=this.dm.gMember(this.auth.user.memberId);this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:sn,senderRole:sr,senderPhone:m?.phone1||'',receiverId:ia?1:null,receiverPhone:type==='member_to_member'?pm.senderPhone:'',message:txt,timestamp:U.now(),type,parentId:pid,replyLabel:rl});this.ui.switchTab('messenger');}
@@ -405,7 +412,7 @@ uploadBulk(file){this.dm.uploadBulk(file,(e,tr,up,ad,nm)=>{if(e)alert('❌ '+e);
 تراکنش: ${ad}`);this.ui.switchTab('members');}});}
 saveSupport(){const p=$('#spp').value.trim(),a=$('#spa').value.trim(),ad=$('#spad').value.trim();this.dm.support={phone:p,accountNumber:a,address:ad};this.dm.sv('support');alert('ذخیره شد');this.ui.switchTab('support');}
 }
-try{const app=new App();window.app=app;document.addEventListener('click',function(e){const t=e.target;if(t.matches('.poll-options .option-btn')&&!t.disabled)app.votePoll(t.dataset.poll,parseInt(t.dataset.opt));});}catch(e){console.error('خطا:',e);document.getElementById('appContainer').innerHTML='<div style="text-align:center;padding:40px;color:red;"><i class="fas fa-exclamation-triangle" style="font-size:3rem"></i><p style="margin-top:15px">خطا در بارگذاری. لطفاً صفحه را رفرش کنید.</p></div>';}
+try{const app=new App();window.app=app;setInterval(autoSync, 30000);document.addEventListener('click',function(e){const t=e.target;if(t.matches('.poll-options .option-btn')&&!t.disabled)app.votePoll(t.dataset.poll,parseInt(t.dataset.opt));});}catch(e){console.error('خطا:',e);document.getElementById('appContainer').innerHTML='<div style="text-align:center;padding:40px;color:red;"><i class="fas fa-exclamation-triangle" style="font-size:3rem"></i><p style="margin-top:15px">خطا در بارگذاری. لطفاً صفحه را رفرش کنید.</p></div>';}
 })();
 </script>
 </body>
