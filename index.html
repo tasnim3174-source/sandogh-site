@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>صندوق اتحاد</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- استفاده از نسخه UMD و CDN جایگزین -->
+<script src="https://unpkg.com/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
 body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
@@ -32,7 +33,6 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 .alert{padding:12px;border-radius:8px;margin-bottom:15px}
 .alert-success{background:#d4edda;color:#155724}
 .alert-error{background:#f8d7da;color:#721c24}
-.alert-info{background:#d1ecf1;color:#0c5460}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
 .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center}
 .stat-card .num{font-size:32px;font-weight:bold;margin:10px 0}
@@ -70,19 +70,19 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
     <div style="padding:15px;background:#f8f9fa;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
       <div>
         <span>خوش آمدید، <strong id="currentUser"></strong></span>
-        <span class="coin-display" id="userCoins">0 </span>
+        <span class="coin-display" id="userCoins">0 🪙</span>
       </div>
       <button class="btn btn-danger" onclick="logout()">خروج</button>
     </div>
 
     <div class="nav">
-      <button class="active" onclick="showSection('home',this)"> خانه</button>
+      <button class="active" onclick="showSection('home',this)">🏠 خانه</button>
       <button onclick="showSection('announcements',this)">📢 اطلاعیه‌ها</button>
       <button onclick="showSection('messages',this)">💬 پیام‌ها</button>
       <button onclick="showSection('polls',this)">📊 نظرسنجی</button>
       <button onclick="showSection('requests',this)">📝 درخواست‌ها</button>
-      <button onclick="showSection('support',this)">🎧 پشتیبانی</button>
-      <button onclick="showSection('rewards',this)"> پاداش‌ها</button>
+      <button onclick="showSection('support',this)"> پشتیبانی</button>
+      <button onclick="showSection('rewards',this)">🎁 پاداش‌ها</button>
       <button id="adminTab" style="display:none" onclick="showSection('admin',this)">⚙️ مدیریت</button>
     </div>
 
@@ -195,9 +195,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 const SUPABASE_URL = 'https://nkswstjsmevrnvksebsr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3dzdGpzbWV2cm52a3NlYnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMzg5MDksImV4cCI6MjA5ODYxNDkwOX0.EFj6AK2lfAofZOYfW7QwaxN-POgpEjV5T7t7rnWJKGQ';
 
-// تعریف supabase به صورت let (نه const)
 let supabase = null;
-
 let currentUser = null;
 let appData = {
   messages: [],
@@ -210,9 +208,10 @@ let appData = {
   users: { 'admin': { password: 'admin123', role: 'admin' } }
 };
 
-// ================= مقداردهی Supabase بعد از لود شدن =================
+// ================= راه‌اندازی Supabase =================
 function initSupabase() {
-  if (window.supabase && !supabase) {
+  // چک می‌کنیم آیا کتابخانه لود شده است
+  if (typeof window.supabase !== 'undefined' && !supabase) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     console.log('✅ Supabase initialized');
     return true;
@@ -220,7 +219,7 @@ function initSupabase() {
   return false;
 }
 
-// ================= نمایش وضعیت همگام‌سازی =================
+// ================= نمایش وضعیت =================
 function showSyncStatus(message, type) {
   const indicator = document.getElementById('syncIndicator');
   indicator.textContent = message;
@@ -229,17 +228,15 @@ function showSyncStatus(message, type) {
   setTimeout(() => { indicator.style.display = 'none'; }, 3000);
 }
 
-// ================= بارگذاری داده از Supabase =================
+// ================= بارگذاری داده =================
 async function loadData() {
-  if (!supabase) {
-    if (!initSupabase()) {
-      console.error('❌ Supabase هنوز لود نشده');
-      showSyncStatus('خطا: Supabase لود نشده', 'error');
-      return false;
-    }
+  if (!supabase && !initSupabase()) {
+    console.error('❌ کتابخانه Supabase در دسترس نیست');
+    showSyncStatus('خطا: کتابخانه لود نشد', 'error');
+    return false;
   }
 
-  console.log('🔄 شروع بارگذاری داده‌ها از Supabase...');
+  console.log('🔄 بارگذاری از Supabase...');
   showSyncStatus('در حال بارگذاری...', 'loading');
   
   try {
@@ -254,8 +251,6 @@ async function loadData() {
       showSyncStatus('خطا در بارگذاری', 'error');
       return false;
     }
-    
-    console.log('✅ داده دریافت شد:', data);
     
     if (data) {
       appData = {
@@ -272,11 +267,8 @@ async function loadData() {
       console.log('✅ داده‌ها بارگذاری شدند');
       showSyncStatus('✓ بارگذاری موفق', 'success');
       return true;
-    } else {
-      console.warn('⚠️ داده‌ای پیدا نشد');
-      showSyncStatus('داده‌ای وجود ندارد', 'error');
-      return false;
     }
+    return false;
   } catch (e) {
     console.error('❌ خطا در بارگذاری:', e);
     showSyncStatus('خطا در اتصال', 'error');
@@ -284,21 +276,19 @@ async function loadData() {
   }
 }
 
-// ================= ذخیره داده در Supabase =================
+// ================= ذخیره داده =================
 async function saveData() {
-  if (!supabase) {
-    if (!initSupabase()) {
-      console.error('❌ Supabase هنوز لود نشده');
-      showSyncStatus('خطا: Supabase لود نشده', 'error');
-      return false;
-    }
+  if (!supabase && !initSupabase()) {
+    console.error('❌ کتابخانه Supabase در دسترس نیست');
+    showSyncStatus('خطا: کتابخانه لود نشد', 'error');
+    return false;
   }
 
-  console.log('💾 شروع ذخیره داده‌ها در Supabase...');
+  console.log('💾 ذخیره در Supabase...');
   showSyncStatus('در حال ذخیره...', 'loading');
   
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('app_data')
       .update({
         messages: appData.messages,
@@ -311,8 +301,7 @@ async function saveData() {
         users: appData.users,
         updated_at: new Date().toISOString()
       })
-      .eq('id', 1)
-      .select();
+      .eq('id', 1);
     
     if (error) {
       console.error('❌ خطا در ذخیره:', error);
@@ -320,8 +309,8 @@ async function saveData() {
       return false;
     }
     
-    console.log('✅ داده‌ها ذخیره شدند:', data);
-    showSyncStatus('✓ ذخیره موفق', 'success');
+    console.log('✅ ذخیره موفق');
+    showSyncStatus('✓ ذخیره شد', 'success');
     return true;
   } catch (e) {
     console.error('❌ خطا در ذخیره:', e);
@@ -330,19 +319,15 @@ async function saveData() {
   }
 }
 
-// ================= همگام‌سازی دستی =================
 async function manualSync() {
   const statusDiv = document.getElementById('syncStatus');
   statusDiv.innerHTML = '<div class="alert alert-info">در حال همگام‌سازی...</div>';
-  
   await loadData();
   refreshUI();
-  
   statusDiv.innerHTML = '<div class="alert alert-success">✓ همگام‌سازی انجام شد</div>';
   setTimeout(() => { statusDiv.innerHTML = ''; }, 3000);
 }
 
-// ================= احراز هویت =================
 async function login() {
   const u = document.getElementById('username').value.trim();
   const p = document.getElementById('password').value.trim();
@@ -353,8 +338,7 @@ async function login() {
     return;
   }
 
-  console.log(' تلاش برای ورود:', u);
-  
+  console.log('🔐 تلاش برای ورود:', u);
   const success = await loadData();
   
   if (!success) {
@@ -368,7 +352,6 @@ async function login() {
     console.log('✅ ورود موفق:', u);
     showDashboard();
   } else {
-    console.log('❌ ورود ناموفق');
     alertBox.innerHTML = '<div class="alert alert-error">نام کاربری یا رمز عبور اشتباه است</div>';
   }
 }
@@ -384,15 +367,12 @@ function showDashboard() {
   document.getElementById('loginPage').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   document.getElementById('currentUser').textContent = currentUser.username;
-
   if (currentUser.role === 'admin') {
     document.getElementById('adminTab').style.display = 'block';
   }
-
   refreshUI();
 }
 
-// ================= ناوبری =================
 function showSection(id, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
@@ -401,17 +381,14 @@ function showSection(id, btn) {
   refreshUI();
 }
 
-// ================= به‌روزرسانی UI =================
 function refreshUI() {
   if (!currentUser) return;
-  
   const userCoins = appData.coins[currentUser.username] || 0;
   document.getElementById('userCoins').textContent = userCoins + ' 🪙';
   document.getElementById('myCoins').textContent = userCoins;
   document.getElementById('annCount').textContent = appData.announcements.length;
   document.getElementById('msgCount').textContent = appData.messages.length;
   document.getElementById('reqCount').textContent = appData.requests.length;
-
   renderAnnouncements();
   renderMessages();
   renderPolls();
@@ -423,28 +400,17 @@ function refreshUI() {
 function renderAnnouncements() {
   const list = document.getElementById('announcementsList');
   const homeList = document.getElementById('homeAnnouncements');
-  
   if (appData.announcements.length === 0) {
     list.innerHTML = '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
     homeList.innerHTML = '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
     return;
   }
-  
   const html = appData.announcements.slice().reverse().map(a => `
-    <div class="card">
-      <h3>${escapeHtml(a.title)}</h3>
-      <p>${escapeHtml(a.body)}</p>
-      <div class="meta">📅 ${a.date}</div>
-    </div>
+    <div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="meta">📅 ${a.date}</div></div>
   `).join('');
-  
   list.innerHTML = html;
   homeList.innerHTML = appData.announcements.slice(-3).reverse().map(a => `
-    <div class="card">
-      <h3>${escapeHtml(a.title)}</h3>
-      <p>${escapeHtml(a.body)}</p>
-      <div class="meta">📅 ${a.date}</div>
-    </div>
+    <div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="meta">📅 ${a.date}</div></div>
   `).join('');
 }
 
@@ -455,11 +421,7 @@ function renderMessages() {
     return;
   }
   list.innerHTML = appData.messages.slice().reverse().map(m => `
-    <div class="card">
-      <h3>${escapeHtml(m.user)}</h3>
-      <p>${escapeHtml(m.text)}</p>
-      <div class="meta">📅 ${m.date}</div>
-    </div>
+    <div class="card"><h3>${escapeHtml(m.user)}</h3><p>${escapeHtml(m.text)}</p><div class="meta">📅 ${m.date}</div></div>
   `).join('');
 }
 
@@ -470,12 +432,8 @@ function renderPolls() {
     return;
   }
   list.innerHTML = appData.polls.map((p, i) => `
-    <div class="card">
-      <h3>${escapeHtml(p.question)}</h3>
-      ${p.options.map((opt, j) => {
-        const votes = (p.votes && p.votes[j]) || 0;
-        return `<button class="btn btn-primary" style="width:auto;margin:5px" onclick="votePoll(${i},${j})">${escapeHtml(opt)} (${votes})</button>`;
-      }).join('')}
+    <div class="card"><h3>${escapeHtml(p.question)}</h3>
+    ${p.options.map((opt, j) => `<button class="btn btn-primary" style="width:auto;margin:5px" onclick="votePoll(${i},${j})">${escapeHtml(opt)} (${(p.votes && p.votes[j]) || 0})</button>`).join('')}
     </div>
   `).join('');
 }
@@ -487,11 +445,7 @@ function renderRequests() {
     return;
   }
   list.innerHTML = appData.requests.slice().reverse().map(r => `
-    <div class="card">
-      <h3>${escapeHtml(r.title)}</h3>
-      <p>${escapeHtml(r.desc)}</p>
-      <div class="meta"> ${escapeHtml(r.user)} | 📅 ${r.date}</div>
-    </div>
+    <div class="card"><h3>${escapeHtml(r.title)}</h3><p>${escapeHtml(r.desc)}</p><div class="meta">👤 ${escapeHtml(r.user)} | 📅 ${r.date}</div></div>
   `).join('');
 }
 
@@ -503,11 +457,7 @@ function renderSupport() {
     return;
   }
   list.innerHTML = myTickets.slice().reverse().map(t => `
-    <div class="card">
-      <h3>${escapeHtml(t.title)}</h3>
-      <p>${escapeHtml(t.message)}</p>
-      <div class="meta"> ${escapeHtml(t.user)} | 📅 ${t.date}</div>
-    </div>
+    <div class="card"><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.message)}</p><div class="meta">👤 ${escapeHtml(t.user)} | 📅 ${t.date}</div></div>
   `).join('');
 }
 
@@ -518,25 +468,14 @@ function renderRewards() {
     return;
   }
   list.innerHTML = appData.rewards.map((r, i) => `
-    <div class="card">
-      <h3>${escapeHtml(r.title)}</h3>
-      <p>هزینه: <strong>${r.cost} سکه 🪙</strong></p>
-      <button class="btn btn-success" onclick="claimReward(${i})">دریافت</button>
-    </div>
+    <div class="card"><h3>${escapeHtml(r.title)}</h3><p>هزینه: <strong>${r.cost} سکه </strong></p><button class="btn btn-success" onclick="claimReward(${i})">دریافت</button></div>
   `).join('');
 }
 
-// ================= عملیات کاربر =================
 async function sendMessage() {
   const text = document.getElementById('newMessage').value.trim();
   if (!text) return alert('متن پیام خالی است');
-  
-  appData.messages.push({ 
-    user: currentUser.username, 
-    text, 
-    date: new Date().toLocaleString('fa-IR') 
-  });
-  
+  appData.messages.push({ user: currentUser.username, text, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('newMessage').value = '';
   await saveData();
   refreshUI();
@@ -546,14 +485,7 @@ async function sendRequest() {
   const title = document.getElementById('reqTitle').value.trim();
   const desc = document.getElementById('reqDesc').value.trim();
   if (!title || !desc) return alert('همه فیلدها را پر کنید');
-  
-  appData.requests.push({ 
-    title, 
-    desc, 
-    user: currentUser.username, 
-    date: new Date().toLocaleString('fa-IR') 
-  });
-  
+  appData.requests.push({ title, desc, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('reqTitle').value = '';
   document.getElementById('reqDesc').value = '';
   await saveData();
@@ -564,14 +496,7 @@ async function sendSupport() {
   const title = document.getElementById('supTitle').value.trim();
   const message = document.getElementById('supMsg').value.trim();
   if (!title || !message) return alert('همه فیلدها را پر کنید');
-  
-  appData.support.push({ 
-    title, 
-    message, 
-    user: currentUser.username, 
-    date: new Date().toLocaleString('fa-IR') 
-  });
-  
+  appData.support.push({ title, message, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('supTitle').value = '';
   document.getElementById('supMsg').value = '';
   await saveData();
@@ -581,15 +506,10 @@ async function sendSupport() {
 async function votePoll(pollIdx, optIdx) {
   if (!appData.polls[pollIdx].votes) appData.polls[pollIdx].votes = {};
   const key = currentUser.username;
-  
-  if (appData.polls[pollIdx].voters && appData.polls[pollIdx].voters.includes(key)) {
-    return alert('شما قبلاً رأی داده‌اید');
-  }
-  
+  if (appData.polls[pollIdx].voters && appData.polls[pollIdx].voters.includes(key)) return alert('شما قبلاً رأی داده‌اید');
   if (!appData.polls[pollIdx].voters) appData.polls[pollIdx].voters = [];
   appData.polls[pollIdx].voters.push(key);
   appData.polls[pollIdx].votes[optIdx] = (appData.polls[pollIdx].votes[optIdx] || 0) + 1;
-  
   await saveData();
   refreshUI();
 }
@@ -597,28 +517,19 @@ async function votePoll(pollIdx, optIdx) {
 async function claimReward(idx) {
   const reward = appData.rewards[idx];
   const userCoins = appData.coins[currentUser.username] || 0;
-  
   if (userCoins < reward.cost) return alert('سکه کافی ندارید');
   if (!confirm(`آیا مطمئن هستید؟ هزینه: ${reward.cost} سکه`)) return;
-  
   appData.coins[currentUser.username] = userCoins - reward.cost;
   await saveData();
   refreshUI();
   alert('پاداش با موفقیت دریافت شد!');
 }
 
-// ================= عملیات ادمین =================
 async function addAnnouncement() {
   const title = document.getElementById('annTitle').value.trim();
   const body = document.getElementById('annBody').value.trim();
   if (!title || !body) return alert('همه فیلدها را پر کنید');
-  
-  appData.announcements.push({ 
-    title, 
-    body, 
-    date: new Date().toLocaleString('fa-IR') 
-  });
-  
+  appData.announcements.push({ title, body, date: new Date().toLocaleString('fa-IR') });
   document.getElementById('annTitle').value = '';
   document.getElementById('annBody').value = '';
   await saveData();
@@ -631,14 +542,7 @@ async function addPoll() {
   const question = document.getElementById('pollQ').value.trim();
   const opts = document.getElementById('pollOpts').value.split(',').map(s => s.trim()).filter(s => s);
   if (!question || opts.length < 2) return alert('سوال و حداقل 2 گزینه لازم است');
-  
-  appData.polls.push({ 
-    question, 
-    options: opts, 
-    votes: {}, 
-    voters: [] 
-  });
-  
+  appData.polls.push({ question, options: opts, votes: {}, voters: [] });
   document.getElementById('pollQ').value = '';
   document.getElementById('pollOpts').value = '';
   await saveData();
@@ -651,7 +555,6 @@ async function addReward() {
   const title = document.getElementById('rewTitle').value.trim();
   const cost = parseInt(document.getElementById('rewCost').value);
   if (!title || !cost) return alert('همه فیلدها را پر کنید');
-  
   appData.rewards.push({ title, cost });
   document.getElementById('rewTitle').value = '';
   document.getElementById('rewCost').value = '';
@@ -665,7 +568,6 @@ async function updateCoins() {
   const user = document.getElementById('coinUser').value.trim();
   const amount = parseInt(document.getElementById('coinAmount').value);
   if (!user || isNaN(amount)) return alert('اطلاعات نامعتبر');
-  
   appData.coins[user] = (appData.coins[user] || 0) + amount;
   document.getElementById('coinUser').value = '';
   document.getElementById('coinAmount').value = '';
@@ -675,38 +577,27 @@ async function updateCoins() {
   setTimeout(() => { document.getElementById('adminAlert').innerHTML = ''; }, 3000);
 }
 
-// ================= ابزار =================
 function escapeHtml(s) {
   const div = document.createElement('div');
   div.textContent = s;
   return div.innerHTML;
 }
 
-// ================= شروع =================
 window.onload = async () => {
   console.log('🚀 برنامه شروع شد');
   
-  // صبر کن تا Supabase لود بشه
-  let attempts = 0;
-  const maxAttempts = 50;
-  
-  while (!initSupabase() && attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 100));
-    attempts++;
-  }
-  
-  if (!supabase) {
-    console.error('❌ Supabase لود نشد!');
-    alert('خطا در بارگذاری Supabase. لطفاً صفحه را رفرش کنید.');
+  // بررسی لود شدن کتابخانه
+  if (typeof window.supabase === 'undefined') {
+    console.error('❌ کتابخانه Supabase بارگذاری نشد!');
+    alert('خطا: کتابخانه Supabase بارگذاری نشد. لطفاً اتصال اینترنت خود را بررسی کنید یا فیلترشکن را خاموش/روشن کنید.');
     return;
   }
   
-  console.log('✅ Supabase آماده است');
+  initSupabase();
   
   const saved = localStorage.getItem('sandogh_user');
   if (saved) {
     currentUser = JSON.parse(saved);
-    console.log('👤 کاربر ذخیره شده:', currentUser.username);
     await loadData();
     showDashboard();
   }
