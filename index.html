@@ -88,21 +88,28 @@ let data = {
 };
 
 async function load() {
+  console.log('🔄 بارگذاری از JSONBin...');
   try {
     const r = await fetch(URL + '/latest', { headers: { 'X-Master-Key': KEY } });
+    console.log('Status:', r.status);
     const d = await r.json();
-    if (d.record) data = { ...data, ...d.record };
-  } catch(e) { console.error(e); }
+    if (d.record) {
+      data = { ...data, ...d.record };
+      console.log('✅ بارگذاری موفق');
+    }
+  } catch(e) { console.error('❌ خطا:', e); }
 }
 
 async function save() {
+  console.log('💾 ذخیره در JSONBin...');
   try {
     await fetch(URL, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'X-Master-Key': KEY },
       body: JSON.stringify(data)
     });
-  } catch(e) { console.error(e); }
+    console.log('✅ ذخیره موفق');
+  } catch(e) { console.error('❌ خطا:', e); }
 }
 
 async function login() {
@@ -117,7 +124,7 @@ async function login() {
     document.getElementById('currentUser').textContent = u;
     update();
   } else {
-    alert('خطا!');
+    alert('نام کاربری یا رمز اشتباه است');
   }
 }
 
@@ -128,10 +135,9 @@ function logout() {
 
 function show(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav button').forEach((b,i,a) => {
-    b.classList.toggle('active', a[i].textContent.includes(id === 'home' ? 'خانه' : id === 'messages' ? 'پیام' : 'مدیریت'));
-  });
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
 }
 
 function update() {
@@ -157,10 +163,11 @@ async function addCoin() {
   if (!u || !a) return;
   data.coins[u] = (data.coins[u] || 0) + a;
   await save();
-  alert('✓');
+  alert('✓ سکه اضافه شد');
 }
 
 window.onload = async () => {
+  console.log('🚀 برنامه شروع شد');
   const s = localStorage.getItem('u');
   if (s) {
     user = s;
