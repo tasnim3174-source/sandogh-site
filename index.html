@@ -3,506 +3,128 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>صندوق - Sandogh</title>
-<!-- اضافه کردن Eruda برای کنسول موبایل -->
+<title>صندوق</title>
 <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
 <script>eruda.init();</script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; font-family: Tahoma, sans-serif; }
-  body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-  .container { max-width: 1200px; margin: 0 auto; background: #fff; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); overflow: hidden; }
-  .header { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px; text-align: center; }
-  .header h1 { font-size: 28px; }
-  .login-box { max-width: 400px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-  .login-box h2 { text-align: center; margin-bottom: 20px; color: #333; }
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; margin-bottom: 5px; color: #555; font-weight: bold; }
-  .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
-  .btn { padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; }
-  .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; width: 100%; }
-  .btn-success { background: #27ae60; color: #fff; }
-  .btn-warning { background: #f39c12; color: #fff; }
-  .nav { display: flex; background: #f8f9fa; border-bottom: 2px solid #e9ecef; overflow-x: auto; }
-  .nav button { flex: 1; padding: 15px; border: none; background: transparent; cursor: pointer; font-size: 14px; font-weight: bold; color: #555; }
-  .nav button.active { background: #fff; color: #667eea; border-bottom: 3px solid #667eea; }
-  .content { padding: 25px; min-height: 500px; }
-  .section { display: none; }
-  .section.active { display: block; }
-  .card { background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-right: 4px solid #667eea; }
-  .card h3 { color: #333; margin-bottom: 8px; }
-  .card p { color: #666; line-height: 1.6; }
-  .card .meta { font-size: 12px; color: #999; margin-top: 8px; }
-  .alert { padding: 12px; border-radius: 8px; margin-bottom: 15px; }
-  .alert-success { background: #d4edda; color: #155724; }
-  .alert-error { background: #f8d7da; color: #721c24; }
-  .logout-btn { background: #e74c3c; color: #fff; padding: 8px 16px; border-radius: 8px; border: none; }
-  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-  .stat-card { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px; border-radius: 10px; text-align: center; }
-  .stat-card .num { font-size: 32px; font-weight: bold; margin: 10px 0; }
-  .stat-card .label { font-size: 14px; opacity: 0.9; }
-  .empty { text-align: center; padding: 40px; color: #999; }
-  .coin-display { display: inline-block; background: #f39c12; color: #fff; padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 13px; margin-right: 10px; }
-  .test-box { position: fixed; bottom: 10px; left: 10px; background: #000; color: #0f0; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 11px; max-width: 200px; max-height: 150px; overflow-y: auto; z-index: 9999; }
+*{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma}
+body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:10px}
+.container{max-width:1200px;margin:0 auto;background:#fff;border-radius:15px;overflow:hidden}
+.header{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;text-align:center}
+.login-box{max-width:400px;margin:50px auto;padding:30px;background:#fff;border-radius:15px}
+.form-group{margin-bottom:15px}
+.form-group label{display:block;margin-bottom:5px;font-weight:bold}
+.form-group input,.form-group textarea{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:14px}
+.btn{padding:12px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;color:#fff}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2)}
+.btn-success{background:#27ae60}
+.btn-warning{background:#f39c12}
+.btn-danger{background:#e74c3c}
+.nav{display:flex;background:#f8f9fa;border-bottom:2px solid #e9ecef;overflow-x:auto}
+.nav button{flex:1;padding:12px;border:none;background:transparent;cursor:pointer;font-weight:bold;color:#555;white-space:nowrap}
+.nav button.active{background:#fff;color:#667eea;border-bottom:3px solid #667eea}
+.content{padding:20px;min-height:400px}
+.section{display:none}
+.section.active{display:block}
+.card{background:#f8f9fa;padding:15px;border-radius:10px;margin-bottom:10px;border-right:4px solid #667eea}
+.card h3{margin-bottom:8px}
+.alert{padding:10px;border-radius:8px;margin-bottom:10px}
+.alert-success{background:#d4edda;color:#155724}
+.alert-error{background:#f8d7da;color:#721c24}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:15px}
+.stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:15px;border-radius:10px;text-align:center}
+.stat-card .num{font-size:28px;font-weight:bold}
+.empty{text-align:center;padding:30px;color:#999}
+.coin-display{background:#f39c12;color:#fff;padding:4px 10px;border-radius:20px;font-weight:bold;font-size:13px}
 </style>
 </head>
 <body>
-
 <div class="container">
-  <div class="header">
-    <h1>💰 صندوق</h1>
-    <p>سیستم مدیریت صندوق</p>
-  </div>
+<div class="header"><h1>💰 صندوق</h1></div>
 
-  <div id="loginPage" class="login-box">
-    <h2> ورود به سیستم</h2>
-    <div id="loginAlert"></div>
-    <div class="form-group">
-      <label>نام کاربری</label>
-      <input type="text" id="username" placeholder="نام کاربری">
-    </div>
-    <div class="form-group">
-      <label>رمز عبور</label>
-      <input type="password" id="password" placeholder="رمز عبور">
-    </div>
-    <button class="btn btn-primary" onclick="login()">ورود</button>
-  </div>
-
-  <div id="dashboard" style="display:none;">
-    <div style="padding: 15px; background: #f8f9fa; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-      <div>
-        <span>خوش آمدید، <strong id="currentUser"></strong></span>
-        <span class="coin-display" id="userCoins">0 🪙</span>
-      </div>
-      <button class="logout-btn" onclick="logout()">خروج</button>
-    </div>
-
-    <div class="nav">
-      <button class="active" onclick="showSection('home', this)">🏠 خانه</button>
-      <button onclick="showSection('announcements', this)">📢 اطلاعیه</button>
-      <button onclick="showSection('messages', this)">💬 پیام</button>
-      <button onclick="showSection('polls', this)">📊 نظرسنجی</button>
-      <button onclick="showSection('requests', this)">📝 درخواست</button>
-      <button onclick="showSection('support', this)">🎧 پشتیبانی</button>
-      <button onclick="showSection('rewards', this)">🎁 پاداش</button>
-      <button id="adminTab" style="display:none;" onclick="showSection('admin', this)">⚙️ مدیریت</button>
-    </div>
-
-    <div class="content">
-      <div id="home" class="section active">
-        <div class="stats">
-          <div class="stat-card"><div class="label">موجودی شما</div><div class="num" id="myCoins">0</div><div class="label">سکه 🪙</div></div>
-          <div class="stat-card"><div class="label">اطلاعیه‌ها</div><div class="num" id="annCount">0</div><div class="label">مورد</div></div>
-          <div class="stat-card"><div class="label">پیام‌ها</div><div class="num" id="msgCount">0</div><div class="label">مورد</div></div>
-          <div class="stat-card"><div class="label">درخواست‌ها</div><div class="num" id="reqCount">0</div><div class="label">مورد</div></div>
-        </div>
-        <h2>📌 آخرین اطلاعیه‌ها</h2>
-        <div id="homeAnnouncements"></div>
-      </div>
-
-      <div id="announcements" class="section">
-        <h2>📢 اطلاعیه‌ها</h2>
-        <div id="announcementsList"></div>
-      </div>
-
-      <div id="messages" class="section">
-        <h2>💬 پیام‌ها</h2>
-        <div class="form-group"><textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea></div>
-        <button class="btn btn-primary" style="width:auto;margin-bottom:20px;" onclick="sendMessage()">ارسال پیام</button>
-        <div id="messagesList"></div>
-      </div>
-
-      <div id="polls" class="section">
-        <h2>📊 نظرسنجی‌ها</h2>
-        <div id="pollsList"></div>
-      </div>
-
-      <div id="requests" class="section">
-        <h2>📝 درخواست‌ها</h2>
-        <div class="form-group"><input type="text" id="reqTitle" placeholder="عنوان درخواست"></div>
-        <div class="form-group"><textarea id="reqDesc" rows="3" placeholder="توضیحات..."></textarea></div>
-        <button class="btn btn-primary" style="width:auto;margin-bottom:20px;" onclick="sendRequest()">ثبت درخواست</button>
-        <div id="requestsList"></div>
-      </div>
-
-      <div id="support" class="section">
-        <h2>🎧 پشتیبانی</h2>
-        <div class="form-group"><input type="text" id="supTitle" placeholder="موضوع"></div>
-        <div class="form-group"><textarea id="supMsg" rows="3" placeholder="پیام شما..."></textarea></div>
-        <button class="btn btn-primary" style="width:auto;margin-bottom:20px;" onclick="sendSupport()">ارسال تیکت</button>
-        <div id="supportList"></div>
-      </div>
-
-      <div id="rewards" class="section">
-        <h2> پاداش‌ها</h2>
-        <div id="rewardsList"></div>
-      </div>
-
-      <div id="admin" class="section">
-        <h2>️ پنل مدیریت</h2>
-        <div id="adminAlert"></div>
-        <div class="card" style="background:#fff;">
-          <h3>📢 افزودن اطلاعیه</h3>
-          <div class="form-group"><input type="text" id="annTitle" placeholder="عنوان"></div>
-          <div class="form-group"><textarea id="annBody" rows="3" placeholder="متن اطلاعیه"></textarea></div>
-          <button class="btn btn-success" onclick="addAnnouncement()">افزودن</button>
-        </div>
-        <div class="card" style="background:#fff;margin-top:15px;">
-          <h3>📊 افزودن نظرسنجی</h3>
-          <div class="form-group"><input type="text" id="pollQ" placeholder="سوال"></div>
-          <div class="form-group"><input type="text" id="pollOpts" placeholder="گزینه‌ها (با , جدا کنید)"></div>
-          <button class="btn btn-success" onclick="addPoll()">افزودن</button>
-        </div>
-        <div class="card" style="background:#fff;margin-top:15px;">
-          <h3> افزودن پاداش</h3>
-          <div class="form-group"><input type="text" id="rewTitle" placeholder="عنوان پاداش"></div>
-          <div class="form-group"><input type="number" id="rewCost" placeholder="هزینه (سکه)"></div>
-          <button class="btn btn-success" onclick="addReward()">افزودن</button>
-        </div>
-        <div class="card" style="background:#fff;margin-top:15px;">
-          <h3>🪙 مدیریت سکه کاربران</h3>
-          <div class="form-group"><input type="text" id="coinUser" placeholder="نام کاربری"></div>
-          <div class="form-group"><input type="number" id="coinAmount" placeholder="مقدار (+ یا -)"></div>
-          <button class="btn btn-warning" onclick="updateCoins()">به‌روزرسانی</button>
-        </div>
-        <div class="card" style="background:#fff;margin-top:15px;">
-          <h3>🔍 وضعیت داده‌ها (تست)</h3>
-          <button class="btn btn-primary" style="width:auto;" onclick="showDataStatus()">نمایش وضعیت</button>
-          <div id="dataStatus" style="margin-top:10px;font-family:monospace;font-size:12px;background:#f0f0f0;padding:10px;border-radius:5px;"></div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div id="loginPage" class="login-box">
+<h2 style="text-align:center;margin-bottom:20px"> ورود</h2>
+<div id="loginAlert"></div>
+<div class="form-group"><label>نام کاربری</label><input type="text" id="username"></div>
+<div class="form-group"><label>رمز عبور</label><input type="password" id="password"></div>
+<button class="btn btn-primary" style="width:100%" onclick="login()">ورود</button>
 </div>
 
-<div class="test-box" id="testBox" style="display:none;"></div>
+<div id="dashboard" style="display:none">
+<div style="padding:15px;background:#f8f9fa;display:flex;justify-content:space-between;align-items:center">
+<div><strong id="currentUser"></strong> <span class="coin-display" id="userCoins">0 🪙</span></div>
+<button class="btn btn-danger" onclick="logout()">خروج</button>
+</div>
 
-<script>
-const JSONBIN_BIN_ID = '6a46c8e7da38895dfe249a90';
-const JSONBIN_API_KEY = '$2a$10$94Aa.jIBYMCsIyVJkgblD.41bpzRmDO0h0i9EC/R2V5puDYzcdy56';
-const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+<div class="nav">
+<button class="active" onclick="showSection('home',this)"> خانه</button>
+<button onclick="showSection('announcements',this)">📢 اطلاعیه</button>
+<button onclick="showSection('messages',this)">💬 پیام</button>
+<button onclick="showSection('polls',this)">📊 نظرسنجی</button>
+<button onclick="showSection('requests',this)">📝 درخواست</button>
+<button onclick="showSection('support',this)"> پشتیبانی</button>
+<button onclick="showSection('rewards',this)">🎁 پاداش</button>
+<button id="adminTab" style="display:none" onclick="showSection('admin',this)">⚙️ مدیریت</button>
+</div>
 
-let currentUser = null;
-let appData = {
-  messages: [],
-  coins: {},
-  announcements: [],
-  polls: [],
-  requests: [],
-  support: [],
-  rewards: [],
-  users: { 'admin': { password: 'admin123', role: 'admin' } }
-};
+<div class="content">
 
-// لاگ در کنسول موبایل
-function mobileLog(msg, type = 'info') {
-  console.log(`[${type}] ${msg}`);
-  const box = document.getElementById('testBox');
-  if (box.style.display !== 'none') {
-    const time = new Date().toLocaleTimeString('fa-IR');
-    box.innerHTML += `<div style="color:${type==='error'?'red':type==='success'?'green':'#0f0'}">[${time}] ${msg}</div>`;
-    box.scrollTop = box.scrollHeight;
-  }
-}
+<div id="home" class="section active">
+<div class="stats">
+<div class="stat-card"><div>موجودی</div><div class="num" id="myCoins">0</div><div>سکه 🪙</div></div>
+<div class="stat-card"><div>اطلاعیه‌ها</div><div class="num" id="annCount">0</div></div>
+<div class="stat-card"><div>پیام‌ها</div><div class="num" id="msgCount">0</div></div>
+<div class="stat-card"><div>درخواست‌ها</div><div class="num" id="reqCount">0</div></div>
+</div>
+<h2>📌 آخرین اطلاعیه‌ها</h2>
+<div id="homeAnnouncements"></div>
+</div>
 
-function toggleTestBox() {
-  const box = document.getElementById('testBox');
-  box.style.display = box.style.display === 'none' ? 'block' : 'none';
-}
+<div id="announcements" class="section"><h2>📢 اطلاعیه‌ها</h2><div id="announcementsList"></div></div>
 
-async function loadData() {
-  mobileLog('شروع بارگذاری...', 'info');
-  try {
-    const res = await fetch(`${JSONBIN_URL}/latest`, {
-      headers: { 'X-Master-Key': JSONBIN_API_KEY }
-    });
-    mobileLog(`Status: ${res.status}`, res.ok ? 'success' : 'error');
-    
-    if (!res.ok) {
-      const errText = await res.text();
-      mobileLog(`خطا: ${errText}`, 'error');
-      return;
-    }
-    
-    const data = await res.json();
-    mobileLog(`داده دریافت شد: ${JSON.stringify(data).substring(0, 100)}...`, 'info');
-    
-    if (data.record) {
-      appData = { ...appData, ...data.record };
-      mobileLog('✓ بارگذاری موفق', 'success');
-    } else {
-      mobileLog('Bin خالی است', 'error');
-    }
-  } catch (e) {
-    mobileLog(`خطا: ${e.message}`, 'error');
-  }
-}
+<div id="messages" class="section">
+<h2>💬 پیام‌ها</h2>
+<div class="form-group"><textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea></div>
+<button class="btn btn-primary" onclick="sendMessage()">ارسال پیام</button>
+<div id="messagesList" style="margin-top:15px"></div>
+</div>
 
-async function saveData() {
-  mobileLog('شروع ذخیره...', 'info');
-  try {
-    const res = await fetch(JSONBIN_URL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Master-Key': JSONBIN_API_KEY
-      },
-      body: JSON.stringify(appData)
-    });
-    mobileLog(`Status: ${res.status}`, res.ok ? 'success' : 'error');
-    
-    if (!res.ok) {
-      const errText = await res.text();
-      mobileLog(`خطا در ذخیره: ${errText}`, 'error');
-    } else {
-      mobileLog('✓ ذخیره موفق', 'success');
-    }
-  } catch (e) {
-    mobileLog(`خطا: ${e.message}`, 'error');
-  }
-}
+<div id="polls" class="section"><h2>📊 نظرسنجی‌ها</h2><div id="pollsList"></div></div>
 
-async function login() {
-  const u = document.getElementById('username').value.trim();
-  const p = document.getElementById('password').value.trim();
-  const alertBox = document.getElementById('loginAlert');
+<div id="requests" class="section">
+<h2>📝 درخواست‌ها</h2>
+<div class="form-group"><input type="text" id="reqTitle" placeholder="عنوان درخواست"></div>
+<div class="form-group"><textarea id="reqDesc" rows="3" placeholder="توضیحات..."></textarea></div>
+<button class="btn btn-primary" onclick="sendRequest()">ثبت درخواست</button>
+<div id="requestsList" style="margin-top:15px"></div>
+</div>
 
-  if (!u || !p) {
-    alertBox.innerHTML = '<div class="alert alert-error">لطفاً همه فیلدها را پر کنید</div>';
-    return;
-  }
+<div id="support" class="section">
+<h2>🎧 پشتیبانی</h2>
+<div class="form-group"><input type="text" id="supTitle" placeholder="موضوع"></div>
+<div class="form-group"><textarea id="supMsg" rows="3" placeholder="پیام شما..."></textarea></div>
+<button class="btn btn-primary" onclick="sendSupport()">ارسال تیکت</button>
+<div id="supportList" style="margin-top:15px"></div>
+</div>
 
-  mobileLog(`تلاش ورود: ${u}`, 'info');
-  await loadData();
+<div id="rewards" class="section"><h2>🎁 پاداش‌ها</h2><div id="rewardsList"></div></div>
 
-  if (appData.users[u] && appData.users[u].password === p) {
-    currentUser = { username: u, role: appData.users[u].role };
-    localStorage.setItem('sandogh_user', JSON.stringify(currentUser));
-    mobileLog(`✓ ورود موفق: ${u}`, 'success');
-    showDashboard();
-  } else {
-    mobileLog(`✗ ورود ناموفق`, 'error');
-    alertBox.innerHTML = '<div class="alert alert-error">نام کاربری یا رمز عبور اشتباه است</div>';
-  }
-}
+<div id="admin" class="section">
+<h2>⚙️ پنل مدیریت</h2>
+<div id="adminAlert"></div>
 
-function logout() {
-  localStorage.removeItem('sandogh_user');
-  currentUser = null;
-  document.getElementById('loginPage').style.display = 'block';
-  document.getElementById('dashboard').style.display = 'none';
-}
+<div class="card" style="background:#fff">
+<h3>📢 افزودن اطلاعیه</h3>
+<div class="form-group"><input type="text" id="annTitle" placeholder="عنوان"></div>
+<div class="form-group"><textarea id="annBody" rows="3" placeholder="متن اطلاعیه"></textarea></div>
+<button class="btn btn-success" onclick="addAnnouncement()">افزودن</button>
+</div>
 
-function showDashboard() {
-  document.getElementById('loginPage').style.display = 'none';
-  document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('currentUser').textContent = currentUser.username;
-  if (currentUser.role === 'admin') {
-    document.getElementById('adminTab').style.display = 'block';
-  }
-  refreshUI();
-}
+<div class="card" style="background:#fff;margin-top:15px">
+<h3> افزودن نظرسنجی</h3>
+<div class="form-group"><input type="text" id="pollQ" placeholder="سوال"></div>
+<div class="form-group"><input type="text" id="pollOpts" placeholder="گزینه‌ها (با , جدا کنید)"></div>
+<button class="btn btn-success" onclick="addPoll()">افزودن</button>
+</div>
 
-function showSection(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  if (btn) btn.classList.add('active');
-  refreshUI();
-}
-
-function refreshUI() {
-  if (!currentUser) return;
-  const userCoins = appData.coins[currentUser.username] || 0;
-  document.getElementById('userCoins').textContent = userCoins + ' 🪙';
-  document.getElementById('myCoins').textContent = userCoins;
-  document.getElementById('annCount').textContent = appData.announcements.length;
-  document.getElementById('msgCount').textContent = appData.messages.length;
-  document.getElementById('reqCount').textContent = appData.requests.length;
-  renderAnnouncements();
-  renderMessages();
-  renderPolls();
-  renderRequests();
-  renderSupport();
-  renderRewards();
-}
-
-function renderAnnouncements() {
-  const list = document.getElementById('announcementsList');
-  const homeList = document.getElementById('homeAnnouncements');
-  const html = appData.announcements.length === 0 ? '<div class="empty">اطلاعیه‌ای وجود ندارد</div>' : 
-    appData.announcements.slice().reverse().map(a => `<div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="meta">📅 ${a.date}</div></div>`).join('');
-  list.innerHTML = html;
-  homeList.innerHTML = appData.announcements.slice(-3).reverse().map(a => `<div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="meta">📅 ${a.date}</div></div>`).join('') || '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
-}
-
-function renderMessages() {
-  const list = document.getElementById('messagesList');
-  list.innerHTML = appData.messages.length === 0 ? '<div class="empty">پیامی وجود ندارد</div>' :
-    appData.messages.slice().reverse().map(m => `<div class="card"><h3>${escapeHtml(m.user)}</h3><p>${escapeHtml(m.text)}</p><div class="meta">📅 ${m.date}</div></div>`).join('');
-}
-
-function renderPolls() {
-  const list = document.getElementById('pollsList');
-  list.innerHTML = appData.polls.length === 0 ? '<div class="empty">نظرسنجی‌ای وجود ندارد</div>' :
-    appData.polls.map((p, i) => `<div class="card"><h3>${escapeHtml(p.question)}</h3>${p.options.map((opt, j) => `<button class="btn btn-primary" style="width:auto;margin:5px;" onclick="votePoll(${i},${j})">${escapeHtml(opt)} (${(p.votes && p.votes[j]) || 0})</button>`).join('')}</div>`).join('');
-}
-
-function renderRequests() {
-  const list = document.getElementById('requestsList');
-  list.innerHTML = appData.requests.length === 0 ? '<div class="empty">درخواستی وجود ندارد</div>' :
-    appData.requests.slice().reverse().map(r => `<div class="card"><h3>${escapeHtml(r.title)}</h3><p>${escapeHtml(r.desc)}</p><div class="meta">👤 ${escapeHtml(r.user)} | 📅 ${r.date}</div></div>`).join('');
-}
-
-function renderSupport() {
-  const list = document.getElementById('supportList');
-  const myTickets = appData.support.filter(t => t.user === currentUser.username || currentUser.role === 'admin');
-  list.innerHTML = myTickets.length === 0 ? '<div class="empty">تیکتی وجود ندارد</div>' :
-    myTickets.slice().reverse().map(t => `<div class="card"><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.message)}</p><div class="meta">👤 ${escapeHtml(t.user)} |  ${t.date}</div></div>`).join('');
-}
-
-function renderRewards() {
-  const list = document.getElementById('rewardsList');
-  list.innerHTML = appData.rewards.length === 0 ? '<div class="empty">پاداشی وجود ندارد</div>' :
-    appData.rewards.map((r, i) => `<div class="card"><h3>${escapeHtml(r.title)}</h3><p>هزینه: <strong>${r.cost} سکه </strong></p><button class="btn btn-success" onclick="claimReward(${i})">دریافت</button></div>`).join('');
-}
-
-async function sendMessage() {
-  const text = document.getElementById('newMessage').value.trim();
-  if (!text) return alert('متن پیام خالی است');
-  appData.messages.push({ user: currentUser.username, text, date: new Date().toLocaleString('fa-IR') });
-  document.getElementById('newMessage').value = '';
-  await saveData();
-  refreshUI();
-}
-
-async function sendRequest() {
-  const title = document.getElementById('reqTitle').value.trim();
-  const desc = document.getElementById('reqDesc').value.trim();
-  if (!title || !desc) return alert('همه فیلدها را پر کنید');
-  appData.requests.push({ title, desc, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
-  document.getElementById('reqTitle').value = '';
-  document.getElementById('reqDesc').value = '';
-  await saveData();
-  refreshUI();
-}
-
-async function sendSupport() {
-  const title = document.getElementById('supTitle').value.trim();
-  const message = document.getElementById('supMsg').value.trim();
-  if (!title || !message) return alert('همه فیلدها را پر کنید');
-  appData.support.push({ title, message, user: currentUser.username, date: new Date().toLocaleString('fa-IR') });
-  document.getElementById('supTitle').value = '';
-  document.getElementById('supMsg').value = '';
-  await saveData();
-  refreshUI();
-}
-
-async function votePoll(pollIdx, optIdx) {
-  if (!appData.polls[pollIdx].votes) appData.polls[pollIdx].votes = {};
-  const key = currentUser.username;
-  if (appData.polls[pollIdx].voters && appData.polls[pollIdx].voters.includes(key)) {
-    return alert('شما قبلاً رأی داده‌اید');
-  }
-  if (!appData.polls[pollIdx].voters) appData.polls[pollIdx].voters = [];
-  appData.polls[pollIdx].voters.push(key);
-  appData.polls[pollIdx].votes[optIdx] = (appData.polls[pollIdx].votes[optIdx] || 0) + 1;
-  await saveData();
-  refreshUI();
-}
-
-async function claimReward(idx) {
-  const reward = appData.rewards[idx];
-  const userCoins = appData.coins[currentUser.username] || 0;
-  if (userCoins < reward.cost) return alert('سکه کافی ندارید');
-  if (!confirm(`آیا مطمئن هستید؟ هزینه: ${reward.cost} سکه`)) return;
-  appData.coins[currentUser.username] = userCoins - reward.cost;
-  await saveData();
-  refreshUI();
-  alert('پاداش با موفقیت دریافت شد!');
-}
-
-async function addAnnouncement() {
-  const title = document.getElementById('annTitle').value.trim();
-  const body = document.getElementById('annBody').value.trim();
-  if (!title || !body) return alert('همه فیلدها را پر کنید');
-  appData.announcements.push({ title, body, date: new Date().toLocaleString('fa-IR') });
-  document.getElementById('annTitle').value = '';
-  document.getElementById('annBody').value = '';
-  await saveData();
-  refreshUI();
-  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">اطلاعیه افزوده شد ✓</div>';
-}
-
-async function addPoll() {
-  const question = document.getElementById('pollQ').value.trim();
-  const opts = document.getElementById('pollOpts').value.split(',').map(s => s.trim()).filter(s => s);
-  if (!question || opts.length < 2) return alert('سوال و حداقل 2 گزینه لازم است');
-  appData.polls.push({ question, options: opts, votes: {}, voters: [] });
-  document.getElementById('pollQ').value = '';
-  document.getElementById('pollOpts').value = '';
-  await saveData();
-  refreshUI();
-  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">نظرسنجی افزوده شد ✓</div>';
-}
-
-async function addReward() {
-  const title = document.getElementById('rewTitle').value.trim();
-  const cost = parseInt(document.getElementById('rewCost').value);
-  if (!title || !cost) return alert('همه فیلدها را پر کنید');
-  appData.rewards.push({ title, cost });
-  document.getElementById('rewTitle').value = '';
-  document.getElementById('rewCost').value = '';
-  await saveData();
-  refreshUI();
-  document.getElementById('adminAlert').innerHTML = '<div class="alert alert-success">پاداش افزوده شد ✓</div>';
-}
-
-async function updateCoins() {
-  const user = document.getElementById('coinUser').value.trim();
-  const amount = parseInt(document.getElementById('coinAmount').value);
-  if (!user || isNaN(amount)) return alert('اطلاعات نامعتبر');
-  appData.coins[user] = (appData.coins[user] || 0) + amount;
-  document.getElementById('coinUser').value = '';
-  document.getElementById('coinAmount').value = '';
-  await saveData();
-  refreshUI();
-  document.getElementById('adminAlert').innerHTML = `<div class="alert alert-success">سکه ${user} به‌روزرسانی شد ✓</div>`;
-}
-
-function showDataStatus() {
-  const status = document.getElementById('dataStatus');
-  status.innerHTML = `
-    <strong>وضعیت داده‌ها:</strong><br>
-    پیام‌ها: ${appData.messages.length}<br>
-    سکه‌ها: ${JSON.stringify(appData.coins)}<br>
-    اطلاعیه‌ها: ${appData.announcements.length}<br>
-    نظرسنجی: ${appData.polls.length}<br>
-    درخواست‌ها: ${appData.requests.length}<br>
-    پشتیبانی: ${appData.support.length}<br>
-    پاداش‌ها: ${appData.rewards.length}<br>
-    کاربران: ${Object.keys(appData.users).join(', ')}<br>
-    <br>
-    <button onclick="toggleTestBox()" style="padding:5px 10px;">نمایش/مخفی کردن لاگ</button>
-  `;
-}
-
-function escapeHtml(s) {
-  const div = document.createElement('div');
-  div.textContent = s;
-  return div.innerHTML;
-}
-
-window.onload = async () => {
-  mobileLog('برنامه شروع شد', 'info');
-  const saved = localStorage.getItem('sandogh_user');
-  if (saved) {
-    currentUser = JSON.parse(saved);
-    mobileLog(`کاربر ذخیره شده: ${currentUser.username}`, 'info');
-    await loadData();
-    showDashboard();
-  }
-};
-</script>
-
-</body>
-                                                                                                                    </html>
+<div class="card" style="background:#fff;margin-top:15px
