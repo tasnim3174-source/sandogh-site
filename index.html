@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>صندوق اتحاد</title>
-<!-- استفاده از نسخه UMD و CDN جایگزین -->
-<script src="https://unpkg.com/@supabase/supabase-js@2.39.3/dist/umd/supabase.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Tahoma,sans-serif}
 body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:20px}
@@ -17,11 +15,11 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 .form-group{margin-bottom:15px}
 .form-group label{display:block;margin-bottom:5px;color:#555;font-weight:bold}
 .form-group input,.form-group textarea{width:100%;padding:10px;border:2px solid #ddd;border-radius:8px;font-size:14px}
-.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold}
-.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;width:100%}
-.btn-success{background:#27ae60;color:#fff}
-.btn-warning{background:#f39c12;color:#fff}
-.btn-danger{background:#e74c3c;color:#fff}
+.btn{padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:bold;color:#fff}
+.btn-primary{background:linear-gradient(135deg,#667eea,#764ba2);width:100%}
+.btn-success{background:#27ae60}
+.btn-warning{background:#f39c12}
+.btn-danger{background:#e74c3c}
 .nav{display:flex;background:#f8f9fa;border-bottom:2px solid #e9ecef;overflow-x:auto}
 .nav button{flex:1;padding:15px;border:none;background:transparent;cursor:pointer;font-size:14px;font-weight:bold;color:#555;white-space:nowrap}
 .nav button.active{background:#fff;color:#667eea;border-bottom:3px solid #667eea}
@@ -33,6 +31,7 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 .alert{padding:12px;border-radius:8px;margin-bottom:15px}
 .alert-success{background:#d4edda;color:#155724}
 .alert-error{background:#f8d7da;color:#721c24}
+.alert-info{background:#d1ecf1;color:#0c5460}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
 .stat-card{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:20px;border-radius:10px;text-align:center}
 .stat-card .num{font-size:32px;font-weight:bold;margin:10px 0}
@@ -47,41 +46,29 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 <body>
 
 <div class="container">
-  <div class="header">
-    <h1>💰 صندوق اتحاد</h1>
-    <p>سیستم مدیریت صندوق</p>
-  </div>
+  <div class="header"><h1>💰 صندوق اتحاد</h1><p>سیستم مدیریت صندوق</p></div>
 
   <div id="loginPage" class="login-box">
-    <h2>🔐 ورود به سیستم</h2>
+    <h2> ورود به سیستم</h2>
     <div id="loginAlert"></div>
-    <div class="form-group">
-      <label>نام کاربری</label>
-      <input type="text" id="username" placeholder="نام کاربری">
-    </div>
-    <div class="form-group">
-      <label>رمز عبور</label>
-      <input type="password" id="password" placeholder="رمز عبور">
-    </div>
+    <div class="form-group"><label>نام کاربری</label><input type="text" id="username" placeholder="نام کاربری"></div>
+    <div class="form-group"><label>رمز عبور</label><input type="password" id="password" placeholder="رمز عبور"></div>
     <button class="btn btn-primary" onclick="login()">ورود</button>
   </div>
 
   <div id="dashboard" style="display:none">
     <div style="padding:15px;background:#f8f9fa;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
-      <div>
-        <span>خوش آمدید، <strong id="currentUser"></strong></span>
-        <span class="coin-display" id="userCoins">0 🪙</span>
-      </div>
+      <div><span>خوش آمدید، <strong id="currentUser"></strong></span> <span class="coin-display" id="userCoins">0 🪙</span></div>
       <button class="btn btn-danger" onclick="logout()">خروج</button>
     </div>
 
     <div class="nav">
       <button class="active" onclick="showSection('home',this)">🏠 خانه</button>
-      <button onclick="showSection('announcements',this)">📢 اطلاعیه‌ها</button>
+      <button onclick="showSection('announcements',this)"> اطلاعیه‌ها</button>
       <button onclick="showSection('messages',this)">💬 پیام‌ها</button>
       <button onclick="showSection('polls',this)">📊 نظرسنجی</button>
       <button onclick="showSection('requests',this)">📝 درخواست‌ها</button>
-      <button onclick="showSection('support',this)"> پشتیبانی</button>
+      <button onclick="showSection('support',this)">🎧 پشتیبانی</button>
       <button onclick="showSection('rewards',this)">🎁 پاداش‌ها</button>
       <button id="adminTab" style="display:none" onclick="showSection('admin',this)">⚙️ مدیریت</button>
     </div>
@@ -90,96 +77,72 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
       <div id="home" class="section active">
         <div class="stats">
           <div class="stat-card"><div class="label">موجودی شما</div><div class="num" id="myCoins">0</div><div class="label">سکه 🪙</div></div>
-          <div class="stat-card"><div class="label">اطلاعیه‌ها</div><div class="num" id="annCount">0</div><div class="label">مورد</div></div>
-          <div class="stat-card"><div class="label">پیام‌ها</div><div class="num" id="msgCount">0</div><div class="label">مورد</div></div>
-          <div class="stat-card"><div class="label">درخواست‌ها</div><div class="num" id="reqCount">0</div><div class="label">مورد</div></div>
+          <div class="stat-card"><div class="label">اطلاعیه‌ها</div><div class="num" id="annCount">0</div></div>
+          <div class="stat-card"><div class="label">پیام‌ها</div><div class="num" id="msgCount">0</div></div>
+          <div class="stat-card"><div class="label">درخواست‌ها</div><div class="num" id="reqCount">0</div></div>
         </div>
         <h2>📌 آخرین اطلاعیه‌ها</h2>
         <div id="homeAnnouncements"></div>
       </div>
 
-      <div id="announcements" class="section">
-        <h2>📢 اطلاعیه‌ها</h2>
-        <div id="announcementsList"></div>
-      </div>
+      <div id="announcements" class="section"><h2>📢 اطلاعیه‌ها</h2><div id="announcementsList"></div></div>
 
       <div id="messages" class="section">
         <h2>💬 پیام‌ها</h2>
-        <div class="form-group">
-          <textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea>
-        </div>
+        <div class="form-group"><textarea id="newMessage" rows="3" placeholder="پیام خود را بنویسید..."></textarea></div>
         <button class="btn btn-primary" style="width:auto;margin-bottom:20px" onclick="sendMessage()">ارسال پیام</button>
         <div id="messagesList"></div>
       </div>
 
-      <div id="polls" class="section">
-        <h2> نظرسنجی‌ها</h2>
-        <div id="pollsList"></div>
-      </div>
+      <div id="polls" class="section"><h2>📊 نظرسنجی‌ها</h2><div id="pollsList"></div></div>
 
       <div id="requests" class="section">
         <h2> درخواست‌ها</h2>
-        <div class="form-group">
-          <input type="text" id="reqTitle" placeholder="عنوان درخواست">
-        </div>
-        <div class="form-group">
-          <textarea id="reqDesc" rows="3" placeholder="توضیحات..."></textarea>
-        </div>
+        <div class="form-group"><input type="text" id="reqTitle" placeholder="عنوان درخواست"></div>
+        <div class="form-group"><textarea id="reqDesc" rows="3" placeholder="توضیحات..."></textarea></div>
         <button class="btn btn-primary" style="width:auto;margin-bottom:20px" onclick="sendRequest()">ثبت درخواست</button>
         <div id="requestsList"></div>
       </div>
 
       <div id="support" class="section">
         <h2>🎧 پشتیبانی</h2>
-        <div class="form-group">
-          <input type="text" id="supTitle" placeholder="موضوع">
-        </div>
-        <div class="form-group">
-          <textarea id="supMsg" rows="3" placeholder="پیام شما..."></textarea>
-        </div>
+        <div class="form-group"><input type="text" id="supTitle" placeholder="موضوع"></div>
+        <div class="form-group"><textarea id="supMsg" rows="3" placeholder="پیام شما..."></textarea></div>
         <button class="btn btn-primary" style="width:auto;margin-bottom:20px" onclick="sendSupport()">ارسال تیکت</button>
         <div id="supportList"></div>
       </div>
 
-      <div id="rewards" class="section">
-        <h2>🎁 پاداش‌ها</h2>
-        <div id="rewardsList"></div>
-      </div>
+      <div id="rewards" class="section"><h2> پاداش‌ها</h2><div id="rewardsList"></div></div>
 
       <div id="admin" class="section">
         <h2>⚙️ پنل مدیریت</h2>
         <div id="adminAlert"></div>
 
-        <div class="card" style="background:#fff">
-          <h3> افزودن اطلاعیه</h3>
+        <div class="card" style="background:#fff"><h3>📢 افزودن اطلاعیه</h3>
           <div class="form-group"><input type="text" id="annTitle" placeholder="عنوان"></div>
           <div class="form-group"><textarea id="annBody" rows="3" placeholder="متن اطلاعیه"></textarea></div>
           <button class="btn btn-success" onclick="addAnnouncement()">افزودن</button>
         </div>
 
-        <div class="card" style="background:#fff;margin-top:15px">
-          <h3>📊 افزودن نظرسنجی</h3>
+        <div class="card" style="background:#fff;margin-top:15px"><h3>📊 افزودن نظرسنجی</h3>
           <div class="form-group"><input type="text" id="pollQ" placeholder="سوال"></div>
           <div class="form-group"><input type="text" id="pollOpts" placeholder="گزینه‌ها (با , جدا کنید)"></div>
           <button class="btn btn-success" onclick="addPoll()">افزودن</button>
         </div>
 
-        <div class="card" style="background:#fff;margin-top:15px">
-          <h3>🎁 افزودن پاداش</h3>
+        <div class="card" style="background:#fff;margin-top:15px"><h3>🎁 افزودن پاداش</h3>
           <div class="form-group"><input type="text" id="rewTitle" placeholder="عنوان پاداش"></div>
           <div class="form-group"><input type="number" id="rewCost" placeholder="هزینه (سکه)"></div>
           <button class="btn btn-success" onclick="addReward()">افزودن</button>
         </div>
 
-        <div class="card" style="background:#fff;margin-top:15px">
-          <h3> مدیریت سکه کاربران</h3>
+        <div class="card" style="background:#fff;margin-top:15px"><h3>🪙 مدیریت سکه کاربران</h3>
           <div class="form-group"><input type="text" id="coinUser" placeholder="نام کاربری"></div>
           <div class="form-group"><input type="number" id="coinAmount" placeholder="مقدار (+ یا -)"></div>
           <button class="btn btn-warning" onclick="updateCoins()">به‌روزرسانی</button>
         </div>
 
-        <div class="card" style="background:#fff;margin-top:15px">
-          <h3>🔄 همگام‌سازی دستی</h3>
+        <div class="card" style="background:#fff;margin-top:15px"><h3>🔄 همگام‌سازی دستی</h3>
           <button class="btn btn-primary" style="width:auto" onclick="manualSync()">🔄 همگام‌سازی</button>
           <div id="syncStatus" style="margin-top:10px"></div>
         </div>
@@ -191,11 +154,10 @@ body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding
 <div id="syncIndicator" class="sync-status" style="display:none"></div>
 
 <script>
-// ================= تنظیمات Supabase =================
+// ================= تنظیمات Supabase (REST API مستقیم) =================
 const SUPABASE_URL = 'https://nkswstjsmevrnvksebsr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rc3dzdGpzbWV2cm52a3NlYnNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwMzg5MDksImV4cCI6MjA5ODYxNDkwOX0.EFj6AK2lfAofZOYfW7QwaxN-POgpEjV5T7t7rnWJKGQ';
 
-let supabase = null;
 let currentUser = null;
 let appData = {
   messages: [],
@@ -208,17 +170,6 @@ let appData = {
   users: { 'admin': { password: 'admin123', role: 'admin' } }
 };
 
-// ================= راه‌اندازی Supabase =================
-function initSupabase() {
-  // چک می‌کنیم آیا کتابخانه لود شده است
-  if (typeof window.supabase !== 'undefined' && !supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log('✅ Supabase initialized');
-    return true;
-  }
-  return false;
-}
-
 // ================= نمایش وضعیت =================
 function showSyncStatus(message, type) {
   const indicator = document.getElementById('syncIndicator');
@@ -228,46 +179,49 @@ function showSyncStatus(message, type) {
   setTimeout(() => { indicator.style.display = 'none'; }, 3000);
 }
 
-// ================= بارگذاری داده =================
+// ================= بارگذاری داده با REST API مستقیم =================
 async function loadData() {
-  if (!supabase && !initSupabase()) {
-    console.error('❌ کتابخانه Supabase در دسترس نیست');
-    showSyncStatus('خطا: کتابخانه لود نشد', 'error');
-    return false;
-  }
-
   console.log('🔄 بارگذاری از Supabase...');
   showSyncStatus('در حال بارگذاری...', 'loading');
   
   try {
-    const { data, error } = await supabase
-      .from('app_data')
-      .select('*')
-      .eq('id', 1)
-      .single();
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/app_data?id=eq.1&select=*`, {
+      method: 'GET',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
     
-    if (error) {
-      console.error('❌ خطا:', error);
+    if (!response.ok) {
+      console.error('❌ خطا:', response.status);
       showSyncStatus('خطا در بارگذاری', 'error');
       return false;
     }
     
-    if (data) {
+    const data = await response.json();
+    console.log('✅ داده دریافت شد:', data);
+    
+    if (data && data.length > 0) {
+      const record = data[0];
       appData = {
         ...appData,
-        messages: data.messages || [],
-        coins: data.coins || {},
-        announcements: data.announcements || [],
-        polls: data.polls || [],
-        requests: data.requests || [],
-        support: data.support || [],
-        rewards: data.rewards || [],
-        users: { ...appData.users, ...(data.users || {}) }
+        messages: record.messages || [],
+        coins: record.coins || {},
+        announcements: record.announcements || [],
+        polls: record.polls || [],
+        requests: record.requests || [],
+        support: record.support || [],
+        rewards: record.rewards || [],
+        users: { ...appData.users, ...(record.users || {}) }
       };
       console.log('✅ داده‌ها بارگذاری شدند');
       showSyncStatus('✓ بارگذاری موفق', 'success');
       return true;
     }
+    
+    showSyncStatus('داده‌ای وجود ندارد', 'error');
     return false;
   } catch (e) {
     console.error('❌ خطا در بارگذاری:', e);
@@ -276,21 +230,21 @@ async function loadData() {
   }
 }
 
-// ================= ذخیره داده =================
+// ================= ذخیره داده با REST API مستقیم =================
 async function saveData() {
-  if (!supabase && !initSupabase()) {
-    console.error('❌ کتابخانه Supabase در دسترس نیست');
-    showSyncStatus('خطا: کتابخانه لود نشد', 'error');
-    return false;
-  }
-
   console.log('💾 ذخیره در Supabase...');
   showSyncStatus('در حال ذخیره...', 'loading');
   
   try {
-    const { error } = await supabase
-      .from('app_data')
-      .update({
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/app_data?id=eq.1`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify({
         messages: appData.messages,
         coins: appData.coins,
         announcements: appData.announcements,
@@ -301,10 +255,11 @@ async function saveData() {
         users: appData.users,
         updated_at: new Date().toISOString()
       })
-      .eq('id', 1);
+    });
     
-    if (error) {
-      console.error('❌ خطا در ذخیره:', error);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('❌ خطا در ذخیره:', errorText);
       showSyncStatus('خطا در ذخیره', 'error');
       return false;
     }
@@ -319,6 +274,7 @@ async function saveData() {
   }
 }
 
+// ================= همگام‌سازی دستی =================
 async function manualSync() {
   const statusDiv = document.getElementById('syncStatus');
   statusDiv.innerHTML = '<div class="alert alert-info">در حال همگام‌سازی...</div>';
@@ -328,6 +284,7 @@ async function manualSync() {
   setTimeout(() => { statusDiv.innerHTML = ''; }, 3000);
 }
 
+// ================= احراز هویت =================
 async function login() {
   const u = document.getElementById('username').value.trim();
   const p = document.getElementById('password').value.trim();
@@ -405,13 +362,9 @@ function renderAnnouncements() {
     homeList.innerHTML = '<div class="empty">اطلاعیه‌ای وجود ندارد</div>';
     return;
   }
-  const html = appData.announcements.slice().reverse().map(a => `
-    <div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="meta">📅 ${a.date}</div></div>
-  `).join('');
+  const html = appData.announcements.slice().reverse().map(a => `<div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div style="font-size:12px;color:#999">📅 ${a.date}</div></div>`).join('');
   list.innerHTML = html;
-  homeList.innerHTML = appData.announcements.slice(-3).reverse().map(a => `
-    <div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="meta">📅 ${a.date}</div></div>
-  `).join('');
+  homeList.innerHTML = appData.announcements.slice(-3).reverse().map(a => `<div class="card"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div style="font-size:12px;color:#999"> ${a.date}</div></div>`).join('');
 }
 
 function renderMessages() {
@@ -420,9 +373,7 @@ function renderMessages() {
     list.innerHTML = '<div class="empty">پیامی وجود ندارد</div>';
     return;
   }
-  list.innerHTML = appData.messages.slice().reverse().map(m => `
-    <div class="card"><h3>${escapeHtml(m.user)}</h3><p>${escapeHtml(m.text)}</p><div class="meta">📅 ${m.date}</div></div>
-  `).join('');
+  list.innerHTML = appData.messages.slice().reverse().map(m => `<div class="card"><h3>${escapeHtml(m.user)}</h3><p>${escapeHtml(m.text)}</p><div style="font-size:12px;color:#999">📅 ${m.date}</div></div>`).join('');
 }
 
 function renderPolls() {
@@ -431,11 +382,7 @@ function renderPolls() {
     list.innerHTML = '<div class="empty">نظرسنجی‌ای وجود ندارد</div>';
     return;
   }
-  list.innerHTML = appData.polls.map((p, i) => `
-    <div class="card"><h3>${escapeHtml(p.question)}</h3>
-    ${p.options.map((opt, j) => `<button class="btn btn-primary" style="width:auto;margin:5px" onclick="votePoll(${i},${j})">${escapeHtml(opt)} (${(p.votes && p.votes[j]) || 0})</button>`).join('')}
-    </div>
-  `).join('');
+  list.innerHTML = appData.polls.map((p, i) => `<div class="card"><h3>${escapeHtml(p.question)}</h3>${p.options.map((opt, j) => `<button class="btn btn-primary" style="width:auto;margin:5px" onclick="votePoll(${i},${j})">${escapeHtml(opt)} (${(p.votes && p.votes[j]) || 0})</button>`).join('')}</div>`).join('');
 }
 
 function renderRequests() {
@@ -444,9 +391,7 @@ function renderRequests() {
     list.innerHTML = '<div class="empty">درخواستی وجود ندارد</div>';
     return;
   }
-  list.innerHTML = appData.requests.slice().reverse().map(r => `
-    <div class="card"><h3>${escapeHtml(r.title)}</h3><p>${escapeHtml(r.desc)}</p><div class="meta">👤 ${escapeHtml(r.user)} | 📅 ${r.date}</div></div>
-  `).join('');
+  list.innerHTML = appData.requests.slice().reverse().map(r => `<div class="card"><h3>${escapeHtml(r.title)}</h3><p>${escapeHtml(r.desc)}</p><div style="font-size:12px;color:#999">👤 ${escapeHtml(r.user)} | 📅 ${r.date}</div></div>`).join('');
 }
 
 function renderSupport() {
@@ -456,9 +401,7 @@ function renderSupport() {
     list.innerHTML = '<div class="empty">تیکتی وجود ندارد</div>';
     return;
   }
-  list.innerHTML = myTickets.slice().reverse().map(t => `
-    <div class="card"><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.message)}</p><div class="meta">👤 ${escapeHtml(t.user)} | 📅 ${t.date}</div></div>
-  `).join('');
+  list.innerHTML = myTickets.slice().reverse().map(t => `<div class="card"><h3>${escapeHtml(t.title)}</h3><p>${escapeHtml(t.message)}</p><div style="font-size:12px;color:#999">👤 ${escapeHtml(t.user)} | 📅 ${t.date}</div></div>`).join('');
 }
 
 function renderRewards() {
@@ -467,9 +410,7 @@ function renderRewards() {
     list.innerHTML = '<div class="empty">پاداشی وجود ندارد</div>';
     return;
   }
-  list.innerHTML = appData.rewards.map((r, i) => `
-    <div class="card"><h3>${escapeHtml(r.title)}</h3><p>هزینه: <strong>${r.cost} سکه </strong></p><button class="btn btn-success" onclick="claimReward(${i})">دریافت</button></div>
-  `).join('');
+  list.innerHTML = appData.rewards.map((r, i) => `<div class="card"><h3>${escapeHtml(r.title)}</h3><p>هزینه: <strong>${r.cost} سکه 🪙</strong></p><button class="btn btn-success" onclick="claimReward(${i})">دریافت</button></div>`).join('');
 }
 
 async function sendMessage() {
@@ -585,16 +526,6 @@ function escapeHtml(s) {
 
 window.onload = async () => {
   console.log('🚀 برنامه شروع شد');
-  
-  // بررسی لود شدن کتابخانه
-  if (typeof window.supabase === 'undefined') {
-    console.error('❌ کتابخانه Supabase بارگذاری نشد!');
-    alert('خطا: کتابخانه Supabase بارگذاری نشد. لطفاً اتصال اینترنت خود را بررسی کنید یا فیلترشکن را خاموش/روشن کنید.');
-    return;
-  }
-  
-  initSupabase();
-  
   const saved = localStorage.getItem('sandogh_user');
   if (saved) {
     currentUser = JSON.parse(saved);
