@@ -139,12 +139,6 @@ tbody tr:hover{background:rgba(102,126,234,.05)}
 <script>
 window.onerror = function(msg, url, line, col, error) {
     console.error('خطای سراسری:', msg, 'در خط:', line, error);
-    try {
-        const container = document.getElementById('appContainer');
-        if (container) {
-            container.innerHTML = '<div style="background:rgba(255,255,255,.95);border-radius:32px;padding:40px;box-shadow:0 25px 50px rgba(0,0,0,.25);max-width:800px;margin:50px auto;border:3px solid #e53e3e;direction:rtl;font-family:Tahoma"><h2 style="color:#e53e3e;margin-bottom:20px">⚠️ خطا در بارگذاری برنامه</h2><p style="margin-bottom:15px;color:#4a5568">خطای JavaScript:</p><pre style="background:#f7fafc;padding:20px;border-radius:12px;overflow-x:auto;font-size:.9rem;color:#2d3748;direction:ltr;text-align:left;max-height:300px;overflow-y:auto;font-family:monospace">'+msg+'<br>خط: '+line+'</pre><button onclick="location.reload()" style="margin-top:20px;padding:12px 24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:16px;font-size:1rem;font-weight:700;cursor:pointer">تلاش مجدد</button></div>';
-        }
-    } catch(e) { console.error(e); }
     return false;
 };
 
@@ -153,9 +147,20 @@ try {
 const $=(s,p=document)=>p.querySelector(s);
 const $$=(s,p=document)=>p.querySelectorAll(s);
 
-const GITHUB_OWNER = 'Tasnim3174-source';
-const GITHUB_REPO = 'sandogh-site';
-const GITHUB_TOKEN = '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';
+// ⚙️ تنظیمات اصلی - معماری جدید
+const CONFIG = {
+    GITHUB_OWNER: 'Tasnim3174-source',
+    GITHUB_REPO: 'sandogh-site',
+    GITHUB_TOKEN: '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',
+    DATA_FILE: 'data.json',
+    SYNC_INTERVAL: 30000,
+    get DATA_URL() {
+        return `https://raw.githubusercontent.com/${this.GITHUB_OWNER}/${this.GITHUB_REPO}/main/${this.DATA_FILE}`;
+    },
+    get API_URL() {
+        return `https://api.github.com/repos/${this.GITHUB_OWNER}/${this.GITHUB_REPO}`;
+    }
+};
 
 function findInRaw(raw, keys) {
     if (!raw) return undefined;
@@ -202,98 +207,188 @@ function showSyncStatus(text, type='syncing') {
     }
 }
 
-async function syncDataToGitHub(data) {
+// 📖 خواندن data.json از GitHub (بدون توکن - سریع)
+async function loadDataFile() {
     try {
-        showSyncStatus('در حال ذخیره در GitHub...', 'syncing');
-        const response = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: `[DATA] ${new Date().toISOString()}`,
-                body: JSON.stringify(data),
-                labels: ['sync-data']
-            })
-        });
+        showSyncStatus('در حال بارگذاری داده‌ها...', 'syncing');
+        const url = CONFIG.DATA_URL + '?t=' + Date.now();
+        const response = await fetch(url, { cache: 'no-store' });
         if (response.ok) {
-            showSyncStatus('✅ ذخیره شد', 'success');
+            const data = await response.json();
+            console.log('✅ فایل data.json بارگذاری شد');
+            showSyncStatus('✅ داده‌ها بارگذاری شدند', 'success');
+            return data;
+        } else {
+            console.warn('⚠️ خطا در بارگذاری data.json:', response.status);
+            return null;
+        }
+    } catch (error) {
+        console.warn('خطا در بارگذاری data.json:', error);
+        return null;
+    }
+}
+
+// ✍️ ذخیره data.json در GitHub (با توکن)
+async function saveDataFile(data) {
+    try {
+        showSyncStatus('در حال ذخیره داده‌ها...', 'syncing');
+        
+        let sha = null;
+        try {
+            const getResponse = await fetch(
+                `${CONFIG.API_URL}/contents/${CONFIG.DATA_FILE}`,
+                {
+                    headers: {
+                        'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+            if (getResponse.ok) {
+                const fileData = await getResponse.json();
+                sha = fileData.sha;
+            }
+        } catch (e) {
+            console.log('فایل data.json هنوز وجود ندارد');
+        }
+        
+        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+        const body = {
+            message: `📊 به‌روزرسانی داده‌ها - ${new Date().toLocaleString('fa-IR')}`,
+            content: content,
+            branch: 'main'
+        };
+        if (sha) body.sha = sha;
+        
+        const response = await fetch(
+            `${CONFIG.API_URL}/contents/${CONFIG.DATA_FILE}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            }
+        );
+        
+        if (response.ok) {
+            console.log('✅ فایل data.json ذخیره شد');
+            showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
             return true;
         } else {
-            console.warn('خطا در ذخیره GitHub:', response.status);
-            showSyncStatus('⚠️ خطا در ذخیره', 'error');
+            console.error('❌ خطا در ذخیره data.json:', response.status);
+            showSyncStatus('❌ خطا در ذخیره', 'error');
             return false;
         }
     } catch (error) {
-        console.warn('خطا در اتصال GitHub:', error);
-        showSyncStatus('⚠️ بدون اینترنت', 'error');
+        console.error('خطا در ذخیره data.json:', error);
+        showSyncStatus('❌ خطا در اتصال', 'error');
         return false;
     }
 }
 
-async function loadDataFromGitHub() {
+// 💬 همگام‌سازی پیام‌ها با Issues
+async function syncMessagesToGitHub(data) {
     try {
-        showSyncStatus('در حال بارگذاری از GitHub...', 'syncing');
+        const response = await fetch(`${CONFIG.API_URL}/issues`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title: `[SYNC] ${new Date().toISOString()}`,
+                body: JSON.stringify(data),
+                labels: ['sync-messages']
+            })
+        });
+        return response.ok;
+    } catch (error) {
+        console.error('خطا در sync messages:', error);
+        return false;
+    }
+}
+
+async function loadMessagesFromGitHub() {
+    try {
         const response = await fetch(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/issues?labels=sync-data&state=all&per_page=1&sort=created&direction=desc`,
-            { headers: { 'Authorization': `token ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } }
+            `${CONFIG.API_URL}/issues?labels=sync-messages&state=all&per_page=1&sort=created&direction=desc`,
+            { headers: { 'Authorization': `token ${CONFIG.GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } }
         );
         if (response.ok) {
             const issues = await response.json();
             if (issues.length > 0) {
-                const data = JSON.parse(issues[0].body);
-                showSyncStatus('✅ بارگذاری شد', 'success');
-                return data;
+                return JSON.parse(issues[0].body);
             }
         }
         return null;
     } catch (error) {
-        console.warn('خطا در اتصال GitHub:', error);
+        console.error('خطا در load messages:', error);
         return null;
     }
 }
 
 let lastSyncTime = 0;
 let isSyncing = false;
+let initialLoadDone = false;
+
 async function autoSync() {
     try {
         if (isSyncing) return;
         const now = Date.now();
-        if (now - lastSyncTime < 30000) return;
+        if (now - lastSyncTime < CONFIG.SYNC_INTERVAL) return;
         if (!window.app) return;
         isSyncing = true;
+        
         if (window.app.auth.isAdmin()) {
-            const data = {
+            // مدیر: ذخیره داده‌های اعضا در data.json
+            const dataFile = {
                 members: window.app.dm.members,
                 users: window.app.dm.users,
+                logo: window.app.dm.logo,
+                support: window.app.dm.support,
+                shopItems: window.app.dm.shopItems,
+                lastUpdate: new Date().toISOString()
+            };
+            await saveDataFile(dataFile);
+            
+            // ذخیره پیام‌ها در Issues
+            const messagesData = {
                 messages: window.app.dm.messages,
                 announcements: window.app.dm.announcements,
                 polls: window.app.dm.polls,
-                support: window.app.dm.support,
-                logo: window.app.dm.logo,
-                shopItems: window.app.dm.shopItems,
                 timestamp: now
             };
-            await syncDataToGitHub(data);
+            await syncMessagesToGitHub(messagesData);
         } else if (window.app.auth.isLoggedIn()) {
-            const data = await loadDataFromGitHub();
-            if (data && data.members) {
-                window.app.dm.members = data.members;
-                window.app.dm.users = data.users;
-                window.app.dm.messages = data.messages || [];
-                window.app.dm.announcements = data.announcements || [];
-                window.app.dm.polls = data.polls || [];
-                window.app.dm.support = data.support || {phone:'',accountNumber:'',address:''};
-                window.app.dm.logo = data.logo || '';
-                window.app.dm.shopItems = data.shopItems || [];
-                ['members','users','messages','announcements','polls','support','logo','shopItems'].forEach(k => window.app.dm.sv(k));
-                if (window.app.ui) window.app.ui.render();
+            // عضو: بارگذاری داده‌ها
+            const dataFile = await loadDataFile();
+            if (dataFile) {
+                window.app.dm.members = dataFile.members || [];
+                window.app.dm.users = dataFile.users || [];
+                window.app.dm.logo = dataFile.logo || '';
+                window.app.dm.support = dataFile.support || {phone:'',accountNumber:'',address:''};
+                window.app.dm.shopItems = dataFile.shopItems || [];
+                ['members','users','logo','support','shopItems'].forEach(k => window.app.dm.sv(k));
             }
+            
+            const messagesData = await loadMessagesFromGitHub();
+            if (messagesData) {
+                window.app.dm.messages = messagesData.messages || [];
+                window.app.dm.announcements = messagesData.announcements || [];
+                window.app.dm.polls = messagesData.polls || [];
+                ['messages','announcements','polls'].forEach(k => window.app.dm.sv(k));
+            }
+            
+            if (window.app.ui) window.app.ui.render();
         }
+        
         lastSyncTime = now;
         isSyncing = false;
+        initialLoadDone = true;
     } catch (error) {
         console.error('خطا در همگام‌سازی:', error);
         isSyncing = false;
@@ -409,7 +504,16 @@ uploadBulk(file,cb){
             self.sv('members');
             self.sv('users');
             cb(null,rows.length,updated,added,0);
-            syncDataToGitHub({members:self.members,users:self.users,messages:self.messages,announcements:self.announcements,polls:self.polls,support:self.support,logo:self.logo,shopItems:self.shopItems,timestamp:Date.now()});
+            
+            // ذخیره در data.json
+            saveDataFile({
+                members: self.members,
+                users: self.users,
+                logo: self.logo,
+                support: self.support,
+                shopItems: self.shopItems,
+                lastUpdate: new Date().toISOString()
+            });
         }catch(e){console.error(e);cb('خطا در پردازش: '+e.message,0,0,0,0);}
     };
     reader.onload=function(e){
@@ -807,7 +911,32 @@ updNotif(){
 }
 
 class App{constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.init();}
-init(){this.ui.render();}
+async init(){
+    // بارگذاری اولیه از data.json
+    if (!initialLoadDone) {
+        console.log('🔄 بارگذاری اولیه از data.json...');
+        const dataFile = await loadDataFile();
+        if (dataFile && dataFile.members) {
+            this.dm.members = dataFile.members;
+            this.dm.users = dataFile.users || this.dm.users;
+            this.dm.logo = dataFile.logo || '';
+            this.dm.support = dataFile.support || this.dm.support;
+            this.dm.shopItems = dataFile.shopItems || this.dm.shopItems;
+            ['members','users','logo','support','shopItems'].forEach(k => this.dm.sv(k));
+            console.log(`✅ ${dataFile.members.length} عضو از data.json بارگذاری شد`);
+        }
+        
+        const messagesData = await loadMessagesFromGitHub();
+        if (messagesData) {
+            this.dm.messages = messagesData.messages || [];
+            this.dm.announcements = messagesData.announcements || [];
+            this.dm.polls = messagesData.polls || [];
+            ['messages','announcements','polls'].forEach(k => this.dm.sv(k));
+        }
+        initialLoadDone = true;
+    }
+    this.ui.render();
+}
 setTheme(t){localStorage.setItem('theme',t);$$('.theme-btn').forEach(b=>b.classList.remove('active'));$(`.theme-btn[data-theme="${t}"]`)?.classList.add('active');}
 doLogin(){const un=$('#loginUsername').value.trim(),pw=$('#loginPassword').value.trim(),ed=$('#loginError');ed.textContent='';if(!un||!pw){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> نام کاربری و رمز عبور را وارد کنید';return;}const r=this.auth.login(un,pw);if(!r.s){ed.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${r.m}`;return;}if(r.fc){this.ui.render();return;}this.ui.render();}
 doForgot(){
@@ -885,7 +1014,8 @@ saveSupport(){const p=$('#spp').value.trim(),a=$('#spa').value.trim(),ad=$('#spa
 
 const app=new App();
 window.app=app;
-setInterval(autoSync, 30000);
+app.init();
+setInterval(autoSync, CONFIG.SYNC_INTERVAL);
 
 })();
 } catch (error) {
