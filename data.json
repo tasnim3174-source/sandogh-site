@@ -1,0 +1,24 @@
+{
+  "members": [],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "admin123",
+      "role": "admin",
+      "memberId": null
+    }
+  ],
+  "logo": "",
+  "support": {
+    "phone": "",
+    "accountNumber": "",
+    "address": ""
+  },
+  "shopItems": [
+    {"id": "s1", "name": "کالا نمونه ۱", "description": "توضیحات", "price": 10},
+    {"id": "s2", "name": "کالا نمونه ۲", "description": "توضیحات", "price": 20},
+    {"id": "s3", "name": "کالا نمونه ۳", "description": "توضیحات", "price": 50}
+  ],
+  "lastUpdate": ""
+}
