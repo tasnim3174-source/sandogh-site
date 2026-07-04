@@ -902,5 +902,19 @@ setInterval(autoSync, 30000);
     }
 }
 </script>
+    <script>
+// ثبت Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sandogh-site/sw.js')
+            .then((registration) => {
+                console.log('✅ Service Worker ثبت شد:', registration.scope);
+            })
+            .catch((error) => {
+                console.warn('⚠️ خطا در ثبت Service Worker:', error);
+            });
+    });
+}
+</script>
 </body>
 </html>
