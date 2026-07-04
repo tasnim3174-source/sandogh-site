@@ -147,18 +147,14 @@ try {
 const $=(s,p=document)=>p.querySelector(s);
 const $$=(s,p=document)=>p.querySelectorAll(s);
 
-// ⚙️ تنظیمات اصلی - معماری جدید
+// ⚙️ تنظیمات اصلی - خواندن از مخزن sandogh-data
 const CONFIG = {
     GITHUB_OWNER: 'Tasnim3174-source',
-    GITHUB_REPO: 'sandogh-site',
-    GITHUB_TOKEN: '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',
+    GITHUB_REPO: 'sandogh-data',
     DATA_FILE: 'data.json',
     SYNC_INTERVAL: 30000,
     get DATA_URL() {
         return `https://raw.githubusercontent.com/${this.GITHUB_OWNER}/${this.GITHUB_REPO}/main/${this.DATA_FILE}`;
-    },
-    get API_URL() {
-        return `https://api.github.com/repos/${this.GITHUB_OWNER}/${this.GITHUB_REPO}`;
     }
 };
 
@@ -207,126 +203,25 @@ function showSyncStatus(text, type='syncing') {
     }
 }
 
-// 📖 خواندن data.json از GitHub (بدون توکن - سریع)
-async function loadDataFile() {
+// 📖 خواندن data.json از مخزن sandogh-data (بدون توکن - سریع)
+async function loadDataFromSandoghData() {
     try {
-        showSyncStatus('در حال بارگذاری داده‌ها...', 'syncing');
+        showSyncStatus('در حال بارگذاری از sandogh-data...', 'syncing');
         const url = CONFIG.DATA_URL + '?t=' + Date.now();
         const response = await fetch(url, { cache: 'no-store' });
         if (response.ok) {
             const data = await response.json();
-            console.log('✅ فایل data.json بارگذاری شد');
+            console.log('✅ فایل data.json از sandogh-data بارگذاری شد');
             showSyncStatus('✅ داده‌ها بارگذاری شدند', 'success');
             return data;
         } else {
             console.warn('⚠️ خطا در بارگذاری data.json:', response.status);
+            showSyncStatus('⚠️ خطا در بارگذاری', 'error');
             return null;
         }
     } catch (error) {
         console.warn('خطا در بارگذاری data.json:', error);
-        return null;
-    }
-}
-
-// ✍️ ذخیره data.json در GitHub (با توکن)
-async function saveDataFile(data) {
-    try {
-        showSyncStatus('در حال ذخیره داده‌ها...', 'syncing');
-        
-        let sha = null;
-        try {
-            const getResponse = await fetch(
-                `${CONFIG.API_URL}/contents/${CONFIG.DATA_FILE}`,
-                {
-                    headers: {
-                        'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                }
-            );
-            if (getResponse.ok) {
-                const fileData = await getResponse.json();
-                sha = fileData.sha;
-            }
-        } catch (e) {
-            console.log('فایل data.json هنوز وجود ندارد');
-        }
-        
-        const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-        const body = {
-            message: `📊 به‌روزرسانی داده‌ها - ${new Date().toLocaleString('fa-IR')}`,
-            content: content,
-            branch: 'main'
-        };
-        if (sha) body.sha = sha;
-        
-        const response = await fetch(
-            `${CONFIG.API_URL}/contents/${CONFIG.DATA_FILE}`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(body)
-            }
-        );
-        
-        if (response.ok) {
-            console.log('✅ فایل data.json ذخیره شد');
-            showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
-            return true;
-        } else {
-            console.error('❌ خطا در ذخیره data.json:', response.status);
-            showSyncStatus('❌ خطا در ذخیره', 'error');
-            return false;
-        }
-    } catch (error) {
-        console.error('خطا در ذخیره data.json:', error);
-        showSyncStatus('❌ خطا در اتصال', 'error');
-        return false;
-    }
-}
-
-// 💬 همگام‌سازی پیام‌ها با Issues
-async function syncMessagesToGitHub(data) {
-    try {
-        const response = await fetch(`${CONFIG.API_URL}/issues`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `token ${CONFIG.GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title: `[SYNC] ${new Date().toISOString()}`,
-                body: JSON.stringify(data),
-                labels: ['sync-messages']
-            })
-        });
-        return response.ok;
-    } catch (error) {
-        console.error('خطا در sync messages:', error);
-        return false;
-    }
-}
-
-async function loadMessagesFromGitHub() {
-    try {
-        const response = await fetch(
-            `${CONFIG.API_URL}/issues?labels=sync-messages&state=all&per_page=1&sort=created&direction=desc`,
-            { headers: { 'Authorization': `token ${CONFIG.GITHUB_TOKEN}`, 'Accept': 'application/vnd.github.v3+json' } }
-        );
-        if (response.ok) {
-            const issues = await response.json();
-            if (issues.length > 0) {
-                return JSON.parse(issues[0].body);
-            }
-        }
-        return null;
-    } catch (error) {
-        console.error('خطا در load messages:', error);
+        showSyncStatus('⚠️ خطا در اتصال', 'error');
         return null;
     }
 }
@@ -343,47 +238,21 @@ async function autoSync() {
         if (!window.app) return;
         isSyncing = true;
         
-        if (window.app.auth.isAdmin()) {
-            // مدیر: ذخیره داده‌های اعضا در data.json
-            const dataFile = {
-                members: window.app.dm.members,
-                users: window.app.dm.users,
-                logo: window.app.dm.logo,
-                support: window.app.dm.support,
-                shopItems: window.app.dm.shopItems,
-                lastUpdate: new Date().toISOString()
-            };
-            await saveDataFile(dataFile);
+        // همه کاربران: بارگذاری از sandogh-data
+        const data = await loadDataFromSandoghData();
+        if (data) {
+            window.app.dm.members = data.members || [];
+            window.app.dm.users = data.users || window.app.dm.users;
+            window.app.dm.logo = data.logo || '';
+            window.app.dm.support = data.support || window.app.dm.support;
+            window.app.dm.shopItems = data.shopItems || window.app.dm.shopItems;
+            window.app.dm.messages = data.messages || [];
+            window.app.dm.announcements = data.announcements || [];
+            window.app.dm.polls = data.polls || [];
             
-            // ذخیره پیام‌ها در Issues
-            const messagesData = {
-                messages: window.app.dm.messages,
-                announcements: window.app.dm.announcements,
-                polls: window.app.dm.polls,
-                timestamp: now
-            };
-            await syncMessagesToGitHub(messagesData);
-        } else if (window.app.auth.isLoggedIn()) {
-            // عضو: بارگذاری داده‌ها
-            const dataFile = await loadDataFile();
-            if (dataFile) {
-                window.app.dm.members = dataFile.members || [];
-                window.app.dm.users = dataFile.users || [];
-                window.app.dm.logo = dataFile.logo || '';
-                window.app.dm.support = dataFile.support || {phone:'',accountNumber:'',address:''};
-                window.app.dm.shopItems = dataFile.shopItems || [];
-                ['members','users','logo','support','shopItems'].forEach(k => window.app.dm.sv(k));
-            }
+            ['members','users','logo','support','shopItems','messages','announcements','polls'].forEach(k => window.app.dm.sv(k));
             
-            const messagesData = await loadMessagesFromGitHub();
-            if (messagesData) {
-                window.app.dm.messages = messagesData.messages || [];
-                window.app.dm.announcements = messagesData.announcements || [];
-                window.app.dm.polls = messagesData.polls || [];
-                ['messages','announcements','polls'].forEach(k => window.app.dm.sv(k));
-            }
-            
-            if (window.app.ui) window.app.ui.render();
+            if (window.app.ui && initialLoadDone) window.app.ui.render();
         }
         
         lastSyncTime = now;
@@ -441,88 +310,6 @@ spendCoin(mid,amount,reason,desc=''){
 }
 applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const add=(a,r,d)=>{this.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
 
-uploadBulk(file,cb){
-    if(typeof XLSX==='undefined'){cb('کتابخانه XLSX بارگذاری نشد',0,0,0,0);return;}
-    const ext=file.name.split('.').pop().toLowerCase();
-    if(!['xlsx','xls','csv'].includes(ext)){cb('فرمت پشتیبانی نمی‌شود',0,0,0,0);return;}
-    const reader=new FileReader(),self=this;
-    const process=(data,isCsv)=>{
-        try{
-            let wb;
-            if(isCsv)wb=XLSX.read(data,{type:'string',raw:true});
-            else wb=XLSX.read(new Uint8Array(data),{type:'array',raw:true});
-            const sh=wb.Sheets[wb.SheetNames[0]];
-            if(!sh){cb('شیت خالی است',0,0,0,0);return;}
-            const rows=XLSX.utils.sheet_to_json(sh,{defval:'',raw:false});
-            if(!rows.length){cb('فایل خالی است',0,0,0,0);return;}
-            const headers=Object.keys(rows[0]);
-            const colMap={
-                firstName:U.findCol(['نام','firstname','first_name'],headers),
-                lastName:U.findCol(['نام خانوادگی','lastname','last_name','فامیلی'],headers),
-                accountNumber:U.findCol(['شماره حساب','accountnumber','account_number','کدعضو','شماره','کد'],headers),
-                openDate:U.findCol(['تاریخ افتتاح','opendate','open_date'],headers),
-                birthDate:U.findCol(['تاریخ تولد','birthdate','birth_date'],headers),
-                phone1:U.findCol(['تلفن','تلفن1','phone1','phone','موبایل','mobile'],headers),
-                phone2:U.findCol(['تلفن2','phone2','تلفن 2'],headers),
-                balance:U.findCol(['موجودی','balance','مانده'],headers),
-                savings:U.findCol(['پس انداز','savings','پس‌انداز'],headers),
-                loan:U.findCol(['وام','loan','تسهیلات'],headers)
-            };
-            if(!colMap.accountNumber){cb('ستون "شماره حساب" در فایل یافت نشد.',0,0,0,0);return;}
-            let updated=0,added=0;
-            rows.forEach(row=>{
-                const accNum=String(row[colMap.accountNumber]||'').trim();
-                if(!accNum)return;
-                let member=self.members.find(m=>String(m.accountNumber||'').trim()===accNum);
-                let isNew=false;
-                if(!member){
-                    const newId=self.members.length>0?Math.max(...self.members.map(m=>m.id))+1:1;
-                    member={id:newId,firstName:'',lastName:'',accountNumber:accNum,openDate:'',birthDate:'',phone1:'',phone2:'',balance:0,coins:0,usedCoins:0,coinHistory:[],loginCount:0,smsStatus:{},transactions:[]};
-                    self.members.push(member);
-                    isNew=true;
-                }
-                if(colMap.firstName)member.firstName=String(row[colMap.firstName]||member.firstName||'').trim();
-                if(colMap.lastName)member.lastName=String(row[colMap.lastName]||member.lastName||'').trim();
-                if(colMap.openDate)member.openDate=String(row[colMap.openDate]||member.openDate||'').trim();
-                if(colMap.birthDate)member.birthDate=String(row[colMap.birthDate]||member.birthDate||'').trim();
-                if(colMap.phone1)member.phone1=String(row[colMap.phone1]||member.phone1||'').trim();
-                if(colMap.phone2)member.phone2=String(row[colMap.phone2]||member.phone2||'').trim();
-                if(colMap.balance)member.balance=U.parseNum(row[colMap.balance]);
-                if(colMap.savings)member.savingsStatus=U.parseNum(row[colMap.savings]);
-                if(colMap.loan)member.loanBalance=U.parseNum(row[colMap.loan]);
-                member.fullName=(member.firstName||'')+' '+(member.lastName||'');
-                let user=self.gUserByMid(member.id);
-                if(!user){
-                    user={id:self.users.length>0?Math.max(...self.users.map(u=>u.id))+1:1,username:accNum,password:accNum,role:'member',memberId:member.id};
-                    self.users.push(user);
-                } else {
-                    user.username = accNum;
-                    user.password = accNum;
-                }
-                if(isNew)added++;else updated++;
-            });
-            self.sv('members');
-            self.sv('users');
-            cb(null,rows.length,updated,added,0);
-            
-            // ذخیره در data.json
-            saveDataFile({
-                members: self.members,
-                users: self.users,
-                logo: self.logo,
-                support: self.support,
-                shopItems: self.shopItems,
-                lastUpdate: new Date().toISOString()
-            });
-        }catch(e){console.error(e);cb('خطا در پردازش: '+e.message,0,0,0,0);}
-    };
-    reader.onload=function(e){
-        if(ext==='csv'){const arr=new Uint8Array(e.target.result);let txt=new TextDecoder('utf-8').decode(arr);process(txt,true);}
-        else process(e.target.result,false);
-    };
-    reader.onerror=()=>cb('خطا در خواندن فایل',0,0,0,0);
-    reader.readAsArrayBuffer(file);
-}
 changeUname(mid,nu){const u=this.gUserByMid(mid);if(!u||this.users.some(x=>x.username===nu&&u.memberId!==mid))return false;u.username=nu;this.sv('users');return true;}
 changePass(mid,np){const u=this.gUserByMid(mid);if(!u||!np)return false;u.password=np;this.sv('users');return true;}
 incLogin(mid){const m=this.gMember(mid);if(m){m.loginCount=(m.loginCount||0)+1;m.lastLoginDate=U.now();this.sv('members');}}
@@ -596,10 +383,11 @@ switchTab(t){const c=$('#dynamicContent');if(!c)return;c.innerHTML='';const fn='
 
 render_profile(c){
     if(this.app.auth.isAdmin()){
-      let h=`<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div><div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، نام خانوادگی، شماره حساب..."><button class="clear-search" id="spi_cl"><i class="fas fa-times"></i></button></div><div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد</th><th>تلفن۱</th><th>تلفن۲</th><th>عملیات</th></tr></thead><tbody>`;
-      this.app.dm.members.forEach(m=>{const ui=this.app.dm.gUserByMid(m.id);h+=`<tr>${['firstName','lastName','','','accountNumber','openDate','birthDate','phone1','phone2'].map((k,i)=>{if(i===2)return`<td><input id="pfu_${m.id}" value="${U.esc(ui?.username||'')}" style="width:110px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>`;if(i===3)return`<td><input id="pfp_${m.id}" value="${U.esc(ui?.password||'')}" style="width:110px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>`;return`<td><input id="pf_${k}_${m.id}" value="${U.esc(m[k]||'')}" style="width:90px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>`;}).join('')}<td><button class="btn-small success-btn" id="spb_${m.id}"><i class="fas fa-save"></i> ذخیره</button></td></tr>`;});
-      h+=`</tbody></table></div>`;c.innerHTML=h;
-      c.querySelectorAll('[id^="spb_"]').forEach(b=>{const mid=parseInt(b.id.split('_')[1]);b.onclick=()=>this.app.saveProf(mid);});
+      let h=`<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div><div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، نام خانوادگی، شماره حساب..."><button class="clear-search" id="spi_cl"><i class="fas fa-times"></i></button></div><div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد</th><th>تلفن۱</th><th>تلفن۲</th></tr></thead><tbody>`;
+      this.app.dm.members.forEach(m=>{const ui=this.app.dm.gUserByMid(m.id);h+=`<tr>${['firstName','lastName','','','accountNumber','openDate','birthDate','phone1','phone2'].map((k,i)=>{if(i===2)return`<td>${U.esc(ui?.username||'')}</td>`;if(i===3)return`<td>${U.esc(ui?.password||'')}</td>`;return`<td>${U.esc(m[k]||'')}</td>`;}).join('')}</tr>`;});
+      h+=`</tbody></table></div>`;
+      h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(128,90,213,.1),rgba(107,70,193,.05));border-right-color:#805ad5;margin-top:20px"><i class="fas fa-info-circle" style="color:#805ad5"></i> <strong>توجه:</strong> برای ویرایش اطلاعات اعضا، فایل <code>data.json</code> را در مخزن <code>sandogh-data</code> ویرایش کنید.</div>`;
+      c.innerHTML=h;
       this.search('spi','#pt',c);
     }else{
       const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;}
@@ -717,31 +505,18 @@ render_settings(c){
     if(!this.app.auth.isAdmin()){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-ban" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی غیرمجاز</p></div>';return;}
     const currentLogo=this.app.dm.logo;
     let h=`<div class="info-box"><i class="fas fa-cog"></i> تنظیمات سیستم</div>`;
-    h+=`<div class="dashboard-section"><h3><i class="fas fa-image"></i> مدیریت لوگو</h3><div style="background:rgba(247,250,252,.8);padding:20px;border-radius:16px;margin-bottom:20px;border:2px dashed #cbd5e0"><div style="text-align:center">`;
+    h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(128,90,213,.1),rgba(107,70,193,.05));border-right-color:#805ad5"><i class="fas fa-info-circle" style="color:#805ad5"></i> <strong>توجه:</strong> برای ویرایش اطلاعات، فایل <code>data.json</code> را در مخزن <code>sandogh-data</code> ویرایش کنید.</div>`;
+    h+=`<div class="dashboard-section"><h3><i class="fas fa-image"></i> لوگوی فعلی</h3><div style="background:rgba(247,250,252,.8);padding:20px;border-radius:16px;text-align:center">`;
     if(currentLogo)h+=`<img src="${currentLogo}" class="logo-preview" alt="لوگوی فعلی">`;
     else h+=`<div style="width:100px;height:100px;border-radius:50%;background:#e2e8f0;margin:15px auto;display:flex;align-items:center;justify-content:center"><i class="fas fa-image" style="font-size:2rem;color:#a0aec0"></i></div>`;
-    h+=`<div style="margin-top:15px"><input type="file" id="logoInput" accept="image/*" style="display:none"><button class="btn-small info-btn" id="uploadLogoBtn"><i class="fas fa-upload"></i> انتخاب لوگو</button>`;
-    if(currentLogo)h+=`<button class="btn-small danger-btn" id="removeLogoBtn" style="margin-right:10px"><i class="fas fa-trash"></i> حذف لوگو</button>`;
-    h+=`</div></div></div></div>`;
-    h+=`<div class="dashboard-section"><h3><i class="fas fa-store"></i> مدیریت فروشگاه</h3><div style="background:rgba(247,250,252,.8);padding:20px;border-radius:16px;margin-bottom:20px"><div style="display:grid;gap:12px"><input type="text" id="shopItemName" placeholder="نام کالا" style="padding:10px;border:2px solid #e2e8f0;border-radius:12px"><textarea id="shopItemDesc" placeholder="توضیحات" style="padding:10px;border:2px solid #e2e8f0;border-radius:12px;min-height:60px;resize:vertical"></textarea><input type="number" id="shopItemPrice" placeholder="قیمت (سکه)" min="1" style="padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button class="btn-small success-btn" id="addShopItemBtn"><i class="fas fa-plus"></i> افزودن کالا</button></div></div>`;
-    const items=this.app.dm.shopItems||[];
-    if(items.length){h+=`<div class="table-wrapper"><table><thead><tr><th>نام</th><th>توضیحات</th><th>قیمت</th><th>عملیات</th></tr></thead><tbody>`;items.forEach(item=>{h+=`<tr><td>${U.esc(item.name)}</td><td>${U.esc(item.description||'')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${item.price}</span></td><td><button class="btn-small danger-btn" data-del-shop="${item.id}"><i class="fas fa-trash"></i></button></td></tr>`;});h+=`</tbody></table></div>`;}
-    h+=`</div>`;
+    h+=`</div></div>`;
     c.innerHTML=h;
-    $('#uploadLogoBtn',c).onclick=()=>$('#logoInput',c).click();
-    $('#logoInput',c).onchange=function(){if(this.files[0]){const file=this.files[0];if(!file.type.startsWith('image/')){alert('لطفاً یک فایل تصویری انتخاب کنید');return;}const reader=new FileReader();reader.onload=function(e){window.app.dm.setLogo(e.target.result);alert('✅ لوگو با موفقیت بارگذاری شد');window.app.ui.render();};reader.readAsDataURL(file);}};
-    const removeBtn=$('#removeLogoBtn',c);
-    if(removeBtn)removeBtn.onclick=()=>{if(confirm('آیا مطمئن هستید؟')){window.app.dm.setLogo('');alert('✅ لوگو حذف شد');window.app.ui.render();}};
-    $('#addShopItemBtn',c).onclick=()=>{const name=$('#shopItemName',c).value.trim();const desc=$('#shopItemDesc',c).value.trim();const price=parseInt($('#shopItemPrice',c).value);if(!name){alert('نام کالا را وارد کنید');return;}if(isNaN(price)||price<=0){alert('قیمت معتبر وارد کنید');return;}this.app.dm.addShopItem({id:'s_'+Date.now(),name,description:desc,price});alert('✅ کالا اضافه شد');this.render_settings(c);};
-    c.querySelectorAll('[data-del-shop]').forEach(btn=>{btn.onclick=()=>{if(confirm('حذف این کالا؟')){this.app.dm.delShopItem(btn.dataset.delShop);this.render_settings(c);}};});
 }
 
 render_coins(c){ 
     if(this.app.auth.isAdmin()){ 
-        let h=`<div class="info-box"><i class="fas fa-coins"></i> مدیریت سکه‌ها</div><div class="dashboard-section"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><select id="cms" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px">${this.app.dm.members.map(m=>`<option value="${m.id}">${U.esc(m.firstName||'')} ${U.esc(m.lastName||'')}</option>`).join('')}</select><input type="number" id="cai" value="5" min="1" style="width:100px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button class="btn-small success-btn" id="acb"><i class="fas fa-plus"></i> افزودن</button></div></div><div class="table-wrapper"><table id="ct"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th><th>سکه</th><th>عملیات</th></tr></thead><tbody>${this.app.dm.members.map(m=>`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700">${m.coins||0}</span></td><td><button class="btn-small danger-btn reset-btn" data-mid="${m.id}"><i class="fas fa-redo"></i> ریست</button></td></tr>`).join('')}</tbody></table></div>`; 
-        c.innerHTML=h; 
-        $('#acb',c).onclick=()=>this.app.addCoin(); 
-        c.querySelectorAll('.reset-btn').forEach(b=>{const mid=parseInt(b.dataset.mid);b.onclick=()=>this.app.resetCoins(mid);}); 
+        let h=`<div class="info-box"><i class="fas fa-coins"></i> مدیریت سکه‌ها</div><div class="table-wrapper"><table id="ct"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map(m=>`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700">${m.coins||0}</span></td></tr>`).join('')}</tbody></table></div>`; 
+        c.innerHTML=h;
     }else{ 
         const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;} 
         let h=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> سکه‌های شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(197,48,48,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-shopping-cart" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مصرف شده</div><div style="font-size:1.8rem;font-weight:700;color:#e53e3e">${m.usedCoins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مانده</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum((m.coins||0)-(m.usedCoins||0))}</div></div></div></div>`; 
@@ -841,9 +616,14 @@ renderAnns(){const container=$('#ancr');if(!container)return;if(!this.app.dm.ann
 
 render_sms(c){const ia=this.app.auth.isAdmin();if(ia){const keys=['general','supervisors','council','overdue','birthday','newsletter','poll','occasions'];c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="table-wrapper"><table id="st"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${this.app.dm.members.map(m=>{const s=m.smsStatus||{};return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td>${keys.map(k=>`<td>${s[k]?'<span style="color:#48bb78;font-weight:700">✅</span>':'<span style="color:#e53e3e;font-weight:700">❌</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`;}else{const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m)return;const s=m.smsStatus||{},items=[{k:'general',l:'سیستم کلی سامانه پیامکی',icon:'fa-cog'},{k:'supervisors',l:'سیستم ویژه سرپرستان',icon:'fa-user-shield'},{k:'council',l:'سیستم پیامکی ویژه شورا',icon:'fa-users'},{k:'overdue',l:'سیستم معوقات',icon:'fa-exclamation-triangle'},{k:'birthday',l:'سیستم پیامکی تبریک تولد',icon:'fa-birthday-cake'},{k:'newsletter',l:'سیستم پیامکی خبرنامه',icon:'fa-newspaper'},{k:'poll',l:'سیستم پیامکی مسابقه و نظر سنجی',icon:'fa-poll'},{k:'occasions',l:'سیستم پیامکی مناسبات',icon:'fa-calendar-alt'}];c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی شما</div><div class="sms-status-grid">${items.map(i=>`<div class="sms-status-item"><span style="display:flex;align-items:center;gap:10px;font-weight:600"><i class="fas ${i.icon}" style="color:#667eea"></i> ${i.l}</span><span class="${s[i.k]?'status-active':'status-inactive'}">${s[i.k]?'<i class="fas fa-check"></i> فعال':'<i class="fas fa-times"></i> غیرفعال'}</span></div>`).join('')}</div>`;}}
 
-render_support(c){const s=this.app.dm.support,ia=this.app.auth.isAdmin();let h=`<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی</div>`;if(ia)h+=`<div class="dashboard-section"><h3><i class="fas fa-edit"></i> ویرایش اطلاعات</h3><div style="display:grid;gap:15px"><div><label style="font-weight:600;color:#718096;display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-phone"></i> شماره تماس:</label><input type="text" id="spp" value="${U.esc(s.phone||'')}" style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px"></div><div><label style="font-weight:600;color:#718096;display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-university"></i> شماره حساب:</label><input type="text" id="spa" value="${U.esc(s.accountNumber||'')}" style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px"></div><div><label style="font-weight:600;color:#718096;display:flex;align-items:center;gap:8px;margin-bottom:8px"><i class="fas fa-map-marker-alt"></i> آدرس:</label><input type="text" id="spad" value="${U.esc(s.address||'')}" style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px"></div><button class="btn-small success-btn" id="ssb" style="align-self:flex-start"><i class="fas fa-save"></i> ذخیره</button></div></div>`;h+=`<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات تماس</h3><div style="display:grid;gap:15px"><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(102,126,234,.1);border-radius:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.phone||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(72,187,120,.1);border-radius:12px"><i class="fas fa-university" style="font-size:1.5rem;color:#48bb78"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">حساب:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(237,137,54,.1);border-radius:12px"><i class="fas fa-map-marker-alt" style="font-size:1.5rem;color:#ed8936"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آدرس:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.address||'---')}</div></div></div></div></div>`;c.innerHTML=h;$('#ssb',c)&&($('#ssb',c).onclick=()=>this.app.saveSupport());}
+render_support(c){const s=this.app.dm.support,ia=this.app.auth.isAdmin();let h=`<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی</div>`;h+=`<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات تماس</h3><div style="display:grid;gap:15px"><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(102,126,234,.1);border-radius:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.phone||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(72,187,120,.1);border-radius:12px"><i class="fas fa-university" style="font-size:1.5rem;color:#48bb78"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">حساب:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(237,137,54,.1);border-radius:12px"><i class="fas fa-map-marker-alt" style="font-size:1.5rem;color:#ed8936"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آدرس:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.address||'---')}</div></div></div></div></div>`;c.innerHTML=h;}
 
-render_members(c){const ia=this.app.auth.isAdmin();if(!ia){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-ban" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی غیرمجاز</p></div>';return;}let h=`<div class="info-box"><i class="fas fa-users"></i> مدیریت اعضا</div><div style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap"><input type="file" id="bf" accept=".xlsx,.xls,.csv" style="display:none"><button id="beb" style="background:linear-gradient(135deg,#805ad5,#6b46c1);color:#fff;padding:12px 24px;border:none;border-radius:24px;cursor:pointer;font-weight:700;display:flex;align-items:center;gap:8px"><i class="fas fa-upload"></i> آپلود فایل اکسل</button>${ia?'<button id="dab" class="delete-all-btn"><i class="fas fa-trash"></i> حذف کلی اعضا</button>':''}</div>`;h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(128,90,213,.1),rgba(107,70,193,.05));border-right-color:#805ad5"><i class="fas fa-info-circle" style="color:#805ad5"></i> <strong>راهنمای آپلود اکسل:</strong> فایل باید شامل ستون "شماره حساب" باشد. نام کاربری و رمز عبور هر عضو = شماره حساب</div>`;h+=`<div class="table-wrapper"><table id="mt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تلفن۱</th><th>تلفن۲</th><th>سکه</th><th>عملیات</th></tr></thead><tbody>${this.app.dm.members.map(m=>{const ui=this.app.dm.gUserByMid(m.id);return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(ui?.username||'---')}</td><td class="password-dots" data-mid="${m.id}">••••••</td><td>${U.esc(m.accountNumber||'---')}</td><td>${U.esc(m.phone1||'---')}</td><td>${U.esc(m.phone2||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${m.coins||0}</span></td><td style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn-small danger-btn" id="dmb_${m.id}"><i class="fas fa-trash"></i></button></td></tr>`;}).join('')}</tbody></table></div>`;c.innerHTML=h;this.app.dm.members.forEach(m=>{$(`#dmb_${m.id}`,c).onclick=()=>this.app.delMember(m.id);});c.querySelectorAll('.password-dots').forEach(el=>{el.onclick=function(){const u=window.app.dm.gUserByMid(parseInt(this.dataset.mid));if(!u)return;if(this.textContent==='••••••'){this.textContent=u.password||'---';this.style.background='#fff3cd';}else{this.textContent='••••••';this.style.background='#edf2f7';}};});$('#dab',c)&&($('#dab',c).onclick=()=>{if(confirm('حذف کامل؟'))if(confirm('تأیید نهایی'))this.app.delAllMembers();});$('#beb',c).onclick=()=>$('#bf',c).click();$('#bf',c).onchange=function(){if(this.files[0]){window.app.uploadBulk(this.files[0]);this.value='';}};}
+render_members(c){const ia=this.app.auth.isAdmin();if(!ia){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-ban" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی غیرمجاز</p></div>';return;}
+let h=`<div class="info-box"><i class="fas fa-users"></i> مدیریت اعضا</div>`;
+h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(128,90,213,.1),rgba(107,70,193,.05));border-right-color:#805ad5"><i class="fas fa-info-circle" style="color:#805ad5"></i> <strong>توجه:</strong> اطلاعات اعضا از فایل <code>data.json</code> در مخزن <code>sandogh-data</code> خوانده می‌شود. برای ویرایش اطلاعات، فایل را در GitHub ویرایش کنید.</div>`;
+h+=`<div class="table-wrapper"><table id="mt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تلفن۱</th><th>تلفن۲</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map(m=>{const ui=this.app.dm.gUserByMid(m.id);return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(ui?.username||'---')}</td><td class="password-dots" data-mid="${m.id}">••••••</td><td>${U.esc(m.accountNumber||'---')}</td><td>${U.esc(m.phone1||'---')}</td><td>${U.esc(m.phone2||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${m.coins||0}</span></td></tr>`;}).join('')}</tbody></table></div>`;
+c.innerHTML=h;
+c.querySelectorAll('.password-dots').forEach(el=>{el.onclick=function(){const u=window.app.dm.gUserByMid(parseInt(this.dataset.mid));if(!u)return;if(this.textContent==='••••••'){this.textContent=u.password||'---';this.style.background='#fff3cd';}else{this.textContent='••••••';this.style.background='#edf2f7';}};});}
 
 render_supervisor(c){
     const self=this;
@@ -912,26 +692,20 @@ updNotif(){
 
 class App{constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.init();}
 async init(){
-    // بارگذاری اولیه از data.json
     if (!initialLoadDone) {
-        console.log('🔄 بارگذاری اولیه از data.json...');
-        const dataFile = await loadDataFile();
-        if (dataFile && dataFile.members) {
-            this.dm.members = dataFile.members;
-            this.dm.users = dataFile.users || this.dm.users;
-            this.dm.logo = dataFile.logo || '';
-            this.dm.support = dataFile.support || this.dm.support;
-            this.dm.shopItems = dataFile.shopItems || this.dm.shopItems;
-            ['members','users','logo','support','shopItems'].forEach(k => this.dm.sv(k));
-            console.log(`✅ ${dataFile.members.length} عضو از data.json بارگذاری شد`);
-        }
-        
-        const messagesData = await loadMessagesFromGitHub();
-        if (messagesData) {
-            this.dm.messages = messagesData.messages || [];
-            this.dm.announcements = messagesData.announcements || [];
-            this.dm.polls = messagesData.polls || [];
-            ['messages','announcements','polls'].forEach(k => this.dm.sv(k));
+        console.log('🔄 بارگذاری اولیه از sandogh-data...');
+        const data = await loadDataFromSandoghData();
+        if (data) {
+            this.dm.members = data.members || [];
+            this.dm.users = data.users || this.dm.users;
+            this.dm.logo = data.logo || '';
+            this.dm.support = data.support || this.dm.support;
+            this.dm.shopItems = data.shopItems || this.dm.shopItems;
+            this.dm.messages = data.messages || [];
+            this.dm.announcements = data.announcements || [];
+            this.dm.polls = data.polls || [];
+            ['members','users','logo','support','shopItems','messages','announcements','polls'].forEach(k => this.dm.sv(k));
+            console.log(`✅ ${this.dm.members.length} عضو از sandogh-data بارگذاری شد`);
         }
         initialLoadDone = true;
     }
@@ -952,8 +726,6 @@ doForgot(){
 }
 doForceChange(){const np=$('#newPasswordForce').value.trim(),cp=$('#confirmPasswordForce').value.trim(),ed=$('#forceError');ed.textContent='';if(!np){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> رمز جدید را وارد کنید';return;}if(np!==cp){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> رمز و تکرار آن مطابقت ندارند';return;}const r=this.auth.changeForced(np);if(!r.s){ed.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${r.m}`;return;}this.ui.render();}
 doLogout(){this.auth.logout();localStorage.removeItem('activeTab');this.ui.render();}
-addCoin(){const s=$('#cms'),a=$('#cai');if(!s||!a)return;const mid=parseInt(s.value),amt=parseInt(a.value);if(isNaN(amt)||amt<=0){alert('تعداد سکه معتبر وارد کنید');return;}const m=this.dm.gMember(mid);if(!m){alert('عضو یافت نشد');return;}this.dm.addCoin(mid,amt,'افزودن توسط مدیر',`افزودن ${amt} سکه`);alert(`✅ اضافه شد`);this.ui.switchTab('coins');}
-resetCoins(mid){if(!confirm('ریست سکه‌ها؟'))return;const m=this.dm.gMember(mid);if(!m)return;m.coins=m.usedCoins=0;m.coinHistory=[];this.dm.sv('members');alert('ریست شد');this.ui.switchTab('coins');}
 spendCoinOnItem(itemId){
     const item=this.dm.shopItems.find(i=>i.id===itemId);
     if(!item){alert('کالا یافت نشد');return;}
@@ -993,23 +765,8 @@ sendReply(pid,type,txt){
 }
 delMsg(id){if(confirm('حذف پیام؟')){this.dm.delMsg(id);this.ui.render();}}
 sendAnn(){const t=$('#ant').value.trim(),c=$('#anc').value.trim();if(!t||!c){alert('عنوان و متن را وارد کنید');return;}this.dm.addAnn({id:'a_'+Date.now()+Math.random().toString(36).slice(2,6),title:t,content:c,timestamp:U.now(),sender:this.auth.user.username||'مدیر'});$('#ant').value='';$('#anc').value='';this.ui.switchTab('cultural');}
-saveProf(mid){const m=this.dm.gMember(mid);if(!m)return;const vals={};['firstName','lastName','accountNumber','openDate','birthDate','phone1','phone2'].forEach(k=>{vals[k]=$(`#pf_${k}_${mid}`)?.value.trim()||'';});const un=$(`#pfu_${mid}`)?.value.trim()||'',pw=$(`#pfp_${mid}`)?.value.trim()||'';if(!vals.firstName||!vals.lastName||!vals.accountNumber||!vals.openDate){alert('موارد اجباری را پر کنید');return;}const ui=this.dm.gUserByMid(mid);if(ui){if(this.dm.users.some(u=>u.username===un&&u.id!==ui.id)){alert('نام کاربری تکراری');return;}ui.username=un;ui.password=pw;this.dm.sv('users');}Object.assign(m,vals);m.fullName=vals.firstName+' '+vals.lastName;this.dm.sv('members');alert('ذخیره شد');this.ui.switchTab('profile');}
 saveBirth(mid){const v=$('#nbd')?.value.trim();if(!v){alert('تاریخ تولد را وارد کنید');return;}const m=this.dm.gMember(mid);if(!m)return;m.birthDate=v;this.dm.sv('members');alert('✅ ذخیره شد');this.ui.render();}
 savePass(mid){const np=$('#npi')?.value.trim(),cp=$('#cpi')?.value.trim();if(!np||!cp){alert('رمز و تکرار آن را وارد کنید');return;}if(np!==cp){alert('رمز و تکرار آن مطابقت ندارند');return;}if(U.strength(np)==='ضعیف'){alert('رمز عبور بسیار ضعیف است');return;}const u=this.dm.gUserByMid(mid);if(!u)return;u.password=np;this.dm.sv('users');alert('✅ رمز عبور تغییر یافت');this.ui.render();}
-delMember(mid){if(confirm('حذف عضو؟')){this.dm.delMember(mid);alert('حذف شد');this.ui.switchTab('members');}}
-delAllMembers(){this.dm.delAllMembers();alert('همه اعضا حذف شدند');this.ui.switchTab('members');}
-uploadBulk(file){
-    showSyncStatus('در حال پردازش فایل اکسل...', 'syncing');
-    this.dm.uploadBulk(file,(e,tr,up,ad,nm)=>{
-        if(e){showSyncStatus('❌ '+e, 'error');alert('❌ '+e);}
-        else{
-            showSyncStatus('✅ آپلود کامل شد', 'success');
-            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n🔄 به‌روزرسانی شده: ${up}\n➕ عضو جدید اضافه شده: ${ad}\n\nنام کاربری = شماره حساب\nرمز عبور = شماره حساب`);
-            this.ui.switchTab('members');
-        }
-    });
-}
-saveSupport(){const p=$('#spp').value.trim(),a=$('#spa').value.trim(),ad=$('#spad').value.trim();this.dm.support={phone:p,accountNumber:a,address:ad};this.dm.sv('support');alert('ذخیره شد');this.ui.switchTab('support');}
 }
 
 const app=new App();
