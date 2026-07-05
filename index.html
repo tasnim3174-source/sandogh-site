@@ -162,12 +162,12 @@ const CONFIG = {
 };
 
 const U={
-norm(s){if(!s)return'';return s.toLowerCase().replace(/[\s\-_]/g,'');},
+norm(s){if(s===null||s===undefined||s==='')return'';return String(s).toLowerCase().replace(/[\s\-_]/g,'');},
 fmtNum(n){return new Intl.NumberFormat('fa-IR').format(n);},
 toJalali(g){const d=new Date(g),gy=d.getFullYear(),gm=d.getMonth()+1,gd=d.getDate(),gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy,days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1],jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30),jd=1+(days<186?days%31:(days-186)%30);return`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`;},
 now(){const n=new Date();return`${this.toJalali(n)} ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;},
 parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=String(v).replace(/[,\s]/g,'');return isNaN(parseFloat(s))?0:parseFloat(s);},
-fmtDate(s){if(!s)return'---';const c=s.replace(/\D/g,'');return c.length===8?`${c.slice(0,4)}/${c.slice(4,6)}/${c.slice(6,8)}`:s;},
+fmtDate(s){if(!s)return'---';const c=String(s).replace(/\D/g,'');return c.length===8?`${c.slice(0,4)}/${c.slice(4,6)}/${c.slice(6,8)}`:s;},
 esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;},
 strength(p){let s=0;if(p.length>=6)s++;if(p.length>=8)s++;if(/[a-z]/.test(p))s++;if(/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^a-zA-Z\d]/.test(p))s++;return s<=2?'ضعیف':s<=4?'متوسط':'قوی';},
 findCol(names,headers){for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers)if(h.toLowerCase().replace(/[_\s\-]/g,'')===nn)return h;}return null;},
@@ -288,6 +288,9 @@ async function autoSync() {
             window.app.dm.users = (data.users || []).map(function(u) {
                 return Object.assign({}, u, {
                     id: parseInt(u.id) || u.id,
+                    username: String(u.username || ''),
+                    password: String(u.password || ''),
+                    role: String(u.role || 'member'),
                     memberId: u.memberId ? (parseInt(u.memberId) || null) : null
                 });
             });
@@ -331,7 +334,7 @@ constructor(){
         {id:'s2',name:'کالا نمونه ۲',description:'توضیحات کالا',price:20},
         {id:'s3',name:'کالا نمونه ۳',description:'توضیحات کالا',price:50}
     ]);
-    if(!this.users.find(function(u){return u.username==='admin';})){
+    if(!this.users.find(function(u){return String(u.username)==='admin';})){
         this.users.push({id:1,username:'admin',password:'admin123',role:'admin',memberId:null});
         this.sv('users');
     }
@@ -498,7 +501,7 @@ class Auth{constructor(dm){this.dm=dm;this.user=null;this.pending=null;}
 login(un,pw){
     const u=this.dm.users.find(function(x){return U.norm(x.username)===U.norm(un);});
     if(!u)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
-    if(u.password!==pw)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
+    if(String(u.password)!==String(pw))return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
     if(U.norm(u.password)===U.norm(u.username) && u.role!=='admin'){ this.pending=u; return{s:true,fc:true}; }
     this.user=u;
     if((u.role==='member'||u.role==='special')&&u.memberId){
@@ -977,6 +980,9 @@ async init(){
             this.dm.users = (data.users || []).map(function(u) {
                 return Object.assign({}, u, {
                     id: parseInt(u.id) || u.id,
+                    username: String(u.username || ''),
+                    password: String(u.password || ''),
+                    role: String(u.role || 'member'),
                     memberId: u.memberId ? (parseInt(u.memberId) || null) : null
                 });
             });
@@ -996,7 +1002,7 @@ async init(){
             ['members','users','messages','announcements','support','shopItems'].forEach(function(k) { window.app.dm.sv(k); });
             
             // ✅ تضمین وجود کاربر admin
-            const adminExists = this.dm.users.find(function(u) { return u.username === 'admin'; });
+            const adminExists = this.dm.users.find(function(u) { return String(u.username) === 'admin'; });
             if (!adminExists) {
                 console.log('⚠️ کاربر admin یافت نشد، در حال ساخت...');
                 const newId = this.dm.users.length > 0 ? Math.max.apply(null, this.dm.users.map(function(u) { return u.id || 0; })) + 1 : 1;
