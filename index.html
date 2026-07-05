@@ -175,6 +175,40 @@ getMembershipDuration(openDate){if(!openDate)return'---';return openDate;},
 parseJSON(s){try{return typeof s==='string'?JSON.parse(s):s}catch(e){return s}}
 };
 
+// ✅ تابع حذف اعضای تکراری بر اساس شماره حساب (نگه داشتن بزرگترین ID)
+function removeDuplicateMembers(members) {
+    if (!members || !members.length) return [];
+    const seen = new Map();
+    members.forEach(function(m) {
+        const key = String(m.accountNumber || '').trim();
+        if (!key) return;
+        const existing = seen.get(key);
+        if (!existing) {
+            seen.set(key, m);
+        } else {
+            // اگر ID بزرگتر است، جایگزین شود
+            const existingId = parseInt(existing.id) || 0;
+            const newId = parseInt(m.id) || 0;
+            if (newId > existingId) {
+                seen.set(key, m);
+            }
+        }
+    });
+    return Array.from(seen.values());
+}
+
+// ✅ تابع حذف تراکنش‌های تکراری بر اساس ID
+function removeDuplicateTransactions(transactions) {
+    if (!transactions || !transactions.length) return [];
+    const seen = new Map();
+    transactions.forEach(function(t) {
+        const key = String(t.transactionId || '').trim();
+        if (!key) return;
+        seen.set(key, t); // آخرین تراکنش با این ID نگه داشته می‌شود
+    });
+    return Array.from(seen.values());
+}
+
 function showSyncStatus(text, type) {
     type = type || 'syncing';
     const el = $('#syncStatus');
@@ -222,6 +256,15 @@ async function saveDataToSheets(data) {
     return new Promise(function(resolve) {
         try {
             showSyncStatus('در حال ذخیره در Google Sheets...', 'syncing');
+            
+            // ✅ حذف تکراری‌ها قبل از ذخیره
+            if (data.members) {
+                data.members = removeDuplicateMembers(data.members);
+            }
+            if (data.transactions) {
+                data.transactions = removeDuplicateTransactions(data.transactions);
+            }
+            
             let iframe = document.getElementById('hidden_iframe');
             if (!iframe) {
                 iframe = document.createElement('iframe');
@@ -269,7 +312,11 @@ async function autoSync() {
         isSyncing = true;
         const data = await loadDataFromSheets();
         if (data) {
-            window.app.dm.members = (data.members || []).map(function(m) {
+            // ✅ حذف تکراری‌ها هنگام بارگذاری
+            let membersData = data.members || [];
+            membersData = removeDuplicateMembers(membersData);
+            
+            window.app.dm.members = membersData.map(function(m) {
                 return Object.assign({}, m, {
                     id: parseInt(m.id) || m.id,
                     balance: U.parseNum(m.balance),
@@ -299,7 +346,10 @@ async function autoSync() {
             window.app.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             window.app.dm.shopItems = data.shopitems || [];
             window.app.dm.logo = (data.settings && data.settings.find(function(s) { return s.key === 'logo'; }) || {}).value || '';
-            window.app.allTransactions = data.transactions || [];
+            
+            // ✅ حذف تراکنش‌های تکراری
+            window.app.allTransactions = removeDuplicateTransactions(data.transactions || []);
+            
             window.app.allPolls = (data.polls || []).map(function(p) {
                 return Object.assign({}, p, {
                     options: U.parseJSON(p.options) || [],
@@ -343,6 +393,7 @@ ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
 sv(k){try{localStorage.setItem(k,JSON.stringify(this[k]))}catch(e){console.warn('خطا در ذخیره:',k,e)}}
 gUserByMid(mid){return this.users.find(function(u){return u.memberId===mid;})}
 gMember(id){return this.members.find(function(m){return m.id===id;})}
+gMemberByAccountNumber(accNum){return this.members.find(function(m){return String(m.accountNumber)===String(accNum);})}
 gMemberByPhone(p){return this.members.find(function(m){return m.phone1===p;})}
 addCoin(mid,amount,reason,desc){
     desc = desc || '';
@@ -397,36 +448,71 @@ uploadBulk(file, cb) {
                 loan: U.findCol(['وام', 'loan', 'تسهیلات'], headers)
             };
             if (!colMap.accountNumber) { cb('ستون "شماره حساب" در فایل یافت نشد.', 0, 0, 0, 0); return; }
+            
             const members = [];
             const users = [];
             let userId = 1;
             users.push({ id: userId++, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
+            
+            // ✅ پردازش هوشمند: بررسی تکراری بودن بر اساس شماره حساب
+            let newCount = 0;
+            let updatedCount = 0;
+            
             rows.forEach(function(row) {
                 const accNum = String(row[colMap.accountNumber] || '').trim();
                 if (!accNum) return;
-                const memberId = members.length + 1;
-                const member = {
-                    id: memberId,
-                    firstName: colMap.firstName ? String(row[colMap.firstName] || '').trim() : '',
-                    lastName: colMap.lastName ? String(row[colMap.lastName] || '').trim() : '',
-                    accountNumber: accNum,
-                    openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',
-                    birthDate: colMap.birthDate ? String(row[colMap.birthDate] || '').trim() : '',
-                    phone1: colMap.phone1 ? String(row[colMap.phone1] || '').trim() : '',
-                    phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
-                    balance: colMap.balance ? U.parseNum(row[colMap.balance]) : 0,
-                    savings: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
-                    savingsStatus: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
-                    loan: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
-                    loanBalance: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
-                    coins: 0, usedCoins: 0, coinHistory: [], loginCount: 0, smsStatus: {}, transactions: []
-                };
-                member.fullName = (member.firstName || '') + ' ' + (member.lastName || '');
-                members.push(member);
-                users.push({ id: userId++, username: accNum, password: accNum, role: 'member', memberId: memberId });
+                
+                // ✅ بررسی آیا این شماره حساب قبلاً در فایل اکسل وجود دارد
+                const existingInFile = members.find(function(m) { 
+                    return String(m.accountNumber) === accNum; 
+                });
+                
+                if (existingInFile) {
+                    // ✅ اگر در فایل تکراری است، اطلاعات را به‌روزرسانی کن
+                    existingInFile.firstName = colMap.firstName ? String(row[colMap.firstName] || '').trim() : existingInFile.firstName;
+                    existingInFile.lastName = colMap.lastName ? String(row[colMap.lastName] || '').trim() : existingInFile.lastName;
+                    existingInFile.openDate = colMap.openDate ? String(row[colMap.openDate] || '').trim() : existingInFile.openDate;
+                    existingInFile.birthDate = colMap.birthDate ? String(row[colMap.birthDate] || '').trim() : existingInFile.birthDate;
+                    existingInFile.phone1 = colMap.phone1 ? String(row[colMap.phone1] || '').trim() : existingInFile.phone1;
+                    existingInFile.phone2 = colMap.phone2 ? String(row[colMap.phone2] || '').trim() : existingInFile.phone2;
+                    existingInFile.balance = colMap.balance ? U.parseNum(row[colMap.balance]) : existingInFile.balance;
+                    existingInFile.savings = colMap.savings ? U.parseNum(row[colMap.savings]) : existingInFile.savings;
+                    existingInFile.savingsStatus = colMap.savings ? U.parseNum(row[colMap.savings]) : existingInFile.savingsStatus;
+                    existingInFile.loan = colMap.loan ? U.parseNum(row[colMap.loan]) : existingInFile.loan;
+                    existingInFile.loanBalance = colMap.loan ? U.parseNum(row[colMap.loan]) : existingInFile.loanBalance;
+                    existingInFile.fullName = (existingInFile.firstName || '') + ' ' + (existingInFile.lastName || '');
+                    updatedCount++;
+                } else {
+                    // ✅ اگر جدید است، اضافه کن
+                    const memberId = members.length + 1;
+                    const member = {
+                        id: memberId,
+                        firstName: colMap.firstName ? String(row[colMap.firstName] || '').trim() : '',
+                        lastName: colMap.lastName ? String(row[colMap.lastName] || '').trim() : '',
+                        accountNumber: accNum,
+                        openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',
+                        birthDate: colMap.birthDate ? String(row[colMap.birthDate] || '').trim() : '',
+                        phone1: colMap.phone1 ? String(row[colMap.phone1] || '').trim() : '',
+                        phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
+                        balance: colMap.balance ? U.parseNum(row[colMap.balance]) : 0,
+                        savings: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
+                        savingsStatus: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
+                        loan: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
+                        loanBalance: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
+                        coins: 0, usedCoins: 0, coinHistory: [], loginCount: 0, smsStatus: {}, transactions: []
+                    };
+                    member.fullName = (member.firstName || '') + ' ' + (member.lastName || '');
+                    members.push(member);
+                    users.push({ id: userId++, username: accNum, password: accNum, role: 'member', memberId: memberId });
+                    newCount++;
+                }
             });
+            
+            // ✅ حذف تکراری‌ها قبل از ذخیره
+            const finalMembers = removeDuplicateMembers(members);
+            
             const dataToSave = {
-                members: members, users: users,
+                members: finalMembers, users: users,
                 messages: self.messages || [], announcements: self.announcements || [],
                 support: [self.support || { phone: '', accountNumber: '', address: '' }],
                 shopItems: self.shopItems || [],
@@ -438,9 +524,9 @@ uploadBulk(file, cb) {
             };
             saveDataToSheets(dataToSave).then(function(success) {
                 if (success) {
-                    self.members = members; self.users = users;
+                    self.members = finalMembers; self.users = users;
                     self.sv('members'); self.sv('users');
-                    cb(null, rows.length, 0, members.length, 0);
+                    cb(null, rows.length, updatedCount, newCount, 0);
                 } else { cb('خطا در ذخیره در Google Sheets', 0, 0, 0, 0); }
             });
         } catch (e) { console.error(e); cb('خطا در پردازش: ' + e.message, 0, 0, 0, 0); }
@@ -545,7 +631,7 @@ switchTab(t){const c=$('#dynamicContent');if(!c)return;c.innerHTML='';const fn='
 render_profile(c){
     if(this.app.auth.isAdmin()){
       let h=`<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div>`;
-      h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.05));border-right-color:#48bb78"><i class="fas fa-info-circle" style="color:#48bb78"></i> <strong>راهنما:</strong> روی دکمه "ذخیره" کنار هر عضو کلیک کنید تا تغییرات ذخیره شود.</div>`;
+      h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.05));border-right-color:#48bb78"><i class="fas fa-info-circle" style="color:#48bb78"></i> <strong>تعداد اعضا:</strong> ${this.app.dm.members.length} عضو (بدون تکرار)</div>`;
       h+=`<div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، نام خانوادگی، شماره حساب..."><button class="clear-search" id="spi_cl"><i class="fas fa-times"></i></button></div>`;
       h+=`<div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد</th><th>تلفن۱</th><th>تلفن۲</th><th>عملیات</th></tr></thead><tbody>`;
       this.app.dm.members.forEach(m=>{
@@ -594,13 +680,20 @@ renderDashboardForMember(mid, c){
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">اطلاعات یافت نشد</p></div>';return;}
     this.app.dm.applyCoinRules(m);
     const allTransactions = window.app.allTransactions || [];
-    const txns = allTransactions.filter(function(t) { return String(t.memberId) === String(mid) || String(t.accountNumber) === String(m.accountNumber); }).sort(function(a,b) { return (parseInt(b.transactionId)||0) - (parseInt(a.transactionId)||0); });
-    const allH = txns.length > 0 ? Object.keys(txns[0]) : ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
+    // ✅ فیلتر بر اساس ID یا شماره حساب
+    const txns = allTransactions.filter(function(t) { 
+        return String(t.memberId) === String(mid) || String(t.accountNumber) === String(m.accountNumber); 
+    }).sort(function(a,b) { return (parseInt(b.transactionId)||0) - (parseInt(a.transactionId)||0); });
+    
+    // ✅ حذف تراکنش‌های تکراری بر اساس ID
+    const uniqueTxns = removeDuplicateTransactions(txns);
+    
+    const allH = uniqueTxns.length > 0 ? Object.keys(uniqueTxns[0]) : ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const memberHeaders = ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const isAdmin = this.app.auth.isAdmin();
     const ah = isAdmin ? allH : allH.filter(function(h) { return memberHeaders.includes(h); });
     const dur = U.getMembershipDuration(m.openDate);
-    const latestTx = txns.length ? txns[0] : null;
+    const latestTx = uniqueTxns.length ? uniqueTxns[0] : null;
     let balance = m.balance || 0;
     let savingsStatus = m.savingsStatus || 0;
     let monthlySalary = 0;
@@ -635,7 +728,7 @@ renderDashboardForMember(mid, c){
         overdueInstallments = U.parseNum(latestTx.overdueInstallments) || overdueInstallments;
         loanBalance = U.parseNum(latestTx.loanBalance) || loanBalance;
     }
-    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${txns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div></div></div>`;
+    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${uniqueTxns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div></div></div>`;
     if (latestTx) {
         h += `<div class="dashboard-section" style="border-right-color:#38b2ac"><h3 style="color:#2c7a7b"><i class="fas fa-receipt"></i> آخرین تراکنش</h3><div class="loan-info">`;
         h += `<div class="loan-info-item" style="border-right:3px solid #48bb78"><div class="loan-info-label"><i class="fas fa-money-bill-wave" style="color:#48bb78"></i> مقرری واریزی</div><div class="loan-info-value">${U.esc(String(latestTx.monthlySalary || '---'))}</div></div>`;
@@ -665,13 +758,13 @@ renderDashboardForMember(mid, c){
     h += `</div>`;
     if (overdueInstallments > 0) h += `<div class="warning-box"><i class="fas fa-exclamation-triangle"></i><div><strong>اقساط معوقه</strong>اقساط وام شما عقب افتاده. سریعا نسبت به پرداخت اقدام نمایید.</div></div>`;
     h += `</div>`;
-    h += `<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${ah.map(function(x) { return `<th>${U.esc(x)}</th>`; }).join('')}</tr></thead><tbody>${txns.length === 0 ? `<tr><td colspan="${ah.length}" style="text-align:center;padding:30px;color:#a0aec0">هیچ تراکنشی ثبت نشده است</td></tr>` : txns.map(function(t) { return `<tr>${ah.map(function(hh) { return `<td title="${U.esc(String(t[hh]||''))}">${U.esc(String(t[hh]||''))}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>`;
+    h += `<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${ah.map(function(x) { return `<th>${U.esc(x)}</th>`; }).join('')}</tr></thead><tbody>${uniqueTxns.length === 0 ? `<tr><td colspan="${ah.length}" style="text-align:center;padding:30px;color:#a0aec0">هیچ تراکنشی ثبت نشده است</td></tr>` : uniqueTxns.map(function(t) { return `<tr>${ah.map(function(hh) { return `<td title="${U.esc(String(t[hh]||''))}">${U.esc(String(t[hh]||''))}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>`;
     c.innerHTML = h;
     const ft = function() { const q = $('#mes', c).value.trim().toLowerCase(); const tb = $('#met', c).querySelector('tbody'); if (!tb) return; tb.querySelectorAll('tr').forEach(function(r) { if (!q || r.textContent.toLowerCase().includes(q)) r.style.display = ''; else r.style.display = 'none'; }); };
     $('#mes', c).oninput = ft;
     $('#mesb', c).onclick = ft;
     $('#mecb', c).onclick = function() { $('#mes', c).value = ''; ft(); };
-    $('#downloadExcel', c).onclick = function() { const data = txns.map(function(t) { const row = {}; ah.forEach(function(hh) { row[hh] = t[hh] || ''; }); return row; }); const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب'); XLSX.writeFile(wb, 'صورتحساب.xlsx'); };
+    $('#downloadExcel', c).onclick = function() { const data = uniqueTxns.map(function(t) { const row = {}; ah.forEach(function(hh) { row[hh] = t[hh] || ''; }); return row; }); const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب'); XLSX.writeFile(wb, 'صورتحساب.xlsx'); };
     $('#printPDF', c).onclick = function() { window.print(); };
 }
 
@@ -888,11 +981,12 @@ render_support(c){const s=this.app.dm.support;c.innerHTML=`<div class="info-box"
 
 render_members(c){const ia=this.app.auth.isAdmin();if(!ia){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-ban" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی غیرمجاز</p></div>';return;}
 let h=`<div class="info-box"><i class="fas fa-users"></i> مدیریت اعضا</div>`;
+h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(66,153,225,.1),rgba(66,153,225,.05));border-right-color:#4299e1"><i class="fas fa-info-circle" style="color:#4299e1"></i> <strong>تعداد اعضا:</strong> ${this.app.dm.members.length} عضو (بدون تکرار)</div>`;
 h+=`<div style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap">`;
 h+=`<input type="file" id="bf" accept=".xlsx,.xls,.csv" style="display:none">`;
 h+=`<button id="beb" class="btn-small excel-btn"><i class="fas fa-file-excel"></i> آپلود فایل اکسل</button>`;
 h+=`</div>`;
-h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(33,115,70,.1),rgba(26,92,56,.05));border-right-color:#217346"><i class="fas fa-info-circle" style="color:#217346"></i> <strong>راهنما:</strong> با آپلود فایل اکسل، اطلاعات اعضا به صورت خودکار در Google Sheets ذخیره می‌شود.</div>`;
+h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(33,115,70,.1),rgba(26,92,56,.05));border-right-color:#217346"><i class="fas fa-info-circle" style="color:#217346"></i> <strong>راهنما:</strong> با آپلود فایل اکسل، اطلاعات اعضا به صورت خودکار در Google Sheets ذخیره می‌شود. اعضای تکراری به‌روزرسانی می‌شوند.</div>`;
 h+=`<div class="table-wrapper"><table id="mt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تلفن۱</th><th>تلفن۲</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map((m)=>{const ui=this.app.dm.gUserByMid(m.id);return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(ui?ui.username||'':'---')}</td><td class="password-dots" data-mid="${m.id}">••••••</td><td>${U.esc(m.accountNumber||'---')}</td><td>${U.esc(m.phone1||'---')}</td><td>${U.esc(m.phone2||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${m.coins||0}</span></td></tr>`;}).join('')}</tbody></table></div>`;
 c.innerHTML=h;
 c.querySelectorAll('.password-dots').forEach(function(el){el.onclick=function(){const u=window.app.dm.gUserByMid(parseInt(this.dataset.mid));if(!u)return;if(this.textContent==='••••••'){this.textContent=u.password||'---';this.style.background='#fff3cd';}else{this.textContent='••••••';this.style.background='#edf2f7';}};});
@@ -968,7 +1062,11 @@ async init(){
         console.log('🔄 بارگذاری اولیه از Google Sheets...');
         const data = await loadDataFromSheets();
         if (data) {
-            this.dm.members = (data.members || []).map(function(m) {
+            // ✅ حذف تکراری‌ها هنگام بارگذاری
+            let membersData = data.members || [];
+            membersData = removeDuplicateMembers(membersData);
+            
+            this.dm.members = membersData.map(function(m) {
                 return Object.assign({}, m, {
                     id: parseInt(m.id) || m.id, balance: U.parseNum(m.balance),
                     savingsStatus: U.parseNum(m.savings), loanBalance: U.parseNum(m.loan),
@@ -990,7 +1088,10 @@ async init(){
             this.dm.announcements = data.announcements || [];
             this.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             this.dm.shopItems = data.shopitems || [];
-            this.allTransactions = data.transactions || [];
+            
+            // ✅ حذف تراکنش‌های تکراری
+            this.allTransactions = removeDuplicateTransactions(data.transactions || []);
+            
             this.allPolls = (data.polls || []).map(function(p) {
                 return Object.assign({}, p, {
                     options: U.parseJSON(p.options) || [],
@@ -1022,8 +1123,8 @@ async init(){
                 console.log('✅ کاربر admin تأیید شد');
             }
             
-            console.log(`✅ ${this.dm.members.length} عضو از Google Sheets بارگذاری شد`);
-            console.log(`✅ ${this.allTransactions.length} تراکنش از Google Sheets بارگذاری شد`);
+            console.log(`✅ ${this.dm.members.length} عضو از Google Sheets بارگذاری شد (بدون تکرار)`);
+            console.log(`✅ ${this.allTransactions.length} تراکنش از Google Sheets بارگذاری شد (بدون تکرار)`);
             console.log(`✅ ${this.allPolls.length} نظرسنجی از Google Sheets بارگذاری شد`);
             console.log(`✅ ${this.allCoinHistory.length} تاریخچه سکه از Google Sheets بارگذاری شد`);
         }
@@ -1166,7 +1267,7 @@ uploadBulk(file){
         if(e){showSyncStatus('❌ '+e, 'error');alert('❌ '+e);}
         else{
             showSyncStatus('✅ آپلود کامل شد', 'success');
-            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n➕ اعضای جدید: ${ad}\n\n✅ داده‌ها در Google Sheets ذخیره شدند\n🔄 همه اعضا در ۳۰ ثانیه به‌روز می‌شوند`);
+            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n🔄 به‌روزرسانی شده: ${up}\n➕ اعضای جدید: ${ad}\n\n✅ اعضای تکراری حذف شدند\n✅ داده‌ها در Google Sheets ذخیره شدند\n🔄 همه اعضا در ۳۰ ثانیه به‌روز می‌شوند`);
             this.ui.switchTab('members');
         }
     });
