@@ -43,8 +43,8 @@ tbody tr{transition:all .3s ease}
 tbody tr:hover{background:rgba(102,126,234,.05)}
 .input-group{margin-bottom:25px;position:relative}
 .input-group label{display:block;margin-bottom:8px;font-weight:600;color:#4a5568}
-.input-group input{width:100%;padding:14px 50px 14px 14px;border:2px solid #e2e8f0;border-radius:16px;font-size:1rem;transition:all .3s ease;background:rgba(255,255,255,.8)}
-.input-group input:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1);background:#fff}
+.input-group input,.input-group select,.input-group textarea{width:100%;padding:14px;border:2px solid #e2e8f0;border-radius:16px;font-size:1rem;transition:all .3s ease;background:rgba(255,255,255,.8);font-family:inherit}
+.input-group input:focus,.input-group select:focus,.input-group textarea:focus{outline:none;border-color:#667eea;box-shadow:0 0 0 4px rgba(102,126,234,.1);background:#fff}
 .toggle-password{position:absolute;left:14px;bottom:14px;background:none;border:none;cursor:pointer;font-size:1.3rem;color:#667eea}
 .error-msg{color:#e53e3e;text-align:center;margin-top:20px;padding:12px;background:rgba(229,62,62,.1);border-radius:12px;border-right:4px solid #e53e3e}
 .success-msg{color:#38a169;text-align:center;margin-top:20px;padding:12px;background:rgba(56,161,105,.1);border-radius:12px;border-right:4px solid #38a169}
@@ -124,6 +124,16 @@ tbody tr:hover{background:rgba(102,126,234,.05)}
 .msg-phone-info{font-size:.78rem;color:#4a5568;margin-top:6px;padding:8px 10px;background:rgba(237,137,54,.06);border-radius:6px;border:1px solid rgba(237,137,54,.2)}
 .msg-phone-info div{margin:3px 0}
 .clear-search{background:none;border:none;cursor:pointer;color:#e53e3e;font-size:1rem;padding:0 8px}
+.poll-item{background:#fff;border-radius:16px;padding:20px;margin-bottom:15px;border-right:4px solid #667eea;box-shadow:0 3px 10px rgba(0,0,0,.08)}
+.poll-question{font-size:1.1rem;font-weight:700;color:#2d3748;margin-bottom:15px}
+.poll-option{display:flex;align-items:center;gap:10px;padding:10px 15px;margin-bottom:8px;background:rgba(102,126,234,.05);border-radius:12px;cursor:pointer;transition:all .3s ease}
+.poll-option:hover{background:rgba(102,126,234,.15)}
+.poll-option.voted{background:rgba(72,187,120,.15);border:2px solid #48bb78}
+.poll-bar{height:8px;background:#e2e8f0;border-radius:4px;margin-top:5px;overflow:hidden}
+.poll-bar-fill{height:100%;background:linear-gradient(135deg,#667eea,#764ba2);transition:width .5s ease}
+.coin-history-item{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#fff;border-radius:12px;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.coin-amount-positive{color:#48bb78;font-weight:700}
+.coin-amount-negative{color:#e53e3e;font-weight:700}
 @media(max-width:768px){body{padding:15px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;display:flex;overflow-x:auto;padding:12px 10px;gap:8px}.vertical-menu .menu-item{flex-shrink:0;font-size:.85rem;padding:10px 14px;white-space:nowrap;margin:0}.content-area{padding:18px;min-height:400px}.header-bar{grid-template-columns:1fr;gap:15px;padding:15px 18px}.datetime-display{flex-direction:column;gap:10px;width:100%}.datetime-card,.clock-card{width:100%;justify-content:center}.header-actions{flex-direction:column;gap:10px;width:100%}.theme-buttons{justify-content:center;width:100%}.coin-badge{justify-content:center;width:100%}table{font-size:.8rem}th,td{padding:8px 6px}}
 </style>
 </head>
@@ -149,23 +159,10 @@ try {
 const $=(s,p=document)=>p.querySelector(s);
 const $$=(s,p=document)=>p.querySelectorAll(s);
 
-// ⚙️ تنظیمات اصلی - Google Sheets
 const CONFIG = {
-    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxbhwlpcTIbxOHVRxGmCSgE6bhEZf8PueDApRi1GQlj625iyAnpCk97m4m17ydnPjq-/exec',
+    APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbzsHK6-WhzntVL30iNdEtihjb0kZpcv--AOahGdMzoGKQJ2GIwdRGP73OeqA8XEqsEw/exec',
     SYNC_INTERVAL: 30000
 };
-
-function findInRaw(raw, keys) {
-    if (!raw) return undefined;
-    for (const key of keys) {
-        const k = String(key).toLowerCase().replace(/[\s\-_]/g, '');
-        for (const rKey in raw) {
-            const rk = String(rKey).toLowerCase().replace(/[\s\-_]/g, '');
-            if (rk === k) return raw[rKey];
-        }
-    }
-    return undefined;
-}
 
 const U={
 norm(s){if(!s)return'';return s.toLowerCase().replace(/[\s\-_]/g,'');},
@@ -177,7 +174,8 @@ fmtDate(s){if(!s)return'---';const c=s.replace(/\D/g,'');return c.length===8?`${
 esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;},
 strength(p){let s=0;if(p.length>=6)s++;if(p.length>=8)s++;if(/[a-z]/.test(p))s++;if(/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^a-zA-Z\d]/.test(p))s++;return s<=2?'ضعیف':s<=4?'متوسط':'قوی';},
 findCol(names,headers){for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers)if(h.toLowerCase().replace(/[_\s\-]/g,'')===nn)return h;}return null;},
-getMembershipDuration(openDate){if(!openDate)return'---';return openDate;}
+getMembershipDuration(openDate){if(!openDate)return'---';return openDate;},
+parseJSON(s){try{return typeof s==='string'?JSON.parse(s):s}catch{return s}}
 };
 
 function showSyncStatus(text, type='syncing') {
@@ -198,19 +196,12 @@ function showSyncStatus(text, type='syncing') {
     }
 }
 
-// 📖 خواندن داده‌ها از Google Sheets با Proxy
 async function loadDataFromSheets() {
     try {
         showSyncStatus('در حال بارگذاری از Google Sheets...', 'syncing');
-        
-        // استفاده از Proxy برای دور زدن CORS
         const proxyUrl = 'https://api.allorigins.win/raw?url=';
         const targetUrl = encodeURIComponent(CONFIG.APPS_SCRIPT_URL);
-        const response = await fetch(proxyUrl + targetUrl, {
-            method: 'GET',
-            cache: 'no-store'
-        });
-        
+        const response = await fetch(proxyUrl + targetUrl, { method: 'GET', cache: 'no-store' });
         if (response.ok) {
             const text = await response.text();
             const result = JSON.parse(text);
@@ -230,13 +221,10 @@ async function loadDataFromSheets() {
     }
 }
 
-// ✍️ ذخیره داده‌ها در Google Sheets با Form Submission
 async function saveDataToSheets(data) {
     return new Promise((resolve) => {
         try {
             showSyncStatus('در حال ذخیره در Google Sheets...', 'syncing');
-            
-            // ایجاد iframe مخفی
             let iframe = document.getElementById('hidden_iframe');
             if (!iframe) {
                 iframe = document.createElement('iframe');
@@ -245,31 +233,24 @@ async function saveDataToSheets(data) {
                 iframe.style.display = 'none';
                 document.body.appendChild(iframe);
             }
-            
-            // ایجاد فرم
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = CONFIG.APPS_SCRIPT_URL + '?action=save';
             form.target = 'hidden_iframe';
             form.style.display = 'none';
-            
             const input = document.createElement('input');
             input.type = 'hidden';
             input.name = 'data';
             input.value = JSON.stringify(data);
             form.appendChild(input);
-            
             document.body.appendChild(form);
             form.submit();
             document.body.removeChild(form);
-            
-            // منتظر پاسخ می‌مانیم
             setTimeout(() => {
                 console.log('✅ درخواست ذخیره ارسال شد');
                 showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
                 resolve(true);
             }, 2000);
-            
         } catch (error) {
             console.error('خطا در ذخیره در Google Sheets:', error);
             showSyncStatus('❌ خطا در اتصال', 'error');
@@ -289,7 +270,6 @@ async function autoSync() {
         if (now - lastSyncTime < CONFIG.SYNC_INTERVAL) return;
         if (!window.app) return;
         isSyncing = true;
-        
         const data = await loadDataFromSheets();
         if (data) {
             window.app.dm.members = (data.members || []).map(m => ({
@@ -317,12 +297,17 @@ async function autoSync() {
             window.app.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             window.app.dm.shopItems = data.shopitems || [];
             window.app.dm.logo = (data.settings && data.settings.find(s => s.key === 'logo')?.value) || '';
-            
+            window.app.allTransactions = data.transactions || [];
+            window.app.allPolls = (data.polls || []).map(p => ({
+                ...p,
+                options: U.parseJSON(p.options) || [],
+                active: String(p.active).toLowerCase() === 'true'
+            }));
+            window.app.allPollVotes = data.pollvotes || [];
+            window.app.allCoinHistory = data.coinhistory || [];
             ['members','users','messages','announcements','support','shopItems','logo'].forEach(k => window.app.dm.sv(k));
-            
             if (window.app.ui && initialLoadDone) window.app.ui.render();
         }
-        
         lastSyncTime = now;
         isSyncing = false;
         initialLoadDone = true;
@@ -379,31 +364,20 @@ spendCoin(mid,amount,reason,desc=''){
 applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const add=(a,r,d)=>{this.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
 
 uploadBulk(file, cb) {
-    if (typeof XLSX === 'undefined') {
-        cb('کتابخانه XLSX بارگذاری نشد', 0, 0, 0, 0);
-        return;
-    }
+    if (typeof XLSX === 'undefined') { cb('کتابخانه XLSX بارگذاری نشد', 0, 0, 0, 0); return; }
     const ext = file.name.split('.').pop().toLowerCase();
-    if (!['xlsx', 'xls', 'csv'].includes(ext)) {
-        cb('فرمت پشتیبانی نمی‌شود', 0, 0, 0, 0);
-        return;
-    }
-    
+    if (!['xlsx', 'xls', 'csv'].includes(ext)) { cb('فرمت پشتیبانی نمی‌شود', 0, 0, 0, 0); return; }
     const reader = new FileReader();
     const self = this;
-    
     const process = (data, isCsv) => {
         try {
             let wb;
             if (isCsv) wb = XLSX.read(data, { type: 'string', raw: true });
             else wb = XLSX.read(new Uint8Array(data), { type: 'array', raw: true });
-            
             const sh = wb.Sheets[wb.SheetNames[0]];
             if (!sh) { cb('شیت خالی است', 0, 0, 0, 0); return; }
-            
             const rows = XLSX.utils.sheet_to_json(sh, { defval: '', raw: false });
             if (!rows.length) { cb('فایل خالی است', 0, 0, 0, 0); return; }
-            
             const headers = Object.keys(rows[0]);
             const colMap = {
                 firstName: U.findCol(['نام', 'firstname', 'first_name'], headers),
@@ -417,30 +391,15 @@ uploadBulk(file, cb) {
                 savings: U.findCol(['پس انداز', 'savings', 'پس‌انداز'], headers),
                 loan: U.findCol(['وام', 'loan', 'تسهیلات'], headers)
             };
-            
-            if (!colMap.accountNumber) {
-                cb('ستون "شماره حساب" در فایل یافت نشد.', 0, 0, 0, 0);
-                return;
-            }
-            
+            if (!colMap.accountNumber) { cb('ستون "شماره حساب" در فایل یافت نشد.', 0, 0, 0, 0); return; }
             const members = [];
             const users = [];
             let userId = 1;
-            
-            users.push({
-                id: userId++,
-                username: 'admin',
-                password: 'admin123',
-                role: 'admin',
-                memberId: null
-            });
-            
+            users.push({ id: userId++, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
             rows.forEach((row) => {
                 const accNum = String(row[colMap.accountNumber] || '').trim();
                 if (!accNum) return;
-                
                 const memberId = members.length + 1;
-                
                 const member = {
                     id: memberId,
                     firstName: colMap.firstName ? String(row[colMap.firstName] || '').trim() : '',
@@ -455,70 +414,69 @@ uploadBulk(file, cb) {
                     savingsStatus: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
                     loan: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
                     loanBalance: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
-                    coins: 0,
-                    usedCoins: 0,
-                    coinHistory: [],
-                    loginCount: 0,
-                    smsStatus: {},
-                    transactions: []
+                    coins: 0, usedCoins: 0, coinHistory: [], loginCount: 0, smsStatus: {}, transactions: []
                 };
-                
                 member.fullName = (member.firstName || '') + ' ' + (member.lastName || '');
                 members.push(member);
-                
-                users.push({
-                    id: userId++,
-                    username: accNum,
-                    password: accNum,
-                    role: 'member',
-                    memberId: memberId
-                });
+                users.push({ id: userId++, username: accNum, password: accNum, role: 'member', memberId: memberId });
             });
-            
             const dataToSave = {
-                members: members,
-                users: users,
-                messages: self.messages || [],
-                announcements: self.announcements || [],
+                members: members, users: users,
+                messages: self.messages || [], announcements: self.announcements || [],
                 support: [self.support || { phone: '', accountNumber: '', address: '' }],
                 shopItems: self.shopItems || [],
-                settings: [{ key: 'logo', value: self.logo || '' }]
+                settings: [{ key: 'logo', value: self.logo || '' }],
+                transactions: window.app.allTransactions || [],
+                polls: window.app.allPolls || [],
+                pollVotes: window.app.allPollVotes || [],
+                coinHistory: window.app.allCoinHistory || []
             };
-            
             saveDataToSheets(dataToSave).then(success => {
                 if (success) {
-                    self.members = members;
-                    self.users = users;
-                    self.sv('members');
-                    self.sv('users');
+                    self.members = members; self.users = users;
+                    self.sv('members'); self.sv('users');
                     cb(null, rows.length, 0, members.length, 0);
-                } else {
-                    cb('خطا در ذخیره در Google Sheets', 0, 0, 0, 0);
-                }
+                } else { cb('خطا در ذخیره در Google Sheets', 0, 0, 0, 0); }
             });
-            
-        } catch (e) {
-            console.error(e);
-            cb('خطا در پردازش: ' + e.message, 0, 0, 0, 0);
-        }
+        } catch (e) { console.error(e); cb('خطا در پردازش: ' + e.message, 0, 0, 0, 0); }
     };
-    
     reader.onload = (e) => {
         if (ext === 'csv') {
             const arr = new Uint8Array(e.target.result);
             let txt = new TextDecoder('utf-8').decode(arr);
             process(txt, true);
-        } else {
-            process(e.target.result, false);
-        }
+        } else { process(e.target.result, false); }
     };
     reader.onerror = () => cb('خطا در خواندن فایل', 0, 0, 0, 0);
-    
-    if (ext === 'csv') {
-        reader.readAsText(file);
-    } else {
-        reader.readAsArrayBuffer(file);
-    }
+    if (ext === 'csv') reader.readAsText(file);
+    else reader.readAsArrayBuffer(file);
+}
+
+saveProfile(mid, data) {
+    const m = this.gMember(mid);
+    if (!m) return false;
+    Object.assign(m, data);
+    m.fullName = (m.firstName || '') + ' ' + (m.lastName || '');
+    this.sv('members');
+    return true;
+}
+
+resetCoins(mid) {
+    const m = this.gMember(mid);
+    if (!m) return false;
+    m.coins = 0; m.usedCoins = 0; m.coinHistory = [];
+    this.sv('members');
+    return true;
+}
+
+addPoll(poll) { this.polls.push(poll); this.sv('polls'); }
+votePoll(pollId, memberId, optionIndex) {
+    const votes = window.app.allPollVotes || [];
+    const existing = votes.find(v => String(v.pollId) === String(pollId) && String(v.memberId) === String(memberId));
+    if (existing) return false;
+    votes.push({ pollId, memberId, optionIndex, timestamp: U.now() });
+    window.app.allPollVotes = votes;
+    return true;
 }
 
 changePass(mid,np){const u=this.gUserByMid(mid);if(!u||!np)return false;u.password=np;this.sv('users');return true;}
@@ -541,10 +499,7 @@ login(un,pw){
     const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un));
     if(!u)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
     if(u.password!==pw)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
-    if(U.norm(u.password)===U.norm(u.username) && u.role!=='admin'){
-        this.pending=u;
-        return{s:true,fc:true};
-    }
+    if(U.norm(u.password)===U.norm(u.username) && u.role!=='admin'){ this.pending=u; return{s:true,fc:true}; }
     this.user=u;
     if((u.role==='member'||u.role==='special')&&u.memberId){
         this.dm.incLogin(u.memberId);
@@ -558,11 +513,7 @@ changeForced(np){
     if(!u)return{s:false,m:'خطا در احراز هویت'};
     if(U.norm(np)===U.norm(u.username))return{s:false,m:'رمز عبور نمی‌تواند با نام کاربری یکسان باشد'};
     if(U.strength(np)==='ضعیف')return{s:false,m:'رمز عبور بسیار ضعیف است'};
-    u.password=np;
-    this.dm.sv('users');
-    this.user=u;
-    this.pending=null;
-    return{s:true};
+    u.password=np; this.dm.sv('users'); this.user=u; this.pending=null; return{s:true};
 }
 logout(){this.user=null;this.pending=null;}
 isAdmin(){return this.user?.role==='admin';}
@@ -581,8 +532,8 @@ isLoggedIn(){return!!this.user;}
 class UI{constructor(app){this.app=app;this.el=$('#appContainer');this.tab=localStorage.getItem('activeTab')||'profile';this.sa=0;this.ci=null;}
 render(){if(this.app.auth.pending){this.el.innerHTML=this.forceHTML();this.bindFC();return;}if(!this.app.auth.isLoggedIn()){this.el.innerHTML=this.loginHTML();this.bindLogin();return;}this.el.innerHTML=this.appHTML();this.bindApp();this.switchTab(this.tab);this.updUI();this.startClock();this.updNotif();this.updCoinBadge();}
 loginHTML(){const logo=this.app.dm.logo;return`<div class="login-page"><div style="text-align:center;margin-bottom:30px">${logo?`<img src="${logo}" class="login-logo" alt="لوگو">`:`<i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px;animation:float 3s ease-in-out infinite"></i>`}<h1 style="color:#2d3748;margin-bottom:10px">سیستم حسابداری صندوق اتحاد</h1><p style="color:#718096">ورود با رمز اختصاصی</p></div><div class="input-group"><label><i class="fas fa-user"></i> نام کاربری</label><input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید"></div><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور</label><input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید"><button class="toggle-password" id="toggleLoginPass"><i class="fas fa-eye"></i></button></div><button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button><button class="btn" id="forgotBtn" style="background:linear-gradient(135deg,#ed8936,#dd6b20);margin-top:12px"><i class="fas fa-key"></i> رمز را فراموش کرده ام</button><div id="loginError" class="error-msg"></div><div id="forgotSuccess" class="success-msg"></div></div>`;}
-forceHTML(){return`<div class="force-change-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-exclamation-triangle" style="font-size:5rem;color:#e53e3e;animation:pulse 2s infinite"></i><div style="font-size:1.8rem;color:#e53e3e;margin:15px 0;font-weight:700">تغییر رمز عبور الزامی است</div><div style="color:#718096;margin-bottom:25px">برای امنیت بیشتر، لطفاً رمز عبور خود را تغییر دهید.</div></div><div style="max-width:450px;margin:0 auto"><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور جدید</label><input type="password" id="newPasswordForce" placeholder="رمز جدید"><button class="toggle-password" id="toggleForcePass"><i class="fas fa-eye"></i></button><div id="passwordStrength" style="margin-top:8px;font-weight:600"></div></div><div class="input-group"><label><i class="fas fa-check-circle"></i> تکرار رمز جدید</label><input type="password" id="confirmPasswordForce" placeholder="تکرار رمز جدید"><button class="toggle-password" id="toggleForceConfirm"><i class="fas fa-eye"></i></button></div><button class="btn" id="forceChangeBtn"><i class="fas fa-save"></i> تغییر رمز و ورود</button><div id="forceError" class="error-msg"></div></div></div>`;}
-appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user?.memberId);const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">تاریخ شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="datetime-card"><i class="fas fa-calendar"></i><div><div class="dt-label">تاریخ میلادی</div><div class="dt-value" id="gregorianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn" data-theme="day"><i class="fas fa-sun"></i> روز</button><button class="theme-btn" data-theme="night"><i class="fas fa-moon"></i> شب</button></div>${!ia?`<div class="coin-badge" id="coinBadge" title="تعداد سکه‌های شما"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>`:''}<div style="position:relative"><button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button></div></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><i class="fas fa-star"></i> خوش آمدید</div><div class="app-layout"><div class="vertical-menu"><div style="font-size:1.3rem;font-weight:700;color:#667eea;padding-bottom:20px;border-bottom:3px solid #edf2f7;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div><div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div><div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div>${!ia?'<div class="menu-item" data-tab="shop"><i class="fas fa-shopping-cart"></i> فروشگاه</div>':''}<div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> مدیریت اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> مدیریت ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid #edf2f7"><span id="roleBadge" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${ia?'<i class="fas fa-crown"></i> مدیر':isp?'<i class="fas fa-shield-alt"></i> پاسخ‌دهنده':isCouncil?'<i class="fas fa-user-shield"></i> عضو شورا':'<i class="fas fa-user"></i> عضو'}</span><button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
+forceHTML(){return`<div class="force-change-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-exclamation-triangle" style="font-size:5rem;color:#e53e3e;animation:pulse 2s infinite"></i><div style="font-size:1.8rem;color:#e53e3e;margin:15px 0;font-weight:700">تغییر رمز عبور الزامی است</div></div><div style="max-width:450px;margin:0 auto"><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور جدید</label><input type="password" id="newPasswordForce" placeholder="رمز جدید"><button class="toggle-password" id="toggleForcePass"><i class="fas fa-eye"></i></button><div id="passwordStrength" style="margin-top:8px;font-weight:600"></div></div><div class="input-group"><label><i class="fas fa-check-circle"></i> تکرار رمز جدید</label><input type="password" id="confirmPasswordForce" placeholder="تکرار رمز جدید"><button class="toggle-password" id="toggleForceConfirm"><i class="fas fa-eye"></i></button></div><button class="btn" id="forceChangeBtn"><i class="fas fa-save"></i> تغییر رمز و ورود</button><div id="forceError" class="error-msg"></div></div></div>`;}
+appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user?.memberId);const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">تاریخ شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="datetime-card"><i class="fas fa-calendar"></i><div><div class="dt-label">تاریخ میلادی</div><div class="dt-value" id="gregorianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn" data-theme="day"><i class="fas fa-sun"></i> روز</button><button class="theme-btn" data-theme="night"><i class="fas fa-moon"></i> شب</button></div>${!ia?`<div class="coin-badge" id="coinBadge"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>`:''}<div style="position:relative"><button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button></div></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><i class="fas fa-star"></i> خوش آمدید</div><div class="app-layout"><div class="vertical-menu"><div style="font-size:1.3rem;font-weight:700;color:#667eea;padding-bottom:20px;border-bottom:3px solid #edf2f7;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div><div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div><div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div>${!ia?'<div class="menu-item" data-tab="shop"><i class="fas fa-shopping-cart"></i> فروشگاه</div>':''}<div class="menu-item" data-tab="polls"><i class="fas fa-poll"></i> نظرسنجی</div><div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> مدیریت اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> مدیریت ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid #edf2f7"><span id="roleBadge" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${ia?'<i class="fas fa-crown"></i> مدیر':isp?'<i class="fas fa-shield-alt"></i> پاسخ‌دهنده':isCouncil?'<i class="fas fa-user-shield"></i> عضو شورا':'<i class="fas fa-user"></i> عضو'}</span><button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
 bindLogin(){$('#loginBtn').onclick=()=>this.app.doLogin();$('#forgotBtn').onclick=()=>this.app.doForgot();$('#loginPassword').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};$('#loginUsername').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};$('#toggleLoginPass').onclick=()=>{const i=$('#loginPassword'),icon=$('#toggleLoginPass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
 bindFC(){$('#forceChangeBtn').onclick=()=>this.app.doForceChange();$('#newPasswordForce').oninput=e=>{$('#passwordStrength').textContent=`قدرت رمز: ${U.strength(e.target.value)}`;$('#passwordStrength').style.color=U.strength(e.target.value)==='قوی'?'#38a169':U.strength(e.target.value)==='متوسط'?'#ed8936':'#e53e3e';};$('#toggleForcePass').onclick=()=>{const i=$('#newPasswordForce'),icon=$('#toggleForcePass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};$('#toggleForceConfirm').onclick=()=>{const i=$('#confirmPasswordForce'),icon=$('#toggleForceConfirm i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
 bindApp(){$$('.menu-item[data-tab]').forEach(el=>el.onclick=()=>{this.tab=el.dataset.tab;localStorage.setItem('activeTab', this.tab);$$('.menu-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');this.switchTab(this.tab);});$('#logoutBtn').onclick=()=>this.app.doLogout();$$('.theme-btn').forEach(b=>b.onclick=()=>this.app.setTheme(b.dataset.theme));}
@@ -590,15 +541,36 @@ switchTab(t){const c=$('#dynamicContent');if(!c)return;c.innerHTML='';const fn='
 
 render_profile(c){
     if(this.app.auth.isAdmin()){
-      let h=`<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div><div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، نام خانوادگی، شماره حساب..."><button class="clear-search" id="spi_cl"><i class="fas fa-times"></i></button></div><div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد</th><th>تلفن۱</th><th>تلفن۲</th></tr></thead><tbody>`;
-      this.app.dm.members.forEach(m=>{const ui=this.app.dm.gUserByMid(m.id);h+=`<tr>${['firstName','lastName','','','accountNumber','openDate','birthDate','phone1','phone2'].map((k,i)=>{if(i===2)return`<td>${U.esc(ui?.username||'')}</td>`;if(i===3)return`<td>${U.esc(ui?.password||'')}</td>`;return`<td>${U.esc(m[k]||'')}</td>`;}).join('')}</tr>`;});
+      let h=`<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div>`;
+      h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.05));border-right-color:#48bb78"><i class="fas fa-info-circle" style="color:#48bb78"></i> <strong>راهنما:</strong> روی دکمه "ذخیره" کنار هر عضو کلیک کنید تا تغییرات ذخیره شود.</div>`;
+      h+=`<div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، نام خانوادگی، شماره حساب..."><button class="clear-search" id="spi_cl"><i class="fas fa-times"></i></button></div>`;
+      h+=`<div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد</th><th>تلفن۱</th><th>تلفن۲</th><th>عملیات</th></tr></thead><tbody>`;
+      this.app.dm.members.forEach(m=>{
+        const ui=this.app.dm.gUserByMid(m.id);
+        h+=`<tr>
+            <td><input id="pf_firstName_${m.id}" value="${U.esc(m.firstName||'')}" style="width:90px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pf_lastName_${m.id}" value="${U.esc(m.lastName||'')}" style="width:90px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pfu_${m.id}" value="${U.esc(ui?.username||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pfp_${m.id}" value="${U.esc(ui?.password||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pf_accountNumber_${m.id}" value="${U.esc(m.accountNumber||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pf_openDate_${m.id}" value="${U.esc(m.openDate||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pf_birthDate_${m.id}" value="${U.esc(m.birthDate||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pf_phone1_${m.id}" value="${U.esc(m.phone1||'')}" style="width:110px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pf_phone2_${m.id}" value="${U.esc(m.phone2||'')}" style="width:110px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><button class="btn-small success-btn" id="spb_${m.id}"><i class="fas fa-save"></i> ذخیره</button></td>
+        </tr>`;
+      });
       h+=`</tbody></table></div>`;
       c.innerHTML=h;
+      c.querySelectorAll('[id^="spb_"]').forEach(b=>{
+        const mid=parseInt(b.id.split('_')[1]);
+        b.onclick=()=>this.app.saveProfile(mid);
+      });
       this.search('spi','#pt',c);
     }else{
       const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;}
       const ui=this.app.dm.gUserByMid(m.id);
-      c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="dashboard-section"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:10px"><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام:</label><div>${U.esc(m.firstName||'---')} ${U.esc(m.lastName||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-hashtag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div>${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-calendar-plus" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تاریخ افتتاح:</label><div>${U.fmtDate(m.openDate)}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-birthday-cake" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تاریخ تولد:</label><div>${U.fmtDate(m.birthDate)}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۱:</label><div>${U.esc(m.phone1||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-mobile-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۲:</label><div>${U.esc(m.phone2||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user-tag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام کاربری:</label><div>${U.esc(ui?.username||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-key" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">رمز:</label><div><span id="pds" class="password-dots">••••••</span><button class="btn-small edit-btn" id="epbtn" style="margin-right:10px"><i class="fas fa-edit"></i></button></div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-coins" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">سکه:</label><div>${m.coins||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-sign-in-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد ورود:</label><div>${m.loginCount||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-clock" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آخرین ورود:</label><div style="font-weight:700;color:#2d3748">${U.esc(m.lastLoginDate||'---')}</div></div></div></div></div><div id="efc" style="margin-top:20px"></div>`;
+      c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="dashboard-section"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:10px"><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام:</label><div>${U.esc(m.firstName||'---')} ${U.esc(m.lastName||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-hashtag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div>${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-calendar-plus" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تاریخ افتتاح:</label><div>${U.fmtDate(m.openDate)}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۱:</label><div>${U.esc(m.phone1||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-mobile-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۲:</label><div>${U.esc(m.phone2||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user-tag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام کاربری:</label><div>${U.esc(ui?.username||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-key" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">رمز:</label><div><span id="pds" class="password-dots">••••••</span><button class="btn-small edit-btn" id="epbtn" style="margin-right:10px"><i class="fas fa-edit"></i></button></div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-coins" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">سکه:</label><div>${m.coins||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-sign-in-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد ورود:</label><div>${m.loginCount||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-clock" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آخرین ورود:</label><div style="font-weight:700;color:#2d3748">${U.esc(m.lastLoginDate||'---')}</div></div></div></div></div><div id="efc" style="margin-top:20px"></div>`;
       $('#epbtn',c).onclick=()=>{const fc=$('#efc',c);fc.innerHTML=`<div class="dashboard-section"><div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap"><label style="font-weight:600;min-width:100px">رمز جدید:</label><input type="password" id="npi" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button id="tnpi" style="background:none;border:none;cursor:pointer;font-size:1.2rem"><i class="fas fa-eye"></i></button></div><div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap"><label style="font-weight:600;min-width:100px">تکرار:</label><input type="password" id="cpi" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button id="tcpi" style="background:none;border:none;cursor:pointer;font-size:1.2rem"><i class="fas fa-eye"></i></button></div><div style="display:flex;gap:10px"><button class="btn-small success-btn" id="spb"><i class="fas fa-save"></i> ذخیره</button><button class="btn-small danger-btn" id="cpb"><i class="fas fa-times"></i> انصراف</button></div></div>`;$('#spb',fc).onclick=()=>this.app.savePass(m.id);$('#cpb',fc).onclick=()=>fc.innerHTML='';$('#tnpi',fc).onclick=()=>{const i=$('#npi'),icon=$('#tnpi i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};$('#tcpi',fc).onclick=()=>{const i=$('#cpi'),icon=$('#tcpi i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};};
     }
 }
@@ -618,13 +590,124 @@ renderDashboardForMember(mid, c){
     const m=this.app.dm.gMember(mid);
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">اطلاعات یافت نشد</p></div>';return;}
     this.app.dm.applyCoinRules(m);
-    const balance=m.balance||0, savingsStatus=m.savingsStatus||0;
-    const dur=U.getMembershipDuration(m.openDate);
-    const overdueInstallments=m.overdueInstallments||0, loanBalance=m.loanBalance||0;
-    let h=`<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div></div></div>`;
-    h+=`<div class="dashboard-section"><h3><i class="fas fa-wallet"></i> اطلاعات موجودی و پس‌انداز</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی شما:</label><div style="font-size:1.3rem;font-weight:700;color:${balance<0?'#e53e3e':'#2d3748'};margin-top:5px">${U.fmtNum(balance)}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">وضعیت پس‌انداز:</label><div style="font-size:1.3rem;font-weight:700;color:${savingsStatus<0?'#e53e3e':'#48bb78'};margin-top:5px">${U.fmtNum(savingsStatus)}</div></div></div></div>`;
-    h+=`<div class="dashboard-section"><h3><i class="fas fa-hand-holding-usd"></i> اطلاعات وام و بدهی</h3><div class="loan-info"><div class="loan-info-item"><div class="loan-info-label">مانده وام (بدهی)</div><div class="loan-info-value">${U.fmtNum(loanBalance)}</div></div><div class="loan-info-item"><div class="loan-info-label">اقساط معوقه</div><div class="loan-info-value">${overdueInstallments||0}</div></div></div></div>`;
-    c.innerHTML=h;
+    const allTransactions = window.app.allTransactions || [];
+    const txns = allTransactions
+        .filter(t => String(t.memberId) === String(mid) || String(t.accountNumber) === String(m.accountNumber))
+        .sort((a,b) => (parseInt(b.transactionId)||0) - (parseInt(a.transactionId)||0));
+    const allH = txns.length > 0 ? Object.keys(txns[0]) : ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
+    const memberHeaders = ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
+    const isAdmin = this.app.auth.isAdmin();
+    const ah = isAdmin ? allH : allH.filter(h => memberHeaders.includes(h));
+    const dur = U.getMembershipDuration(m.openDate);
+    const latestTx = txns.length ? txns[0] : null;
+    let balance = m.balance || 0;
+    let savingsStatus = m.savingsStatus || 0;
+    let monthlySalary = 0;
+    let monthlySalaryApproved = 0;
+    let currentMonthBalance = 0;
+    if (latestTx) {
+        balance = U.parseNum(latestTx.balance) || balance;
+        savingsStatus = U.parseNum(latestTx.savingsStatus) || savingsStatus;
+        monthlySalary = U.parseNum(latestTx.monthlySalary);
+        monthlySalaryApproved = U.parseNum(latestTx.monthlySalaryApproved) || monthlySalary;
+        currentMonthBalance = U.parseNum(latestTx.currentMonthBalance) || balance;
+    }
+    let installmentAmount = m.installmentAmount || 0;
+    let feeAmount = m.feeAmount || 0;
+    let totalInstallments = m.totalInstallments || 0;
+    let paidInstallments = m.paidInstallments || 0;
+    let remainingInstallments = m.remainingInstallments || 0;
+    let overdueInstallments = m.overdueInstallments || 0;
+    let loanBalance = m.loanBalance || 0;
+    let loanRequestDate = m.loanRequestDate || '';
+    let loanReceiveDate = m.loanReceiveDate || '';
+    let lastInstallmentDate = m.lastInstallmentDate || '';
+    if (latestTx) {
+        loanRequestDate = latestTx.loanRequestDate || loanRequestDate;
+        loanReceiveDate = latestTx.loanReceiveDate || loanReceiveDate;
+        lastInstallmentDate = latestTx.lastInstallmentDate || latestTx.installmentDate || lastInstallmentDate;
+        installmentAmount = U.parseNum(latestTx.installmentAmount) || installmentAmount;
+        feeAmount = U.parseNum(latestTx.feeAmount) || feeAmount;
+        totalInstallments = U.parseNum(latestTx.totalInstallments) || totalInstallments;
+        paidInstallments = U.parseNum(latestTx.paidInstallments) || paidInstallments;
+        remainingInstallments = U.parseNum(latestTx.remainingInstallments) || remainingInstallments;
+        overdueInstallments = U.parseNum(latestTx.overdueInstallments) || overdueInstallments;
+        loanBalance = U.parseNum(latestTx.loanBalance) || loanBalance;
+    }
+    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px">
+        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${txns.length}</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div>
+        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div>
+    </div></div>`;
+    if (latestTx) {
+        h += `<div class="dashboard-section" style="border-right-color:#38b2ac"><h3 style="color:#2c7a7b"><i class="fas fa-receipt"></i> آخرین تراکنش</h3><div class="loan-info">`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #48bb78"><div class="loan-info-label"><i class="fas fa-money-bill-wave" style="color:#48bb78"></i> مقرری واریزی</div><div class="loan-info-value">${U.esc(String(latestTx.monthlySalary || '---'))}</div></div>`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #4299e1"><div class="loan-info-label"><i class="fas fa-file-invoice-dollar" style="color:#4299e1"></i> شماره فیش</div><div class="loan-info-value">${U.esc(String(latestTx.fishNumber || '---'))}</div></div>`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #ed8936"><div class="loan-info-label"><i class="fas fa-calendar-day" style="color:#ed8936"></i> تاریخ تراکنش</div><div class="loan-info-value">${U.esc(String(latestTx.transactionDate || '---'))}</div></div>`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #38b2ac"><div class="loan-info-label"><i class="fas fa-user-edit" style="color:#38b2ac"></i> تراکنش کننده</div><div class="loan-info-value">${U.esc(String(latestTx.transactionName || '---'))}</div></div>`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #d69e2e"><div class="loan-info-label"><i class="fas fa-coins" style="color:#d69e2e"></i> مبلغ قسط</div><div class="loan-info-value">${U.esc(String(latestTx.installmentAmount || '---'))}</div></div>`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #e53e3e"><div class="loan-info-label"><i class="fas fa-calendar-check" style="color:#e53e3e"></i> تاریخ قسط</div><div class="loan-info-value">${U.esc(String(latestTx.installmentDate || '---'))}</div></div>`;
+        h += `<div class="loan-info-item" style="border-right:3px solid #667eea"><div class="loan-info-label"><i class="fas fa-comment-dots" style="color:#667eea"></i> توضیحات</div><div class="loan-info-value">${U.esc(String(latestTx.description || '---'))}</div></div>`;
+        h += `</div></div>`;
+    }
+    h += `<div class="dashboard-section"><h3><i class="fas fa-wallet"></i> اطلاعات موجودی و پس‌انداز</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px">
+        <div style="background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی شما:</label><div style="font-size:1.3rem;font-weight:700;color:${balance<0?'#e53e3e':'#2d3748'};margin-top:5px">${U.fmtNum(balance)}</div></div>
+        <div style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">وضعیت پس‌انداز:</label><div style="font-size:1.3rem;font-weight:700;color:${savingsStatus<0?'#e53e3e':'#48bb78'};margin-top:5px">${U.fmtNum(savingsStatus)}</div></div>
+        <div style="background:linear-gradient(135deg,rgba(237,137,54,.1),rgba(221,107,32,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه:</label><div style="font-size:1.3rem;font-weight:700;margin-top:5px">${U.fmtNum(monthlySalary)}</div></div>
+    </div></div>`;
+    h += `<div class="dashboard-section"><h3><i class="fas fa-hand-holding-usd"></i> اطلاعات وام و بدهی</h3><div class="loan-info">`;
+    const loanItems = [
+        {label:'تاریخ درخواست وام', value:loanRequestDate||'---'},
+        {label:'تاریخ دریافت وام', value:loanReceiveDate||'---'},
+        {label:'تاریخ آخرین قسط', value:lastInstallmentDate||'---'},
+        {label:'مبلغ اقساط', value:installmentAmount?U.fmtNum(installmentAmount):'---'},
+        {label:'مبلغ کارمزد', value:feeAmount?U.fmtNum(feeAmount):'---'},
+        {label:'تعداد اقساط', value:totalInstallments||0},
+        {label:'پرداخت شده', value:paidInstallments||0},
+        {label:'قسط مانده', value:remainingInstallments||0},
+        {label:'معوقه', value:overdueInstallments||0},
+        {label:'مانده وام', value:U.fmtNum(loanBalance)}
+    ];
+    loanItems.forEach(item => { h += `<div class="loan-info-item"><div class="loan-info-label">${item.label}</div><div class="loan-info-value">${item.value}</div></div>`; });
+    h += `</div>`;
+    if (overdueInstallments > 0) h += `<div class="warning-box"><i class="fas fa-exclamation-triangle"></i><div><strong>اقساط معوقه</strong>اقساط وام شما عقب افتاده. سریعا نسبت به پرداخت اقدام نمایید.</div></div>`;
+    h += `</div>`;
+    h += `<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب</h3>
+    <div class="filter-bar">
+        <input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ...">
+        <button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button>
+        <button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button>
+        <button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button>
+        <button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button>
+    </div>
+    <div class="table-wrapper">
+        <table id="met">
+            <thead><tr>${ah.map(x => `<th>${U.esc(x)}</th>`).join('')}</tr></thead>
+            <tbody>${txns.length === 0 ? '<tr><td colspan="'+ah.length+'" style="text-align:center;padding:30px;color:#a0aec0">هیچ تراکنشی ثبت نشده است</td></tr>' : txns.map(t => `<tr>${ah.map(hh => `<td title="${U.esc(String(t[hh]||''))}">${U.esc(String(t[hh]||''))}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table>
+    </div></div>`;
+    c.innerHTML = h;
+    const ft = () => {
+        const q = $('#mes', c).value.trim().toLowerCase();
+        const tb = $('#met', c).querySelector('tbody');
+        if (!tb) return;
+        tb.querySelectorAll('tr').forEach(r => { if (!q || r.textContent.toLowerCase().includes(q)) r.style.display = ''; else r.style.display = 'none'; });
+    };
+    $('#mes', c).oninput = ft;
+    $('#mesb', c).onclick = ft;
+    $('#mecb', c).onclick = () => { $('#mes', c).value = ''; ft(); };
+    $('#downloadExcel', c).onclick = () => {
+        const data = txns.map(t => { const row = {}; ah.forEach(hh => { row[hh] = t[hh] || ''; }); return row; });
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب');
+        XLSX.writeFile(wb, 'صورتحساب.xlsx');
+    };
+    $('#printPDF', c).onclick = () => { window.print(); };
 }
 
 render_shop(c){
@@ -632,7 +715,7 @@ render_shop(c){
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;}
     const available=(m.coins||0)-(m.usedCoins||0);
     let h=`<div class="info-box"><i class="fas fa-shopping-cart"></i> فروشگاه - خرج کردن سکه‌ها</div>`;
-    h+=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> موجودی سکه شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">قابل مصرف</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum(available)}</div></div></div></div>`;
+    h+=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> موجودی سکه شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(197,48,48,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-shopping-cart" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مصرف شده</div><div style="font-size:1.8rem;font-weight:700;color:#e53e3e">${m.usedCoins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">قابل مصرف</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum(available)}</div></div></div></div>`;
     h+=`<div class="dashboard-section"><h3><i class="fas fa-store"></i> کالاها و خدمات</h3>`;
     const items=this.app.dm.shopItems||[];
     if(!items.length)h+=`<div style="text-align:center;padding:30px;color:#a0aec0"><i class="fas fa-box-open" style="font-size:3rem;margin-bottom:10px"></i><p>هیچ کالایی موجود نیست</p></div>`;
@@ -642,18 +725,88 @@ render_shop(c){
     c.querySelectorAll('[data-item-id]').forEach(btn=>{btn.onclick=()=>{const itemId=btn.dataset.itemId;const item=items.find(i=>i.id===itemId);if(!item)return;if(confirm(`آیا از خرید "${item.name}" با ${item.price} سکه مطمئن هستید؟`))this.app.spendCoinOnItem(itemId);};});
 }
 
+render_polls(c){
+    const ia=this.app.auth.isAdmin();
+    const uid=this.app.auth.user?.id;
+    const mid=this.app.auth.user?.memberId;
+    const allPolls = window.app.allPolls || [];
+    const allVotes = window.app.allPollVotes || [];
+    let h=`<div class="info-box"><i class="fas fa-poll"></i> نظرسنجی‌ها</div>`;
+    if(ia){
+        h+=`<div class="dashboard-section"><h3><i class="fas fa-plus-circle"></i> ایجاد نظرسنجی جدید</h3>
+        <div style="display:grid;gap:15px">
+            <div><label style="font-weight:600;color:#718096">سوال:</label><input type="text" id="pollQuestion" placeholder="سوال نظرسنجی..." style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;margin-top:5px"></div>
+            <div><label style="font-weight:600;color:#718096">گزینه‌ها (هر گزینه در یک خط):</label><textarea id="pollOptions" placeholder="گزینه 1&#10;گزینه 2&#10;گزینه 3" style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;margin-top:5px;min-height:100px;resize:vertical"></textarea></div>
+            <button class="btn-small success-btn" id="createPollBtn"><i class="fas fa-plus"></i> ایجاد نظرسنجی</button>
+        </div></div>`;
+    }
+    h+=`<div class="dashboard-section"><h3><i class="fas fa-list"></i> نظرسنجی‌های فعال</h3>`;
+    const activePolls = allPolls.filter(p => p.active !== false);
+    if(!activePolls.length){
+        h+=`<div style="text-align:center;padding:30px;color:#a0aec0"><i class="fas fa-poll" style="font-size:3rem;margin-bottom:10px"></i><p>هیچ نظرسنجی فعالی وجود ندارد</p></div>`;
+    } else {
+        activePolls.forEach(poll => {
+            const options = Array.isArray(poll.options) ? poll.options : [];
+            const pollVotes = allVotes.filter(v => String(v.pollId) === String(poll.id));
+            const userVoted = pollVotes.some(v => String(v.memberId) === String(mid));
+            const totalVotes = pollVotes.length;
+            h+=`<div class="poll-item"><div class="poll-question"><i class="fas fa-question-circle" style="color:#667eea"></i> ${U.esc(poll.question||'')}</div>`;
+            if(userVoted){
+                options.forEach((opt, idx) => {
+                    const votes = pollVotes.filter(v => parseInt(v.optionIndex) === idx).length;
+                    const percent = totalVotes > 0 ? Math.round((votes/totalVotes)*100) : 0;
+                    h+=`<div class="poll-option voted"><div style="flex:1"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span>${U.esc(opt)}</span><span style="font-weight:700;color:#667eea">${percent}% (${votes})</span></div><div class="poll-bar"><div class="poll-bar-fill" style="width:${percent}%"></div></div></div></div>`;
+                });
+                h+=`<div style="text-align:center;color:#48bb78;margin-top:10px;font-weight:700"><i class="fas fa-check-circle"></i> شما در این نظرسنجی شرکت کرده‌اید (مجموع آرا: ${totalVotes})</div>`;
+            } else {
+                options.forEach((opt, idx) => {
+                    h+=`<div class="poll-option" data-poll="${poll.id}" data-option="${idx}"><i class="fas fa-circle" style="color:#cbd5e0"></i><span>${U.esc(opt)}</span></div>`;
+                });
+            }
+            h+=`</div>`;
+        });
+    }
+    h+=`</div>`;
+    c.innerHTML=h;
+    if(ia){
+        $('#createPollBtn',c).onclick=()=>this.app.createPoll();
+    }
+    c.querySelectorAll('.poll-option[data-poll]').forEach(el=>{
+        el.onclick=()=>{
+            const pollId=el.dataset.poll;
+            const optionIdx=parseInt(el.dataset.option);
+            this.app.votePoll(pollId, optionIdx);
+        };
+    });
+}
+
 render_settings(c){
     if(!this.app.auth.isAdmin()){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-ban" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی غیرمجاز</p></div>';return;}
     c.innerHTML=`<div class="info-box"><i class="fas fa-cog"></i> تنظیمات سیستم</div><div class="info-box" style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.05));border-right-color:#48bb78"><i class="fas fa-check-circle" style="color:#48bb78"></i> <strong>سیستم با Google Sheets متصل است.</strong> داده‌ها به صورت خودکار همگام‌سازی می‌شوند.</div>`;
 }
 
 render_coins(c){ 
-    if(this.app.auth.isAdmin()){ 
-        let h=`<div class="info-box"><i class="fas fa-coins"></i> مدیریت سکه‌ها</div><div class="table-wrapper"><table id="ct"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map(m=>`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700">${m.coins||0}</span></td></tr>`).join('')}</tbody></table></div>`; 
+    const ia=this.app.auth.isAdmin();
+    const allCoinHistory = window.app.allCoinHistory || [];
+    if(ia){ 
+        let h=`<div class="info-box"><i class="fas fa-coins"></i> مدیریت سکه‌ها</div>`;
+        h+=`<div class="dashboard-section"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><select id="cms" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px">${this.app.dm.members.map(m=>`<option value="${m.id}">${U.esc(m.firstName||'')} ${U.esc(m.lastName||'')}</option>`).join('')}</select><input type="number" id="cai" value="5" min="1" style="width:100px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button class="btn-small success-btn" id="acb"><i class="fas fa-plus"></i> افزودن</button></div></div>`;
+        h+=`<div class="table-wrapper"><table id="ct"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th><th>سکه</th><th>عملیات</th></tr></thead><tbody>${this.app.dm.members.map(m=>`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700">${m.coins||0}</span></td><td><button class="btn-small danger-btn reset-btn" data-mid="${m.id}"><i class="fas fa-redo"></i> ریست</button></td></tr>`).join('')}</tbody></table></div>`; 
         c.innerHTML=h;
+        $('#acb',c).onclick=()=>this.app.addCoin();
+        c.querySelectorAll('.reset-btn').forEach(b=>{const mid=parseInt(b.dataset.mid);b.onclick=()=>this.app.resetCoins(mid);});
     }else{ 
         const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;} 
-        let h=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> سکه‌های شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مانده</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum((m.coins||0)-(m.usedCoins||0))}</div></div></div></div>`; 
+        const myHistory = allCoinHistory.filter(h => String(h.memberId) === String(m.id)).reverse();
+        let h=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> سکه‌های شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(197,48,48,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-shopping-cart" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مصرف شده</div><div style="font-size:1.8rem;font-weight:700;color:#e53e3e">${m.usedCoins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مانده</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum((m.coins||0)-(m.usedCoins||0))}</div></div></div></div>`;
+        if(myHistory.length){
+            h+=`<div class="dashboard-section"><h3><i class="fas fa-history"></i> تاریخچه سکه‌ها</h3>`;
+            myHistory.forEach(item => {
+                const amount = parseInt(item.amount) || 0;
+                h+=`<div class="coin-history-item"><div><div style="font-weight:700;color:#2d3748">${U.esc(item.reason||'')}</div><div style="font-size:.85rem;color:#718096">${U.esc(item.description||'')}</div><div style="font-size:.75rem;color:#a0aec0;margin-top:3px">${U.esc(item.date||'')}</div></div><div class="${amount>0?'coin-amount-positive':'coin-amount-negative'}">${amount>0?'+':''}${amount}</div></div>`;
+            });
+            h+=`</div>`;
+        }
         h+=`<div class="dashboard-section" style="text-align:center"><h3><i class="fas fa-dharmachakra"></i> گردونه شانس</h3><div class="wheel" id="wheel"><div class="pointer"><i class="fas fa-caret-down"></i></div><div class="center"><i class="fas fa-play"></i></div></div><button id="spinBtn" style="padding:14px 35px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:28px;cursor:pointer;font-size:1.1rem;font-weight:700;box-shadow:0 5px 20px rgba(102,126,234,.4);transition:all .3s ease;display:inline-flex;align-items:center;gap:10px"><i class="fas fa-sync-alt"></i> چرخش</button><div id="wheelResult" style="margin-top:15px;font-size:1.2rem;font-weight:700;color:#667eea"></div></div>`; 
         c.innerHTML=h; 
         const ls=localStorage.getItem('lastSpinDate'),today=new Date().toDateString(); 
@@ -676,7 +829,10 @@ _loadMessenger(c){
     $('#sta',c)&&($('#sta',c).onclick=()=>this.app.sendToAdmin());
     $('#stm',c)&&($('#stm',c).onclick=()=>this.app.sendToMember());
     $('#clrAllMsgsBtn',c)&&($('#clrAllMsgsBtn',c).onclick=()=>{if(confirm('آیا از حذف کلیه پیام‌ها مطمئن هستید؟')){if(confirm('تأیید نهایی حذف همه پیام‌ها؟')){window.app.dm.clrMsgs();self._loadMessenger(c);}}});
-    setTimeout(()=>{c.querySelectorAll('.delete-btn[data-mid]').forEach(b=>{b.onclick=function(e){e.stopPropagation();self.app.delMsg(this.dataset.mid);self._loadMessenger(c);};});},20);
+    setTimeout(()=>{
+        c.querySelectorAll('.reply-btn').forEach(b=>{b.onclick=function(e){e.stopPropagation();self.showReply(this.dataset.p,this.dataset.t);};});
+        c.querySelectorAll('.delete-btn[data-mid]').forEach(b=>{b.onclick=function(e){e.stopPropagation();self.app.delMsg(this.dataset.mid);self._loadMessenger(c);};});
+    },20);
     this.updNotif();
 }
 
@@ -686,7 +842,7 @@ msgs(type){
     let fl=[];
     if(type==='member_to_admin'){
         if(hasPrivilege)fl=dm.messages.filter(m=>m.type==='member_to_admin');
-        else{const myMessages = dm.messages.filter(m=>m.type==='member_to_admin' && m.senderId===uid);const myMessageIds = new Set(myMessages.map(m=>m.id));const repliesToMe = dm.messages.filter(m=>m.type==='member_to_admin' && m.parentId && myMessageIds.has(m.parentId));fl = [...myMessages, ...repliesToMe];}
+        else{const myMessages = dm.messages.filter(m=>m.type==='member_to_admin' && String(m.senderId)===String(uid));const myMessageIds = new Set(myMessages.map(m=>m.id));const repliesToMe = dm.messages.filter(m=>m.type==='member_to_admin' && m.parentId && myMessageIds.has(m.parentId));fl = [...myMessages, ...repliesToMe];}
     } else if(type==='member_to_member'){
         if(hasPrivilege)fl=dm.messages.filter(m=>m.type==='member_to_member');
         else fl=dm.messages.filter(m=>m.type==='member_to_member'&&(m.senderPhone===cp||m.receiverPhone===cp));
@@ -695,21 +851,81 @@ msgs(type){
     if(!fl.length)return'<div style="color:#a0aec0;padding:15px;text-align:center"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:10px"></i><p>هیچ پیامی نیست</p></div>';
     const msgClass = type==='member_to_admin' ? 'msg-to-admin' : 'msg-member';
     return fl.map(msg=>{
-        const canDel = ia || (msg.senderId === uid);
+        const canDel = ia || (String(msg.senderId) === String(uid));
         let dn=msg.senderName||'کاربر';
+        let senderInfo='',senderBadge='',phoneInfo='';
+        if(type==='member_to_admin'){
+            if(msg.parentId){
+                dn=`پاسخ شورا یا سیستم`;
+                senderBadge=`<span class="msg-sender-badge" style="background:linear-gradient(135deg,#48bb78,#38a169);color:#fff"><i class="fas fa-reply"></i> پاسخ شورا یا سیستم</span>`;
+                if(hasPrivilege)senderInfo=`<div style="font-size:.78rem;color:#4a5568;margin-top:4px;padding:6px 10px;background:rgba(72,187,120,.06);border-radius:6px;border:1px solid rgba(72,187,120,.2)"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><i class="fas fa-user" style="color:#48bb78"></i> <strong>پاسخ دهنده:</strong> ${U.esc(msg.senderName||'نامشخص')}</div><div style="display:flex;align-items:center;gap:6px"><i class="fas fa-clock" style="color:#48bb78"></i> <strong>تاریخ و ساعت:</strong> ${U.esc(msg.timestamp||'---')}</div></div>`;
+                else senderInfo=`<div style="font-size:.78rem;color:#4a5568;margin-top:4px;padding:6px 10px;background:rgba(72,187,120,.06);border-radius:6px;border:1px solid rgba(72,187,120,.2)"><div style="display:flex;align-items:center;gap:6px"><i class="fas fa-clock" style="color:#48bb78"></i> <strong>تاریخ و ساعت پاسخ:</strong> ${U.esc(msg.timestamp||'---')}</div></div>`;
+            }else{
+                if(hasPrivilege){dn=`پیام از طرف عضو`;senderInfo=`<div style="font-size:.78rem;color:#4a5568;margin-top:4px;padding:6px 10px;background:rgba(66,153,225,.06);border-radius:6px;border:1px solid rgba(66,153,225,.2)"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><i class="fas fa-user" style="color:#4299e1"></i> <strong>نام ارسال کننده:</strong> ${U.esc(msg.senderName||'عضو')}</div><div style="display:flex;align-items:center;gap:6px"><i class="fas fa-clock" style="color:#4299e1"></i> <strong>تاریخ و ساعت:</strong> ${U.esc(msg.timestamp||'---')}</div></div>`;}
+                else{dn=`پیام شما به مدیر`;senderInfo=`<div style="font-size:.78rem;color:#4a5568;margin-top:4px;padding:6px 10px;background:rgba(66,153,225,.06);border-radius:6px;border:1px solid rgba(66,153,225,.2)"><div style="display:flex;align-items:center;gap:6px"><i class="fas fa-clock" style="color:#4299e1"></i> <strong>تاریخ و ساعت:</strong> ${U.esc(msg.timestamp||'---')}</div></div>`;}
+            }
+        } else if(type==='member_to_member'){
+            const isSender = msg.senderPhone === cp;
+            if(msg.parentId){dn=`پاسخ پیام`;senderBadge=`<span class="msg-sender-badge" style="background:linear-gradient(135deg,#9f7aea,#805ad5);color:#fff"><i class="fas fa-reply"></i> ${msg.replyLabel||'پاسخ'}</span>`;}
+            else{if(isSender)dn=`پیام ارسالی شما`;else dn=`پیام دریافتی`;}
+            let phoneHtml='';
+            if(msg.senderPhone)phoneHtml+=`<div><i class="fas fa-phone" style="color:#667eea"></i> تلفن فرستنده: <strong>${U.esc(msg.senderPhone)}</strong></div>`;
+            if(msg.receiverPhone)phoneHtml+=`<div><i class="fas fa-phone" style="color:#ed8936"></i> تلفن گیرنده: <strong>${U.esc(msg.receiverPhone)}</strong></div>`;
+            phoneHtml+=`<div><i class="fas fa-clock" style="color:#48bb78"></i> تاریخ و ساعت: <strong>${U.esc(msg.timestamp||'---')}</strong></div>`;
+            phoneInfo=`<div class="msg-phone-info">${phoneHtml}</div>`;
+        }
         const finalClass = msg.parentId ? 'msg-reply' : msgClass;
         let h=`<div class="msg-item ${finalClass}"><div class="msg-header"><span><i class="fas fa-user-circle"></i> ${U.esc(dn)}</span><span><i class="fas fa-clock"></i> ${U.esc(msg.timestamp||'---')}</span></div>`;
+        if(senderBadge) h+=senderBadge;
+        if(senderInfo) h+=senderInfo;
+        if(phoneInfo) h+=phoneInfo;
+        if(msg.replyLabel && !msg.parentId)h+=`<div style="font-size:.78rem;color:#ed8936;margin:6px 0;padding:5px 8px;background:rgba(237,137,54,.1);border-radius:6px;display:inline-block"><i class="fas fa-reply"></i> ${U.esc(msg.replyLabel)}</div>`;
         h+=`<div style="line-height:1.6;font-size:.92rem">${U.esc(msg.message)}</div><div style="display:flex;gap:8px;margin-top:8px">`;
+        if(type==='member_to_admin' && hasPrivilege)h+=`<button class="reply-btn" data-p="${msg.id}" data-t="${type}" style="background:none;border:none;color:#4299e1;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600;font-size:.82rem"><i class="fas fa-reply"></i> پاسخ</button>`;
+        else if(type==='member_to_member' && !msg.parentId && msg.senderPhone !== cp)h+=`<button class="reply-btn" data-p="${msg.id}" data-t="${type}" style="background:none;border:none;color:#4299e1;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600;font-size:.82rem"><i class="fas fa-reply"></i> پاسخ</button>`;
         if(canDel)h+=`<button class="delete-btn" data-mid="${msg.id}" style="background:none;border:none;color:#e53e3e;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600;font-size:.82rem"><i class="fas fa-trash"></i> حذف</button>`;
-        h+=`</div></div>`;
+        h+=`</div><div id="rf_${msg.id}" style="display:none;margin-top:8px"></div></div>`;
         return h;
     }).join('');
+}
+
+showReply(pid,type){
+    const container=$(`#rf_${pid}`);
+    if(!container)return;
+    if(container.style.display==='block'){container.style.display='none';container.innerHTML='';return;}
+    container.innerHTML=`<div style="background:rgba(247,250,252,.8);padding:12px;border-radius:10px;margin-top:8px"><textarea id="replyTxt_${pid}" placeholder="متن پاسخ..." style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;min-height:60px;resize:vertical;font-size:.9rem"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-small success-btn" id="sendReplyBtn_${pid}"><i class="fas fa-paper-plane"></i> ارسال پاسخ</button><button class="btn-small danger-btn" id="cancelReplyBtn_${pid}"><i class="fas fa-times"></i> انصراف</button></div></div>`;
+    container.style.display='block';
+    const self=this;
+    $(`#sendReplyBtn_${pid}`).onclick=()=>{const txt=$(`#replyTxt_${pid}`).value.trim();if(!txt){alert('متن پاسخ را وارد کنید');return;}self.app.sendReply(pid,type,txt);};
+    $(`#cancelReplyBtn_${pid}`).onclick=()=>{container.style.display='none';container.innerHTML='';};
 }
 
 render_cultural(c){const ia=this.app.auth.isAdmin();let h=`<div class="info-box"><i class="fas fa-theater-masks"></i> برنامه‌های فرهنگی</div><div class="dashboard-section"><h3><i class="fas fa-bullhorn"></i> اطلاعیه‌ها</h3>`;if(ia)h+=`<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap"><input type="text" id="ant" placeholder="عنوان..." style="flex:1;min-width:200px;padding:12px;border:2px solid #e2e8f0;border-radius:12px"><textarea id="anc" placeholder="متن..." style="flex:2;min-width:250px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;min-height:70px;resize:vertical"></textarea><button class="btn-small success-btn" id="sanb" style="align-self:flex-start"><i class="fas fa-paper-plane"></i> ارسال</button></div>`;h+=`<div id="ancr"></div></div>`;c.innerHTML=h;$('#sanb',c)&&($('#sanb',c).onclick=()=>this.app.sendAnn());this.renderAnns();}
 renderAnns(){const container=$('#ancr');if(!container)return;if(!this.app.dm.announcements.length){container.innerHTML='<div style="color:#a0aec0;padding:15px;text-align:center"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:10px"></i><p>هیچ اطلاعیه‌ای نیست</p></div>';return;}container.innerHTML=[...this.app.dm.announcements].reverse().map(a=>`<div class="msg-item"><div class="msg-header"><span><i class="fas fa-user-circle"></i> ${U.esc(a.sender||'مدیر')}</span><span><i class="fas fa-clock"></i> ${U.esc(a.timestamp||'')}</span></div><div><strong style="font-size:1.1rem;color:#2d3748">${U.esc(a.title||'')}</strong><br><div style="margin-top:8px;line-height:1.8">${U.esc(a.content||'')}</div></div></div>`).join('');}
 
-render_sms(c){const ia=this.app.auth.isAdmin();if(ia){const keys=['general','supervisors','council','overdue','birthday','newsletter','poll','occasions'];c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="table-wrapper"><table id="st"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${this.app.dm.members.map(m=>{const s=m.smsStatus||{};return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td>${keys.map(k=>`<td>${s[k]?'<span style="color:#48bb78;font-weight:700">✅</span>':'<span style="color:#e53e3e;font-weight:700">❌</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`;}else{c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی شما</div>`;}}
+render_sms(c){
+    const ia=this.app.auth.isAdmin();
+    const m=this.app.dm.gMember(this.app.auth.user?.memberId);
+    const s=m?.smsStatus||{};
+    const items=[
+        {k:'general',l:'سیستم کلی سامانه پیامکی',icon:'fa-cog'},
+        {k:'supervisors',l:'سیستم ویژه سرپرستان',icon:'fa-user-shield'},
+        {k:'council',l:'سیستم پیامکی ویژه شورا',icon:'fa-users'},
+        {k:'overdue',l:'سیستم معوقات',icon:'fa-exclamation-triangle'},
+        {k:'birthday',l:'سیستم پیامکی تبریک تولد',icon:'fa-birthday-cake'},
+        {k:'newsletter',l:'سیستم پیامکی خبرنامه',icon:'fa-newspaper'},
+        {k:'poll',l:'سیستم پیامکی مسابقه و نظر سنجی',icon:'fa-poll'},
+        {k:'occasions',l:'سیستم پیامکی مناسبات',icon:'fa-calendar-alt'}
+    ];
+    if(ia){
+        const keys=['general','supervisors','council','overdue','birthday','newsletter','poll','occasions'];
+        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="table-wrapper"><table id="st"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${this.app.dm.members.map(m=>{const s=m.smsStatus||{};return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td>${keys.map(k=>`<td>${s[k]?'<span style="color:#48bb78;font-weight:700">✅</span>':'<span style="color:#e53e3e;font-weight:700">❌</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`;
+    } else if(m) {
+        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی شما</div><div class="sms-status-grid">${items.map(i=>`<div class="sms-status-item"><span style="display:flex;align-items:center;gap:10px;font-weight:600"><i class="fas ${i.icon}" style="color:#667eea"></i> ${i.l}</span><span class="${s[i.k]?'status-active':'status-inactive'}">${s[i.k]?'<i class="fas fa-check"></i> فعال':'<i class="fas fa-times"></i> غیرفعال'}</span></div>`).join('')}</div>`;
+    } else {
+        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div>`;
+    }
+}
 
 render_support(c){const s=this.app.dm.support;c.innerHTML=`<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی</div><div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات تماس</h3><div style="display:grid;gap:15px"><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(102,126,234,.1);border-radius:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.phone||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(72,187,120,.1);border-radius:12px"><i class="fas fa-university" style="font-size:1.5rem;color:#48bb78"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">حساب:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px;padding:15px;background:rgba(237,137,54,.1);border-radius:12px"><i class="fas fa-map-marker-alt" style="font-size:1.5rem;color:#ed8936"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آدرس:</label><div style="font-weight:700;font-size:1.1rem">${U.esc(s.address||'---')}</div></div></div></div></div>`;}
 
@@ -768,41 +984,59 @@ startClock(){if(this.ci)clearInterval(this.ci);const tick=()=>{const n=new Date(
 updNotif(){
     const badge=$('#notifBadge');
     if(!badge)return;
-    badge.classList.add('hidden');
+    const dm=this.app.dm,cm=dm.gMember(this.app.auth.user?.memberId),cp=cm?.phone1||'',uid=this.app.auth.user?.id;
+    let n=0;
+    if(this.app.auth.isLoggedIn()){
+        const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();
+        const hasPrivilege = ia || isp || isv;
+        let rel = dm.messages.filter(m=>m.type==='admin_to_members' && String(m.senderId)!==String(uid));
+        if(hasPrivilege)rel = rel.concat(dm.messages.filter(m=>(m.type==='member_to_admin'||m.type==='member_to_member')&&String(m.senderId)!==String(uid)));
+        else{
+            const myMsgIds = new Set(dm.messages.filter(m=>m.type==='member_to_admin'&&String(m.senderId)===String(uid)).map(m=>m.id));
+            const repliesToMe = dm.messages.filter(m=>m.type==='member_to_admin'&&m.parentId&&myMsgIds.has(m.parentId));
+            const msgsToMe = dm.messages.filter(m=>m.type==='member_to_member'&&m.receiverPhone===cp&&String(m.senderId)!==String(uid));
+            rel = rel.concat(repliesToMe, msgsToMe);
+        }
+        n = rel.length;
+    }
+    if(n){badge.classList.remove('hidden');badge.textContent=n>9?'9+':n;}
+    else badge.classList.add('hidden');
 }
 }
 
-class App{constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.init();}
+class App{constructor(){this.dm=new DM();this.auth=new Auth(this.dm);this.ui=new UI(this);this.allTransactions=[];this.allPolls=[];this.allPollVotes=[];this.allCoinHistory=[];this.init();}
 async init(){
     if (!initialLoadDone) {
         console.log('🔄 بارگذاری اولیه از Google Sheets...');
         const data = await loadDataFromSheets();
         if (data) {
             this.dm.members = (data.members || []).map(m => ({
-                ...m,
-                id: parseInt(m.id) || m.id,
-                balance: U.parseNum(m.balance),
-                savingsStatus: U.parseNum(m.savings),
-                loanBalance: U.parseNum(m.loan),
-                coins: parseInt(m.coins) || 0,
-                usedCoins: parseInt(m.usedCoins) || 0,
-                coinHistory: [],
-                loginCount: parseInt(m.loginCount) || 0,
-                smsStatus: m.smsStatus || {},
-                transactions: []
+                ...m, id: parseInt(m.id) || m.id, balance: U.parseNum(m.balance),
+                savingsStatus: U.parseNum(m.savings), loanBalance: U.parseNum(m.loan),
+                coins: parseInt(m.coins) || 0, usedCoins: parseInt(m.usedCoins) || 0,
+                coinHistory: [], loginCount: parseInt(m.loginCount) || 0,
+                smsStatus: m.smsStatus || {}, transactions: []
             }));
             this.dm.users = (data.users || []).map(u => ({
-                ...u,
-                id: parseInt(u.id) || u.id,
+                ...u, id: parseInt(u.id) || u.id,
                 memberId: u.memberId ? (parseInt(u.memberId) || null) : null
             }));
             this.dm.messages = data.messages || [];
             this.dm.announcements = data.announcements || [];
             this.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             this.dm.shopItems = data.shopitems || [];
-            
+            this.allTransactions = data.transactions || [];
+            this.allPolls = (data.polls || []).map(p => ({
+                ...p, options: U.parseJSON(p.options) || [],
+                active: String(p.active).toLowerCase() === 'true'
+            }));
+            this.allPollVotes = data.pollvotes || [];
+            this.allCoinHistory = data.coinhistory || [];
             ['members','users','messages','announcements','support','shopItems'].forEach(k => this.dm.sv(k));
             console.log(`✅ ${this.dm.members.length} عضو از Google Sheets بارگذاری شد`);
+            console.log(`✅ ${this.allTransactions.length} تراکنش از Google Sheets بارگذاری شد`);
+            console.log(`✅ ${this.allPolls.length} نظرسنجی از Google Sheets بارگذاری شد`);
+            console.log(`✅ ${this.allCoinHistory.length} تاریخچه سکه از Google Sheets بارگذاری شد`);
         }
         initialLoadDone = true;
     }
@@ -816,8 +1050,7 @@ doForgot(){
     if(!un){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> نام کاربری را وارد کنید';return;}
     const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un)&&x.role!=='admin');
     if(!u){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> نام کاربری یافت نشد';return;}
-    u.password=u.username;
-    this.dm.sv('users');
+    u.password=u.username; this.dm.sv('users');
     sd.innerHTML=`<i class="fas fa-check-circle"></i> رمز عبور به شماره حساب تغییر یافت.`;
 }
 doForceChange(){const np=$('#newPasswordForce').value.trim(),cp=$('#confirmPasswordForce').value.trim(),ed=$('#forceError');ed.textContent='';if(!np){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> رمز جدید را وارد کنید';return;}if(np!==cp){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> رمز و تکرار آن مطابقت ندارند';return;}const r=this.auth.changeForced(np);if(!r.s){ed.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${r.m}`;return;}this.ui.render();}
@@ -846,9 +1079,98 @@ sendToMember(){
     pi.value='';mi.value='';
     this.ui.switchTab('messenger');
 }
+sendReply(pid,type,txt){
+    const pm=this.dm.messages.find(m=>m.id===pid);
+    if(!pm){alert('پیام اصلی یافت نشد');return;}
+    const ia=this.auth.isAdmin(),isp=this.auth.isSpecial(),isv=this.auth.isSupervisor();
+    let rl='',sn='',sr='member';
+    if(ia){rl='پاسخ از مدیریت';sn='مدیر';sr='admin';}
+    else if(isp){rl='پاسخ از شورا';const m=this.dm.gMember(this.auth.user.memberId);sn=m?`${m.firstName||''} ${m.lastName||''}`:'شورا';sr='special';}
+    else if(isv){rl='پاسخ از سرپرست';const m=this.dm.gMember(this.auth.user.memberId);sn=m?`${m.firstName||''} ${m.lastName||''}`:'سرپرست';sr='supervisor';}
+    else{const m=this.dm.gMember(this.auth.user.memberId);sn=`${m?.firstName||''} ${m?.lastName||''}`;}
+    const m=this.dm.gMember(this.auth.user.memberId);
+    this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:sn,senderRole:sr,senderPhone:m?.phone1||'',receiverId:ia?1:null,receiverPhone:type==='member_to_member'?pm.senderPhone:'',message:txt,timestamp:U.now(),type,parentId:pid,replyLabel:rl});
+    this.ui.switchTab('messenger');
+}
 delMsg(id){if(confirm('حذف پیام؟')){this.dm.delMsg(id);this.ui.render();}}
 sendAnn(){const t=$('#ant').value.trim(),c=$('#anc').value.trim();if(!t||!c){alert('عنوان و متن را وارد کنید');return;}this.dm.addAnn({id:'a_'+Date.now()+Math.random().toString(36).slice(2,6),title:t,content:c,timestamp:U.now(),sender:this.auth.user.username||'مدیر'});$('#ant').value='';$('#anc').value='';this.ui.switchTab('cultural');}
 savePass(mid){const np=$('#npi')?.value.trim(),cp=$('#cpi')?.value.trim();if(!np||!cp){alert('رمز و تکرار آن را وارد کنید');return;}if(np!==cp){alert('رمز و تکرار آن مطابقت ندارند');return;}if(U.strength(np)==='ضعیف'){alert('رمز عبور بسیار ضعیف است');return;}const u=this.dm.gUserByMid(mid);if(!u)return;u.password=np;this.dm.sv('users');alert('✅ رمز عبور تغییر یافت');this.ui.render();}
+saveProfile(mid){
+    const m=this.dm.gMember(mid);
+    if(!m)return;
+    const ui=this.dm.gUserByMid(mid);
+    const data = {
+        firstName: $(`#pf_firstName_${mid}`)?.value.trim() || '',
+        lastName: $(`#pf_lastName_${mid}`)?.value.trim() || '',
+        accountNumber: $(`#pf_accountNumber_${mid}`)?.value.trim() || '',
+        openDate: $(`#pf_openDate_${mid}`)?.value.trim() || '',
+        birthDate: $(`#pf_birthDate_${mid}`)?.value.trim() || '',
+        phone1: $(`#pf_phone1_${mid}`)?.value.trim() || '',
+        phone2: $(`#pf_phone2_${mid}`)?.value.trim() || ''
+    };
+    if(!data.firstName || !data.lastName || !data.accountNumber){
+        alert('نام، نام خانوادگی و شماره حساب الزامی هستند');
+        return;
+    }
+    if(ui){
+        ui.username = $(`#pfu_${mid}`)?.value.trim() || '';
+        ui.password = $(`#pfp_${mid}`)?.value.trim() || '';
+        this.dm.sv('users');
+    }
+    this.dm.saveProfile(mid, data);
+    alert('✅ اطلاعات ذخیره شد');
+    this.ui.render();
+}
+addCoin(){
+    const s=$('#cms'),a=$('#cai');
+    if(!s||!a)return;
+    const mid=parseInt(s.value),amt=parseInt(a.value);
+    if(isNaN(amt)||amt<=0){alert('تعداد سکه معتبر وارد کنید');return;}
+    const m=this.dm.gMember(mid);
+    if(!m){alert('عضو یافت نشد');return;}
+    this.dm.addCoin(mid,amt,'افزودن توسط مدیر',`افزودن ${amt} سکه`);
+    alert(`✅ ${amt} سکه به ${m.firstName} ${m.lastName} اضافه شد`);
+    this.ui.switchTab('coins');
+}
+resetCoins(mid){
+    if(!confirm('آیا از ریست سکه‌های این عضو مطمئن هستید؟'))return;
+    const m=this.dm.gMember(mid);
+    if(!m)return;
+    this.dm.resetCoins(mid);
+    alert('✅ سکه‌ها ریست شدند');
+    this.ui.switchTab('coins');
+}
+createPoll(){
+    const q=$('#pollQuestion')?.value.trim();
+    const o=$('#pollOptions')?.value.trim();
+    if(!q){alert('سوال را وارد کنید');return;}
+    if(!o){alert('گزینه‌ها را وارد کنید');return;}
+    const options=o.split('\n').map(s=>s.trim()).filter(s=>s);
+    if(options.length<2){alert('حداقل دو گزینه وارد کنید');return;}
+    const poll={
+        id:'p_'+Date.now()+Math.random().toString(36).slice(2,6),
+        question:q, options:options, timestamp:U.now(),
+        creator:this.auth.user.username||'مدیر', active:true
+    };
+    this.allPolls.push(poll);
+    $('#pollQuestion').value='';
+    $('#pollOptions').value='';
+    alert('✅ نظرسنجی ایجاد شد');
+    this.ui.switchTab('polls');
+}
+votePoll(pollId, optionIndex){
+    const mid=this.auth.user?.memberId;
+    if(!mid){alert('ابتدا وارد شوید');return;}
+    const success=this.dm.votePoll(pollId, mid, optionIndex);
+    if(success){
+        const m=this.dm.gMember(mid);
+        if(m)this.dm.applyCoinRules(m);
+        alert('✅ رأی شما ثبت شد');
+        this.ui.switchTab('polls');
+    } else {
+        alert('❌ شما قبلاً در این نظرسنجی شرکت کرده‌اید');
+    }
+}
 uploadBulk(file){
     showSyncStatus('در حال پردازش فایل اکسل...', 'syncing');
     this.dm.uploadBulk(file,(e,tr,up,ad,nm)=>{
