@@ -90,7 +90,6 @@ tbody tr:hover{background:rgba(102,126,234,.05)}
 .search-box{margin-bottom:20px;display:flex;gap:12px;align-items:center;background:rgba(247,250,252,.8);padding:12px 18px;border-radius:16px;border:2px solid rgba(226,232,240,.5)}
 .search-box input{flex:1;padding:10px 15px;border:2px solid #e2e8f0;border-radius:12px}
 .table-wrapper{overflow-x:auto;max-height:600px;overflow-y:auto;border:2px solid rgba(226,232,240,.5);border-radius:16px;background:#fff}
-.delete-all-btn{background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;padding:12px 24px;border:none;border-radius:24px;cursor:pointer;font-weight:700}
 .password-dots{font-family:monospace;font-size:1.2rem;letter-spacing:3px;cursor:pointer;background:#edf2f7;padding:6px 12px;border-radius:12px}
 .password-dots:hover{background:#fff3cd}
 .warning-box{background:#fff5f5;border:2px solid #feb2b2;border-radius:16px;padding:18px 20px;color:#c53030;display:flex;align-items:center;gap:12px;margin-top:15px}
@@ -102,9 +101,7 @@ tbody tr:hover{background:rgba(102,126,234,.05)}
 .loan-info-label{font-size:.8rem;color:#718096;font-weight:600;margin-bottom:5px}
 .loan-info-value{font-size:1rem;font-weight:700;color:#2d3748}
 .login-logo{width:120px;height:120px;margin:0 auto 20px;border-radius:50%;object-fit:cover;box-shadow:0 10px 30px rgba(0,0,0,.2);animation:float 3s ease-in-out infinite}
-.logo-preview{width:100px;height:100px;border-radius:50%;object-fit:cover;margin:15px auto;display:block}
 .msg-actions-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px;padding:12px;background:rgba(247,250,252,.8);border-radius:12px}
-.last-login-info{display:inline-block;font-size:.85rem;color:#4a5568;background:rgba(102,126,234,.08);padding:4px 12px;border-radius:12px;margin-right:10px}
 .sync-status{position:fixed;bottom:20px;left:20px;background:rgba(255,255,255,.95);padding:10px 18px;border-radius:20px;box-shadow:0 5px 15px rgba(0,0,0,.15);font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px;z-index:999}
 .sync-status.syncing{background:#4299e1;color:#fff}
 .sync-status.success{background:#48bb78;color:#fff}
@@ -175,10 +172,11 @@ esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div')
 strength(p){let s=0;if(p.length>=6)s++;if(p.length>=8)s++;if(/[a-z]/.test(p))s++;if(/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^a-zA-Z\d]/.test(p))s++;return s<=2?'ضعیف':s<=4?'متوسط':'قوی';},
 findCol(names,headers){for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers)if(h.toLowerCase().replace(/[_\s\-]/g,'')===nn)return h;}return null;},
 getMembershipDuration(openDate){if(!openDate)return'---';return openDate;},
-parseJSON(s){try{return typeof s==='string'?JSON.parse(s):s}catch{return s}}
+parseJSON(s){try{return typeof s==='string'?JSON.parse(s):s}catch(e){return s}}
 };
 
-function showSyncStatus(text, type='syncing') {
+function showSyncStatus(text, type) {
+    type = type || 'syncing';
     const el = $('#syncStatus');
     const txt = $('#syncText');
     if (!el || !txt) return;
@@ -189,10 +187,10 @@ function showSyncStatus(text, type='syncing') {
     if (type === 'syncing') icon.className = 'fas fa-sync fa-spin';
     else if (type === 'success') {
         icon.className = 'fas fa-check';
-        setTimeout(() => el.classList.add('hidden'), 3000);
+        setTimeout(function() { el.classList.add('hidden'); }, 3000);
     } else if (type === 'error') {
         icon.className = 'fas fa-exclamation-triangle';
-        setTimeout(() => el.classList.add('hidden'), 5000);
+        setTimeout(function() { el.classList.add('hidden'); }, 5000);
     }
 }
 
@@ -200,13 +198,7 @@ async function loadDataFromSheets() {
     try {
         showSyncStatus('در حال بارگذاری از Google Sheets...', 'syncing');
         const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(CONFIG.APPS_SCRIPT_URL);
-        const response = await fetch(proxyUrl, { 
-            method: 'GET', 
-            cache: 'no-store',
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
+        const response = await fetch(proxyUrl, { method: 'GET', cache: 'no-store' });
         if (response.ok) {
             const text = await response.text();
             const result = JSON.parse(text);
@@ -227,7 +219,7 @@ async function loadDataFromSheets() {
 }
 
 async function saveDataToSheets(data) {
-    return new Promise((resolve) => {
+    return new Promise(function(resolve) {
         try {
             showSyncStatus('در حال ذخیره در Google Sheets...', 'syncing');
             let iframe = document.getElementById('hidden_iframe');
@@ -251,7 +243,7 @@ async function saveDataToSheets(data) {
             document.body.appendChild(form);
             form.submit();
             document.body.removeChild(form);
-            setTimeout(() => {
+            setTimeout(function() {
                 console.log('✅ درخواست ذخیره ارسال شد');
                 showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
                 resolve(true);
@@ -277,40 +269,43 @@ async function autoSync() {
         isSyncing = true;
         const data = await loadDataFromSheets();
         if (data) {
-            window.app.dm.members = (data.members || []).map(m => ({
-                ...m,
-                id: parseInt(m.id) || m.id,
-                balance: U.parseNum(m.balance),
-                savings: U.parseNum(m.savings),
-                savingsStatus: U.parseNum(m.savings),
-                loan: U.parseNum(m.loan),
-                loanBalance: U.parseNum(m.loan),
-                coins: parseInt(m.coins) || 0,
-                usedCoins: parseInt(m.usedCoins) || 0,
-                coinHistory: [],
-                loginCount: parseInt(m.loginCount) || 0,
-                smsStatus: m.smsStatus || {},
-                transactions: []
-            }));
-            window.app.dm.users = (data.users || []).map(u => ({
-                ...u,
-                id: parseInt(u.id) || u.id,
-                memberId: u.memberId ? (parseInt(u.memberId) || null) : null
-            }));
+            window.app.dm.members = (data.members || []).map(function(m) {
+                return Object.assign({}, m, {
+                    id: parseInt(m.id) || m.id,
+                    balance: U.parseNum(m.balance),
+                    savings: U.parseNum(m.savings),
+                    savingsStatus: U.parseNum(m.savings),
+                    loan: U.parseNum(m.loan),
+                    loanBalance: U.parseNum(m.loan),
+                    coins: parseInt(m.coins) || 0,
+                    usedCoins: parseInt(m.usedCoins) || 0,
+                    coinHistory: [],
+                    loginCount: parseInt(m.loginCount) || 0,
+                    smsStatus: m.smsStatus || {},
+                    transactions: []
+                });
+            });
+            window.app.dm.users = (data.users || []).map(function(u) {
+                return Object.assign({}, u, {
+                    id: parseInt(u.id) || u.id,
+                    memberId: u.memberId ? (parseInt(u.memberId) || null) : null
+                });
+            });
             window.app.dm.messages = data.messages || [];
             window.app.dm.announcements = data.announcements || [];
             window.app.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             window.app.dm.shopItems = data.shopitems || [];
-            window.app.dm.logo = (data.settings && data.settings.find(s => s.key === 'logo')?.value) || '';
+            window.app.dm.logo = (data.settings && data.settings.find(function(s) { return s.key === 'logo'; }) || {}).value || '';
             window.app.allTransactions = data.transactions || [];
-            window.app.allPolls = (data.polls || []).map(p => ({
-                ...p,
-                options: U.parseJSON(p.options) || [],
-                active: String(p.active).toLowerCase() === 'true'
-            }));
+            window.app.allPolls = (data.polls || []).map(function(p) {
+                return Object.assign({}, p, {
+                    options: U.parseJSON(p.options) || [],
+                    active: String(p.active).toLowerCase() === 'true'
+                });
+            });
             window.app.allPollVotes = data.pollvotes || [];
             window.app.allCoinHistory = data.coinhistory || [];
-            ['members','users','messages','announcements','support','shopItems','logo'].forEach(k => window.app.dm.sv(k));
+            ['members','users','messages','announcements','support','shopItems','logo'].forEach(function(k) { window.app.dm.sv(k); });
             if (window.app.ui && initialLoadDone) window.app.ui.render();
         }
         lastSyncTime = now;
@@ -336,37 +331,39 @@ constructor(){
         {id:'s2',name:'کالا نمونه ۲',description:'توضیحات کالا',price:20},
         {id:'s3',name:'کالا نمونه ۳',description:'توضیحات کالا',price:50}
     ]);
-    if(!this.users.find(u=>u.username==='admin')){
+    if(!this.users.find(function(u){return u.username==='admin';})){
         this.users.push({id:1,username:'admin',password:'admin123',role:'admin',memberId:null});
         this.sv('users');
     }
 }
-ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch{return d}}
+ld(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}}
 sv(k){try{localStorage.setItem(k,JSON.stringify(this[k]))}catch(e){console.warn('خطا در ذخیره:',k,e)}}
-gUserByMid(mid){return this.users.find(u=>u.memberId===mid)}
-gMember(id){return this.members.find(m=>m.id===id)}
-gMemberByPhone(p){return this.members.find(m=>m.phone1===p)}
-addCoin(mid,amount,reason,desc=''){
+gUserByMid(mid){return this.users.find(function(u){return u.memberId===mid;})}
+gMember(id){return this.members.find(function(m){return m.id===id;})}
+gMemberByPhone(p){return this.members.find(function(m){return m.phone1===p;})}
+addCoin(mid,amount,reason,desc){
+    desc = desc || '';
     const m=this.gMember(mid);
     if(!m)return false;
     m.coins=(m.coins||0)+amount;
     if(!m.coinHistory)m.coinHistory=[];
-    m.coinHistory.push({date:U.now(),amount,reason,description:desc,balance:m.coins});
+    m.coinHistory.push({date:U.now(),amount:amount,reason:reason,description:desc,balance:m.coins});
     this.sv('members');
     return true;
 }
-spendCoin(mid,amount,reason,desc=''){
+spendCoin(mid,amount,reason,desc){
+    desc = desc || '';
     const m=this.gMember(mid);
     if(!m)return {success:false,msg:'عضو یافت نشد'};
     const available=(m.coins||0)-(m.usedCoins||0);
     if(available<amount)return {success:false,msg:'سکه کافی نیست'};
     m.usedCoins=(m.usedCoins||0)+amount;
     if(!m.coinHistory)m.coinHistory=[];
-    m.coinHistory.push({date:U.now(),amount:-amount,reason,description:desc,balance:(m.coins||0)-(m.usedCoins||0)});
+    m.coinHistory.push({date:U.now(),amount:-amount,reason:reason,description:desc,balance:(m.coins||0)-(m.usedCoins||0)});
     this.sv('members');
     return {success:true,msg:'✅ خرید با موفقیت انجام شد'};
 }
-applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const add=(a,r,d)=>{this.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
+applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const self=this;const add=function(a,r,d){self.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
 
 uploadBulk(file, cb) {
     if (typeof XLSX === 'undefined') { cb('کتابخانه XLSX بارگذاری نشد', 0, 0, 0, 0); return; }
@@ -374,7 +371,7 @@ uploadBulk(file, cb) {
     if (!['xlsx', 'xls', 'csv'].includes(ext)) { cb('فرمت پشتیبانی نمی‌شود', 0, 0, 0, 0); return; }
     const reader = new FileReader();
     const self = this;
-    const process = (data, isCsv) => {
+    const process = function(data, isCsv) {
         try {
             let wb;
             if (isCsv) wb = XLSX.read(data, { type: 'string', raw: true });
@@ -401,7 +398,7 @@ uploadBulk(file, cb) {
             const users = [];
             let userId = 1;
             users.push({ id: userId++, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
-            rows.forEach((row) => {
+            rows.forEach(function(row) {
                 const accNum = String(row[colMap.accountNumber] || '').trim();
                 if (!accNum) return;
                 const memberId = members.length + 1;
@@ -436,7 +433,7 @@ uploadBulk(file, cb) {
                 pollVotes: window.app.allPollVotes || [],
                 coinHistory: window.app.allCoinHistory || []
             };
-            saveDataToSheets(dataToSave).then(success => {
+            saveDataToSheets(dataToSave).then(function(success) {
                 if (success) {
                     self.members = members; self.users = users;
                     self.sv('members'); self.sv('users');
@@ -445,14 +442,14 @@ uploadBulk(file, cb) {
             });
         } catch (e) { console.error(e); cb('خطا در پردازش: ' + e.message, 0, 0, 0, 0); }
     };
-    reader.onload = (e) => {
+    reader.onload = function(e) {
         if (ext === 'csv') {
             const arr = new Uint8Array(e.target.result);
             let txt = new TextDecoder('utf-8').decode(arr);
             process(txt, true);
         } else { process(e.target.result, false); }
     };
-    reader.onerror = () => cb('خطا در خواندن فایل', 0, 0, 0, 0);
+    reader.onerror = function() { cb('خطا در خواندن فایل', 0, 0, 0, 0); };
     if (ext === 'csv') reader.readAsText(file);
     else reader.readAsArrayBuffer(file);
 }
@@ -474,34 +471,32 @@ resetCoins(mid) {
     return true;
 }
 
-addPoll(poll) { this.polls.push(poll); this.sv('polls'); }
 votePoll(pollId, memberId, optionIndex) {
     const votes = window.app.allPollVotes || [];
-    const existing = votes.find(v => String(v.pollId) === String(pollId) && String(v.memberId) === String(memberId));
+    const existing = votes.find(function(v) { return String(v.pollId) === String(pollId) && String(v.memberId) === String(memberId); });
     if (existing) return false;
-    votes.push({ pollId, memberId, optionIndex, timestamp: U.now() });
+    votes.push({ pollId: pollId, memberId: memberId, optionIndex: optionIndex, timestamp: U.now() });
     window.app.allPollVotes = votes;
     return true;
 }
 
 changePass(mid,np){const u=this.gUserByMid(mid);if(!u||!np)return false;u.password=np;this.sv('users');return true;}
 incLogin(mid){const m=this.gMember(mid);if(m){m.loginCount=(m.loginCount||0)+1;m.lastLoginDate=U.now();this.sv('members');}}
-delMember(mid){this.users=this.users.filter(u=>u.memberId!==mid);this.members=this.members.filter(m=>m.id!==mid);this.sv('users');this.sv('members');}
-delAllMembers(){this.users=this.users.filter(u=>u.role==='admin');this.members=[];this.sv('users');this.sv('members');}
+delMember(mid){this.users=this.users.filter(function(u){return u.memberId!==mid;});this.members=this.members.filter(function(m){return m.id!==mid;});this.sv('users');this.sv('members');}
 addMsg(msg){this.messages.push(msg);this.sv('messages');}
-delMsg(id){this.messages=this.messages.filter(m=>m.id!==id&&m.parentId!==id);this.sv('messages');}
-clrMsgs(type){if(type)this.messages=this.messages.filter(m=>m.type!==type);else this.messages=[];this.sv('messages');}
+delMsg(id){this.messages=this.messages.filter(function(m){return m.id!==id&&m.parentId!==id;});this.sv('messages');}
+clrMsgs(type){if(type)this.messages=this.messages.filter(function(m){return m.type!==type;});else this.messages=[];this.sv('messages');}
 addAnn(a){this.announcements.push(a);this.sv('announcements');}
-delAnn(id){this.announcements=this.announcements.filter(a=>a.id!==id);this.sv('announcements');}
+delAnn(id){this.announcements=this.announcements.filter(function(a){return a.id!==id;});this.sv('announcements');}
 clrAnn(){this.announcements=[];this.sv('announcements');}
 setLogo(data){this.logo=data;this.sv('logo');}
 addShopItem(item){this.shopItems.push(item);this.sv('shopItems');}
-delShopItem(id){this.shopItems=this.shopItems.filter(i=>i.id!==id);this.sv('shopItems');}
+delShopItem(id){this.shopItems=this.shopItems.filter(function(i){return i.id!==id;});this.sv('shopItems');}
 }
 
 class Auth{constructor(dm){this.dm=dm;this.user=null;this.pending=null;}
 login(un,pw){
-    const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un));
+    const u=this.dm.users.find(function(x){return U.norm(x.username)===U.norm(un);});
     if(!u)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
     if(u.password!==pw)return{s:false,m:'نام کاربری یا رمز عبور اشتباه است'};
     if(U.norm(u.password)===U.norm(u.username) && u.role!=='admin'){ this.pending=u; return{s:true,fc:true}; }
@@ -521,24 +516,24 @@ changeForced(np){
     u.password=np; this.dm.sv('users'); this.user=u; this.pending=null; return{s:true};
 }
 logout(){this.user=null;this.pending=null;}
-isAdmin(){return this.user?.role==='admin';}
-isSpecial(){return this.user?.role==='special';}
+isAdmin(){return this.user && this.user.role==='admin';}
+isSpecial(){return this.user && this.user.role==='special';}
 isSupervisor(){
     if(this.isAdmin()) return true;
-    if(this.user?.role==='member' && this.user.memberId){
+    if(this.user && this.user.role==='member' && this.user.memberId){
         const m = this.dm.gMember(this.user.memberId);
         return m && (m.sessionActive || (m.smsStatus && m.smsStatus.council));
     }
     return false;
 }
-isLoggedIn(){return!!this.user;}
+isLoggedIn(){return !!this.user;}
 }
 
 class UI{constructor(app){this.app=app;this.el=$('#appContainer');this.tab=localStorage.getItem('activeTab')||'profile';this.sa=0;this.ci=null;}
 render(){if(this.app.auth.pending){this.el.innerHTML=this.forceHTML();this.bindFC();return;}if(!this.app.auth.isLoggedIn()){this.el.innerHTML=this.loginHTML();this.bindLogin();return;}this.el.innerHTML=this.appHTML();this.bindApp();this.switchTab(this.tab);this.updUI();this.startClock();this.updNotif();this.updCoinBadge();}
 loginHTML(){const logo=this.app.dm.logo;return`<div class="login-page"><div style="text-align:center;margin-bottom:30px">${logo?`<img src="${logo}" class="login-logo" alt="لوگو">`:`<i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px;animation:float 3s ease-in-out infinite"></i>`}<h1 style="color:#2d3748;margin-bottom:10px">سیستم حسابداری صندوق اتحاد</h1><p style="color:#718096">ورود با رمز اختصاصی</p></div><div class="input-group"><label><i class="fas fa-user"></i> نام کاربری</label><input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید"></div><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور</label><input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید"><button class="toggle-password" id="toggleLoginPass"><i class="fas fa-eye"></i></button></div><button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button><button class="btn" id="forgotBtn" style="background:linear-gradient(135deg,#ed8936,#dd6b20);margin-top:12px"><i class="fas fa-key"></i> رمز را فراموش کرده ام</button><div id="loginError" class="error-msg"></div><div id="forgotSuccess" class="success-msg"></div></div>`;}
 forceHTML(){return`<div class="force-change-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-exclamation-triangle" style="font-size:5rem;color:#e53e3e;animation:pulse 2s infinite"></i><div style="font-size:1.8rem;color:#e53e3e;margin:15px 0;font-weight:700">تغییر رمز عبور الزامی است</div></div><div style="max-width:450px;margin:0 auto"><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور جدید</label><input type="password" id="newPasswordForce" placeholder="رمز جدید"><button class="toggle-password" id="toggleForcePass"><i class="fas fa-eye"></i></button><div id="passwordStrength" style="margin-top:8px;font-weight:600"></div></div><div class="input-group"><label><i class="fas fa-check-circle"></i> تکرار رمز جدید</label><input type="password" id="confirmPasswordForce" placeholder="تکرار رمز جدید"><button class="toggle-password" id="toggleForceConfirm"><i class="fas fa-eye"></i></button></div><button class="btn" id="forceChangeBtn"><i class="fas fa-save"></i> تغییر رمز و ورود</button><div id="forceError" class="error-msg"></div></div></div>`;}
-appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user?.memberId);const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">تاریخ شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="datetime-card"><i class="fas fa-calendar"></i><div><div class="dt-label">تاریخ میلادی</div><div class="dt-value" id="gregorianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn" data-theme="day"><i class="fas fa-sun"></i> روز</button><button class="theme-btn" data-theme="night"><i class="fas fa-moon"></i> شب</button></div>${!ia?`<div class="coin-badge" id="coinBadge"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>`:''}<div style="position:relative"><button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button></div></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><i class="fas fa-star"></i> خوش آمدید</div><div class="app-layout"><div class="vertical-menu"><div style="font-size:1.3rem;font-weight:700;color:#667eea;padding-bottom:20px;border-bottom:3px solid #edf2f7;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div><div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div><div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div>${!ia?'<div class="menu-item" data-tab="shop"><i class="fas fa-shopping-cart"></i> فروشگاه</div>':''}<div class="menu-item" data-tab="polls"><i class="fas fa-poll"></i> نظرسنجی</div><div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> مدیریت اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> مدیریت ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid #edf2f7"><span id="roleBadge" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${ia?'<i class="fas fa-crown"></i> مدیر':isp?'<i class="fas fa-shield-alt"></i> پاسخ‌دهنده':isCouncil?'<i class="fas fa-user-shield"></i> عضو شورا':'<i class="fas fa-user"></i> عضو'}</span><button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
+appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">تاریخ شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="datetime-card"><i class="fas fa-calendar"></i><div><div class="dt-label">تاریخ میلادی</div><div class="dt-value" id="gregorianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn" data-theme="day"><i class="fas fa-sun"></i> روز</button><button class="theme-btn" data-theme="night"><i class="fas fa-moon"></i> شب</button></div>${!ia?`<div class="coin-badge" id="coinBadge"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>`:''}<div style="position:relative"><button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button></div></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><i class="fas fa-star"></i> خوش آمدید</div><div class="app-layout"><div class="vertical-menu"><div style="font-size:1.3rem;font-weight:700;color:#667eea;padding-bottom:20px;border-bottom:3px solid #edf2f7;text-align:center;display:flex;align-items:center;justify-content:center;gap:10px"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div><div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div><div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div>${!ia?'<div class="menu-item" data-tab="shop"><i class="fas fa-shopping-cart"></i> فروشگاه</div>':''}<div class="menu-item" data-tab="polls"><i class="fas fa-poll"></i> نظرسنجی</div><div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> مدیریت اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> مدیریت ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid #edf2f7"><span id="roleBadge" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${ia?'<i class="fas fa-crown"></i> مدیر':isp?'<i class="fas fa-shield-alt"></i> پاسخ‌دهنده':isCouncil?'<i class="fas fa-user-shield"></i> عضو شورا':'<i class="fas fa-user"></i> عضو'}</span><button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
 bindLogin(){$('#loginBtn').onclick=()=>this.app.doLogin();$('#forgotBtn').onclick=()=>this.app.doForgot();$('#loginPassword').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};$('#loginUsername').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};$('#toggleLoginPass').onclick=()=>{const i=$('#loginPassword'),icon=$('#toggleLoginPass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
 bindFC(){$('#forceChangeBtn').onclick=()=>this.app.doForceChange();$('#newPasswordForce').oninput=e=>{$('#passwordStrength').textContent=`قدرت رمز: ${U.strength(e.target.value)}`;$('#passwordStrength').style.color=U.strength(e.target.value)==='قوی'?'#38a169':U.strength(e.target.value)==='متوسط'?'#ed8936':'#e53e3e';};$('#toggleForcePass').onclick=()=>{const i=$('#newPasswordForce'),icon=$('#toggleForcePass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};$('#toggleForceConfirm').onclick=()=>{const i=$('#confirmPasswordForce'),icon=$('#toggleForceConfirm i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
 bindApp(){$$('.menu-item[data-tab]').forEach(el=>el.onclick=()=>{this.tab=el.dataset.tab;localStorage.setItem('activeTab', this.tab);$$('.menu-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');this.switchTab(this.tab);});$('#logoutBtn').onclick=()=>this.app.doLogout();$$('.theme-btn').forEach(b=>b.onclick=()=>this.app.setTheme(b.dataset.theme));}
@@ -555,8 +550,8 @@ render_profile(c){
         h+=`<tr>
             <td><input id="pf_firstName_${m.id}" value="${U.esc(m.firstName||'')}" style="width:90px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
             <td><input id="pf_lastName_${m.id}" value="${U.esc(m.lastName||'')}" style="width:90px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
-            <td><input id="pfu_${m.id}" value="${U.esc(ui?.username||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
-            <td><input id="pfp_${m.id}" value="${U.esc(ui?.password||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pfu_${m.id}" value="${U.esc(ui?ui.username||'':'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
+            <td><input id="pfp_${m.id}" value="${U.esc(ui?ui.password||'':'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
             <td><input id="pf_accountNumber_${m.id}" value="${U.esc(m.accountNumber||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
             <td><input id="pf_openDate_${m.id}" value="${U.esc(m.openDate||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
             <td><input id="pf_birthDate_${m.id}" value="${U.esc(m.birthDate||'')}" style="width:100px;padding:6px;border:2px solid #e2e8f0;border-radius:8px"></td>
@@ -575,7 +570,7 @@ render_profile(c){
     }else{
       const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;}
       const ui=this.app.dm.gUserByMid(m.id);
-      c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="dashboard-section"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:10px"><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام:</label><div>${U.esc(m.firstName||'---')} ${U.esc(m.lastName||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-hashtag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div>${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-calendar-plus" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تاریخ افتتاح:</label><div>${U.fmtDate(m.openDate)}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۱:</label><div>${U.esc(m.phone1||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-mobile-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۲:</label><div>${U.esc(m.phone2||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user-tag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام کاربری:</label><div>${U.esc(ui?.username||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-key" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">رمز:</label><div><span id="pds" class="password-dots">••••••</span><button class="btn-small edit-btn" id="epbtn" style="margin-right:10px"><i class="fas fa-edit"></i></button></div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-coins" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">سکه:</label><div>${m.coins||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-sign-in-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد ورود:</label><div>${m.loginCount||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-clock" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آخرین ورود:</label><div style="font-weight:700;color:#2d3748">${U.esc(m.lastLoginDate||'---')}</div></div></div></div></div><div id="efc" style="margin-top:20px"></div>`;
+      c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="dashboard-section"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;padding:10px"><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام:</label><div>${U.esc(m.firstName||'---')} ${U.esc(m.lastName||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-hashtag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div>${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-calendar-plus" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تاریخ افتتاح:</label><div>${U.fmtDate(m.openDate)}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-phone" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۱:</label><div>${U.esc(m.phone1||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-mobile-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تلفن ۲:</label><div>${U.esc(m.phone2||'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-user-tag" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">نام کاربری:</label><div>${U.esc(ui?ui.username||'':'---')}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-key" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">رمز:</label><div><span id="pds" class="password-dots">••••••</span><button class="btn-small edit-btn" id="epbtn" style="margin-right:10px"><i class="fas fa-edit"></i></button></div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-coins" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">سکه:</label><div>${m.coins||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-sign-in-alt" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد ورود:</label><div>${m.loginCount||0}</div></div></div><div style="display:flex;align-items:center;gap:12px"><i class="fas fa-clock" style="font-size:1.5rem;color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">آخرین ورود:</label><div style="font-weight:700;color:#2d3748">${U.esc(m.lastLoginDate||'---')}</div></div></div></div></div><div id="efc" style="margin-top:20px"></div>`;
       $('#epbtn',c).onclick=()=>{const fc=$('#efc',c);fc.innerHTML=`<div class="dashboard-section"><div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap"><label style="font-weight:600;min-width:100px">رمز جدید:</label><input type="password" id="npi" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button id="tnpi" style="background:none;border:none;cursor:pointer;font-size:1.2rem"><i class="fas fa-eye"></i></button></div><div style="display:flex;gap:12px;margin-bottom:15px;flex-wrap:wrap"><label style="font-weight:600;min-width:100px">تکرار:</label><input type="password" id="cpi" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button id="tcpi" style="background:none;border:none;cursor:pointer;font-size:1.2rem"><i class="fas fa-eye"></i></button></div><div style="display:flex;gap:10px"><button class="btn-small success-btn" id="spb"><i class="fas fa-save"></i> ذخیره</button><button class="btn-small danger-btn" id="cpb"><i class="fas fa-times"></i> انصراف</button></div></div>`;$('#spb',fc).onclick=()=>this.app.savePass(m.id);$('#cpb',fc).onclick=()=>fc.innerHTML='';$('#tnpi',fc).onclick=()=>{const i=$('#npi'),icon=$('#tnpi i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};$('#tcpi',fc).onclick=()=>{const i=$('#cpi'),icon=$('#tcpi i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};};
     }
 }
@@ -596,13 +591,11 @@ renderDashboardForMember(mid, c){
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">اطلاعات یافت نشد</p></div>';return;}
     this.app.dm.applyCoinRules(m);
     const allTransactions = window.app.allTransactions || [];
-    const txns = allTransactions
-        .filter(t => String(t.memberId) === String(mid) || String(t.accountNumber) === String(m.accountNumber))
-        .sort((a,b) => (parseInt(b.transactionId)||0) - (parseInt(a.transactionId)||0));
+    const txns = allTransactions.filter(function(t) { return String(t.memberId) === String(mid) || String(t.accountNumber) === String(m.accountNumber); }).sort(function(a,b) { return (parseInt(b.transactionId)||0) - (parseInt(a.transactionId)||0); });
     const allH = txns.length > 0 ? Object.keys(txns[0]) : ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const memberHeaders = ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const isAdmin = this.app.auth.isAdmin();
-    const ah = isAdmin ? allH : allH.filter(h => memberHeaders.includes(h));
+    const ah = isAdmin ? allH : allH.filter(function(h) { return memberHeaders.includes(h); });
     const dur = U.getMembershipDuration(m.openDate);
     const latestTx = txns.length ? txns[0] : null;
     let balance = m.balance || 0;
@@ -639,14 +632,7 @@ renderDashboardForMember(mid, c){
         overdueInstallments = U.parseNum(latestTx.overdueInstallments) || overdueInstallments;
         loanBalance = U.parseNum(latestTx.loanBalance) || loanBalance;
     }
-    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px">
-        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${txns.length}</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div>
-        <div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div>
-    </div></div>`;
+    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${txns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div></div></div>`;
     if (latestTx) {
         h += `<div class="dashboard-section" style="border-right-color:#38b2ac"><h3 style="color:#2c7a7b"><i class="fas fa-receipt"></i> آخرین تراکنش</h3><div class="loan-info">`;
         h += `<div class="loan-info-item" style="border-right:3px solid #48bb78"><div class="loan-info-label"><i class="fas fa-money-bill-wave" style="color:#48bb78"></i> مقرری واریزی</div><div class="loan-info-value">${U.esc(String(latestTx.monthlySalary || '---'))}</div></div>`;
@@ -658,12 +644,7 @@ renderDashboardForMember(mid, c){
         h += `<div class="loan-info-item" style="border-right:3px solid #667eea"><div class="loan-info-label"><i class="fas fa-comment-dots" style="color:#667eea"></i> توضیحات</div><div class="loan-info-value">${U.esc(String(latestTx.description || '---'))}</div></div>`;
         h += `</div></div>`;
     }
-    h += `<div class="dashboard-section"><h3><i class="fas fa-wallet"></i> اطلاعات موجودی و پس‌انداز</h3>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px">
-        <div style="background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی شما:</label><div style="font-size:1.3rem;font-weight:700;color:${balance<0?'#e53e3e':'#2d3748'};margin-top:5px">${U.fmtNum(balance)}</div></div>
-        <div style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">وضعیت پس‌انداز:</label><div style="font-size:1.3rem;font-weight:700;color:${savingsStatus<0?'#e53e3e':'#48bb78'};margin-top:5px">${U.fmtNum(savingsStatus)}</div></div>
-        <div style="background:linear-gradient(135deg,rgba(237,137,54,.1),rgba(221,107,32,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه:</label><div style="font-size:1.3rem;font-weight:700;margin-top:5px">${U.fmtNum(monthlySalary)}</div></div>
-    </div></div>`;
+    h += `<div class="dashboard-section"><h3><i class="fas fa-wallet"></i> اطلاعات موجودی و پس‌انداز</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی شما:</label><div style="font-size:1.3rem;font-weight:700;color:${balance<0?'#e53e3e':'#2d3748'};margin-top:5px">${U.fmtNum(balance)}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">وضعیت پس‌انداز:</label><div style="font-size:1.3rem;font-weight:700;color:${savingsStatus<0?'#e53e3e':'#48bb78'};margin-top:5px">${U.fmtNum(savingsStatus)}</div></div><div style="background:linear-gradient(135deg,rgba(237,137,54,.1),rgba(221,107,32,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه:</label><div style="font-size:1.3rem;font-weight:700;margin-top:5px">${U.fmtNum(monthlySalary)}</div></div></div></div>`;
     h += `<div class="dashboard-section"><h3><i class="fas fa-hand-holding-usd"></i> اطلاعات وام و بدهی</h3><div class="loan-info">`;
     const loanItems = [
         {label:'تاریخ درخواست وام', value:loanRequestDate||'---'},
@@ -677,46 +658,22 @@ renderDashboardForMember(mid, c){
         {label:'معوقه', value:overdueInstallments||0},
         {label:'مانده وام', value:U.fmtNum(loanBalance)}
     ];
-    loanItems.forEach(item => { h += `<div class="loan-info-item"><div class="loan-info-label">${item.label}</div><div class="loan-info-value">${item.value}</div></div>`; });
+    loanItems.forEach(function(item) { h += `<div class="loan-info-item"><div class="loan-info-label">${item.label}</div><div class="loan-info-value">${item.value}</div></div>`; });
     h += `</div>`;
     if (overdueInstallments > 0) h += `<div class="warning-box"><i class="fas fa-exclamation-triangle"></i><div><strong>اقساط معوقه</strong>اقساط وام شما عقب افتاده. سریعا نسبت به پرداخت اقدام نمایید.</div></div>`;
     h += `</div>`;
-    h += `<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب</h3>
-    <div class="filter-bar">
-        <input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ...">
-        <button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button>
-        <button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button>
-        <button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button>
-        <button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button>
-    </div>
-    <div class="table-wrapper">
-        <table id="met">
-            <thead><tr>${ah.map(x => `<th>${U.esc(x)}</th>`).join('')}</tr></thead>
-            <tbody>${txns.length === 0 ? '<tr><td colspan="'+ah.length+'" style="text-align:center;padding:30px;color:#a0aec0">هیچ تراکنشی ثبت نشده است</td></tr>' : txns.map(t => `<tr>${ah.map(hh => `<td title="${U.esc(String(t[hh]||''))}">${U.esc(String(t[hh]||''))}</td>`).join('')}</tr>`).join('')}</tbody>
-        </table>
-    </div></div>`;
+    h += `<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${ah.map(function(x) { return `<th>${U.esc(x)}</th>`; }).join('')}</tr></thead><tbody>${txns.length === 0 ? `<tr><td colspan="${ah.length}" style="text-align:center;padding:30px;color:#a0aec0">هیچ تراکنشی ثبت نشده است</td></tr>` : txns.map(function(t) { return `<tr>${ah.map(function(hh) { return `<td title="${U.esc(String(t[hh]||''))}">${U.esc(String(t[hh]||''))}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>`;
     c.innerHTML = h;
-    const ft = () => {
-        const q = $('#mes', c).value.trim().toLowerCase();
-        const tb = $('#met', c).querySelector('tbody');
-        if (!tb) return;
-        tb.querySelectorAll('tr').forEach(r => { if (!q || r.textContent.toLowerCase().includes(q)) r.style.display = ''; else r.style.display = 'none'; });
-    };
+    const ft = function() { const q = $('#mes', c).value.trim().toLowerCase(); const tb = $('#met', c).querySelector('tbody'); if (!tb) return; tb.querySelectorAll('tr').forEach(function(r) { if (!q || r.textContent.toLowerCase().includes(q)) r.style.display = ''; else r.style.display = 'none'; }); };
     $('#mes', c).oninput = ft;
     $('#mesb', c).onclick = ft;
-    $('#mecb', c).onclick = () => { $('#mes', c).value = ''; ft(); };
-    $('#downloadExcel', c).onclick = () => {
-        const data = txns.map(t => { const row = {}; ah.forEach(hh => { row[hh] = t[hh] || ''; }); return row; });
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب');
-        XLSX.writeFile(wb, 'صورتحساب.xlsx');
-    };
-    $('#printPDF', c).onclick = () => { window.print(); };
+    $('#mecb', c).onclick = function() { $('#mes', c).value = ''; ft(); };
+    $('#downloadExcel', c).onclick = function() { const data = txns.map(function(t) { const row = {}; ah.forEach(function(hh) { row[hh] = t[hh] || ''; }); return row; }); const ws = XLSX.utils.json_to_sheet(data); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب'); XLSX.writeFile(wb, 'صورتحساب.xlsx'); };
+    $('#printPDF', c).onclick = function() { window.print(); };
 }
 
 render_shop(c){
-    const m=this.app.dm.gMember(this.app.auth.user?.memberId);
+    const m=this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;}
     const available=(m.coins||0)-(m.usedCoins||0);
     let h=`<div class="info-box"><i class="fas fa-shopping-cart"></i> فروشگاه - خرج کردن سکه‌ها</div>`;
@@ -724,47 +681,41 @@ render_shop(c){
     h+=`<div class="dashboard-section"><h3><i class="fas fa-store"></i> کالاها و خدمات</h3>`;
     const items=this.app.dm.shopItems||[];
     if(!items.length)h+=`<div style="text-align:center;padding:30px;color:#a0aec0"><i class="fas fa-box-open" style="font-size:3rem;margin-bottom:10px"></i><p>هیچ کالایی موجود نیست</p></div>`;
-    else items.forEach(item=>{const canBuy=available>=item.price;h+=`<div class="shop-item"><div class="shop-item-info"><div class="shop-item-title">${U.esc(item.name)}</div><div class="shop-item-desc">${U.esc(item.description||'')}</div><div class="shop-item-price"><i class="fas fa-coins"></i> ${item.price} سکه</div></div><button class="btn-small ${canBuy?'success-btn':'danger-btn'}" ${canBuy?'':'disabled'} data-item-id="${item.id}" style="${canBuy?'':'opacity:.5;cursor:not-allowed'}"><i class="fas fa-shopping-cart"></i> خرید</button></div>`;});
+    else items.forEach(function(item){const canBuy=available>=item.price;h+=`<div class="shop-item"><div class="shop-item-info"><div class="shop-item-title">${U.esc(item.name)}</div><div class="shop-item-desc">${U.esc(item.description||'')}</div><div class="shop-item-price"><i class="fas fa-coins"></i> ${item.price} سکه</div></div><button class="btn-small ${canBuy?'success-btn':'danger-btn'}" ${canBuy?'':'disabled'} data-item-id="${item.id}" style="${canBuy?'':'opacity:.5;cursor:not-allowed'}"><i class="fas fa-shopping-cart"></i> خرید</button></div>`;});
     h+=`</div>`;
     c.innerHTML=h;
-    c.querySelectorAll('[data-item-id]').forEach(btn=>{btn.onclick=()=>{const itemId=btn.dataset.itemId;const item=items.find(i=>i.id===itemId);if(!item)return;if(confirm(`آیا از خرید "${item.name}" با ${item.price} سکه مطمئن هستید؟`))this.app.spendCoinOnItem(itemId);};});
+    c.querySelectorAll('[data-item-id]').forEach(function(btn){btn.onclick=function(){const itemId=btn.dataset.itemId;const item=items.find(function(i){return i.id===itemId;});if(!item)return;if(confirm(`آیا از خرید "${item.name}" با ${item.price} سکه مطمئن هستید؟`))window.app.spendCoinOnItem(itemId);};});
 }
 
 render_polls(c){
     const ia=this.app.auth.isAdmin();
-    const uid=this.app.auth.user?.id;
-    const mid=this.app.auth.user?.memberId;
+    const mid=this.app.auth.user && this.app.auth.user.memberId;
     const allPolls = window.app.allPolls || [];
     const allVotes = window.app.allPollVotes || [];
     let h=`<div class="info-box"><i class="fas fa-poll"></i> نظرسنجی‌ها</div>`;
     if(ia){
-        h+=`<div class="dashboard-section"><h3><i class="fas fa-plus-circle"></i> ایجاد نظرسنجی جدید</h3>
-        <div style="display:grid;gap:15px">
-            <div><label style="font-weight:600;color:#718096">سوال:</label><input type="text" id="pollQuestion" placeholder="سوال نظرسنجی..." style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;margin-top:5px"></div>
-            <div><label style="font-weight:600;color:#718096">گزینه‌ها (هر گزینه در یک خط):</label><textarea id="pollOptions" placeholder="گزینه 1&#10;گزینه 2&#10;گزینه 3" style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;margin-top:5px;min-height:100px;resize:vertical"></textarea></div>
-            <button class="btn-small success-btn" id="createPollBtn"><i class="fas fa-plus"></i> ایجاد نظرسنجی</button>
-        </div></div>`;
+        h+=`<div class="dashboard-section"><h3><i class="fas fa-plus-circle"></i> ایجاد نظرسنجی جدید</h3><div style="display:grid;gap:15px"><div><label style="font-weight:600;color:#718096">سوال:</label><input type="text" id="pollQuestion" placeholder="سوال نظرسنجی..." style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;margin-top:5px"></div><div><label style="font-weight:600;color:#718096">گزینه‌ها (هر گزینه در یک خط):</label><textarea id="pollOptions" placeholder="گزینه 1&#10;گزینه 2&#10;گزینه 3" style="width:100%;padding:12px;border:2px solid #e2e8f0;border-radius:12px;margin-top:5px;min-height:100px;resize:vertical"></textarea></div><button class="btn-small success-btn" id="createPollBtn"><i class="fas fa-plus"></i> ایجاد نظرسنجی</button></div></div>`;
     }
     h+=`<div class="dashboard-section"><h3><i class="fas fa-list"></i> نظرسنجی‌های فعال</h3>`;
-    const activePolls = allPolls.filter(p => p.active !== false);
+    const activePolls = allPolls.filter(function(p) { return p.active !== false; });
     if(!activePolls.length){
         h+=`<div style="text-align:center;padding:30px;color:#a0aec0"><i class="fas fa-poll" style="font-size:3rem;margin-bottom:10px"></i><p>هیچ نظرسنجی فعالی وجود ندارد</p></div>`;
     } else {
-        activePolls.forEach(poll => {
+        activePolls.forEach(function(poll) {
             const options = Array.isArray(poll.options) ? poll.options : [];
-            const pollVotes = allVotes.filter(v => String(v.pollId) === String(poll.id));
-            const userVoted = pollVotes.some(v => String(v.memberId) === String(mid));
+            const pollVotes = allVotes.filter(function(v) { return String(v.pollId) === String(poll.id); });
+            const userVoted = pollVotes.some(function(v) { return String(v.memberId) === String(mid); });
             const totalVotes = pollVotes.length;
             h+=`<div class="poll-item"><div class="poll-question"><i class="fas fa-question-circle" style="color:#667eea"></i> ${U.esc(poll.question||'')}</div>`;
             if(userVoted){
-                options.forEach((opt, idx) => {
-                    const votes = pollVotes.filter(v => parseInt(v.optionIndex) === idx).length;
+                options.forEach(function(opt, idx) {
+                    const votes = pollVotes.filter(function(v) { return parseInt(v.optionIndex) === idx; }).length;
                     const percent = totalVotes > 0 ? Math.round((votes/totalVotes)*100) : 0;
                     h+=`<div class="poll-option voted"><div style="flex:1"><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span>${U.esc(opt)}</span><span style="font-weight:700;color:#667eea">${percent}% (${votes})</span></div><div class="poll-bar"><div class="poll-bar-fill" style="width:${percent}%"></div></div></div></div>`;
                 });
                 h+=`<div style="text-align:center;color:#48bb78;margin-top:10px;font-weight:700"><i class="fas fa-check-circle"></i> شما در این نظرسنجی شرکت کرده‌اید (مجموع آرا: ${totalVotes})</div>`;
             } else {
-                options.forEach((opt, idx) => {
+                options.forEach(function(opt, idx) {
                     h+=`<div class="poll-option" data-poll="${poll.id}" data-option="${idx}"><i class="fas fa-circle" style="color:#cbd5e0"></i><span>${U.esc(opt)}</span></div>`;
                 });
             }
@@ -773,14 +724,12 @@ render_polls(c){
     }
     h+=`</div>`;
     c.innerHTML=h;
-    if(ia){
-        $('#createPollBtn',c).onclick=()=>this.app.createPoll();
-    }
-    c.querySelectorAll('.poll-option[data-poll]').forEach(el=>{
-        el.onclick=()=>{
+    if(ia){ $('#createPollBtn',c).onclick=()=>window.app.createPoll(); }
+    c.querySelectorAll('.poll-option[data-poll]').forEach(function(el){
+        el.onclick=function(){
             const pollId=el.dataset.poll;
             const optionIdx=parseInt(el.dataset.option);
-            this.app.votePoll(pollId, optionIdx);
+            window.app.votePoll(pollId, optionIdx);
         };
     });
 }
@@ -795,18 +744,18 @@ render_coins(c){
     const allCoinHistory = window.app.allCoinHistory || [];
     if(ia){ 
         let h=`<div class="info-box"><i class="fas fa-coins"></i> مدیریت سکه‌ها</div>`;
-        h+=`<div class="dashboard-section"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><select id="cms" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px">${this.app.dm.members.map(m=>`<option value="${m.id}">${U.esc(m.firstName||'')} ${U.esc(m.lastName||'')}</option>`).join('')}</select><input type="number" id="cai" value="5" min="1" style="width:100px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button class="btn-small success-btn" id="acb"><i class="fas fa-plus"></i> افزودن</button></div></div>`;
-        h+=`<div class="table-wrapper"><table id="ct"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th><th>سکه</th><th>عملیات</th></tr></thead><tbody>${this.app.dm.members.map(m=>`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700">${m.coins||0}</span></td><td><button class="btn-small danger-btn reset-btn" data-mid="${m.id}"><i class="fas fa-redo"></i> ریست</button></td></tr>`).join('')}</tbody></table></div>`; 
+        h+=`<div class="dashboard-section"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><select id="cms" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px">${this.app.dm.members.map(function(m){return`<option value="${m.id}">${U.esc(m.firstName||'')} ${U.esc(m.lastName||'')}</option>`;}).join('')}</select><input type="number" id="cai" value="5" min="1" style="width:100px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button class="btn-small success-btn" id="acb"><i class="fas fa-plus"></i> افزودن</button></div></div>`;
+        h+=`<div class="table-wrapper"><table id="ct"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th><th>سکه</th><th>عملیات</th></tr></thead><tbody>${this.app.dm.members.map(function(m){return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:6px 14px;border-radius:20px;font-weight:700">${m.coins||0}</span></td><td><button class="btn-small danger-btn reset-btn" data-mid="${m.id}"><i class="fas fa-redo"></i> ریست</button></td></tr>`;}).join('')}</tbody></table></div>`; 
         c.innerHTML=h;
-        $('#acb',c).onclick=()=>this.app.addCoin();
-        c.querySelectorAll('.reset-btn').forEach(b=>{const mid=parseInt(b.dataset.mid);b.onclick=()=>this.app.resetCoins(mid);});
+        $('#acb',c).onclick=()=>window.app.addCoin();
+        c.querySelectorAll('.reset-btn').forEach(function(b){const mid=parseInt(b.dataset.mid);b.onclick=function(){window.app.resetCoins(mid);};});
     }else{ 
         const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;} 
-        const myHistory = allCoinHistory.filter(h => String(h.memberId) === String(m.id)).reverse();
+        const myHistory = allCoinHistory.filter(function(h) { return String(h.memberId) === String(m.id); }).reverse();
         let h=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> سکه‌های شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(197,48,48,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-shopping-cart" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مصرف شده</div><div style="font-size:1.8rem;font-weight:700;color:#e53e3e">${m.usedCoins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مانده</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum((m.coins||0)-(m.usedCoins||0))}</div></div></div></div>`;
         if(myHistory.length){
             h+=`<div class="dashboard-section"><h3><i class="fas fa-history"></i> تاریخچه سکه‌ها</h3>`;
-            myHistory.forEach(item => {
+            myHistory.forEach(function(item) {
                 const amount = parseInt(item.amount) || 0;
                 h+=`<div class="coin-history-item"><div><div style="font-weight:700;color:#2d3748">${U.esc(item.reason||'')}</div><div style="font-size:.85rem;color:#718096">${U.esc(item.description||'')}</div><div style="font-size:.75rem;color:#a0aec0;margin-top:3px">${U.esc(item.date||'')}</div></div><div class="${amount>0?'coin-amount-positive':'coin-amount-negative'}">${amount>0?'+':''}${amount}</div></div>`;
             });
@@ -816,11 +765,11 @@ render_coins(c){
         c.innerHTML=h; 
         const ls=localStorage.getItem('lastSpinDate'),today=new Date().toDateString(); 
         if(ls===today){$('#spinBtn',c).disabled=true;$('#spinBtn',c).innerHTML='<i class="fas fa-check"></i> امروز انجام شد';$('#spinBtn',c).style.opacity='.6';} 
-        else $('#spinBtn',c).onclick=()=>this.app.spinWheel(); 
+        else $('#spinBtn',c).onclick=()=>window.app.spinWheel(); 
     } 
 }
 
-render_messenger(c){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-spinner fa-spin" style="font-size:3rem;color:#667eea"></i><p style="margin-top:15px">در حال بارگذاری...</p></div>';setTimeout(()=>this._loadMessenger(c),10);}
+render_messenger(c){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-spinner fa-spin" style="font-size:3rem;color:#667eea"></i><p style="margin-top:15px">در حال بارگذاری...</p></div>';const self=this;setTimeout(function(){self._loadMessenger(c);},10);}
 _loadMessenger(c){
     const self=this,ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();
     let h=`<div class="info-box"><i class="fas fa-envelope"></i> پیامرسان</div>`;
@@ -831,31 +780,31 @@ _loadMessenger(c){
     h+=`<div class="messenger-section-title"><i class="fas fa-comments"></i> پیام به عضو دیگر</div>`;
     h+=`<div class="dashboard-section" style="padding:15px"><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:0"><input type="text" id="mpi" placeholder="شماره تلفن مقصد..." style="flex:1;min-width:140px;padding:10px;border:2px solid #e2e8f0;border-radius:10px;font-size:.9rem"><textarea id="mtmi" placeholder="پیام..." style="flex:2;min-width:220px;padding:10px;border:2px solid #e2e8f0;border-radius:10px;min-height:60px;resize:vertical;font-size:.9rem"></textarea><button class="btn-small success-btn" id="stm" style="align-self:flex-start"><i class="fas fa-paper-plane"></i> ارسال</button></div></div><div id="mmc">${this.msgs('member_to_member')}</div>`;
     c.innerHTML=h;
-    $('#sta',c)&&($('#sta',c).onclick=()=>this.app.sendToAdmin());
-    $('#stm',c)&&($('#stm',c).onclick=()=>this.app.sendToMember());
-    $('#clrAllMsgsBtn',c)&&($('#clrAllMsgsBtn',c).onclick=()=>{if(confirm('آیا از حذف کلیه پیام‌ها مطمئن هستید؟')){if(confirm('تأیید نهایی حذف همه پیام‌ها؟')){window.app.dm.clrMsgs();self._loadMessenger(c);}}});
-    setTimeout(()=>{
-        c.querySelectorAll('.reply-btn').forEach(b=>{b.onclick=function(e){e.stopPropagation();self.showReply(this.dataset.p,this.dataset.t);};});
-        c.querySelectorAll('.delete-btn[data-mid]').forEach(b=>{b.onclick=function(e){e.stopPropagation();self.app.delMsg(this.dataset.mid);self._loadMessenger(c);};});
+    $('#sta',c)&&($('#sta',c).onclick=()=>window.app.sendToAdmin());
+    $('#stm',c)&&($('#stm',c).onclick=()=>window.app.sendToMember());
+    $('#clrAllMsgsBtn',c)&&($('#clrAllMsgsBtn',c).onclick=function(){if(confirm('آیا از حذف کلیه پیام‌ها مطمئن هستید؟')){if(confirm('تأیید نهایی حذف همه پیام‌ها؟')){window.app.dm.clrMsgs();self._loadMessenger(c);}}});
+    setTimeout(function(){
+        c.querySelectorAll('.reply-btn').forEach(function(b){b.onclick=function(e){e.stopPropagation();self.showReply(this.dataset.p,this.dataset.t);};});
+        c.querySelectorAll('.delete-btn[data-mid]').forEach(function(b){b.onclick=function(e){e.stopPropagation();window.app.delMsg(this.dataset.mid);self._loadMessenger(c);};});
     },20);
     this.updNotif();
 }
 
 msgs(type){
-    const dm=this.app.dm,ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor(),cm=dm.gMember(this.app.auth.user?.memberId),cp=cm?.phone1||'',uid=this.app.auth.user?.id;
+    const dm=this.app.dm,ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor(),cm=dm.gMember(this.app.auth.user && this.app.auth.user.memberId),cp=cm?cm.phone1||'':'',uid=this.app.auth.user?this.app.auth.user.id:null;
     const hasPrivilege = ia || isp || isv;
     let fl=[];
     if(type==='member_to_admin'){
-        if(hasPrivilege)fl=dm.messages.filter(m=>m.type==='member_to_admin');
-        else{const myMessages = dm.messages.filter(m=>m.type==='member_to_admin' && String(m.senderId)===String(uid));const myMessageIds = new Set(myMessages.map(m=>m.id));const repliesToMe = dm.messages.filter(m=>m.type==='member_to_admin' && m.parentId && myMessageIds.has(m.parentId));fl = [...myMessages, ...repliesToMe];}
+        if(hasPrivilege)fl=dm.messages.filter(function(m){return m.type==='member_to_admin';});
+        else{const myMessages = dm.messages.filter(function(m){return m.type==='member_to_admin' && String(m.senderId)===String(uid);});const myMessageIds = new Set(myMessages.map(function(m){return m.id;}));const repliesToMe = dm.messages.filter(function(m){return m.type==='member_to_admin' && m.parentId && myMessageIds.has(m.parentId);});fl = myMessages.concat(repliesToMe);}
     } else if(type==='member_to_member'){
-        if(hasPrivilege)fl=dm.messages.filter(m=>m.type==='member_to_member');
-        else fl=dm.messages.filter(m=>m.type==='member_to_member'&&(m.senderPhone===cp||m.receiverPhone===cp));
+        if(hasPrivilege)fl=dm.messages.filter(function(m){return m.type==='member_to_member';});
+        else fl=dm.messages.filter(function(m){return m.type==='member_to_member'&&(m.senderPhone===cp||m.receiverPhone===cp);});
     }
-    fl.sort((a,b)=>(a.timestamp||'').localeCompare(b.timestamp||''));
+    fl.sort(function(a,b){return (a.timestamp||'').localeCompare(b.timestamp||'');});
     if(!fl.length)return'<div style="color:#a0aec0;padding:15px;text-align:center"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:10px"></i><p>هیچ پیامی نیست</p></div>';
     const msgClass = type==='member_to_admin' ? 'msg-to-admin' : 'msg-member';
-    return fl.map(msg=>{
+    return fl.map(function(msg){
         const canDel = ia || (String(msg.senderId) === String(uid));
         let dn=msg.senderName||'کاربر';
         let senderInfo='',senderBadge='',phoneInfo='';
@@ -901,17 +850,17 @@ showReply(pid,type){
     container.innerHTML=`<div style="background:rgba(247,250,252,.8);padding:12px;border-radius:10px;margin-top:8px"><textarea id="replyTxt_${pid}" placeholder="متن پاسخ..." style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;min-height:60px;resize:vertical;font-size:.9rem"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-small success-btn" id="sendReplyBtn_${pid}"><i class="fas fa-paper-plane"></i> ارسال پاسخ</button><button class="btn-small danger-btn" id="cancelReplyBtn_${pid}"><i class="fas fa-times"></i> انصراف</button></div></div>`;
     container.style.display='block';
     const self=this;
-    $(`#sendReplyBtn_${pid}`).onclick=()=>{const txt=$(`#replyTxt_${pid}`).value.trim();if(!txt){alert('متن پاسخ را وارد کنید');return;}self.app.sendReply(pid,type,txt);};
-    $(`#cancelReplyBtn_${pid}`).onclick=()=>{container.style.display='none';container.innerHTML='';};
+    $(`#sendReplyBtn_${pid}`).onclick=function(){const txt=$(`#replyTxt_${pid}`).value.trim();if(!txt){alert('متن پاسخ را وارد کنید');return;}window.app.sendReply(pid,type,txt);};
+    $(`#cancelReplyBtn_${pid}`).onclick=function(){container.style.display='none';container.innerHTML='';};
 }
 
-render_cultural(c){const ia=this.app.auth.isAdmin();let h=`<div class="info-box"><i class="fas fa-theater-masks"></i> برنامه‌های فرهنگی</div><div class="dashboard-section"><h3><i class="fas fa-bullhorn"></i> اطلاعیه‌ها</h3>`;if(ia)h+=`<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap"><input type="text" id="ant" placeholder="عنوان..." style="flex:1;min-width:200px;padding:12px;border:2px solid #e2e8f0;border-radius:12px"><textarea id="anc" placeholder="متن..." style="flex:2;min-width:250px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;min-height:70px;resize:vertical"></textarea><button class="btn-small success-btn" id="sanb" style="align-self:flex-start"><i class="fas fa-paper-plane"></i> ارسال</button></div>`;h+=`<div id="ancr"></div></div>`;c.innerHTML=h;$('#sanb',c)&&($('#sanb',c).onclick=()=>this.app.sendAnn());this.renderAnns();}
-renderAnns(){const container=$('#ancr');if(!container)return;if(!this.app.dm.announcements.length){container.innerHTML='<div style="color:#a0aec0;padding:15px;text-align:center"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:10px"></i><p>هیچ اطلاعیه‌ای نیست</p></div>';return;}container.innerHTML=[...this.app.dm.announcements].reverse().map(a=>`<div class="msg-item"><div class="msg-header"><span><i class="fas fa-user-circle"></i> ${U.esc(a.sender||'مدیر')}</span><span><i class="fas fa-clock"></i> ${U.esc(a.timestamp||'')}</span></div><div><strong style="font-size:1.1rem;color:#2d3748">${U.esc(a.title||'')}</strong><br><div style="margin-top:8px;line-height:1.8">${U.esc(a.content||'')}</div></div></div>`).join('');}
+render_cultural(c){const ia=this.app.auth.isAdmin();let h=`<div class="info-box"><i class="fas fa-theater-masks"></i> برنامه‌های فرهنگی</div><div class="dashboard-section"><h3><i class="fas fa-bullhorn"></i> اطلاعیه‌ها</h3>`;if(ia)h+=`<div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap"><input type="text" id="ant" placeholder="عنوان..." style="flex:1;min-width:200px;padding:12px;border:2px solid #e2e8f0;border-radius:12px"><textarea id="anc" placeholder="متن..." style="flex:2;min-width:250px;padding:12px;border:2px solid #e2e8f0;border-radius:12px;min-height:70px;resize:vertical"></textarea><button class="btn-small success-btn" id="sanb" style="align-self:flex-start"><i class="fas fa-paper-plane"></i> ارسال</button></div>`;h+=`<div id="ancr"></div></div>`;c.innerHTML=h;$('#sanb',c)&&($('#sanb',c).onclick=()=>window.app.sendAnn());this.renderAnns();}
+renderAnns(){const container=$('#ancr');if(!container)return;if(!this.app.dm.announcements.length){container.innerHTML='<div style="color:#a0aec0;padding:15px;text-align:center"><i class="fas fa-inbox" style="font-size:2rem;margin-bottom:10px"></i><p>هیچ اطلاعیه‌ای نیست</p></div>';return;}container.innerHTML=[...this.app.dm.announcements].reverse().map(function(a){return`<div class="msg-item"><div class="msg-header"><span><i class="fas fa-user-circle"></i> ${U.esc(a.sender||'مدیر')}</span><span><i class="fas fa-clock"></i> ${U.esc(a.timestamp||'')}</span></div><div><strong style="font-size:1.1rem;color:#2d3748">${U.esc(a.title||'')}</strong><br><div style="margin-top:8px;line-height:1.8">${U.esc(a.content||'')}</div></div></div>`;}).join('');}
 
 render_sms(c){
     const ia=this.app.auth.isAdmin();
-    const m=this.app.dm.gMember(this.app.auth.user?.memberId);
-    const s=m?.smsStatus||{};
+    const m=this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);
+    const s=m?m.smsStatus||{}:{};
     const items=[
         {k:'general',l:'سیستم کلی سامانه پیامکی',icon:'fa-cog'},
         {k:'supervisors',l:'سیستم ویژه سرپرستان',icon:'fa-user-shield'},
@@ -924,9 +873,9 @@ render_sms(c){
     ];
     if(ia){
         const keys=['general','supervisors','council','overdue','birthday','newsletter','poll','occasions'];
-        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="table-wrapper"><table id="st"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th>${keys.map(k=>`<th>${k}</th>`).join('')}</tr></thead><tbody>${this.app.dm.members.map(m=>{const s=m.smsStatus||{};return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td>${keys.map(k=>`<td>${s[k]?'<span style="color:#48bb78;font-weight:700">✅</span>':'<span style="color:#e53e3e;font-weight:700">❌</span>'}</td>`).join('')}</tr>`;}).join('')}</tbody></table></div>`;
+        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="table-wrapper"><table id="st"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>شماره حساب</th>${keys.map(function(k){return`<th>${k}</th>`;}).join('')}</tr></thead><tbody>${this.app.dm.members.map(function(m){const s=m.smsStatus||{};return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(m.accountNumber||'---')}</td>${keys.map(function(k){return`<td>${s[k]?'<span style="color:#48bb78;font-weight:700">✅</span>':'<span style="color:#e53e3e;font-weight:700">❌</span>'}</td>`;}).join('')}</tr>`;}).join('')}</tbody></table></div>`;
     } else if(m) {
-        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی شما</div><div class="sms-status-grid">${items.map(i=>`<div class="sms-status-item"><span style="display:flex;align-items:center;gap:10px;font-weight:600"><i class="fas ${i.icon}" style="color:#667eea"></i> ${i.l}</span><span class="${s[i.k]?'status-active':'status-inactive'}">${s[i.k]?'<i class="fas fa-check"></i> فعال':'<i class="fas fa-times"></i> غیرفعال'}</span></div>`).join('')}</div>`;
+        c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی شما</div><div class="sms-status-grid">${items.map(function(i){return`<div class="sms-status-item"><span style="display:flex;align-items:center;gap:10px;font-weight:600"><i class="fas ${i.icon}" style="color:#667eea"></i> ${i.l}</span><span class="${s[i.k]?'status-active':'status-inactive'}">${s[i.k]?'<i class="fas fa-check"></i> فعال':'<i class="fas fa-times"></i> غیرفعال'}</span></div>`;}).join('')}</div>`;
     } else {
         c.innerHTML=`<div class="info-box"><i class="fas fa-sms"></i> وضعیت پیامکی</div>`;
     }
@@ -941,9 +890,9 @@ h+=`<input type="file" id="bf" accept=".xlsx,.xls,.csv" style="display:none">`;
 h+=`<button id="beb" class="btn-small excel-btn"><i class="fas fa-file-excel"></i> آپلود فایل اکسل</button>`;
 h+=`</div>`;
 h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(33,115,70,.1),rgba(26,92,56,.05));border-right-color:#217346"><i class="fas fa-info-circle" style="color:#217346"></i> <strong>راهنما:</strong> با آپلود فایل اکسل، اطلاعات اعضا به صورت خودکار در Google Sheets ذخیره می‌شود.</div>`;
-h+=`<div class="table-wrapper"><table id="mt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تلفن۱</th><th>تلفن۲</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map(m=>{const ui=this.app.dm.gUserByMid(m.id);return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(ui?.username||'---')}</td><td class="password-dots" data-mid="${m.id}">••••••</td><td>${U.esc(m.accountNumber||'---')}</td><td>${U.esc(m.phone1||'---')}</td><td>${U.esc(m.phone2||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${m.coins||0}</span></td></tr>`;}).join('')}</tbody></table></div>`;
+h+=`<div class="table-wrapper"><table id="mt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تلفن۱</th><th>تلفن۲</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map(function(m){const ui=this.app.dm.gUserByMid(m.id);return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(ui?ui.username||'':'---')}</td><td class="password-dots" data-mid="${m.id}">••••••</td><td>${U.esc(m.accountNumber||'---')}</td><td>${U.esc(m.phone1||'---')}</td><td>${U.esc(m.phone2||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${m.coins||0}</span></td></tr>`;}).join('')}</tbody></table></div>`;
 c.innerHTML=h;
-c.querySelectorAll('.password-dots').forEach(el=>{el.onclick=function(){const u=window.app.dm.gUserByMid(parseInt(this.dataset.mid));if(!u)return;if(this.textContent==='••••••'){this.textContent=u.password||'---';this.style.background='#fff3cd';}else{this.textContent='••••••';this.style.background='#edf2f7';}};});
+c.querySelectorAll('.password-dots').forEach(function(el){el.onclick=function(){const u=window.app.dm.gUserByMid(parseInt(this.dataset.mid));if(!u)return;if(this.textContent==='••••••'){this.textContent=u.password||'---';this.style.background='#fff3cd';}else{this.textContent='••••••';this.style.background='#edf2f7';}};});
 $('#beb',c).onclick=()=>$('#bf',c).click();
 $('#bf',c).onchange=function(){if(this.files[0]){window.app.uploadBulk(this.files[0]);this.value='';}};
 }
@@ -952,24 +901,25 @@ render_supervisor(c){
     const self=this;
     c.innerHTML=`<div class="info-box"><i class="fas fa-user-shield"></i> مدیریت ویژه</div><div class="supervisor-tabs"><button class="supervisor-tab-btn active" data-subtab="members"><i class="fas fa-users"></i> اعضا</button><button class="supervisor-tab-btn" data-subtab="support"><i class="fas fa-headset"></i> پشتیبانی</button><button class="supervisor-tab-btn" data-subtab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</button><button class="supervisor-tab-btn" data-subtab="messenger"><i class="fas fa-envelope"></i> پیامرسان</button></div><div id="supervisorContent"></div>`;
     const subC=$('#supervisorContent',c);
-    const loadSub=(subtab)=>{subC.innerHTML='';c.querySelectorAll('.supervisor-tab-btn').forEach(b=>b.classList.remove('active'));c.querySelector(`.supervisor-tab-btn[data-subtab="${subtab}"]`)?.classList.add('active');if(subtab==='members')self.render_members(subC);else if(subtab==='support')self.render_support(subC);else if(subtab==='cultural')self.render_cultural(subC);else if(subtab==='messenger')self.render_messenger(subC);};
+    const loadSub=function(subtab){subC.innerHTML='';c.querySelectorAll('.supervisor-tab-btn').forEach(function(b){b.classList.remove('active');});const activeBtn=c.querySelector(`.supervisor-tab-btn[data-subtab="${subtab}"]`);if(activeBtn)activeBtn.classList.add('active');if(subtab==='members')self.render_members(subC);else if(subtab==='support')self.render_support(subC);else if(subtab==='cultural')self.render_cultural(subC);else if(subtab==='messenger')self.render_messenger(subC);};
     loadSub('members');
-    c.querySelectorAll('.supervisor-tab-btn').forEach(b=>b.onclick=()=>loadSub(b.dataset.subtab));
+    c.querySelectorAll('.supervisor-tab-btn').forEach(function(b){b.onclick=function(){loadSub(b.dataset.subtab);};});
 }
 
-search(inputId,tableSelector,container=document){
+search(inputId,tableSelector,container){
+    container = container || document;
     const input=$(inputId,container);
     if(!input)return;
     const clearBtn=$(inputId+'_cl',container);
-    const filter=()=>{const q=input.value.trim().toLowerCase(),tb=container.querySelector(tableSelector);if(!tb?.querySelector('tbody'))return;tb.querySelector('tbody').querySelectorAll('tr').forEach(r=>{if(!q||r.textContent.trim().toLowerCase().includes(q))r.style.display='';else r.style.display='none';});};
+    const filter=function(){const q=input.value.trim().toLowerCase(),tb=container.querySelector(tableSelector);if(!tb||!tb.querySelector('tbody'))return;tb.querySelector('tbody').querySelectorAll('tr').forEach(function(r){if(!q||r.textContent.trim().toLowerCase().includes(q))r.style.display='';else r.style.display='none';});};
     input.oninput=filter;
-    if(clearBtn)clearBtn.onclick=()=>{input.value='';filter();input.focus();};
+    if(clearBtn)clearBtn.onclick=function(){input.value='';filter();input.focus();};
     setTimeout(filter,50);
 }
 
 updUI(){
     const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial();
-    const cm=ia?null:this.app.dm.gMember(this.app.auth.user?.memberId);
+    const cm=ia?null:this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);
     const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));
     const wb=$('#welcomeBanner'),rb=$('#roleBadge');
     if(wb){
@@ -982,24 +932,24 @@ updUI(){
     }
 }
 
-updCoinBadge(){const badge=$('#coinCount');if(!badge)return;const m=this.app.dm.gMember(this.app.auth.user?.memberId);if(m)badge.textContent=(m.coins||0)-(m.usedCoins||0);}
+updCoinBadge(){const badge=$('#coinCount');if(!badge)return;const m=this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);if(m)badge.textContent=(m.coins||0)-(m.usedCoins||0);}
 
-startClock(){if(this.ci)clearInterval(this.ci);const tick=()=>{const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');const cl=$('#clockDisplay');if(cl)cl.innerHTML=`${h}:${m}<span class="clock-seconds">:${s}</span>`;const pd=$('#persianDate');if(pd)pd.textContent=U.toJalali(n);const gd=$('#gregorianDate');if(gd)gd.textContent=`${n.getFullYear()}/${String(n.getMonth()+1).padStart(2,'0')}/${String(n.getDate()).padStart(2,'0')}`;};tick();this.ci=setInterval(tick,1000);}
+startClock(){if(this.ci)clearInterval(this.ci);const self=this;const tick=function(){const n=new Date(),h=String(n.getHours()).padStart(2,'0'),m=String(n.getMinutes()).padStart(2,'0'),s=String(n.getSeconds()).padStart(2,'0');const cl=$('#clockDisplay');if(cl)cl.innerHTML=`${h}:${m}<span class="clock-seconds">:${s}</span>`;const pd=$('#persianDate');if(pd)pd.textContent=U.toJalali(n);const gd=$('#gregorianDate');if(gd)gd.textContent=`${n.getFullYear()}/${String(n.getMonth()+1).padStart(2,'0')}/${String(n.getDate()).padStart(2,'0')}`;};tick();this.ci=setInterval(tick,1000);}
 
 updNotif(){
     const badge=$('#notifBadge');
     if(!badge)return;
-    const dm=this.app.dm,cm=dm.gMember(this.app.auth.user?.memberId),cp=cm?.phone1||'',uid=this.app.auth.user?.id;
+    const dm=this.app.dm,cm=dm.gMember(this.app.auth.user && this.app.auth.user.memberId),cp=cm?cm.phone1||'':'',uid=this.app.auth.user?this.app.auth.user.id:null;
     let n=0;
     if(this.app.auth.isLoggedIn()){
         const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();
         const hasPrivilege = ia || isp || isv;
-        let rel = dm.messages.filter(m=>m.type==='admin_to_members' && String(m.senderId)!==String(uid));
-        if(hasPrivilege)rel = rel.concat(dm.messages.filter(m=>(m.type==='member_to_admin'||m.type==='member_to_member')&&String(m.senderId)!==String(uid)));
+        let rel = dm.messages.filter(function(m){return m.type==='admin_to_members' && String(m.senderId)!==String(uid);});
+        if(hasPrivilege)rel = rel.concat(dm.messages.filter(function(m){return (m.type==='member_to_admin'||m.type==='member_to_member')&&String(m.senderId)!==String(uid);}));
         else{
-            const myMsgIds = new Set(dm.messages.filter(m=>m.type==='member_to_admin'&&String(m.senderId)===String(uid)).map(m=>m.id));
-            const repliesToMe = dm.messages.filter(m=>m.type==='member_to_admin'&&m.parentId&&myMsgIds.has(m.parentId));
-            const msgsToMe = dm.messages.filter(m=>m.type==='member_to_member'&&m.receiverPhone===cp&&String(m.senderId)!==String(uid));
+            const myMsgIds = new Set(dm.messages.filter(function(m){return m.type==='member_to_admin'&&String(m.senderId)===String(uid);}).map(function(m){return m.id;}));
+            const repliesToMe = dm.messages.filter(function(m){return m.type==='member_to_admin'&&m.parentId&&myMsgIds.has(m.parentId);});
+            const msgsToMe = dm.messages.filter(function(m){return m.type==='member_to_member'&&m.receiverPhone===cp&&String(m.senderId)!==String(uid);});
             rel = rel.concat(repliesToMe, msgsToMe);
         }
         n = rel.length;
@@ -1015,29 +965,57 @@ async init(){
         console.log('🔄 بارگذاری اولیه از Google Sheets...');
         const data = await loadDataFromSheets();
         if (data) {
-            this.dm.members = (data.members || []).map(m => ({
-                ...m, id: parseInt(m.id) || m.id, balance: U.parseNum(m.balance),
-                savingsStatus: U.parseNum(m.savings), loanBalance: U.parseNum(m.loan),
-                coins: parseInt(m.coins) || 0, usedCoins: parseInt(m.usedCoins) || 0,
-                coinHistory: [], loginCount: parseInt(m.loginCount) || 0,
-                smsStatus: m.smsStatus || {}, transactions: []
-            }));
-            this.dm.users = (data.users || []).map(u => ({
-                ...u, id: parseInt(u.id) || u.id,
-                memberId: u.memberId ? (parseInt(u.memberId) || null) : null
-            }));
+            this.dm.members = (data.members || []).map(function(m) {
+                return Object.assign({}, m, {
+                    id: parseInt(m.id) || m.id, balance: U.parseNum(m.balance),
+                    savingsStatus: U.parseNum(m.savings), loanBalance: U.parseNum(m.loan),
+                    coins: parseInt(m.coins) || 0, usedCoins: parseInt(m.usedCoins) || 0,
+                    coinHistory: [], loginCount: parseInt(m.loginCount) || 0,
+                    smsStatus: m.smsStatus || {}, transactions: []
+                });
+            });
+            this.dm.users = (data.users || []).map(function(u) {
+                return Object.assign({}, u, {
+                    id: parseInt(u.id) || u.id,
+                    memberId: u.memberId ? (parseInt(u.memberId) || null) : null
+                });
+            });
             this.dm.messages = data.messages || [];
             this.dm.announcements = data.announcements || [];
             this.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             this.dm.shopItems = data.shopitems || [];
             this.allTransactions = data.transactions || [];
-            this.allPolls = (data.polls || []).map(p => ({
-                ...p, options: U.parseJSON(p.options) || [],
-                active: String(p.active).toLowerCase() === 'true'
-            }));
+            this.allPolls = (data.polls || []).map(function(p) {
+                return Object.assign({}, p, {
+                    options: U.parseJSON(p.options) || [],
+                    active: String(p.active).toLowerCase() === 'true'
+                });
+            });
             this.allPollVotes = data.pollvotes || [];
             this.allCoinHistory = data.coinhistory || [];
-            ['members','users','messages','announcements','support','shopItems'].forEach(k => this.dm.sv(k));
+            ['members','users','messages','announcements','support','shopItems'].forEach(function(k) { window.app.dm.sv(k); });
+            
+            // ✅ تضمین وجود کاربر admin
+            const adminExists = this.dm.users.find(function(u) { return u.username === 'admin'; });
+            if (!adminExists) {
+                console.log('⚠️ کاربر admin یافت نشد، در حال ساخت...');
+                const newId = this.dm.users.length > 0 ? Math.max.apply(null, this.dm.users.map(function(u) { return u.id || 0; })) + 1 : 1;
+                this.dm.users.push({
+                    id: newId,
+                    username: 'admin',
+                    password: 'admin123',
+                    role: 'admin',
+                    memberId: null
+                });
+                this.dm.sv('users');
+                console.log('✅ کاربر admin ساخته شد');
+            } else {
+                adminExists.password = 'admin123';
+                adminExists.role = 'admin';
+                this.dm.sv('users');
+                console.log('✅ کاربر admin تأیید شد');
+            }
+            
             console.log(`✅ ${this.dm.members.length} عضو از Google Sheets بارگذاری شد`);
             console.log(`✅ ${this.allTransactions.length} تراکنش از Google Sheets بارگذاری شد`);
             console.log(`✅ ${this.allPolls.length} نظرسنجی از Google Sheets بارگذاری شد`);
@@ -1047,13 +1025,13 @@ async init(){
     }
     this.ui.render();
 }
-setTheme(t){localStorage.setItem('theme',t);$$('.theme-btn').forEach(b=>b.classList.remove('active'));$(`.theme-btn[data-theme="${t}"]`)?.classList.add('active');}
+setTheme(t){localStorage.setItem('theme',t);$$('.theme-btn').forEach(function(b){b.classList.remove('active');});const activeBtn=$(`.theme-btn[data-theme="${t}"]`);if(activeBtn)activeBtn.classList.add('active');}
 doLogin(){const un=$('#loginUsername').value.trim(),pw=$('#loginPassword').value.trim(),ed=$('#loginError');ed.textContent='';if(!un||!pw){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> نام کاربری و رمز عبور را وارد کنید';return;}const r=this.auth.login(un,pw);if(!r.s){ed.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${r.m}`;return;}if(r.fc){this.ui.render();return;}this.ui.render();}
 doForgot(){
     const un=$('#loginUsername').value.trim(),ed=$('#loginError'),sd=$('#forgotSuccess');
     ed.textContent='';sd.textContent='';
     if(!un){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> نام کاربری را وارد کنید';return;}
-    const u=this.dm.users.find(x=>U.norm(x.username)===U.norm(un)&&x.role!=='admin');
+    const u=this.dm.users.find(function(x){return U.norm(x.username)===U.norm(un)&&x.role!=='admin';});
     if(!u){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> نام کاربری یافت نشد';return;}
     u.password=u.username; this.dm.sv('users');
     sd.innerHTML=`<i class="fas fa-check-circle"></i> رمز عبور به شماره حساب تغییر یافت.`;
@@ -1061,7 +1039,7 @@ doForgot(){
 doForceChange(){const np=$('#newPasswordForce').value.trim(),cp=$('#confirmPasswordForce').value.trim(),ed=$('#forceError');ed.textContent='';if(!np){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> رمز جدید را وارد کنید';return;}if(np!==cp){ed.innerHTML='<i class="fas fa-exclamation-circle"></i> رمز و تکرار آن مطابقت ندارند';return;}const r=this.auth.changeForced(np);if(!r.s){ed.innerHTML=`<i class="fas fa-exclamation-circle"></i> ${r.m}`;return;}this.ui.render();}
 doLogout(){this.auth.logout();localStorage.removeItem('activeTab');this.ui.render();}
 spendCoinOnItem(itemId){
-    const item=this.dm.shopItems.find(i=>i.id===itemId);
+    const item=this.dm.shopItems.find(function(i){return i.id===itemId;});
     if(!item){alert('کالا یافت نشد');return;}
     const m=this.dm.gMember(this.auth.user.memberId);
     if(!m){alert('اطلاعات یافت نشد');return;}
@@ -1070,7 +1048,7 @@ spendCoinOnItem(itemId){
     else{alert(`❌ ${result.msg}`);}
 }
 spinWheel(){const wh=$('#wheel'),btn=$('#spinBtn'),res=$('#wheelResult');if(!wh||!btn)return;const today=new Date().toDateString();if(localStorage.getItem('lastSpinDate')===today){return;}btn.disabled=true;const prize=[1,2,3,4,5][Math.floor(Math.random()*5)],angle=Math.floor(Math.random()*5)*60+30+Math.random()*360+720;this.ui.sa+=angle;wh.style.transition='transform 4s cubic-bezier(.17,.67,.12,.99)';wh.style.transform=`rotate(${this.ui.sa}deg)`;setTimeout(()=>{if(res)res.innerHTML=`<i class="fas fa-trophy"></i> ${prize} سکه`;if(prize>0){const m=this.dm.gMember(this.auth.user.memberId);if(m)this.dm.addCoin(m.id,prize,'چرخش گردونه','گردونه شانس');}localStorage.setItem('lastSpinDate',today);btn.disabled=true;btn.innerHTML='<i class="fas fa-check"></i> امروز انجام شد';btn.style.opacity='.6';this.ui.updCoinBadge();},4000);}
-sendToAdmin(){const i=$('#mtai');if(!i?.value.trim()){alert('متن را وارد کنید');return;}const m=this.dm.gMember(this.auth.user.memberId);if(!m){alert('اطلاعات یافت نشد');return;}this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:`${m.firstName||''} ${m.lastName||''}`,senderRole:'member',senderPhone:m.phone1||'',receiverId:1,receiverPhone:'',message:i.value.trim(),timestamp:U.now(),type:'member_to_admin',parentId:null,replyLabel:''});i.value='';this.dm.applyCoinRules(m);this.ui.switchTab('messenger');}
+sendToAdmin(){const i=$('#mtai');if(!i||!i.value.trim()){alert('متن را وارد کنید');return;}const m=this.dm.gMember(this.auth.user.memberId);if(!m){alert('اطلاعات یافت نشد');return;}this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:`${m.firstName||''} ${m.lastName||''}`,senderRole:'member',senderPhone:m.phone1||'',receiverId:1,receiverPhone:'',message:i.value.trim(),timestamp:U.now(),type:'member_to_admin',parentId:null,replyLabel:''});i.value='';this.dm.applyCoinRules(m);this.ui.switchTab('messenger');}
 sendToMember(){
     const pi=$('#mpi'),mi=$('#mtmi');
     if(!pi||!mi)return;
@@ -1085,41 +1063,41 @@ sendToMember(){
     this.ui.switchTab('messenger');
 }
 sendReply(pid,type,txt){
-    const pm=this.dm.messages.find(m=>m.id===pid);
+    const pm=this.dm.messages.find(function(m){return m.id===pid;});
     if(!pm){alert('پیام اصلی یافت نشد');return;}
     const ia=this.auth.isAdmin(),isp=this.auth.isSpecial(),isv=this.auth.isSupervisor();
     let rl='',sn='',sr='member';
     if(ia){rl='پاسخ از مدیریت';sn='مدیر';sr='admin';}
     else if(isp){rl='پاسخ از شورا';const m=this.dm.gMember(this.auth.user.memberId);sn=m?`${m.firstName||''} ${m.lastName||''}`:'شورا';sr='special';}
     else if(isv){rl='پاسخ از سرپرست';const m=this.dm.gMember(this.auth.user.memberId);sn=m?`${m.firstName||''} ${m.lastName||''}`:'سرپرست';sr='supervisor';}
-    else{const m=this.dm.gMember(this.auth.user.memberId);sn=`${m?.firstName||''} ${m?.lastName||''}`;}
+    else{const m=this.dm.gMember(this.auth.user.memberId);sn=`${m?m.firstName||'':''} ${m?m.lastName||'':''}`;}
     const m=this.dm.gMember(this.auth.user.memberId);
-    this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:sn,senderRole:sr,senderPhone:m?.phone1||'',receiverId:ia?1:null,receiverPhone:type==='member_to_member'?pm.senderPhone:'',message:txt,timestamp:U.now(),type,parentId:pid,replyLabel:rl});
+    this.dm.addMsg({id:'m_'+Date.now()+Math.random().toString(36).slice(2,6),senderId:this.auth.user.id,senderName:sn,senderRole:sr,senderPhone:m?m.phone1||'':'',receiverId:ia?1:null,receiverPhone:type==='member_to_member'?pm.senderPhone:'',message:txt,timestamp:U.now(),type:type,parentId:pid,replyLabel:rl});
     this.ui.switchTab('messenger');
 }
 delMsg(id){if(confirm('حذف پیام؟')){this.dm.delMsg(id);this.ui.render();}}
 sendAnn(){const t=$('#ant').value.trim(),c=$('#anc').value.trim();if(!t||!c){alert('عنوان و متن را وارد کنید');return;}this.dm.addAnn({id:'a_'+Date.now()+Math.random().toString(36).slice(2,6),title:t,content:c,timestamp:U.now(),sender:this.auth.user.username||'مدیر'});$('#ant').value='';$('#anc').value='';this.ui.switchTab('cultural');}
-savePass(mid){const np=$('#npi')?.value.trim(),cp=$('#cpi')?.value.trim();if(!np||!cp){alert('رمز و تکرار آن را وارد کنید');return;}if(np!==cp){alert('رمز و تکرار آن مطابقت ندارند');return;}if(U.strength(np)==='ضعیف'){alert('رمز عبور بسیار ضعیف است');return;}const u=this.dm.gUserByMid(mid);if(!u)return;u.password=np;this.dm.sv('users');alert('✅ رمز عبور تغییر یافت');this.ui.render();}
+savePass(mid){const np=$('#npi')?$('#npi').value.trim():'',cp=$('#cpi')?$('#cpi').value.trim():'';if(!np||!cp){alert('رمز و تکرار آن را وارد کنید');return;}if(np!==cp){alert('رمز و تکرار آن مطابقت ندارند');return;}if(U.strength(np)==='ضعیف'){alert('رمز عبور بسیار ضعیف است');return;}const u=this.dm.gUserByMid(mid);if(!u)return;u.password=np;this.dm.sv('users');alert('✅ رمز عبور تغییر یافت');this.ui.render();}
 saveProfile(mid){
     const m=this.dm.gMember(mid);
     if(!m)return;
     const ui=this.dm.gUserByMid(mid);
     const data = {
-        firstName: $(`#pf_firstName_${mid}`)?.value.trim() || '',
-        lastName: $(`#pf_lastName_${mid}`)?.value.trim() || '',
-        accountNumber: $(`#pf_accountNumber_${mid}`)?.value.trim() || '',
-        openDate: $(`#pf_openDate_${mid}`)?.value.trim() || '',
-        birthDate: $(`#pf_birthDate_${mid}`)?.value.trim() || '',
-        phone1: $(`#pf_phone1_${mid}`)?.value.trim() || '',
-        phone2: $(`#pf_phone2_${mid}`)?.value.trim() || ''
+        firstName: $(`#pf_firstName_${mid}`)?$('#pf_firstName_'+mid).value.trim():'',
+        lastName: $(`#pf_lastName_${mid}`)?$('#pf_lastName_'+mid).value.trim():'',
+        accountNumber: $(`#pf_accountNumber_${mid}`)?$('#pf_accountNumber_'+mid).value.trim():'',
+        openDate: $(`#pf_openDate_${mid}`)?$('#pf_openDate_'+mid).value.trim():'',
+        birthDate: $(`#pf_birthDate_${mid}`)?$('#pf_birthDate_'+mid).value.trim():'',
+        phone1: $(`#pf_phone1_${mid}`)?$('#pf_phone1_'+mid).value.trim():'',
+        phone2: $(`#pf_phone2_${mid}`)?$('#pf_phone2_'+mid).value.trim():''
     };
     if(!data.firstName || !data.lastName || !data.accountNumber){
         alert('نام، نام خانوادگی و شماره حساب الزامی هستند');
         return;
     }
     if(ui){
-        ui.username = $(`#pfu_${mid}`)?.value.trim() || '';
-        ui.password = $(`#pfp_${mid}`)?.value.trim() || '';
+        ui.username = $(`#pfu_${mid}`)?$('#pfu_'+mid).value.trim():'';
+        ui.password = $(`#pfp_${mid}`)?$('#pfp_'+mid).value.trim():'';
         this.dm.sv('users');
     }
     this.dm.saveProfile(mid, data);
@@ -1146,11 +1124,11 @@ resetCoins(mid){
     this.ui.switchTab('coins');
 }
 createPoll(){
-    const q=$('#pollQuestion')?.value.trim();
-    const o=$('#pollOptions')?.value.trim();
+    const q=$('#pollQuestion')?$('#pollQuestion').value.trim():'';
+    const o=$('#pollOptions')?$('#pollOptions').value.trim():'';
     if(!q){alert('سوال را وارد کنید');return;}
     if(!o){alert('گزینه‌ها را وارد کنید');return;}
-    const options=o.split('\n').map(s=>s.trim()).filter(s=>s);
+    const options=o.split('\n').map(function(s){return s.trim();}).filter(function(s){return s;});
     if(options.length<2){alert('حداقل دو گزینه وارد کنید');return;}
     const poll={
         id:'p_'+Date.now()+Math.random().toString(36).slice(2,6),
@@ -1164,7 +1142,7 @@ createPoll(){
     this.ui.switchTab('polls');
 }
 votePoll(pollId, optionIndex){
-    const mid=this.auth.user?.memberId;
+    const mid=this.auth.user?this.auth.user.memberId:null;
     if(!mid){alert('ابتدا وارد شوید');return;}
     const success=this.dm.votePoll(pollId, mid, optionIndex);
     if(success){
