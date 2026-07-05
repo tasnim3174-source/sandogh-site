@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تست Proxy</title>
+<style>
+body{font-family:Tahoma;padding:20px;background:#f0f0f0}
+.box{background:#fff;padding:20px;border-radius:12px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.success{border-right:5px solid #48bb78}
+.error{border-right:5px solid #e53e3e}
+.testing{border-right:5px solid #4299e1}
+h1{color:#667eea}
+pre{background:#f7fafc;padding:15px;border-radius:8px;overflow-x:auto;font-size:.85rem}
+button{padding:12px 24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;cursor:pointer;font-size:1rem;font-weight:700;margin:5px}
+</style>
+</head>
+<body>
+<h1>🔍 تست Proxy برای Google Sheets</h1>
+<div class="box">
+<p><strong>URL Apps Script شما:</strong></p>
+<code id="url"></code>
+</div>
+<button onclick="testAll()">▶️ شروع تست همه Proxy ها</button>
+<div id="results"></div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxbhwlpcTIbxOHVRxGmCSgE6bhEZf8PueDApRi1GQlj625iyAnpCk97m4m17ydnPjq-/exec';
+
+document.getElementById('url').textContent = APPS_SCRIPT_URL;
+
+const proxies = [
+    { name: 'corsproxy.io', makeUrl: url => 'https://corsproxy.io/?' + encodeURIComponent(url) },
+    { name: 'api.codetabs.com', makeUrl: url => 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url) },
+    { name: 'cors-anywhere (Heroku)', makeUrl: url => 'https://cors-anywhere.herokuapp.com/' + url },
+    { name: 'thingproxy.freeboard.io', makeUrl: url => 'https://thingproxy.freeboard.io/fetch/' + url },
+    { name: 'allorigins.win', makeUrl: url => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url) },
+    { name: 'بدون Proxy (مستقیم)', makeUrl: url => url }
+];
+
+async function testProxy(proxy) {
+    const startTime = Date.now();
+    try {
+        const proxyUrl = proxy.makeUrl(APPS_SCRIPT_URL);
+        const response = await fetch(proxyUrl, { method: 'GET', cache: 'no-store' });
+        const duration = Date.now() - startTime;
+        
+        if (response.ok) {
+            const text = await response.text();
+            const result = JSON.parse(text);
+            if (result.success) {
+                return { success: true, duration, data: result.data, proxy: proxy.name };
+            }
+        }
+        return { success: false, duration, error: 'Status: ' + response.status, proxy: proxy.name };
+    } catch (error) {
+        return { success: false, duration: Date.now() - startTime, error: error.message, proxy: proxy.name };
+    }
+}
+
+async function testAll() {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '<div class="box testing"><h3>⏳ در حال تست...</h3></div>';
+    
+    const results = [];
+    for (const proxy of proxies) {
+        const result = await testProxy(proxy);
+        results.push(result);
+    }
+    
+    results.sort((a, b) => {
+        if (a.success && !b.success) return -1;
+        if (!a.success && b.success) return 1;
+        return a.duration - b.duration;
+    });
+    
+    let html = '';
+    results.forEach(r => {
+        if (r.success) {
+            const membersCount = r.data.members ? r.data.members.length : 0;
+            const txnsCount = r.data.transactions ? r.data.transactions.length : 0;
+            html += `<div class="box success">
+                <h3>✅ ${r.proxy} - موفق!</h3>
+                <p><strong>زمان:</strong> ${r.duration}ms</p>
+                <p><strong>تعداد اعضا:</strong> ${membersCount}</p>
+                <p><strong>تعداد تراکنش‌ها:</strong> ${txnsCount}</p>
+                <p style="color:#48bb78;font-weight:700">👆 این Proxy را در کد اصلی استفاده کنید</p>
+            </div>`;
+        } else {
+            html += `<div class="box error">
+                <h3>❌ ${r.proxy} - ناموفق</h3>
+                <p><strong>زمان:</strong> ${r.duration}ms</p>
+                <p><strong>خطا:</strong> ${r.error}</p>
+            </div>`;
+        }
+    });
+    
+    const bestProxy = results.find(r => r.success);
+    if (bestProxy) {
+        html += `<div class="box success" style="background:#f0fff4">
+            <h2>🎉 بهترین Proxy پیدا شد!</h2>
+            <p><strong>نام:</strong> ${bestProxy.proxy}</p>
+            <p><strong>زمان پاسخ:</strong> ${bestProxy.duration}ms</p>
+            <p style="font-size:1.1rem;margin-top:15px">📋 این نام را به من بگویید تا کد اصلی را برایتان اصلاح کنم</p>
+        </div>`;
+    } else {
+        html += `<div class="box error" style="background:#fff5f5">
+            <h2>😔 هیچ Proxy کار نکرد</h2>
+            <p>لطفاً اسکرین‌شات این صفحه را برایم بفرستید</p>
+        </div>`;
+    }
+    
+    resultsDiv.innerHTML = html;
+}
+</script>
+</body>
+</html>
