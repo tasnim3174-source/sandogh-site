@@ -148,11 +148,11 @@ try {
 const $=(s,p=document)=>p.querySelector(s);
 const $$=(s,p=document)=>p.querySelectorAll(s);
 
-// ⚙️ تنظیمات اصلی
+// ⚙️ تنظیمات اصلی - توکن جدید
 const CONFIG = {
     GITHUB_OWNER: 'Tasnim3174-source',
     GITHUB_REPO_DATA: 'sandogh-data',
-    GITHUB_TOKEN: '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', // توکن خود را اینجا قرار دهید
+    GITHUB_TOKEN: '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',
     DATA_FILE: 'data.json',
     SYNC_INTERVAL: 30000,
     get DATA_URL() {
@@ -208,7 +208,6 @@ function showSyncStatus(text, type='syncing') {
     }
 }
 
-// 📖 خواندن data.json از مخزن sandogh-data
 async function loadDataFromSandoghData() {
     try {
         showSyncStatus('در حال بارگذاری از sandogh-data...', 'syncing');
@@ -231,12 +230,10 @@ async function loadDataFromSandoghData() {
     }
 }
 
-// ✍️ ذخیره data.json در مخزن sandogh-data (توسط مدیر)
 async function saveDataToSandoghData(data) {
     try {
         showSyncStatus('در حال ذخیره در sandogh-data...', 'syncing');
         
-        // ابتدا SHA فایل فعلی را بگیریم
         let sha = null;
         try {
             const getResponse = await fetch(
@@ -248,6 +245,21 @@ async function saveDataToSandoghData(data) {
                     }
                 }
             );
+            
+            if (getResponse.status === 401) {
+                console.error('❌ خطای 401: توکن GitHub نامعتبر است');
+                showSyncStatus('❌ توکن GitHub نامعتبر!', 'error');
+                alert('❌ خطا: توکن GitHub نامعتبر یا منقضی شده است!\n\nلطفاً مراحل زیر را انجام دهید:\n1. به https://github.com/settings/tokens بروید\n2. یک توکن جدید با دسترسی repo بسازید\n3. توکن را در کد index.html جایگزین کنید\n4. صفحه را رفرش کنید');
+                return false;
+            }
+            
+            if (getResponse.status === 403) {
+                console.error('❌ خطای 403: دسترسی کافی ندارید');
+                showSyncStatus('❌ دسترسی کافی ندارید', 'error');
+                alert('❌ خطا: توکن GitHub دسترسی repo ندارد!\n\nلطفاً یک توکن جدید با تیک "repo" بسازید.');
+                return false;
+            }
+            
             if (getResponse.ok) {
                 const fileData = await getResponse.json();
                 sha = fileData.sha;
@@ -256,7 +268,6 @@ async function saveDataToSandoghData(data) {
             console.log('فایل data.json هنوز وجود ندارد، ایجاد می‌شود');
         }
         
-        // ذخیره فایل
         const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
         const body = {
             message: `📊 به‌روزرسانی داده‌ها از برنامه - ${new Date().toLocaleString('fa-IR')}`,
@@ -278,12 +289,20 @@ async function saveDataToSandoghData(data) {
             }
         );
         
+        if (response.status === 401) {
+            console.error('❌ خطای 401 هنگام ذخیره: توکن نامعتبر');
+            showSyncStatus('❌ توکن نامعتبر', 'error');
+            alert('❌ خطا: توکن GitHub نامعتبر است!\nلطفاً توکن را به‌روزرسانی کنید.');
+            return false;
+        }
+        
         if (response.ok) {
             console.log('✅ فایل data.json در sandogh-data ذخیره شد');
             showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
             return true;
         } else {
-            console.error('❌ خطا در ذخیره data.json:', response.status);
+            const errorText = await response.text();
+            console.error('❌ خطا در ذخیره data.json:', response.status, errorText);
             showSyncStatus('❌ خطا در ذخیره', 'error');
             return false;
         }
@@ -306,7 +325,6 @@ async function autoSync() {
         if (!window.app) return;
         isSyncing = true;
         
-        // همه کاربران: بارگذاری از sandogh-data
         const data = await loadDataFromSandoghData();
         if (data) {
             window.app.dm.members = data.members || [];
@@ -378,7 +396,6 @@ spendCoin(mid,amount,reason,desc=''){
 }
 applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const add=(a,r,d)=>{this.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
 
-// 📤 آپلود اکسل و تبدیل به data.json و ذخیره در sandogh-data
 uploadBulk(file, cb) {
     if (typeof XLSX === 'undefined') {
         cb('کتابخانه XLSX بارگذاری نشد', 0, 0, 0, 0);
@@ -428,7 +445,6 @@ uploadBulk(file, cb) {
             const users = [];
             let userId = 1;
             
-            // اضافه کردن کاربر admin
             users.push({
                 id: userId++,
                 username: 'admin',
@@ -466,7 +482,6 @@ uploadBulk(file, cb) {
                 member.fullName = (member.firstName || '') + ' ' + (member.lastName || '');
                 members.push(member);
                 
-                // نام کاربری و رمز = شماره حساب
                 users.push({
                     id: userId++,
                     username: accNum,
@@ -476,7 +491,6 @@ uploadBulk(file, cb) {
                 });
             });
             
-            // ساخت data.json
             const dataJson = {
                 members: members,
                 users: users,
@@ -489,10 +503,8 @@ uploadBulk(file, cb) {
                 lastUpdate: new Date().toISOString()
             };
             
-            // ذخیره در sandogh-data
             saveDataToSandoghData(dataJson).then(success => {
                 if (success) {
-                    // به‌روزرسانی داده‌های محلی
                     self.members = members;
                     self.users = users;
                     self.sv('members');
