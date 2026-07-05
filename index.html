@@ -197,39 +197,25 @@ function showSyncStatus(text, type='syncing') {
 }
 
 async function loadDataFromSheets() {
-    const proxies = [
-        url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        url => `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`,
-        url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
-    ];
-    
-    for (const makeProxy of proxies) {
-        try {
-            showSyncStatus('در حال بارگذاری از Google Sheets...', 'syncing');
-            const proxyUrl = makeProxy(CONFIG.APPS_SCRIPT_URL);
-            const response = await fetch(proxyUrl, { 
-                method: 'GET', 
-                cache: 'no-store'
-            });
-            if (response.ok) {
-                const text = await response.text();
-                const result = JSON.parse(text);
-                if (result.success && result.data) {
-                    console.log('✅ داده‌ها از Google Sheets بارگذاری شدند');
-                    showSyncStatus('✅ داده‌ها بارگذاری شدند', 'success');
-                    return result.data;
-                }
+    try {
+        showSyncStatus('در حال بارگذاری از Google Sheets...', 'syncing');
+        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(CONFIG.APPS_SCRIPT_URL);
+        const response = await fetch(proxyUrl, { 
+            method: 'GET', 
+            cache: 'no-store',
+            headers: {
+                'Accept': 'application/json'
             }
-        } catch (error) {
-            console.warn('⚠️ یک Proxy کار نکرد، امتحان بعدی...', error.message);
+        });
+        if (response.ok) {
+            const text = await response.text();
+            const result = JSON.parse(text);
+            if (result.success && result.data) {
+                console.log('✅ داده‌ها از Google Sheets بارگذاری شدند');
+                showSyncStatus('✅ داده‌ها بارگذاری شدند', 'success');
+                return result.data;
+            }
         }
-    }
-    
-    console.error('❌ همه Proxy ها شکست خوردند');
-    showSyncStatus('❌ خطا در اتصال', 'error');
-    return null;
-}
         console.warn('⚠️ خطا در بارگذاری:', response.status);
         showSyncStatus('⚠️ خطا در بارگذاری', 'error');
         return null;
