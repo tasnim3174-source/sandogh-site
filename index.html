@@ -227,27 +227,38 @@ function showSyncStatus(text, type) {
 }
 
 async function loadDataFromSheets() {
-    try {
-        showSyncStatus('در حال بارگذاری از Google Sheets...', 'syncing');
-        const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(CONFIG.APPS_SCRIPT_URL);
-        const response = await fetch(proxyUrl, { method: 'GET', cache: 'no-store' });
-        if (response.ok) {
-            const text = await response.text();
-            const result = JSON.parse(text);
-            if (result.success && result.data) {
-                console.log('✅ داده‌ها از Google Sheets بارگذاری شدند');
-                showSyncStatus('✅ داده‌ها بارگذاری شدند', 'success');
-                return result.data;
+    const proxies = [
+        function(url) { return 'https://corsproxy.io/?' + encodeURIComponent(url); },
+        function(url) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url); },
+        function(url) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url); }
+    ];
+    
+    for (let i = 0; i < proxies.length; i++) {
+        try {
+            showSyncStatus('در حال بارگذاری از Google Sheets...', 'syncing');
+            const proxyUrl = proxies[i](CONFIG.APPS_SCRIPT_URL);
+            const response = await fetch(proxyUrl, { 
+                method: 'GET', 
+                cache: 'no-store'
+            });
+            if (response.ok) {
+                const text = await response.text();
+                const result = JSON.parse(text);
+                if (result.success && result.data) {
+                    console.log('✅ داده‌ها از Google Sheets بارگذاری شدند (Proxy ' + (i+1) + ')');
+                    showSyncStatus('✅ داده‌ها بارگذاری شدند', 'success');
+                    return result.data;
+                }
             }
+            console.warn('⚠️ Proxy ' + (i+1) + ' کار نکرد:', response.status);
+        } catch (error) {
+            console.warn('⚠️ Proxy ' + (i+1) + ' خطا داد:', error.message);
         }
-        console.warn('⚠️ خطا در بارگذاری:', response.status);
-        showSyncStatus('⚠️ خطا در بارگذاری', 'error');
-        return null;
-    } catch (error) {
-        console.warn('خطا در بارگذاری از Google Sheets:', error);
-        showSyncStatus('⚠️ خطا در اتصال', 'error');
-        return null;
     }
+    
+    console.error('❌ همه Proxy ها شکست خوردند');
+    showSyncStatus('❌ خطا در اتصال', 'error');
+    return null;
 }
 
 async function saveDataToSheets(data) {
@@ -405,7 +416,6 @@ spendCoin(mid,amount,reason,desc){
 }
 applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const self=this;const add=function(a,r,d){self.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
 
-// ✅ تابع آپلود فایل اکسل با پشتیبانی از همه ستون‌های Access
 uploadBulk(file, cb) {
     if (typeof XLSX === 'undefined') { cb('کتابخانه XLSX بارگذاری نشد', 0, 0, 0, 0); return; }
     const ext = file.name.split('.').pop().toLowerCase();
@@ -423,26 +433,18 @@ uploadBulk(file, cb) {
             if (!rows.length) { cb('فایل خالی است', 0, 0, 0, 0); return; }
             const headers = Object.keys(rows[0]);
             
-            // ✅ نقشه ستون‌ها برای اطلاعات عضو
             const colMap = {
-                // اطلاعات هویتی
                 id: U.findCol(['ID', 'id'], headers),
                 accountNumber: U.findCol(['شماره حساب', 'accountnumber', 'account_number', 'کدعضو', 'شماره', 'کد'], headers),
                 name: U.findCol(['name', 'نام', 'firstname', 'first_name', 'نام عضو'], headers),
                 phone: U.findCol(['phone', 'تلفن', 'تلفن1', 'phone1', 'موبایل', 'mobile'], headers),
                 phone2: U.findCol(['phone2', 'تلفن2', 'تلفن 2'], headers),
-                
-                // تاریخ‌ها
                 dateOzviyat: U.findCol(['date ozviyat', 'dateozviyat', 'تاریخ عضویت'], headers),
                 dateSabt: U.findCol(['date sabt', 'datesabt', 'تاریخ ثبت', 'تاریخ درخواست وام'], headers),
                 datMiladi: U.findCol(['dat miladi', 'datmiladi', 'تاریخ میلادی', 'تاریخ تولد', 'birthdate', 'birth_date'], headers),
-                
-                // اطلاعات مالی
                 balance: U.findCol(['موجودی', 'balance', 'مانده'], headers),
                 mojodiTaInLahzeh: U.findCol(['mojodi ta in lahzeh', 'mojoditainlahzeh', 'موجودی تا این لحظه'], headers),
                 savingsStatus: U.findCol(['وضعیت پس انداز', 'وضعیت پس‌انداز', 'savingsstatus', 'savings_status'], headers),
-                
-                // اطلاعات وام
                 mablaghVam: U.findCol(['mablagh vam', 'mablaghvam', 'مانده وام', 'مبلغ وام', 'loan'], headers),
                 dateVam: U.findCol(['date vam', 'datevam', 'تاریخ وام', 'تاریخ دریافت وام'], headers),
                 tedadAghsat: U.findCol(['tedad aghsat', 'tedadaghsat', 'تعداد اقساط'], headers),
@@ -452,12 +454,8 @@ uploadBulk(file, cb) {
                 paidInstallments: U.findCol(['تعداد قسط پرداخت شده', 'تعدادقسطپرداختشده', 'paidinstallments'], headers),
                 remainingInstallments: U.findCol(['تعداد قسط مانده', 'تعدادقسطمانده', 'remaininginstallments'], headers),
                 overdueInstallments: U.findCol(['تعداد قسط معوقه', 'تعدادقسطمعوقه', 'overdueinstallments'], headers),
-                
-                // مقرری
                 monthlySalary: U.findCol(['مقرری ماهانه', 'مقرری_ماهانه', 'monthlysalary'], headers),
                 monthlySalaryApproved: U.findCol(['مقرری ماهانه مصوب شده هرنفر', 'مقرری ماهانه مصوب', 'monthlysalaryapproved'], headers),
-                
-                // اطلاعات تراکنش
                 fishNumber: U.findCol(['شماره فیش', 'شماره_فیش', 'fishnumber'], headers),
                 transactionDate: U.findCol(['تاریخ تراکنش', 'تاریخ_تراکنش', 'transactiondate'], headers),
                 amount: U.findCol(['مبلغ تراکنش', 'مبلغ_تراکنش', 'amount'], headers),
@@ -465,9 +463,7 @@ uploadBulk(file, cb) {
                 installmentAmountTx: U.findCol(['مبلغ قسط واریزی', 'مبلغ_قسط_واریزی'], headers),
                 installmentDateTx: U.findCol(['تاریخ قسط واریزی', 'تاریخ_قسط_واریزی'], headers),
                 total: U.findCol(['جمع واریزی', 'جمع_واریزی', 'total'], headers),
-                description: U.findCol(['توضیحات', 'توضیحات', 'description'], headers),
-                
-                // وضعیت پیامکی
+                description: U.findCol(['توضیحات', 'description'], headers),
                 kodOmomi: U.findCol(['kod omomi', 'kodomomi', 'پیامک واریز'], headers),
                 kodSarparast: U.findCol(['kod sarparast', 'kodsarparast'], headers),
                 kodMoavaghe: U.findCol(['kod moavaghe', 'kodmoavaghe'], headers),
@@ -476,18 +472,17 @@ uploadBulk(file, cb) {
                 kodKhabarnameh: U.findCol(['kod khabarnameh', 'kodkhabarnameh'], headers),
                 kodTavalod: U.findCol(['kod tavalod', 'kodtavalod'], headers),
                 kodMonasebat: U.findCol(['kod monasebat', 'kodmonasebat'], headers),
-                
-                // وضعیت فعال
                 active: U.findCol(['active'], headers)
             };
             
             if (!colMap.accountNumber) { cb('ستون "شماره حساب" در فایل یافت نشد.', 0, 0, 0, 0); return; }
             
-            const membersMap = new Map(); // برای نگهداری اعضا بر اساس شماره حساب
-            const transactions = []; // همه تراکنش‌ها
-            const users = [];
-            let userId = 1;
-            users.push({ id: userId++, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
+            const membersMap = new Map();
+            const usersMap = new Map();
+            const transactions = [];
+            let userId = 2;
+            
+            usersMap.set('admin', { id: 1, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
             
             let newCount = 0;
             let updatedCount = 0;
@@ -497,11 +492,10 @@ uploadBulk(file, cb) {
                 const accNum = String(row[colMap.accountNumber] || '').trim();
                 if (!accNum) return;
                 
-                // ✅ استخراج اطلاعات تراکنش
                 const transactionId = colMap.id ? String(row[colMap.id] || '').trim() : String(index + 1);
                 const transaction = {
                     transactionId: transactionId,
-                    memberId: null, // بعداً پر می‌شود
+                    memberId: null,
                     accountNumber: accNum,
                     fishNumber: colMap.fishNumber ? String(row[colMap.fishNumber] || '').trim() : '',
                     transactionDate: colMap.transactionDate ? String(row[colMap.transactionDate] || '').trim() : '',
@@ -527,7 +521,6 @@ uploadBulk(file, cb) {
                     description: colMap.description ? String(row[colMap.description] || '').trim() : ''
                 };
                 
-                // ✅ استخراج وضعیت پیامکی
                 const smsStatus = {
                     general: U.parseBool(colMap.kodOmomi ? row[colMap.kodOmomi] : ''),
                     supervisors: U.parseBool(colMap.kodSarparast ? row[colMap.kodSarparast] : ''),
@@ -539,12 +532,9 @@ uploadBulk(file, cb) {
                     occasions: U.parseBool(colMap.kodMonasebat ? row[colMap.kodMonasebat] : '')
                 };
                 
-                // ✅ بررسی آیا این عضو قبلاً اضافه شده
                 const existingMember = membersMap.get(accNum);
                 
                 if (existingMember) {
-                    // ✅ اگر عضو قبلاً وجود دارد، فقط اطلاعات را به‌روزرسانی کن
-                    // (اطلاعات آخرین تراکنش مهم‌تر است)
                     existingMember.balance = transaction.balance;
                     existingMember.savingsStatus = transaction.savingsStatus;
                     existingMember.loanBalance = transaction.loanBalance;
@@ -563,7 +553,6 @@ uploadBulk(file, cb) {
                     existingMember.lastInstallmentDate = transaction.lastInstallmentDate;
                     existingMember.smsStatus = smsStatus;
                     
-                    // اگر نام در این ردیف موجود است، به‌روزرسانی شود
                     if (colMap.name && row[colMap.name]) {
                         const name = String(row[colMap.name] || '').trim();
                         if (name) {
@@ -580,8 +569,12 @@ uploadBulk(file, cb) {
                     
                     transaction.memberId = existingMember.id;
                     updatedCount++;
+                    
+                    const existingUser = usersMap.get(accNum);
+                    if (existingUser) {
+                        existingUser.memberId = existingMember.id;
+                    }
                 } else {
-                    // ✅ اگر عضو جدید است، اضافه کن
                     const memberId = membersMap.size + 1;
                     const name = colMap.name ? String(row[colMap.name] || '').trim() : '';
                     const member = {
@@ -618,8 +611,17 @@ uploadBulk(file, cb) {
                     member.fullName = member.firstName;
                     membersMap.set(accNum, member);
                     transaction.memberId = memberId;
-                    users.push({ id: userId++, username: accNum, password: accNum, role: 'member', memberId: memberId });
-                    newCount++;
+                    
+                    if (!usersMap.has(accNum)) {
+                        usersMap.set(accNum, { 
+                            id: userId++, 
+                            username: accNum, 
+                            password: accNum, 
+                            role: 'member', 
+                            memberId: memberId 
+                        });
+                        newCount++;
+                    }
                 }
                 
                 transactions.push(transaction);
@@ -627,12 +629,17 @@ uploadBulk(file, cb) {
             });
             
             const members = Array.from(membersMap.values());
+            const users = Array.from(usersMap.values());
             const finalMembers = removeDuplicateMembers(members);
             const finalTransactions = removeDuplicateTransactions(transactions);
             
+            console.log('📊 نتایج آپلود: ' + finalMembers.length + ' عضو، ' + users.length + ' کاربر، ' + finalTransactions.length + ' تراکنش');
+            
             const dataToSave = {
-                members: finalMembers, users: users,
-                messages: self.messages || [], announcements: self.announcements || [],
+                members: finalMembers, 
+                users: users,
+                messages: self.messages || [], 
+                announcements: self.announcements || [],
                 support: [self.support || { phone: '', accountNumber: '', address: '' }],
                 shopItems: self.shopItems || [],
                 settings: [{ key: 'logo', value: self.logo || '' }],
@@ -644,9 +651,11 @@ uploadBulk(file, cb) {
             
             saveDataToSheets(dataToSave).then(function(success) {
                 if (success) {
-                    self.members = finalMembers; self.users = users;
+                    self.members = finalMembers; 
+                    self.users = users;
                     window.app.allTransactions = finalTransactions;
-                    self.sv('members'); self.sv('users');
+                    self.sv('members'); 
+                    self.sv('users');
                     cb(null, rows.length, updatedCount, newCount, transactionCount);
                 } else { cb('خطا در ذخیره در Google Sheets', 0, 0, 0, 0); }
             });
