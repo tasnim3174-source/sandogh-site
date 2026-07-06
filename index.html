@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="mobile-web-app-capable" content="yes">
 <title>سیستم حسابداری صندوق اتحاد</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -218,6 +217,7 @@ async function loadDataFromSheets() {
     return null;
 }
 
+// ✅ اصلاح مهم: استفاده از iframe و form به جای fetch
 async function saveDataToSheets(data) {
     return new Promise(function(resolve) {
         try {
@@ -230,25 +230,37 @@ async function saveDataToSheets(data) {
             console.log('📊 تعداد کاربران:', data.users ? data.users.length : 0);
             console.log('📊 تعداد تراکنش‌ها:', data.transactions ? data.transactions.length : 0);
             
-            const formData = new FormData();
-            formData.append('action', 'save');
-            formData.append('data', JSON.stringify(data));
+            // ✅ استفاده از iframe و form
+            let iframe = document.getElementById('hidden_iframe');
+            if (!iframe) {
+                iframe = document.createElement('iframe');
+                iframe.id = 'hidden_iframe';
+                iframe.name = 'hidden_iframe';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+            }
             
-            fetch(CONFIG.APPS_SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: formData
-            })
-            .then(function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = CONFIG.APPS_SCRIPT_URL + '?action=save';
+            form.target = 'hidden_iframe';
+            form.style.display = 'none';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(data);
+            form.appendChild(input);
+            
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+            
+            setTimeout(function() {
                 console.log('✅ درخواست ذخیره ارسال شد');
                 showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
                 resolve(true);
-            })
-            .catch(function(error) {
-                console.error('❌ خطا در ذخیره:', error);
-                showSyncStatus('❌ خطا در اتصال', 'error');
-                resolve(false);
-            });
+            }, 2000);
         } catch (error) {
             console.error('خطا در ذخیره در Google Sheets:', error);
             showSyncStatus('❌ خطا در اتصال', 'error');
@@ -263,8 +275,9 @@ let initialLoadDone = false;
 
 async function autoSync() {
     try {
-        if (window.lastUploadTime && (Date.now() - window.lastUploadTime < 15000)) {
-            console.log('⏸️ autoSync موقتاً غیرفعال است');
+        // ✅ غیرفعال کردن autoSync برای ۶۰ ثانیه بعد از آپلود
+        if (window.lastUploadTime && (Date.now() - window.lastUploadTime < 60000)) {
+            console.log('⏸️ autoSync موقتاً غیرفعال است (منتظر ذخیره کامل)');
             return;
         }
         if (isSyncing) return;
@@ -594,8 +607,9 @@ uploadBulk(file, cb) {
             
             console.log('📊 نتایج آپلود: ' + finalMembers.length + ' عضو، ' + users.length + ' کاربر، ' + finalTransactions.length + ' تراکنش');
             
+            // ✅ ثبت زمان آپلود برای غیرفعال کردن autoSync
             window.lastUploadTime = Date.now();
-            console.log('⏱️ زمان آپلود ثبت شد');
+            console.log('⏱️ زمان آپلود ثبت شد - autoSync برای ۶۰ ثانیه غیرفعال است');
             
             const dataToSave = {
                 members: finalMembers, 
@@ -710,11 +724,11 @@ isLoggedIn(){return !!this.user;}
 
 class UI{constructor(app){this.app=app;this.el=$('#appContainer');this.tab=localStorage.getItem('activeTab')||'profile';this.sa=0;this.ci=null;}
 render(){if(this.app.auth.pending){this.el.innerHTML=this.forceHTML();this.bindFC();return;}if(!this.app.auth.isLoggedIn()){this.el.innerHTML=this.loginHTML();this.bindLogin();return;}this.el.innerHTML=this.appHTML();this.bindApp();this.switchTab(this.tab);this.updUI();this.startClock();this.updNotif();this.updCoinBadge();}
-loginHTML(){const logo=this.app.dm.logo;return`<div class="login-page"><div style="text-align:center;margin-bottom:30px">${logo?`<img src="${logo}" style="width:120px;height:120px;border-radius:50%;margin-bottom:20px">`:`<i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px"></i>`}<h1 style="color:#2d3748;margin-bottom:10px">سیستم حسابداری صندوق اتحاد</h1><p style="color:#718096">ورود با رمز اختصاصی</p></div><div class="input-group"><label><i class="fas fa-user"></i> نام کاربری</label><input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید"></div><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور</label><input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید"><button class="toggle-password" id="toggleLoginPass"><i class="fas fa-eye"></i></button></div><button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button><button class="btn" id="forgotBtn" style="background:linear-gradient(135deg,#ed8936,#dd6b20);margin-top:12px"><i class="fas fa-key"></i> رمز را فراموش کرده ام</button><div id="loginError" class="error-msg"></div><div id="forgotSuccess" class="success-msg"></div></div>`;}
-forceHTML(){return`<div class="force-change-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-exclamation-triangle" style="font-size:5rem;color:#e53e3e"></i><div style="font-size:1.8rem;color:#e53e3e;margin:15px 0;font-weight:700">تغییر رمز عبور الزامی است</div></div><div style="max-width:450px;margin:0 auto"><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور جدید</label><input type="password" id="newPasswordForce" placeholder="رمز جدید"><button class="toggle-password" id="toggleForcePass"><i class="fas fa-eye"></i></button><div id="passwordStrength" style="margin-top:8px;font-weight:600"></div></div><div class="input-group"><label><i class="fas fa-check-circle"></i> تکرار رمز جدید</label><input type="password" id="confirmPasswordForce" placeholder="تکرار رمز جدید"><button class="toggle-password" id="toggleForceConfirm"><i class="fas fa-eye"></i></button></div><button class="btn" id="forceChangeBtn"><i class="fas fa-save"></i> تغییر رمز و ورود</button><div id="forceError" class="error-msg"></div></div></div>`;}
+loginHTML(){return`<div class="login-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px"></i><h1 style="color:#2d3748;margin-bottom:10px">سیستم حسابداری صندوق اتحاد</h1><p style="color:#718096">ورود با رمز اختصاصی</p></div><div class="input-group"><label><i class="fas fa-user"></i> نام کاربری</label><input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید"></div><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور</label><input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید"><button class="toggle-password" id="toggleLoginPass"><i class="fas fa-eye"></i></button></div><button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button><button class="btn" id="forgotBtn" style="background:linear-gradient(135deg,#ed8936,#dd6b20);margin-top:12px"><i class="fas fa-key"></i> رمز را فراموش کرده ام</button><div id="loginError" class="error-msg"></div><div id="forgotSuccess" class="success-msg"></div></div>`;}
+forceHTML(){return`<div class="force-change-page"><div style="text-align:center;margin-bottom:30px"><i class="fas fa-exclamation-triangle" style="font-size:5rem;color:#e53e3e"></i><div style="font-size:1.8rem;color:#e53e3e;margin:15px 0;font-weight:700">تغییر رمز عبور الزامی است</div></div><div style="max-width:450px;margin:0 auto"><div class="input-group"><label><i class="fas fa-lock"></i> رمز عبور جدید</label><input type="password" id="newPasswordForce" placeholder="رمز جدید"><button class="toggle-password" id="toggleForcePass"><i class="fas fa-eye"></i></button></div><div class="input-group"><label><i class="fas fa-check-circle"></i> تکرار رمز جدید</label><input type="password" id="confirmPasswordForce" placeholder="تکرار رمز جدید"><button class="toggle-password" id="toggleForceConfirm"><i class="fas fa-eye"></i></button></div><button class="btn" id="forceChangeBtn"><i class="fas fa-save"></i> تغییر رمز و ورود</button><div id="forceError" class="error-msg"></div></div></div>`;}
 appHTML(){const ia=this.app.auth.isAdmin(),isp=this.app.auth.isSpecial(),isv=this.app.auth.isSupervisor();const cm=ia?null:this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);const isCouncil=cm&&(cm.sessionActive||(cm.smsStatus&&cm.smsStatus.council));return`<div class="app-page"><div class="header-bar"><div class="datetime-display"><div class="datetime-card"><i class="fas fa-calendar-alt"></i><div><div class="dt-label">تاریخ شمسی</div><div class="dt-value" id="persianDate">---</div></div></div><div class="datetime-card"><i class="fas fa-calendar"></i><div><div class="dt-label">تاریخ میلادی</div><div class="dt-value" id="gregorianDate">---</div></div></div><div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div></div><div class="header-actions"><div class="theme-buttons"><button class="theme-btn" data-theme="day"><i class="fas fa-sun"></i> روز</button><button class="theme-btn" data-theme="night"><i class="fas fa-moon"></i> شب</button></div>${!ia?`<div class="coin-badge" id="coinBadge"><i class="fas fa-coins"></i><span id="coinCount">0</span></div>`:''}<div style="position:relative"><button class="notification-bell" id="bellButton"><i class="fas fa-bell"></i><span class="badge hidden" id="notifBadge">0</span></button></div></div></div><div id="welcomeBanner" style="font-size:1.3rem;font-weight:700;color:#667eea;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap"><i class="fas fa-star"></i> خوش آمدید</div><div class="app-layout"><div class="vertical-menu"><div style="font-size:1.3rem;font-weight:700;color:#667eea;padding-bottom:20px;border-bottom:3px solid #edf2f7;text-align:center"><i class="fas fa-university"></i> صندوق اتحاد</div><div class="menu-item" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div><div class="menu-item" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div><div class="menu-item" data-tab="coins"><i class="fas fa-coins"></i> سکه‌ها</div>${!ia?'<div class="menu-item" data-tab="shop"><i class="fas fa-shopping-cart"></i> فروشگاه</div>':''}<div class="menu-item" data-tab="polls"><i class="fas fa-poll"></i> نظرسنجی</div><div class="menu-item" data-tab="messenger"><i class="fas fa-envelope"></i> پیامرسان</div><div class="menu-item" data-tab="cultural"><i class="fas fa-theater-masks"></i> فرهنگی</div><div class="menu-item" data-tab="sms"><i class="fas fa-sms"></i> وضعیت پیامکی</div><div class="menu-item" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>${(ia||isp)?'<div class="menu-item" data-tab="members"><i class="fas fa-users"></i> مدیریت اعضا</div>':''}${isv?'<div class="menu-item" data-tab="supervisor"><i class="fas fa-user-shield"></i> مدیریت ویژه</div>':''}${ia?'<div class="menu-item" data-tab="settings"><i class="fas fa-cog"></i> تنظیمات</div>':''}<div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid #edf2f7"><span id="roleBadge" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${ia?'<i class="fas fa-crown"></i> مدیر':isp?'<i class="fas fa-shield-alt"></i> پاسخ‌دهنده':isCouncil?'<i class="fas fa-user-shield"></i> عضو شورا':'<i class="fas fa-user"></i> عضو'}</span><button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px"><i class="fas fa-sign-out-alt"></i> خروج</button></div></div><div class="content-area" id="dynamicContent"></div></div></div>`;}
 bindLogin(){$('#loginBtn').onclick=()=>this.app.doLogin();$('#forgotBtn').onclick=()=>this.app.doForgot();$('#loginPassword').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};$('#loginUsername').onkeydown=e=>{if(e.key==='Enter')this.app.doLogin();};$('#toggleLoginPass').onclick=()=>{const i=$('#loginPassword'),icon=$('#toggleLoginPass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
-bindFC(){$('#forceChangeBtn').onclick=()=>this.app.doForceChange();$('#newPasswordForce').oninput=e=>{$('#passwordStrength').textContent=`قدرت رمز: ${U.strength(e.target.value)}`;$('#passwordStrength').style.color=U.strength(e.target.value)==='قوی'?'#38a169':U.strength(e.target.value)==='متوسط'?'#ed8936':'#e53e3e';};$('#toggleForcePass').onclick=()=>{const i=$('#newPasswordForce'),icon=$('#toggleForcePass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};$('#toggleForceConfirm').onclick=()=>{const i=$('#confirmPasswordForce'),icon=$('#toggleForceConfirm i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
+bindFC(){$('#forceChangeBtn').onclick=()=>this.app.doForceChange();$('#toggleForcePass').onclick=()=>{const i=$('#newPasswordForce'),icon=$('#toggleForcePass i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};$('#toggleForceConfirm').onclick=()=>{const i=$('#confirmPasswordForce'),icon=$('#toggleForceConfirm i');if(i.type==='password'){i.type='text';icon.className='fas fa-eye-slash';}else{i.type='password';icon.className='fas fa-eye';}};}
 bindApp(){$$('.menu-item[data-tab]').forEach(el=>el.onclick=()=>{this.tab=el.dataset.tab;localStorage.setItem('activeTab', this.tab);$$('.menu-item').forEach(e=>e.classList.remove('active'));el.classList.add('active');this.switchTab(this.tab);});$('#logoutBtn').onclick=()=>this.app.doLogout();$$('.theme-btn').forEach(b=>b.onclick=()=>this.app.setTheme(b.dataset.theme));}
 switchTab(t){const c=$('#dynamicContent');if(!c)return;c.innerHTML='';const fn='render_'+t;if(typeof this[fn]==='function')this[fn](c);}
 
@@ -778,7 +792,6 @@ renderDashboardForMember(mid, c){
     const memberHeaders = ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const isAdmin = this.app.auth.isAdmin();
     const ah = isAdmin ? allH : allH.filter(function(h) { return memberHeaders.includes(h); });
-    const dur = U.getMembershipDuration(m.openDate);
     const latestTx = uniqueTxns.length ? uniqueTxns[0] : null;
     let balance = m.balance || 0;
     let savingsStatus = m.savingsStatus || 0;
@@ -814,18 +827,7 @@ renderDashboardForMember(mid, c){
         overdueInstallments = U.parseNum(latestTx.overdueInstallments) || overdueInstallments;
         loanBalance = U.parseNum(latestTx.loanBalance) || loanBalance;
     }
-    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مدت عضویت:</label><div style="font-weight:700">${dur}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${uniqueTxns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div></div></div>`;
-    if (latestTx) {
-        h += `<div class="dashboard-section" style="border-right-color:#38b2ac"><h3 style="color:#2c7a7b"><i class="fas fa-receipt"></i> آخرین تراکنش</h3><div class="loan-info">`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #48bb78"><div class="loan-info-label"><i class="fas fa-money-bill-wave" style="color:#48bb78"></i> مقرری واریزی</div><div class="loan-info-value">${U.esc(String(latestTx.monthlySalary || '---'))}</div></div>`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #4299e1"><div class="loan-info-label"><i class="fas fa-file-invoice-dollar" style="color:#4299e1"></i> شماره فیش</div><div class="loan-info-value">${U.esc(String(latestTx.fishNumber || '---'))}</div></div>`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #ed8936"><div class="loan-info-label"><i class="fas fa-calendar-day" style="color:#ed8936"></i> تاریخ تراکنش</div><div class="loan-info-value">${U.esc(String(latestTx.transactionDate || '---'))}</div></div>`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #38b2ac"><div class="loan-info-label"><i class="fas fa-user-edit" style="color:#38b2ac"></i> تراکنش کننده</div><div class="loan-info-value">${U.esc(String(latestTx.transactionName || '---'))}</div></div>`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #d69e2e"><div class="loan-info-label"><i class="fas fa-coins" style="color:#d69e2e"></i> مبلغ قسط</div><div class="loan-info-value">${U.esc(String(latestTx.installmentAmount || '---'))}</div></div>`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #e53e3e"><div class="loan-info-label"><i class="fas fa-calendar-check" style="color:#e53e3e"></i> تاریخ قسط</div><div class="loan-info-value">${U.esc(String(latestTx.installmentDate || '---'))}</div></div>`;
-        h += `<div class="loan-info-item" style="border-right:3px solid #667eea"><div class="loan-info-label"><i class="fas fa-comment-dots" style="color:#667eea"></i> توضیحات</div><div class="loan-info-value">${U.esc(String(latestTx.description || '---'))}</div></div>`;
-        h += `</div></div>`;
-    }
+    let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">شماره حساب:</label><div style="font-weight:700">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700">${uniqueTxns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه مصوب:</label><div style="font-weight:700">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی تا این ماه:</label><div style="font-weight:700">${U.fmtNum(currentMonthBalance)}</div></div></div></div></div>`;
     h += `<div class="dashboard-section"><h3><i class="fas fa-wallet"></i> اطلاعات موجودی و پس‌انداز</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(102,126,234,.1),rgba(118,75,162,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">موجودی شما:</label><div style="font-size:1.3rem;font-weight:700;color:${balance<0?'#e53e3e':'#2d3748'};margin-top:5px">${U.fmtNum(balance)}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.1),rgba(56,161,105,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">وضعیت پس‌انداز:</label><div style="font-size:1.3rem;font-weight:700;color:${savingsStatus<0?'#e53e3e':'#48bb78'};margin-top:5px">${U.fmtNum(savingsStatus)}</div></div><div style="background:linear-gradient(135deg,rgba(237,137,54,.1),rgba(221,107,32,.1));padding:15px;border-radius:12px"><label style="font-weight:600;color:#718096;font-size:.85rem">مقرری ماهانه:</label><div style="font-size:1.3rem;font-weight:700;margin-top:5px">${U.fmtNum(monthlySalary)}</div></div></div></div>`;
     h += `<div class="dashboard-section"><h3><i class="fas fa-hand-holding-usd"></i> اطلاعات وام و بدهی</h3><div class="loan-info">`;
     const loanItems = [
@@ -841,9 +843,7 @@ renderDashboardForMember(mid, c){
         {label:'مانده وام', value:U.fmtNum(loanBalance)}
     ];
     loanItems.forEach(function(item) { h += `<div class="loan-info-item"><div class="loan-info-label">${item.label}</div><div class="loan-info-value">${item.value}</div></div>`; });
-    h += `</div>`;
-    if (overdueInstallments > 0) h += `<div class="warning-box"><i class="fas fa-exclamation-triangle"></i><div><strong>اقساط معوقه</strong>اقساط وام شما عقب افتاده. سریعا نسبت به پرداخت اقدام نمایید.</div></div>`;
-    h += `</div>`;
+    h += `</div></div>`;
     h += `<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${ah.map(function(x) { return `<th>${U.esc(x)}</th>`; }).join('')}</tr></thead><tbody>${uniqueTxns.length === 0 ? `<tr><td colspan="${ah.length}" style="text-align:center;padding:30px;color:#a0aec0">هیچ تراکنشی ثبت نشده است</td></tr>` : uniqueTxns.map(function(t) { return `<tr>${ah.map(function(hh) { return `<td title="${U.esc(String(t[hh]||''))}">${U.esc(String(t[hh]||''))}</td>`; }).join('')}</tr>`; }).join('')}</tbody></table></div></div>`;
     c.innerHTML = h;
     const ft = function() { const q = $('#mes', c).value.trim().toLowerCase(); const tb = $('#met', c).querySelector('tbody'); if (!tb) return; tb.querySelectorAll('tr').forEach(function(r) { if (!q || r.textContent.toLowerCase().includes(q)) r.style.display = ''; else r.style.display = 'none'; }); };
@@ -858,8 +858,8 @@ render_shop(c){
     const m=this.app.dm.gMember(this.app.auth.user && this.app.auth.user.memberId);
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;}
     const available=(m.coins||0)-(m.usedCoins||0);
-    let h=`<div class="info-box"><i class="fas fa-shopping-cart"></i> فروشگاه - خرج کردن سکه‌ها</div>`;
-    h+=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> موجودی سکه شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(197,48,48,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-shopping-cart" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مصرف شده</div><div style="font-size:1.8rem;font-weight:700;color:#e53e3e">${m.usedCoins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">قابل مصرف</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum(available)}</div></div></div></div>`;
+    let h=`<div class="info-box"><i class="fas fa-shopping-cart"></i> فروشگاه</div>`;
+    h+=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> موجودی سکه شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">قابل مصرف</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum(available)}</div></div></div></div>`;
     h+=`<div class="dashboard-section"><h3><i class="fas fa-store"></i> کالاها و خدمات</h3>`;
     const items=this.app.dm.shopItems||[];
     if(!items.length)h+=`<div style="text-align:center;padding:30px;color:#a0aec0"><i class="fas fa-box-open" style="font-size:3rem;margin-bottom:10px"></i><p>هیچ کالایی موجود نیست</p></div>`;
@@ -923,7 +923,6 @@ render_settings(c){
 
 render_coins(c){ 
     const ia=this.app.auth.isAdmin();
-    const allCoinHistory = window.app.allCoinHistory || [];
     if(ia){ 
         let h=`<div class="info-box"><i class="fas fa-coins"></i> مدیریت سکه‌ها</div>`;
         h+=`<div class="dashboard-section"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><select id="cms" style="flex:1;min-width:200px;padding:10px;border:2px solid #e2e8f0;border-radius:12px">${this.app.dm.members.map(function(m){return`<option value="${m.id}">${U.esc(m.firstName||'')} ${U.esc(m.lastName||'')}</option>`;}).join('')}</select><input type="number" id="cai" value="5" min="1" style="width:100px;padding:10px;border:2px solid #e2e8f0;border-radius:12px"><button class="btn-small success-btn" id="acb"><i class="fas fa-plus"></i> افزودن</button></div></div>`;
@@ -933,17 +932,8 @@ render_coins(c){
         c.querySelectorAll('.reset-btn').forEach(function(b){const mid=parseInt(b.dataset.mid);b.onclick=function(){window.app.resetCoins(mid);};});
     }else{ 
         const m=this.app.dm.gMember(this.app.auth.user.memberId);if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">خطا</p></div>';return;} 
-        const myHistory = allCoinHistory.filter(function(h) { return String(h.memberId) === String(m.id); }).reverse();
-        let h=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> سکه‌های شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(197,48,48,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-shopping-cart" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مصرف شده</div><div style="font-size:1.8rem;font-weight:700;color:#e53e3e">${m.usedCoins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مانده</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum((m.coins||0)-(m.usedCoins||0))}</div></div></div></div>`;
-        if(myHistory.length){
-            h+=`<div class="dashboard-section"><h3><i class="fas fa-history"></i> تاریخچه سکه‌ها</h3>`;
-            myHistory.forEach(function(item) {
-                const amount = parseInt(item.amount) || 0;
-                h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#fff;border-radius:12px;margin-bottom:8px"><div><div style="font-weight:700;color:#2d3748">${U.esc(item.reason||'')}</div><div style="font-size:.85rem;color:#718096">${U.esc(item.description||'')}</div><div style="font-size:.75rem;color:#a0aec0;margin-top:3px">${U.esc(item.date||'')}</div></div><div style="${amount>0?'color:#48bb78':'color:#e53e3e'};font-weight:700">${amount>0?'+':''}${amount}</div></div>`;
-            });
-            h+=`</div>`;
-        }
-        h+=`<div class="dashboard-section" style="text-align:center"><h3><i class="fas fa-dharmachakra"></i> گردونه شانس</h3><div style="width:220px;height:220px;border-radius:50%;border:8px solid #667eea;margin:0 auto 25px;position:relative;overflow:hidden;background:conic-gradient(#f56565 0deg 60deg,#ed8936 60deg 120deg,#ecc94b 120deg 180deg,#48bb78 180deg 240deg,#4299e1 240deg 300deg,#9f7aea 300deg 360deg);transition:transform 4s cubic-bezier(.17,.67,.12,.99)" id="wheel"><div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:2.5rem;color:#e53e3e;z-index:10"><i class="fas fa-caret-down"></i></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#667eea"><i class="fas fa-play"></i></div></div><button id="spinBtn" style="padding:14px 35px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:28px;cursor:pointer;font-size:1.1rem;font-weight:700"><i class="fas fa-sync-alt"></i> چرخش</button><div id="wheelResult" style="margin-top:15px;font-size:1.2rem;font-weight:700;color:#667eea"></div></div>`; 
+        let h=`<div class="dashboard-section"><h3><i class="fas fa-coins"></i> سکه‌های شما</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px"><div style="background:linear-gradient(135deg,rgba(236,201,75,.2),rgba(214,158,46,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-coins" style="font-size:2rem;color:#d69e2e;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">جمع کل</div><div style="font-size:1.8rem;font-weight:700;color:#d69e2e">${m.coins||0}</div></div><div style="background:linear-gradient(135deg,rgba(72,187,120,.2),rgba(56,161,105,.2));padding:20px;border-radius:16px;text-align:center"><i class="fas fa-wallet" style="font-size:2rem;color:#48bb78;margin-bottom:10px"></i><div style="font-size:.9rem;color:#718096;margin-bottom:5px">مانده</div><div style="font-size:1.8rem;font-weight:700;color:#48bb78">${U.fmtNum((m.coins||0)-(m.usedCoins||0))}</div></div></div></div>`;
+        h+=`<div class="dashboard-section" style="text-align:center"><h3><i class="fas fa-dharmachakra"></i> گردونه شانس</h3><div style="width:220px;height:220px;border-radius:50%;border:8px solid #667eea;margin:0 auto 25px;position:relative;overflow:hidden;background:conic-gradient(#f56565 0deg 60deg,#ed8936 60deg 120deg,#ecc94b 120deg 180deg,#48bb78 180deg 240deg,#4299e1 240deg 300deg,#9f7aea 300deg 360deg);transition:transform 4s cubic-bezier(.17,.67,.12,.99)" id="wheel"><div style="position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:2.5rem;color:#e53e3e;z-index:10"><i class="fas fa-caret-down"></i></div></div><button id="spinBtn" style="padding:14px 35px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:28px;cursor:pointer;font-size:1.1rem;font-weight:700"><i class="fas fa-sync-alt"></i> چرخش</button><div id="wheelResult" style="margin-top:15px;font-size:1.2rem;font-weight:700;color:#667eea"></div></div>`; 
         c.innerHTML=h; 
         const ls=localStorage.getItem('lastSpinDate'),today=new Date().toDateString(); 
         if(ls===today){$('#spinBtn',c).disabled=true;$('#spinBtn',c).innerHTML='<i class="fas fa-check"></i> امروز انجام شد';$('#spinBtn',c).style.opacity='.6';} 
@@ -991,7 +981,6 @@ msgs(type){
         let dn=msg.senderName||'کاربر';
         const finalClass = msg.parentId ? 'msg-reply' : msgClass;
         let h=`<div class="msg-item ${finalClass}"><div class="msg-header"><span><i class="fas fa-user-circle"></i> ${U.esc(dn)}</span><span><i class="fas fa-clock"></i> ${U.esc(msg.timestamp||'---')}</span></div>`;
-        if(msg.replyLabel && !msg.parentId)h+=`<div style="font-size:.78rem;color:#ed8936;margin:6px 0;padding:5px 8px;background:rgba(237,137,54,.1);border-radius:6px;display:inline-block"><i class="fas fa-reply"></i> ${U.esc(msg.replyLabel)}</div>`;
         h+=`<div style="line-height:1.6;font-size:.92rem">${U.esc(msg.message)}</div><div style="display:flex;gap:8px;margin-top:8px">`;
         if(type==='member_to_admin' && hasPrivilege)h+=`<button class="reply-btn" data-p="${msg.id}" data-t="${type}" style="background:none;border:none;color:#4299e1;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600;font-size:.82rem"><i class="fas fa-reply"></i> پاسخ</button>`;
         else if(type==='member_to_member' && !msg.parentId && msg.senderPhone !== cp)h+=`<button class="reply-btn" data-p="${msg.id}" data-t="${type}" style="background:none;border:none;color:#4299e1;cursor:pointer;display:flex;align-items:center;gap:4px;font-weight:600;font-size:.82rem"><i class="fas fa-reply"></i> پاسخ</button>`;
@@ -1007,7 +996,6 @@ showReply(pid,type){
     if(container.style.display==='block'){container.style.display='none';container.innerHTML='';return;}
     container.innerHTML=`<div style="background:rgba(247,250,252,.8);padding:12px;border-radius:10px;margin-top:8px"><textarea id="replyTxt_${pid}" placeholder="متن پاسخ..." style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;min-height:60px;resize:vertical"></textarea><div style="display:flex;gap:8px;margin-top:8px"><button class="btn-small success-btn" id="sendReplyBtn_${pid}"><i class="fas fa-paper-plane"></i> ارسال پاسخ</button><button class="btn-small danger-btn" id="cancelReplyBtn_${pid}"><i class="fas fa-times"></i> انصراف</button></div></div>`;
     container.style.display='block';
-    const self=this;
     $(`#sendReplyBtn_${pid}`).onclick=function(){const txt=$(`#replyTxt_${pid}`).value.trim();if(!txt){alert('متن پاسخ را وارد کنید');return;}window.app.sendReply(pid,type,txt);};
     $(`#cancelReplyBtn_${pid}`).onclick=function(){container.style.display='none';container.innerHTML='';};
 }
@@ -1326,7 +1314,7 @@ uploadBulk(file){
         if(e){showSyncStatus('❌ '+e, 'error');alert('❌ '+e);}
         else{
             showSyncStatus('✅ آپلود کامل شد', 'success');
-            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n🔄 به‌روزرسانی شده: ${up}\n➕ اعضای جدید: ${ad}\n💰 تراکنش‌های ذخیره شده: ${tx}\n\n✅ اعضای تکراری حذف شدند\n✅ همه ستون‌های اکسل شناسایی شدند\n✅ وضعیت پیامکی استخراج شد\n✅ داده‌ها در Google Sheets ذخیره شدند\n\n⚠️ مهم: برای دیدن داده‌ها در Google Sheets، لطفاً ۵ ثانیه صبر کنید و سپس صفحه را رفرش کنید.`);
+            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n🔄 به‌روزرسانی شده: ${up}\n➕ اعضای جدید: ${ad}\n💰 تراکنش‌های ذخیره شده: ${tx}\n\n✅ اعضای تکراری حذف شدند\n✅ همه ستون‌های اکسل شناسایی شدند\n✅ وضعیت پیامکی استخراج شد\n✅ داده‌ها در Google Sheets ذخیره شدند\n\n⏸️ autoSync برای ۶۰ ثانیه غیرفعال است\n⏳ لطفاً ۱۰ ثانیه صبر کنید و سپس Google Sheets را چک کنید`);
             this.ui.switchTab('members');
         }
     });
