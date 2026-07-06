@@ -306,6 +306,17 @@ let isSyncing = false;
 let initialLoadDone = false;
 
 async function autoSync() {
+    async function autoSync() {
+    // ✅ غیرفعال کردن autoSync برای ۱۰ ثانیه بعد از آپلود
+    if (window.lastUploadTime && (Date.now() - window.lastUploadTime < 10000)) {
+        console.log('⏸️ autoSync موقتاً غیرفعال است');
+        return;
+    }
+    
+    try {
+        // ... بقیه کد
+    }
+}
     try {
         if (isSyncing) return;
         const now = Date.now();
@@ -634,7 +645,8 @@ uploadBulk(file, cb) {
             const finalTransactions = removeDuplicateTransactions(transactions);
             
             console.log('📊 نتایج آپلود: ' + finalMembers.length + ' عضو، ' + users.length + ' کاربر، ' + finalTransactions.length + ' تراکنش');
-            
+            window.lastUploadTime = Date.now();
+console.log('⏱️ زمان آپلود ثبت شد');
             const dataToSave = {
                 members: finalMembers, 
                 users: users,
@@ -649,18 +661,44 @@ uploadBulk(file, cb) {
                 coinHistory: window.app.allCoinHistory || []
             };
             
-            saveDataToSheets(dataToSave).then(function(success) {
-                if (success) {
-                    self.members = finalMembers; 
-                    self.users = users;
-                    window.app.allTransactions = finalTransactions;
-                    self.sv('members'); 
-                    self.sv('users');
-                    cb(null, rows.length, updatedCount, newCount, transactionCount);
-                } else { cb('خطا در ذخیره در Google Sheets', 0, 0, 0, 0); }
+           async function saveDataToSheets(data) {
+    return new Promise(function(resolve) {
+        try {
+            showSyncStatus('در حال ذخیره در Google Sheets...', 'syncing');
+            if (data.members) data.members = removeDuplicateMembers(data.members);
+            if (data.transactions) data.transactions = removeDuplicateTransactions(data.transactions);
+            
+            console.log('📤 ارسال داده‌ها به Google Sheets...');
+            console.log('📊 تعداد اعضا:', data.members ? data.members.length : 0);
+            console.log('📊 تعداد کاربران:', data.users ? data.users.length : 0);
+            console.log('📊 تعداد تراکنش‌ها:', data.transactions ? data.transactions.length : 0);
+            
+            const formData = new FormData();
+            formData.append('action', 'save');
+            formData.append('data', JSON.stringify(data));
+            
+            fetch(CONFIG.APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            })
+            .then(function() {
+                console.log('✅ درخواست ذخیره ارسال شد');
+                showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
+                resolve(true);
+            })
+            .catch(function(error) {
+                console.error('❌ خطا در ذخیره:', error);
+                showSyncStatus('❌ خطا در اتصال', 'error');
+                resolve(false);
             });
-        } catch (e) { console.error(e); cb('خطا در پردازش: ' + e.message, 0, 0, 0, 0); }
-    };
+        } catch (error) {
+            console.error('خطا در ذخیره در Google Sheets:', error);
+            showSyncStatus('❌ خطا در اتصال', 'error');
+            resolve(false);
+        }
+    });
+}
     reader.onload = function(e) {
         if (ext === 'csv') {
             const arr = new Uint8Array(e.target.result);
