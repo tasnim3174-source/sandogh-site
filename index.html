@@ -172,10 +172,10 @@ esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div')
 strength(p){let s=0;if(p.length>=6)s++;if(p.length>=8)s++;if(/[a-z]/.test(p))s++;if(/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^a-zA-Z\d]/.test(p))s++;return s<=2?'ضعیف':s<=4?'متوسط':'قوی';},
 findCol(names,headers){for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers)if(h.toLowerCase().replace(/[_\s\-]/g,'')===nn)return h;}return null;},
 getMembershipDuration(openDate){if(!openDate)return'---';return openDate;},
-parseJSON(s){try{return typeof s==='string'?JSON.parse(s):s}catch(e){return s}}
+parseJSON(s){try{return typeof s==='string'?JSON.parse(s):s}catch(e){return s}},
+parseBool(v){if(v===null||v===undefined||v==='')return false;const s=String(v).trim().toLowerCase();return['true','1','yes','فعال','بله','✓','✅','on'].includes(s);}
 };
 
-// ✅ تابع حذف اعضای تکراری بر اساس شماره حساب (نگه داشتن بزرگترین ID)
 function removeDuplicateMembers(members) {
     if (!members || !members.length) return [];
     const seen = new Map();
@@ -186,7 +186,6 @@ function removeDuplicateMembers(members) {
         if (!existing) {
             seen.set(key, m);
         } else {
-            // اگر ID بزرگتر است، جایگزین شود
             const existingId = parseInt(existing.id) || 0;
             const newId = parseInt(m.id) || 0;
             if (newId > existingId) {
@@ -197,14 +196,13 @@ function removeDuplicateMembers(members) {
     return Array.from(seen.values());
 }
 
-// ✅ تابع حذف تراکنش‌های تکراری بر اساس ID
 function removeDuplicateTransactions(transactions) {
     if (!transactions || !transactions.length) return [];
     const seen = new Map();
     transactions.forEach(function(t) {
         const key = String(t.transactionId || '').trim();
         if (!key) return;
-        seen.set(key, t); // آخرین تراکنش با این ID نگه داشته می‌شود
+        seen.set(key, t);
     });
     return Array.from(seen.values());
 }
@@ -256,15 +254,8 @@ async function saveDataToSheets(data) {
     return new Promise(function(resolve) {
         try {
             showSyncStatus('در حال ذخیره در Google Sheets...', 'syncing');
-            
-            // ✅ حذف تکراری‌ها قبل از ذخیره
-            if (data.members) {
-                data.members = removeDuplicateMembers(data.members);
-            }
-            if (data.transactions) {
-                data.transactions = removeDuplicateTransactions(data.transactions);
-            }
-            
+            if (data.members) data.members = removeDuplicateMembers(data.members);
+            if (data.transactions) data.transactions = removeDuplicateTransactions(data.transactions);
             let iframe = document.getElementById('hidden_iframe');
             if (!iframe) {
                 iframe = document.createElement('iframe');
@@ -312,18 +303,16 @@ async function autoSync() {
         isSyncing = true;
         const data = await loadDataFromSheets();
         if (data) {
-            // ✅ حذف تکراری‌ها هنگام بارگذاری
             let membersData = data.members || [];
             membersData = removeDuplicateMembers(membersData);
-            
             window.app.dm.members = membersData.map(function(m) {
                 return Object.assign({}, m, {
                     id: parseInt(m.id) || m.id,
                     balance: U.parseNum(m.balance),
                     savings: U.parseNum(m.savings),
-                    savingsStatus: U.parseNum(m.savings),
+                    savingsStatus: U.parseNum(m.savingsStatus),
                     loan: U.parseNum(m.loan),
-                    loanBalance: U.parseNum(m.loan),
+                    loanBalance: U.parseNum(m.loanBalance),
                     coins: parseInt(m.coins) || 0,
                     usedCoins: parseInt(m.usedCoins) || 0,
                     coinHistory: [],
@@ -346,10 +335,7 @@ async function autoSync() {
             window.app.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             window.app.dm.shopItems = data.shopitems || [];
             window.app.dm.logo = (data.settings && data.settings.find(function(s) { return s.key === 'logo'; }) || {}).value || '';
-            
-            // ✅ حذف تراکنش‌های تکراری
             window.app.allTransactions = removeDuplicateTransactions(data.transactions || []);
-            
             window.app.allPolls = (data.polls || []).map(function(p) {
                 return Object.assign({}, p, {
                     options: U.parseJSON(p.options) || [],
@@ -419,6 +405,7 @@ spendCoin(mid,amount,reason,desc){
 }
 applyCoinRules(m){if(!m)return;const t=new Date(),ts=t.toDateString(),mk=`${t.getFullYear()}-${t.getMonth()}`;let ch=false;const self=this;const add=function(a,r,d){self.addCoin(m.id,a,r,d);ch=true;};if(m.coinDailyLogin!==ts){add(2,'ورود روزانه','ورود به برنامه');m.coinDailyLogin=ts;}if(m.birthDate&&!m.birthdaySetCoinsClaimed){add(2,'ثبت تاریخ تولد','ثبت تاریخ تولد');m.birthdaySetCoinsClaimed=true;}if(m.birthDate){const p=m.birthDate.split('/');if(p.length===3){const bm=parseInt(p[1]),bd=parseInt(p[2]);if(t.getMonth()+1===bm&&t.getDate()===bd&&m.lastBirthdayCoinYear!==t.getFullYear()){add(5,'تولد','تولد مبارک!');m.lastBirthdayCoinYear=t.getFullYear();}}}if(m.coinDashboardVisit!==ts){add(2,'بازدید صورتحساب','مشاهده صورتحساب');m.coinDashboardVisit=ts;}if(m.coinMessageToAdmin!==ts){add(1,'ارسال پیام به مدیر','ارسال پیام به مدیر');m.coinMessageToAdmin=ts;}if(m.coinPollParticipation!==ts){add(3,'شرکت در نظرسنجی','پاسخ به نظرسنجی');m.coinPollParticipation=ts;}if(m.coinMonthly!==mk){let e=false;if((m.loanBalance||0)<=0&&(m.overdueInstallments||0)<=0){add(1,'بدون بدهی','بدون بدهی و اقساط معوقه');e=true;}if((m.balance||0)>=0&&(m.savingsStatus||0)>=0){add(1,'بدون کسری','بدون کسری موجودی');e=true;}if(e)m.coinMonthly=mk;}if(m.openDate){const p=m.openDate.split('/');if(p.length===3){const om=parseInt(p[1]),od=parseInt(p[2]);if(t.getMonth()+1===om&&t.getDate()===od&&m.lastOpeningCoinYear!==t.getFullYear()){add(5,'سالروز افتتاح حساب',`سالروز ${t.getFullYear()}`);m.lastOpeningCoinYear=t.getFullYear();}}}if(ch)this.sv('members');return ch;}
 
+// ✅ تابع آپلود فایل اکسل با پشتیبانی از همه ستون‌های Access
 uploadBulk(file, cb) {
     if (typeof XLSX === 'undefined') { cb('کتابخانه XLSX بارگذاری نشد', 0, 0, 0, 0); return; }
     const ext = file.name.split('.').pop().toLowerCase();
@@ -435,81 +422,213 @@ uploadBulk(file, cb) {
             const rows = XLSX.utils.sheet_to_json(sh, { defval: '', raw: false });
             if (!rows.length) { cb('فایل خالی است', 0, 0, 0, 0); return; }
             const headers = Object.keys(rows[0]);
+            
+            // ✅ نقشه ستون‌ها برای اطلاعات عضو
             const colMap = {
-                firstName: U.findCol(['نام', 'firstname', 'first_name'], headers),
-                lastName: U.findCol(['نام خانوادگی', 'lastname', 'last_name', 'فامیلی'], headers),
+                // اطلاعات هویتی
+                id: U.findCol(['ID', 'id'], headers),
                 accountNumber: U.findCol(['شماره حساب', 'accountnumber', 'account_number', 'کدعضو', 'شماره', 'کد'], headers),
-                openDate: U.findCol(['تاریخ افتتاح', 'opendate', 'open_date'], headers),
-                birthDate: U.findCol(['تاریخ تولد', 'birthdate', 'birth_date'], headers),
-                phone1: U.findCol(['تلفن', 'تلفن1', 'phone1', 'phone', 'موبایل', 'mobile'], headers),
-                phone2: U.findCol(['تلفن2', 'phone2', 'تلفن 2'], headers),
+                name: U.findCol(['name', 'نام', 'firstname', 'first_name', 'نام عضو'], headers),
+                phone: U.findCol(['phone', 'تلفن', 'تلفن1', 'phone1', 'موبایل', 'mobile'], headers),
+                phone2: U.findCol(['phone2', 'تلفن2', 'تلفن 2'], headers),
+                
+                // تاریخ‌ها
+                dateOzviyat: U.findCol(['date ozviyat', 'dateozviyat', 'تاریخ عضویت'], headers),
+                dateSabt: U.findCol(['date sabt', 'datesabt', 'تاریخ ثبت', 'تاریخ درخواست وام'], headers),
+                datMiladi: U.findCol(['dat miladi', 'datmiladi', 'تاریخ میلادی', 'تاریخ تولد', 'birthdate', 'birth_date'], headers),
+                
+                // اطلاعات مالی
                 balance: U.findCol(['موجودی', 'balance', 'مانده'], headers),
-                savings: U.findCol(['پس انداز', 'savings', 'پس‌انداز'], headers),
-                loan: U.findCol(['وام', 'loan', 'تسهیلات'], headers)
+                mojodiTaInLahzeh: U.findCol(['mojodi ta in lahzeh', 'mojoditainlahzeh', 'موجودی تا این لحظه'], headers),
+                savingsStatus: U.findCol(['وضعیت پس انداز', 'وضعیت پس‌انداز', 'savingsstatus', 'savings_status'], headers),
+                
+                // اطلاعات وام
+                mablaghVam: U.findCol(['mablagh vam', 'mablaghvam', 'مانده وام', 'مبلغ وام', 'loan'], headers),
+                dateVam: U.findCol(['date vam', 'datevam', 'تاریخ وام', 'تاریخ دریافت وام'], headers),
+                tedadAghsat: U.findCol(['tedad aghsat', 'tedadaghsat', 'تعداد اقساط'], headers),
+                mablaghHarGhest: U.findCol(['mablagh har ghest', 'mablaghargest', 'مبلغ هر قسط', 'مبلغ اقساط'], headers),
+                akharinGhest: U.findCol(['akharin ghest', 'akharinghest', 'آخرین قسط', 'تاریخ آخرین قسط'], headers),
+                mablaghKarmozd: U.findCol(['mablagh karmozd', 'mablaghkarmozd', 'مبلغ کارمزد', 'کارمزد'], headers),
+                paidInstallments: U.findCol(['تعداد قسط پرداخت شده', 'تعدادقسطپرداختشده', 'paidinstallments'], headers),
+                remainingInstallments: U.findCol(['تعداد قسط مانده', 'تعدادقسطمانده', 'remaininginstallments'], headers),
+                overdueInstallments: U.findCol(['تعداد قسط معوقه', 'تعدادقسطمعوقه', 'overdueinstallments'], headers),
+                
+                // مقرری
+                monthlySalary: U.findCol(['مقرری ماهانه', 'مقرری_ماهانه', 'monthlysalary'], headers),
+                monthlySalaryApproved: U.findCol(['مقرری ماهانه مصوب شده هرنفر', 'مقرری ماهانه مصوب', 'monthlysalaryapproved'], headers),
+                
+                // اطلاعات تراکنش
+                fishNumber: U.findCol(['شماره فیش', 'شماره_فیش', 'fishnumber'], headers),
+                transactionDate: U.findCol(['تاریخ تراکنش', 'تاریخ_تراکنش', 'transactiondate'], headers),
+                amount: U.findCol(['مبلغ تراکنش', 'مبلغ_تراکنش', 'amount'], headers),
+                transactionName: U.findCol(['نام تراکنش کننده', 'نام_تراکنش_کننده', 'transactionname'], headers),
+                installmentAmountTx: U.findCol(['مبلغ قسط واریزی', 'مبلغ_قسط_واریزی'], headers),
+                installmentDateTx: U.findCol(['تاریخ قسط واریزی', 'تاریخ_قسط_واریزی'], headers),
+                total: U.findCol(['جمع واریزی', 'جمع_واریزی', 'total'], headers),
+                description: U.findCol(['توضیحات', 'توضیحات', 'description'], headers),
+                
+                // وضعیت پیامکی
+                kodOmomi: U.findCol(['kod omomi', 'kodomomi', 'پیامک واریز'], headers),
+                kodSarparast: U.findCol(['kod sarparast', 'kodsarparast'], headers),
+                kodMoavaghe: U.findCol(['kod moavaghe', 'kodmoavaghe'], headers),
+                kodOverdue: U.findCol(['kod', 'پیامک اخطار'], headers),
+                kodMosabegheh: U.findCol(['kod mosabegheh', 'kodmosabegheh'], headers),
+                kodKhabarnameh: U.findCol(['kod khabarnameh', 'kodkhabarnameh'], headers),
+                kodTavalod: U.findCol(['kod tavalod', 'kodtavalod'], headers),
+                kodMonasebat: U.findCol(['kod monasebat', 'kodmonasebat'], headers),
+                
+                // وضعیت فعال
+                active: U.findCol(['active'], headers)
             };
+            
             if (!colMap.accountNumber) { cb('ستون "شماره حساب" در فایل یافت نشد.', 0, 0, 0, 0); return; }
             
-            const members = [];
+            const membersMap = new Map(); // برای نگهداری اعضا بر اساس شماره حساب
+            const transactions = []; // همه تراکنش‌ها
             const users = [];
             let userId = 1;
             users.push({ id: userId++, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
             
-            // ✅ پردازش هوشمند: بررسی تکراری بودن بر اساس شماره حساب
             let newCount = 0;
             let updatedCount = 0;
+            let transactionCount = 0;
             
-            rows.forEach(function(row) {
+            rows.forEach(function(row, index) {
                 const accNum = String(row[colMap.accountNumber] || '').trim();
                 if (!accNum) return;
                 
-                // ✅ بررسی آیا این شماره حساب قبلاً در فایل اکسل وجود دارد
-                const existingInFile = members.find(function(m) { 
-                    return String(m.accountNumber) === accNum; 
-                });
+                // ✅ استخراج اطلاعات تراکنش
+                const transactionId = colMap.id ? String(row[colMap.id] || '').trim() : String(index + 1);
+                const transaction = {
+                    transactionId: transactionId,
+                    memberId: null, // بعداً پر می‌شود
+                    accountNumber: accNum,
+                    fishNumber: colMap.fishNumber ? String(row[colMap.fishNumber] || '').trim() : '',
+                    transactionDate: colMap.transactionDate ? String(row[colMap.transactionDate] || '').trim() : '',
+                    amount: colMap.amount ? U.parseNum(row[colMap.amount]) : 0,
+                    transactionName: colMap.transactionName ? String(row[colMap.transactionName] || '').trim() : '',
+                    installmentAmount: colMap.installmentAmountTx ? U.parseNum(row[colMap.installmentAmountTx]) : 0,
+                    installmentDate: colMap.installmentDateTx ? String(row[colMap.installmentDateTx] || '').trim() : '',
+                    total: colMap.total ? U.parseNum(row[colMap.total]) : 0,
+                    balance: colMap.balance ? U.parseNum(row[colMap.balance]) : 0,
+                    monthlySalary: colMap.monthlySalary ? U.parseNum(row[colMap.monthlySalary]) : 0,
+                    monthlySalaryApproved: colMap.monthlySalaryApproved ? U.parseNum(row[colMap.monthlySalaryApproved]) : 0,
+                    currentMonthBalance: colMap.mojodiTaInLahzeh ? U.parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
+                    savingsStatus: colMap.savingsStatus ? U.parseNum(row[colMap.savingsStatus]) : 0,
+                    loanRequestDate: colMap.dateSabt ? String(row[colMap.dateSabt] || '').trim() : '',
+                    loanReceiveDate: colMap.dateVam ? String(row[colMap.dateVam] || '').trim() : '',
+                    lastInstallmentDate: colMap.akharinGhest ? String(row[colMap.akharinGhest] || '').trim() : '',
+                    feeAmount: colMap.mablaghKarmozd ? U.parseNum(row[colMap.mablaghKarmozd]) : 0,
+                    totalInstallments: colMap.tedadAghsat ? U.parseNum(row[colMap.tedadAghsat]) : 0,
+                    paidInstallments: colMap.paidInstallments ? U.parseNum(row[colMap.paidInstallments]) : 0,
+                    remainingInstallments: colMap.remainingInstallments ? U.parseNum(row[colMap.remainingInstallments]) : 0,
+                    overdueInstallments: colMap.overdueInstallments ? U.parseNum(row[colMap.overdueInstallments]) : 0,
+                    loanBalance: colMap.mablaghVam ? U.parseNum(row[colMap.mablaghVam]) : 0,
+                    description: colMap.description ? String(row[colMap.description] || '').trim() : ''
+                };
                 
-                if (existingInFile) {
-                    // ✅ اگر در فایل تکراری است، اطلاعات را به‌روزرسانی کن
-                    existingInFile.firstName = colMap.firstName ? String(row[colMap.firstName] || '').trim() : existingInFile.firstName;
-                    existingInFile.lastName = colMap.lastName ? String(row[colMap.lastName] || '').trim() : existingInFile.lastName;
-                    existingInFile.openDate = colMap.openDate ? String(row[colMap.openDate] || '').trim() : existingInFile.openDate;
-                    existingInFile.birthDate = colMap.birthDate ? String(row[colMap.birthDate] || '').trim() : existingInFile.birthDate;
-                    existingInFile.phone1 = colMap.phone1 ? String(row[colMap.phone1] || '').trim() : existingInFile.phone1;
-                    existingInFile.phone2 = colMap.phone2 ? String(row[colMap.phone2] || '').trim() : existingInFile.phone2;
-                    existingInFile.balance = colMap.balance ? U.parseNum(row[colMap.balance]) : existingInFile.balance;
-                    existingInFile.savings = colMap.savings ? U.parseNum(row[colMap.savings]) : existingInFile.savings;
-                    existingInFile.savingsStatus = colMap.savings ? U.parseNum(row[colMap.savings]) : existingInFile.savingsStatus;
-                    existingInFile.loan = colMap.loan ? U.parseNum(row[colMap.loan]) : existingInFile.loan;
-                    existingInFile.loanBalance = colMap.loan ? U.parseNum(row[colMap.loan]) : existingInFile.loanBalance;
-                    existingInFile.fullName = (existingInFile.firstName || '') + ' ' + (existingInFile.lastName || '');
+                // ✅ استخراج وضعیت پیامکی
+                const smsStatus = {
+                    general: U.parseBool(colMap.kodOmomi ? row[colMap.kodOmomi] : ''),
+                    supervisors: U.parseBool(colMap.kodSarparast ? row[colMap.kodSarparast] : ''),
+                    council: U.parseBool(colMap.kodMoavaghe ? row[colMap.kodMoavaghe] : ''),
+                    overdue: U.parseBool(colMap.kodOverdue ? row[colMap.kodOverdue] : ''),
+                    poll: U.parseBool(colMap.kodMosabegheh ? row[colMap.kodMosabegheh] : ''),
+                    newsletter: U.parseBool(colMap.kodKhabarnameh ? row[colMap.kodKhabarnameh] : ''),
+                    birthday: U.parseBool(colMap.kodTavalod ? row[colMap.kodTavalod] : ''),
+                    occasions: U.parseBool(colMap.kodMonasebat ? row[colMap.kodMonasebat] : '')
+                };
+                
+                // ✅ بررسی آیا این عضو قبلاً اضافه شده
+                const existingMember = membersMap.get(accNum);
+                
+                if (existingMember) {
+                    // ✅ اگر عضو قبلاً وجود دارد، فقط اطلاعات را به‌روزرسانی کن
+                    // (اطلاعات آخرین تراکنش مهم‌تر است)
+                    existingMember.balance = transaction.balance;
+                    existingMember.savingsStatus = transaction.savingsStatus;
+                    existingMember.loanBalance = transaction.loanBalance;
+                    existingMember.loan = transaction.loanBalance;
+                    existingMember.monthlySalary = transaction.monthlySalary;
+                    existingMember.monthlySalaryApproved = transaction.monthlySalaryApproved;
+                    existingMember.currentMonthBalance = transaction.currentMonthBalance;
+                    existingMember.installmentAmount = transaction.installmentAmount;
+                    existingMember.feeAmount = transaction.feeAmount;
+                    existingMember.totalInstallments = transaction.totalInstallments;
+                    existingMember.paidInstallments = transaction.paidInstallments;
+                    existingMember.remainingInstallments = transaction.remainingInstallments;
+                    existingMember.overdueInstallments = transaction.overdueInstallments;
+                    existingMember.loanRequestDate = transaction.loanRequestDate;
+                    existingMember.loanReceiveDate = transaction.loanReceiveDate;
+                    existingMember.lastInstallmentDate = transaction.lastInstallmentDate;
+                    existingMember.smsStatus = smsStatus;
+                    
+                    // اگر نام در این ردیف موجود است، به‌روزرسانی شود
+                    if (colMap.name && row[colMap.name]) {
+                        const name = String(row[colMap.name] || '').trim();
+                        if (name) {
+                            existingMember.firstName = name;
+                            existingMember.fullName = name;
+                        }
+                    }
+                    if (colMap.phone && row[colMap.phone]) {
+                        existingMember.phone1 = String(row[colMap.phone] || '').trim();
+                    }
+                    if (colMap.phone2 && row[colMap.phone2]) {
+                        existingMember.phone2 = String(row[colMap.phone2] || '').trim();
+                    }
+                    
+                    transaction.memberId = existingMember.id;
                     updatedCount++;
                 } else {
-                    // ✅ اگر جدید است، اضافه کن
-                    const memberId = members.length + 1;
+                    // ✅ اگر عضو جدید است، اضافه کن
+                    const memberId = membersMap.size + 1;
+                    const name = colMap.name ? String(row[colMap.name] || '').trim() : '';
                     const member = {
                         id: memberId,
-                        firstName: colMap.firstName ? String(row[colMap.firstName] || '').trim() : '',
-                        lastName: colMap.lastName ? String(row[colMap.lastName] || '').trim() : '',
+                        firstName: name,
+                        lastName: '',
                         accountNumber: accNum,
-                        openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',
-                        birthDate: colMap.birthDate ? String(row[colMap.birthDate] || '').trim() : '',
-                        phone1: colMap.phone1 ? String(row[colMap.phone1] || '').trim() : '',
+                        openDate: colMap.dateOzviyat ? String(row[colMap.dateOzviyat] || '').trim() : '',
+                        birthDate: colMap.datMiladi ? String(row[colMap.datMiladi] || '').trim() : '',
+                        phone1: colMap.phone ? String(row[colMap.phone] || '').trim() : '',
                         phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
-                        balance: colMap.balance ? U.parseNum(row[colMap.balance]) : 0,
-                        savings: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
-                        savingsStatus: colMap.savings ? U.parseNum(row[colMap.savings]) : 0,
-                        loan: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
-                        loanBalance: colMap.loan ? U.parseNum(row[colMap.loan]) : 0,
-                        coins: 0, usedCoins: 0, coinHistory: [], loginCount: 0, smsStatus: {}, transactions: []
+                        balance: transaction.balance,
+                        savings: 0,
+                        savingsStatus: transaction.savingsStatus,
+                        loan: transaction.loanBalance,
+                        loanBalance: transaction.loanBalance,
+                        monthlySalary: transaction.monthlySalary,
+                        monthlySalaryApproved: transaction.monthlySalaryApproved,
+                        currentMonthBalance: transaction.currentMonthBalance,
+                        installmentAmount: transaction.installmentAmount,
+                        feeAmount: transaction.feeAmount,
+                        totalInstallments: transaction.totalInstallments,
+                        paidInstallments: transaction.paidInstallments,
+                        remainingInstallments: transaction.remainingInstallments,
+                        overdueInstallments: transaction.overdueInstallments,
+                        loanRequestDate: transaction.loanRequestDate,
+                        loanReceiveDate: transaction.loanReceiveDate,
+                        lastInstallmentDate: transaction.lastInstallmentDate,
+                        coins: 0, usedCoins: 0, coinHistory: [], loginCount: 0,
+                        smsStatus: smsStatus,
+                        transactions: [],
+                        active: U.parseBool(colMap.active ? row[colMap.active] : '')
                     };
-                    member.fullName = (member.firstName || '') + ' ' + (member.lastName || '');
-                    members.push(member);
+                    member.fullName = member.firstName;
+                    membersMap.set(accNum, member);
+                    transaction.memberId = memberId;
                     users.push({ id: userId++, username: accNum, password: accNum, role: 'member', memberId: memberId });
                     newCount++;
                 }
+                
+                transactions.push(transaction);
+                transactionCount++;
             });
             
-            // ✅ حذف تکراری‌ها قبل از ذخیره
+            const members = Array.from(membersMap.values());
             const finalMembers = removeDuplicateMembers(members);
+            const finalTransactions = removeDuplicateTransactions(transactions);
             
             const dataToSave = {
                 members: finalMembers, users: users,
@@ -517,16 +636,18 @@ uploadBulk(file, cb) {
                 support: [self.support || { phone: '', accountNumber: '', address: '' }],
                 shopItems: self.shopItems || [],
                 settings: [{ key: 'logo', value: self.logo || '' }],
-                transactions: window.app.allTransactions || [],
+                transactions: finalTransactions,
                 polls: window.app.allPolls || [],
                 pollVotes: window.app.allPollVotes || [],
                 coinHistory: window.app.allCoinHistory || []
             };
+            
             saveDataToSheets(dataToSave).then(function(success) {
                 if (success) {
                     self.members = finalMembers; self.users = users;
+                    window.app.allTransactions = finalTransactions;
                     self.sv('members'); self.sv('users');
-                    cb(null, rows.length, updatedCount, newCount, 0);
+                    cb(null, rows.length, updatedCount, newCount, transactionCount);
                 } else { cb('خطا در ذخیره در Google Sheets', 0, 0, 0, 0); }
             });
         } catch (e) { console.error(e); cb('خطا در پردازش: ' + e.message, 0, 0, 0, 0); }
@@ -680,14 +801,10 @@ renderDashboardForMember(mid, c){
     if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">اطلاعات یافت نشد</p></div>';return;}
     this.app.dm.applyCoinRules(m);
     const allTransactions = window.app.allTransactions || [];
-    // ✅ فیلتر بر اساس ID یا شماره حساب
     const txns = allTransactions.filter(function(t) { 
         return String(t.memberId) === String(mid) || String(t.accountNumber) === String(m.accountNumber); 
     }).sort(function(a,b) { return (parseInt(b.transactionId)||0) - (parseInt(a.transactionId)||0); });
-    
-    // ✅ حذف تراکنش‌های تکراری بر اساس ID
     const uniqueTxns = removeDuplicateTransactions(txns);
-    
     const allH = uniqueTxns.length > 0 ? Object.keys(uniqueTxns[0]) : ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const memberHeaders = ['transactionId','accountNumber','transactionDate','amount','monthlySalary','fishNumber','transactionName','installmentAmount','installmentDate','balance','total','paidInstallments','remainingInstallments','savingsStatus','description'];
     const isAdmin = this.app.auth.isAdmin();
@@ -986,7 +1103,7 @@ h+=`<div style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap">`;
 h+=`<input type="file" id="bf" accept=".xlsx,.xls,.csv" style="display:none">`;
 h+=`<button id="beb" class="btn-small excel-btn"><i class="fas fa-file-excel"></i> آپلود فایل اکسل</button>`;
 h+=`</div>`;
-h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(33,115,70,.1),rgba(26,92,56,.05));border-right-color:#217346"><i class="fas fa-info-circle" style="color:#217346"></i> <strong>راهنما:</strong> با آپلود فایل اکسل، اطلاعات اعضا به صورت خودکار در Google Sheets ذخیره می‌شود. اعضای تکراری به‌روزرسانی می‌شوند.</div>`;
+h+=`<div class="info-box" style="background:linear-gradient(135deg,rgba(33,115,70,.1),rgba(26,92,56,.05));border-right-color:#217346"><i class="fas fa-info-circle" style="color:#217346"></i> <strong>راهنما:</strong> با آپلود فایل اکسل، اطلاعات اعضا و تراکنش‌ها به صورت خودکار در Google Sheets ذخیره می‌شود. اعضای تکراری به‌روزرسانی می‌شوند.</div>`;
 h+=`<div class="table-wrapper"><table id="mt"><thead><tr><th>نام</th><th>نام خانوادگی</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تلفن۱</th><th>تلفن۲</th><th>سکه</th></tr></thead><tbody>${this.app.dm.members.map((m)=>{const ui=this.app.dm.gUserByMid(m.id);return`<tr><td>${U.esc(m.firstName||'---')}</td><td>${U.esc(m.lastName||'---')}</td><td>${U.esc(ui?ui.username||'':'---')}</td><td class="password-dots" data-mid="${m.id}">••••••</td><td>${U.esc(m.accountNumber||'---')}</td><td>${U.esc(m.phone1||'---')}</td><td>${U.esc(m.phone2||'---')}</td><td><span style="background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;padding:4px 12px;border-radius:16px;font-weight:700">${m.coins||0}</span></td></tr>`;}).join('')}</tbody></table></div>`;
 c.innerHTML=h;
 c.querySelectorAll('.password-dots').forEach(function(el){el.onclick=function(){const u=window.app.dm.gUserByMid(parseInt(this.dataset.mid));if(!u)return;if(this.textContent==='••••••'){this.textContent=u.password||'---';this.style.background='#fff3cd';}else{this.textContent='••••••';this.style.background='#edf2f7';}};});
@@ -1062,14 +1179,12 @@ async init(){
         console.log('🔄 بارگذاری اولیه از Google Sheets...');
         const data = await loadDataFromSheets();
         if (data) {
-            // ✅ حذف تکراری‌ها هنگام بارگذاری
             let membersData = data.members || [];
             membersData = removeDuplicateMembers(membersData);
-            
             this.dm.members = membersData.map(function(m) {
                 return Object.assign({}, m, {
                     id: parseInt(m.id) || m.id, balance: U.parseNum(m.balance),
-                    savingsStatus: U.parseNum(m.savings), loanBalance: U.parseNum(m.loan),
+                    savingsStatus: U.parseNum(m.savingsStatus), loanBalance: U.parseNum(m.loanBalance),
                     coins: parseInt(m.coins) || 0, usedCoins: parseInt(m.usedCoins) || 0,
                     coinHistory: [], loginCount: parseInt(m.loginCount) || 0,
                     smsStatus: m.smsStatus || {}, transactions: []
@@ -1088,10 +1203,7 @@ async init(){
             this.dm.announcements = data.announcements || [];
             this.dm.support = (data.support && data.support[0]) || {phone:'',accountNumber:'',address:''};
             this.dm.shopItems = data.shopitems || [];
-            
-            // ✅ حذف تراکنش‌های تکراری
             this.allTransactions = removeDuplicateTransactions(data.transactions || []);
-            
             this.allPolls = (data.polls || []).map(function(p) {
                 return Object.assign({}, p, {
                     options: U.parseJSON(p.options) || [],
@@ -1101,8 +1213,6 @@ async init(){
             this.allPollVotes = data.pollvotes || [];
             this.allCoinHistory = data.coinhistory || [];
             ['members','users','messages','announcements','support','shopItems'].forEach(function(k) { window.app.dm.sv(k); });
-            
-            // ✅ تضمین وجود کاربر admin
             const adminExists = this.dm.users.find(function(u) { return String(u.username) === 'admin'; });
             if (!adminExists) {
                 console.log('⚠️ کاربر admin یافت نشد، در حال ساخت...');
@@ -1122,7 +1232,6 @@ async init(){
                 this.dm.sv('users');
                 console.log('✅ کاربر admin تأیید شد');
             }
-            
             console.log(`✅ ${this.dm.members.length} عضو از Google Sheets بارگذاری شد (بدون تکرار)`);
             console.log(`✅ ${this.allTransactions.length} تراکنش از Google Sheets بارگذاری شد (بدون تکرار)`);
             console.log(`✅ ${this.allPolls.length} نظرسنجی از Google Sheets بارگذاری شد`);
@@ -1263,11 +1372,11 @@ votePoll(pollId, optionIndex){
 }
 uploadBulk(file){
     showSyncStatus('در حال پردازش فایل اکسل...', 'syncing');
-    this.dm.uploadBulk(file,(e,tr,up,ad,nm)=>{
+    this.dm.uploadBulk(file,(e,tr,up,ad,tx)=>{
         if(e){showSyncStatus('❌ '+e, 'error');alert('❌ '+e);}
         else{
             showSyncStatus('✅ آپلود کامل شد', 'success');
-            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n🔄 به‌روزرسانی شده: ${up}\n➕ اعضای جدید: ${ad}\n\n✅ اعضای تکراری حذف شدند\n✅ داده‌ها در Google Sheets ذخیره شدند\n🔄 همه اعضا در ۳۰ ثانیه به‌روز می‌شوند`);
+            alert(`✅ عملیات با موفقیت انجام شد\n\n📊 کل ردیف‌های فایل: ${tr}\n🔄 به‌روزرسانی شده: ${up}\n➕ اعضای جدید: ${ad}\n💰 تراکنش‌های ذخیره شده: ${tx}\n\n✅ اعضای تکراری حذف شدند\n✅ همه ستون‌های اکسل شناسایی شدند\n✅ وضعیت پیامکی استخراج شد\n✅ داده‌ها در Google Sheets ذخیره شدند`);
             this.ui.switchTab('members');
         }
     });
