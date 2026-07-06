@@ -228,10 +228,7 @@ function showSyncStatus(text, type) {
 
 async function loadDataFromSheets() {
     const proxies = [
-        function(url) { return 'https://corsproxy.io/?' + encodeURIComponent(url); },
-        function(url) { return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url); },
-        function(url) { return 'https://api.codetabs.com/v1/proxy/?quest=' + encodeURIComponent(url); }
-    ];
+        function(url) { return 'https://corsproxy.io
     
     for (let i = 0; i < proxies.length; i++) {
         try {
