@@ -102,7 +102,6 @@ tbody tr:hover{background:rgba(102,126,234,.05)}
     </div>
 </div>
 <div id="syncStatus" class="sync-status hidden"><i class="fas fa-sync fa-spin"></i> <span id="syncText">در حال همگام‌سازی...</span></div>
-<iframe id="hidden_iframe" name="hidden_iframe" style="display:none"></iframe>
 
 <script>
 window.onerror = function(msg, url, line, col, error) {
@@ -217,7 +216,7 @@ async function loadDataFromSheets() {
     return null;
 }
 
-// ✅ اصلاح مهم: استفاده از iframe و form به جای fetch
+// ✅ اصلاح مهم: استفاده از fetch با Content-Type: text/plain
 async function saveDataToSheets(data) {
     return new Promise(function(resolve) {
         try {
@@ -230,37 +229,25 @@ async function saveDataToSheets(data) {
             console.log('📊 تعداد کاربران:', data.users ? data.users.length : 0);
             console.log('📊 تعداد تراکنش‌ها:', data.transactions ? data.transactions.length : 0);
             
-            // ✅ استفاده از iframe و form
-            let iframe = document.getElementById('hidden_iframe');
-            if (!iframe) {
-                iframe = document.createElement('iframe');
-                iframe.id = 'hidden_iframe';
-                iframe.name = 'hidden_iframe';
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-            }
-            
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = CONFIG.APPS_SCRIPT_URL + '?action=save';
-            form.target = 'hidden_iframe';
-            form.style.display = 'none';
-            
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'data';
-            input.value = JSON.stringify(data);
-            form.appendChild(input);
-            
-            document.body.appendChild(form);
-            form.submit();
-            document.body.removeChild(form);
-            
-            setTimeout(function() {
+            // ✅ استفاده از fetch با Content-Type: text/plain
+            fetch(CONFIG.APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'text/plain',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(function() {
                 console.log('✅ درخواست ذخیره ارسال شد');
                 showSyncStatus('✅ داده‌ها ذخیره شدند', 'success');
                 resolve(true);
-            }, 2000);
+            })
+            .catch(function(error) {
+                console.error('❌ خطا در ذخیره:', error);
+                showSyncStatus('❌ خطا در اتصال', 'error');
+                resolve(false);
+            });
         } catch (error) {
             console.error('خطا در ذخیره در Google Sheets:', error);
             showSyncStatus('❌ خطا در اتصال', 'error');
@@ -607,7 +594,6 @@ uploadBulk(file, cb) {
             
             console.log('📊 نتایج آپلود: ' + finalMembers.length + ' عضو، ' + users.length + ' کاربر، ' + finalTransactions.length + ' تراکنش');
             
-            // ✅ ثبت زمان آپلود برای غیرفعال کردن autoSync
             window.lastUploadTime = Date.now();
             console.log('⏱️ زمان آپلود ثبت شد - autoSync برای ۶۰ ثانیه غیرفعال است');
             
