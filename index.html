@@ -303,16 +303,12 @@ const U={
         }
         return null;
     },
-    // ✅ تابع parseBool اصلاح شده - پشتیبانی از -1 و 1
     parseBool(v){
         if(v===null||v===undefined||v==='')return false;
-        // بررسی عددی
         if(typeof v === 'number') return v === 1 || v === -1;
         const s=String(v).trim().toLowerCase();
-        // ✅ -1 و 1 هر دو فعال
         if(s === '1' || s === '-1') return true;
         if(s === '0') return false;
-        // بررسی متنی
         return['true','yes','فعال','بله','✓','✅','on'].includes(s);
     },
     getJalaliMonth(){const now=new Date();const gy=now.getFullYear(),gm=now.getMonth()+1,gd=now.getDate();const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy;let days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1];let jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30);const jd=1+(days<186?days%31:(days-186)%30);return {year:jy,month:jm,day:jd,str:`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`};},
@@ -445,17 +441,54 @@ async function loadMainData() {
         const sh = wb.Sheets[wb.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sh, { defval: '', raw: false });
         
-        let shopRows = [];
-        if (wb.SheetNames.length > 1) {
-            const shopSheetName = wb.SheetNames.find(name => name.toLowerCase().includes('shop') || name.toLowerCase().includes('فروشگاه') || name.toLowerCase().includes('محصول')) || wb.SheetNames[1];
-            const shopSh = wb.Sheets[shopSheetName];
-            shopRows = XLSX.utils.sheet_to_json(shopSh, { defval: '', raw: false });
-            console.log(`🛒 شیت فروشگاه بارگذاری شد: ${shopSheetName} (${shopRows.length} ردیف)`);
-        }
-        
         if (!rows.length) return { members: [], transactions: [] };
         const headers = Object.keys(rows[0]);
         console.log('📋 سرستون‌های اکسل:', headers);
+        
+        if (rows.length > 0) {
+            const firstRow = rows[0];
+            
+            // ✅ مشکل ۲ اصلاح شد: تلفن صندوق از ستون "تلفن صندوق" یا "telepen"
+            const supportPhoneCol = U.findCol(['تلفن صندوق', 'telepen', 'telefon', 'phone sandogh'], headers);
+            const supportAccountCol = U.findCol(['shomareh hasab', 'شماره حساب صندوق'], headers);
+            const supportCardCol = U.findCol(['shomareh kart', 'شماره کارت صندوق'], headers);
+            const supportShebaCol = U.findCol(['adress', 'شماره شبا صندوق'], headers);
+            const supportWebCol = U.findCol(['web site', 'آدرس سایت صندوق'], headers);
+            
+            SUPPORT_INFO = {
+                phone: supportPhoneCol ? String(firstRow[supportPhoneCol] || '').trim() : '',
+                accountNumber: supportAccountCol ? String(firstRow[supportAccountCol] || '').trim() : '',
+                cardNumber: supportCardCol ? String(firstRow[supportCardCol] || '').trim() : '',
+                shebaNumber: supportShebaCol ? String(firstRow[supportShebaCol] || '').trim() : '',
+                itaaAddress: '@ethads',
+                websiteAddress: supportWebCol ? String(firstRow[supportWebCol] || '').trim() : ''
+            };
+            console.log('✅ اطلاعات پشتیبانی از ردیف اول:', SUPPORT_INFO);
+            
+            const shenasehCol = U.findCol(['shenaseh'], headers);
+            const namemahsoolCol = U.findCol(['namemahsool'], headers);
+            const tozihmahsoolCol = U.findCol(['tozihmahsool'], headers);
+            const priceCol = U.findCol(['price'], headers);
+            const mojodiSekehCol = U.findCol(['mojodi sekeh'], headers);
+            const categoryCol = U.findCol(['category'], headers);
+            const mincoinsCol = U.findCol(['mincoins'], headers);
+            
+            if (shenasehCol) {
+                const shenaseh = String(firstRow[shenasehCol] || '').trim();
+                if (shenaseh) {
+                    SHOP_PRODUCTS = [{
+                        shenaseh: shenaseh,
+                        name: namemahsoolCol ? String(firstRow[namemahsoolCol] || '').trim() : '',
+                        description: tozihmahsoolCol ? String(firstRow[tozihmahsoolCol] || '').trim() : '',
+                        price: priceCol ? U.parseNum(firstRow[priceCol]) : 0,
+                        stock: mojodiSekehCol ? U.parseNum(firstRow[mojodiSekehCol]) : 0,
+                        category: categoryCol ? String(firstRow[categoryCol] || '').trim() : '',
+                        mincoins: mincoinsCol ? U.parseNum(firstRow[mincoinsCol]) : 0
+                    }];
+                    console.log('✅ محصول فروشگاه از ردیف اول:', SHOP_PRODUCTS[0]);
+                }
+            }
+        }
         
         const colMap = {
             id: U.findCol(['ID', 'id'], headers),
@@ -473,7 +506,7 @@ async function loadMainData() {
             monthlySalary: U.findCol(['monthlysalary', 'مقرری ماهانه'], headers),
             monthlySalaryApproved: U.findCol(['مقرری ماهانه مصوب شده هر نفر', 'مقرری ماهانه مصوبه هرنفر'], headers),
             openDate: U.findCol(['date ozviyat', 'تاریخ عضویت'], headers),
-            datMiladi: U.findCol(['dat miladi', 'تاریخ تولد'], headers),
+            datMiladi: U.findCol(['dat miladi', 'تاریخ میلادی افتتاح'], headers),
             dateBirth: U.findCol(['date birth'], headers),
             dateSabt: U.findCol(['date sabt', 'تاریخ ثبت'], headers),
             dateVam: U.findCol(['date vam', 'تاریخ وام'], headers),
@@ -489,7 +522,6 @@ async function loadMainData() {
             installmentAmountTx: U.findCol(['مبلغ قسط واریزی'], headers),
             installmentDateTx: U.findCol(['تاریخ قسط واریزی'], headers),
             total: U.findCol(['total', 'جمع واریزی'], headers),
-            // ✅ ستون‌های سامانه پیامکی
             active: U.findCol(['active'], headers),
             kodOmomi: U.findCol(['kod omomi'], headers),
             kodSarparast: U.findCol(['kod sarparast'], headers),
@@ -499,46 +531,18 @@ async function loadMainData() {
             kodKhabarnameh: U.findCol(['kod khabarnameh'], headers),
             kodTavalod: U.findCol(['kod tavalod'], headers),
             kodMonasebat: U.findCol(['kod monasebat'], headers),
-            noVam: U.findCol(['no vam'], headers),
-            // ✅ مشکل ۱: فقط از ستون telepen
-            supportPhone: U.findCol(['telepon'], headers),
-            supportAccount: U.findCol(['shomareh hasab'], headers),
-            supportCard: U.findCol(['shomareh kart'], headers),
-            supportSheba: U.findCol(['adress'], headers),
-            supportWeb: U.findCol(['web site'], headers)
+            noVam: U.findCol(['no vam'], headers)
         };
         
         console.log('🔍 ستون‌های شناسایی شده:', {
             accountNumber: colMap.accountNumber,
             dateBirth: colMap.dateBirth,
+            datMiladi: colMap.datMiladi,
             monthlySalaryApproved: colMap.monthlySalaryApproved,
-            supportPhone: colMap.supportPhone,
-            active: colMap.active,
-            kodOmomi: colMap.kodOmomi,
-            kodSarparast: colMap.kodSarparast,
-            kodMoavaghe: colMap.kodMoavaghe,
-            kodOverdue: colMap.kodOverdue,
-            kodMosabegheh: colMap.kodMosabegheh,
-            kodKhabarnameh: colMap.kodKhabarnameh,
-            kodTavalod: colMap.kodTavalod,
-            kodMonasebat: colMap.kodMonasebat
+            active: colMap.active
         });
         
         if (!colMap.accountNumber) return { members: [], transactions: [] };
-        
-        // ✅ مشکل ۱: بارگذاری اطلاعات پشتیبانی فقط از ردیف اول اکسل
-        if (rows.length > 0) {
-            const firstRow = rows[0];
-            SUPPORT_INFO = {
-                phone: colMap.supportPhone ? String(firstRow[colMap.supportPhone] || '').trim() : '',
-                accountNumber: colMap.supportAccount ? String(firstRow[colMap.supportAccount] || '').trim() : '',
-                cardNumber: colMap.supportCard ? String(firstRow[colMap.supportCard] || '').trim() : '',
-                shebaNumber: colMap.supportSheba ? String(firstRow[colMap.supportSheba] || '').trim() : '',
-                itaaAddress: '@ethads',
-                websiteAddress: colMap.supportWeb ? String(firstRow[colMap.supportWeb] || '').trim() : ''
-            };
-            console.log('✅ اطلاعات پشتیبانی از ردیف اول:', SUPPORT_INFO);
-        }
         
         const rowsByAccount = new Map();
         rows.forEach((row, index) => {
@@ -557,7 +561,6 @@ async function loadMainData() {
             const accNum = String(row[colMap.accountNumber] || '').trim();
             if (!accNum) return;
             
-            // ✅ مشکل ۲: خواندن وضعیت پیامک‌ها با parseBool اصلاح شده
             const smsActive = colMap.active ? U.parseBool(row[colMap.active]) : false;
             const smsOmomi = colMap.kodOmomi ? U.parseBool(row[colMap.kodOmomi]) : false;
             const smsSarparast = colMap.kodSarparast ? U.parseBool(row[colMap.kodSarparast]) : false;
@@ -641,7 +644,6 @@ async function loadMainData() {
                 _mojodiTaInLahzeh: colMap.mojodiTaInLahzeh ? U.parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
                 _loanNumber: colMap.noVam ? String(row[colMap.noVam] || '').trim() : accNum,
                 smsStatus: smsStatus,
-                // ✅ مشکل ۲: همه سامانه‌های پیامکی
                 smsActive: smsActive,
                 smsOmomi: smsOmomi,
                 smsSarparast: smsSarparast,
@@ -656,46 +658,6 @@ async function loadMainData() {
         });
         
         const members = Array.from(membersMap.values());
-        
-        if (shopRows.length > 0) {
-            const shopHeaders = Object.keys(shopRows[0]);
-            console.log('🛒 سرستون‌های فروشگاه:', shopHeaders);
-            
-            const shopColMap = {
-                shenaseh: U.findCol(['shenaseh'], shopHeaders),
-                namemahsool: U.findCol(['namemahsool'], shopHeaders),
-                tozihmahsool: U.findCol(['tozihmahsool'], shopHeaders),
-                price: U.findCol(['price'], shopHeaders),
-                mojodi: U.findCol(['mojodi sekeh'], shopHeaders),
-                category: U.findCol(['category'], shopHeaders),
-                mincoins: U.findCol(['mincoins'], shopHeaders)
-            };
-            
-            console.log('🔍 ستون‌های فروشگاه شناسایی شده:', shopColMap);
-            
-            const productsMap = new Map();
-            shopRows.forEach(row => {
-                const shenaseh = shopColMap.shenaseh ? String(row[shopColMap.shenaseh] || '').trim() : '';
-                if (!shenaseh) return;
-                if (productsMap.has(shenaseh)) {
-                    console.log(`⏭️ شناسه تکراری رد شد: ${shenaseh}`);
-                    return;
-                }
-                const product = {
-                    shenaseh: shenaseh,
-                    name: shopColMap.namemahsool ? String(row[shopColMap.namemahsool] || '').trim() : '',
-                    description: shopColMap.tozihmahsool ? String(row[shopColMap.tozihmahsool] || '').trim() : '',
-                    price: shopColMap.price ? U.parseNum(row[shopColMap.price]) : 0,
-                    stock: shopColMap.mojodi ? U.parseNum(row[shopColMap.mojodi]) : 0,
-                    category: shopColMap.category ? String(row[shopColMap.category] || '').trim() : '',
-                    mincoins: shopColMap.mincoins ? U.parseNum(row[shopColMap.mincoins]) : 0
-                };
-                productsMap.set(shenaseh, product);
-            });
-            SHOP_PRODUCTS = Array.from(productsMap.values());
-            console.log(`✅ ${SHOP_PRODUCTS.length} محصول یکتا بارگذاری شد`);
-        }
-        
         return { members, transactions };
     } catch (error) {
         console.error('❌ خطا در بارگذاری:', error);
@@ -890,10 +852,10 @@ class App {
     
     render_profile(c) {
         if (this.currentUser.role === 'admin') {
-            let h = `<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div><div class="info-box" style="background:var(--info-bg);border-right-color:#48bb78"><i class="fas fa-info-circle" style="color:#48bb78"></i><strong>تعداد اعضا:</strong> ${this.dm.members.length} عضو</div><div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، شماره حساب..."><button id="spi_cl" style="background:none;border:none;cursor:pointer;color:#e53e3e"><i class="fas fa-times"></i></button></div><div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد</th><th>تلفن</th><th>تلفن۲</th><th>عملیات</th></tr></thead><tbody>`;
+            let h = `<div class="info-box"><i class="fas fa-users-cog"></i> مدیریت پروفایل اعضا</div><div class="info-box" style="background:var(--info-bg);border-right-color:#48bb78"><i class="fas fa-info-circle" style="color:#48bb78"></i><strong>تعداد اعضا:</strong> ${this.dm.members.length} عضو</div><div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، شماره حساب..."><button id="spi_cl" style="background:none;border:none;cursor:pointer;color:#e53e3e"><i class="fas fa-times"></i></button></div><div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد شمسی</th><th>تلفن</th><th>تلفن۲</th><th>عملیات</th></tr></thead><tbody>`;
             this.dm.members.forEach(m => {
                 const ui = this.dm.users.find(u => u.memberId === m.id);
-                h += `<tr><td><input id="pf_firstName_${m.id}" value="${U.esc(m.firstName||'')}" style="width:90px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pfu_${m.id}" value="${U.esc(ui?ui.username||'':'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pfp_${m.id}" value="${U.esc(ui?ui.password||'':'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_accountNumber_${m.id}" value="${U.esc(m.accountNumber||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_openDate_${m.id}" value="${U.esc(m.openDate||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_birthDate_${m.id}" value="${U.esc(m.birthDate||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_phone1_${m.id}" value="${U.esc(m.phone1||'')}" style="width:110px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_phone2_${m.id}" value="${U.esc(m.phone2||'')}" style="width:110px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><button class="btn-small success-btn" id="spb_${m.id}"><i class="fas fa-save"></i> ذخیره</button></td></tr>`;
+                h += `<tr><td><input id="pf_firstName_${m.id}" value="${U.esc(m.firstName||'')}" style="width:90px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pfu_${m.id}" value="${U.esc(ui?ui.username||'':'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pfp_${m.id}" value="${U.esc(ui?ui.password||'':'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_accountNumber_${m.id}" value="${U.esc(m.accountNumber||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_openDate_${m.id}" value="${U.esc(m.openDate||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_birthDateShamsi_${m.id}" value="${U.esc(m.birthDateShamsi||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_phone1_${m.id}" value="${U.esc(m.phone1||'')}" style="width:110px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><input id="pf_phone2_${m.id}" value="${U.esc(m.phone2||'')}" style="width:110px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td><td><button class="btn-small success-btn" id="spb_${m.id}"><i class="fas fa-save"></i> ذخیره</button></td></tr>`;
             });
             h += `</tbody></table></div>`;
             c.innerHTML = h;
@@ -906,7 +868,7 @@ class App {
             const totalCoins = this.ddm.getTotalCoins(m.id);
             const lastLogin = localStorage.getItem('sandogh_lastLogin_' + m.id) || '---';
             const loginCount = parseInt(localStorage.getItem('sandogh_loginCount_' + m.id) || '0');
-            c.innerHTML = `<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="coin-display"><i class="fas fa-coins" style="font-size:1.3rem"></i><div><div class="coin-label">سکه‌های شما</div><div class="coin-amount">${totalCoins}</div></div></div><div class="dashboard-section"><div class="profile-info-grid"><div class="profile-info-item"><i class="fas fa-user"></i><div class="info-content"><div class="info-label">نام:</div><div class="info-value">${U.esc(m.firstName||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-hashtag"></i><div class="info-content"><div class="info-label">شماره حساب:</div><div class="info-value">${U.esc(m.accountNumber||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar-plus"></i><div class="info-content"><div class="info-label">تاریخ افتتاح:</div><div class="info-value">${U.fmtDate(m.openDate)}</div></div></div><div class="profile-info-item"><i class="fas fa-birthday-cake"></i><div class="info-content"><div class="info-label">تاریخ تولد (میلادی):</div><div class="info-value">${U.fmtDate(m.birthDate)}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar-day"></i><div class="info-content"><div class="info-label">تاریخ تولد (شمسی):</div><div class="info-value">${U.fmtDate(m.birthDateShamsi)}</div></div></div><div class="profile-info-item"><i class="fas fa-phone"></i><div class="info-content"><div class="info-label">تلفن ۱:</div><div class="info-value">${U.esc(m.phone1||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-mobile-alt"></i><div class="info-content"><div class="info-label">تلفن ۲:</div><div class="info-value">${U.esc(m.phone2||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-user-tag"></i><div class="info-content"><div class="info-label">نام کاربری:</div><div class="info-value">${U.esc(ui?ui.username||'':'---')}</div></div></div><div class="profile-info-item" style="position:relative"><i class="fas fa-key"></i><div class="info-content"><div class="info-label">رمز عبور:</div><div class="info-value"><span id="pwdDisplay" style="font-family:monospace">••••••</span><button id="togglePwdBtn" style="background:none;border:none;cursor:pointer;color:#667eea;font-size:1.1rem;margin-right:8px" title="نمایش/مخفی کردن رمز"><i class="fas fa-eye" id="pwdIcon"></i></button></div></div></div></div><div class="last-login-box"><i class="fas fa-clock"></i><div><div class="ll-label">آخرین ورود شما:</div><div class="ll-value">${lastLogin}</div></div><div style="margin-right:auto;display:flex;align-items:center;gap:8px"><i class="fas fa-sign-in-alt" style="font-size:1.3rem;color:#48bb78"></i><div><div class="ll-label">تعداد ورود:</div><div class="ll-value" style="color:#48bb78">${loginCount} بار</div></div></div></div></div>`;
+            c.innerHTML = `<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="coin-display"><i class="fas fa-coins" style="font-size:1.3rem"></i><div><div class="coin-label">سکه‌های شما</div><div class="coin-amount">${totalCoins}</div></div></div><div class="dashboard-section"><div class="profile-info-grid"><div class="profile-info-item"><i class="fas fa-user"></i><div class="info-content"><div class="info-label">نام:</div><div class="info-value">${U.esc(m.firstName||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-hashtag"></i><div class="info-content"><div class="info-label">شماره حساب:</div><div class="info-value">${U.esc(m.accountNumber||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar-plus"></i><div class="info-content"><div class="info-label">تاریخ افتتاح حساب (شمسی):</div><div class="info-value">${U.fmtDate(m.openDate)}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar"></i><div class="info-content"><div class="info-label">تاریخ افتتاح حساب (میلادی):</div><div class="info-value">${U.fmtDate(m.datMiladi)}</div></div></div><div class="profile-info-item"><i class="fas fa-birthday-cake"></i><div class="info-content"><div class="info-label">تاریخ تولد (شمسی):</div><div class="info-value">${U.fmtDate(m.birthDateShamsi)}</div></div></div><div class="profile-info-item"><i class="fas fa-phone"></i><div class="info-content"><div class="info-label">تلفن ۱:</div><div class="info-value">${U.esc(m.phone1||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-mobile-alt"></i><div class="info-content"><div class="info-label">تلفن ۲:</div><div class="info-value">${U.esc(m.phone2||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-user-tag"></i><div class="info-content"><div class="info-label">نام کاربری:</div><div class="info-value">${U.esc(ui?ui.username||'':'---')}</div></div></div><div class="profile-info-item" style="position:relative"><i class="fas fa-key"></i><div class="info-content"><div class="info-label">رمز عبور:</div><div class="info-value"><span id="pwdDisplay" style="font-family:monospace">••••••</span><button id="togglePwdBtn" style="background:none;border:none;cursor:pointer;color:#667eea;font-size:1.1rem;margin-right:8px" title="نمایش/مخفی کردن رمز"><i class="fas fa-eye" id="pwdIcon"></i></button></div></div></div></div><div class="last-login-box"><i class="fas fa-clock"></i><div><div class="ll-label">آخرین ورود شما:</div><div class="ll-value">${lastLogin}</div></div><div style="margin-right:auto;display:flex;align-items:center;gap:8px"><i class="fas fa-sign-in-alt" style="font-size:1.3rem;color:#48bb78"></i><div><div class="ll-label">تعداد ورود:</div><div class="ll-value" style="color:#48bb78">${loginCount} بار</div></div></div></div></div>`;
             $('#togglePwdBtn', c).onclick = () => {const display = $('#pwdDisplay', c);const icon = $('#pwdIcon', c);if (display.textContent === '••••••') {display.textContent = ui ? (ui.password || '---') : '---';icon.className = 'fas fa-eye-slash';} else {display.textContent = '••••••';icon.className = 'fas fa-eye';}};
         }
     }
@@ -978,32 +940,18 @@ class App {
         const userCoins = member ? this.ddm.getTotalCoins(member.id) : 0;
         let h = `<div class="info-box"><i class="fas fa-store"></i> فروشگاه صندوق اتحاد</div>`;
         if (!isAdmin) {h += `<div class="coin-display"><i class="fas fa-coins" style="font-size:1.3rem"></i><div><div class="coin-label">سکه‌های شما</div><div class="coin-amount">${userCoins}</div></div></div>`;}
-        if (SHOP_PRODUCTS.length === 0) {h += `<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-box-open" style="font-size:4rem;color:var(--text-light);margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">فروشگاه خالی است</h3><p style="color:var(--text-muted)">هیچ محصولی در فروشگاه موجود نیست. لطفاً شیت Shop را در فایل اکسل اضافه کنید.</p></div>`;c.innerHTML = h;return;}
-        const categories = [...new Set(SHOP_PRODUCTS.map(p => p.category).filter(cat => cat))];
-        h += `<div class="shop-filter-bar"><input type="text" id="shopSearch" placeholder="جستجوی محصول..."><select id="shopCategoryFilter"><option value="">همه دسته‌ها</option>${categories.map(cat => `<option value="${U.esc(cat)}">${U.esc(cat)}</option>`).join('')}</select><select id="shopSortFilter"><option value="default">مرتب‌سازی: پیش‌فرض</option><option value="price-asc">قیمت: کم به زیاد</option><option value="price-desc">قیمت: زیاد به کم</option><option value="stock-desc">موجودی: زیاد به کم</option></select></div><div class="shop-grid" id="shopGrid"></div>`;
+        if (SHOP_PRODUCTS.length === 0) {h += `<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-box-open" style="font-size:4rem;color:var(--text-light);margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">فروشگاه خالی است</h3><p style="color:var(--text-muted)">اطلاعات فروشگاه در ردیف اول فایل اکسل تعریف نشده است.</p></div>`;c.innerHTML = h;return;}
+        h += `<div class="shop-grid" id="shopGrid"></div>`;
         c.innerHTML = h;
-        const renderProducts = () => {
-            const search = $('#shopSearch', c)?.value.trim().toLowerCase() || '';
-            const category = $('#shopCategoryFilter', c)?.value || '';
-            const sort = $('#shopSortFilter', c)?.value || 'default';
-            let products = [...SHOP_PRODUCTS];
-            if (search) {products = products.filter(p => p.name.toLowerCase().includes(search) || p.description.toLowerCase().includes(search) || p.shenaseh.toLowerCase().includes(search));}
-            if (category) {products = products.filter(p => p.category === category);}
-            if (sort === 'price-asc') products.sort((a, b) => a.price - b.price);
-            else if (sort === 'price-desc') products.sort((a, b) => b.price - a.price);
-            else if (sort === 'stock-desc') products.sort((a, b) => b.stock - a.stock);
-            const grid = $('#shopGrid', c);
-            if (!grid) return;
-            if (products.length === 0) {grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-light)"><i class="fas fa-search" style="font-size:3rem;margin-bottom:15px"></i><p>هیچ محصولی یافت نشد</p></div>';return;}
-            grid.innerHTML = products.map(p => {
-                const isOutOfStock = p.stock <= 0;const isLowStock = p.stock > 0 && p.stock <= 5;
-                const stockClass = isOutOfStock ? 'out-of-stock' : (isLowStock ? 'low-stock' : 'in-stock');
-                const stockText = isOutOfStock ? 'ناموجود' : (isLowStock ? `فقط ${p.stock} عدد باقی مانده` : `موجودی: ${p.stock} عدد`);
-                const stockIcon = isOutOfStock ? 'times-circle' : (isLowStock ? 'exclamation-circle' : 'check-circle');
-                return `<div class="shop-card ${isOutOfStock ? 'out-of-stock' : ''}"><div class="shop-card-header"><div class="shop-card-title">${U.esc(p.name)}</div>${p.category ? `<div class="shop-card-category">${U.esc(p.category)}</div>` : ''}</div><div class="shop-card-description">${U.esc(p.description) || 'بدون توضیحات'}</div><div class="shop-card-price"><i class="fas fa-coins"></i><div><div class="price-value">${U.fmtNum(p.price)} سکه</div><div class="price-label">قیمت محصول</div></div></div><div class="shop-card-stock ${stockClass}"><span><i class="fas fa-${stockIcon}"></i> ${stockText}</span>${p.mincoins > 0 ? `<span>حداقل: ${p.mincoins} سکه</span>` : ''}</div><div class="shop-card-actions">${isOutOfStock ? `<button class="btn-small danger-btn" disabled><i class="fas fa-ban"></i> ناموجود</button>` : `<button class="btn-small success-btn" onclick="window.app.buyProduct('${U.esc(p.shenaseh)}')"><i class="fas fa-shopping-cart"></i> خرید با سکه</button>`}</div></div>`;
-            }).join('');
-        };
-        setTimeout(() => {$('#shopSearch', c).oninput = renderProducts;$('#shopCategoryFilter', c).onchange = renderProducts;$('#shopSortFilter', c).onchange = renderProducts;renderProducts();}, 50);
+        const grid = $('#shopGrid', c);
+        if (!grid) return;
+        grid.innerHTML = SHOP_PRODUCTS.map(p => {
+            const isOutOfStock = p.stock <= 0;const isLowStock = p.stock > 0 && p.stock <= 5;
+            const stockClass = isOutOfStock ? 'out-of-stock' : (isLowStock ? 'low-stock' : 'in-stock');
+            const stockText = isOutOfStock ? 'ناموجود' : (isLowStock ? `فقط ${p.stock} عدد باقی مانده` : `موجودی: ${p.stock} عدد`);
+            const stockIcon = isOutOfStock ? 'times-circle' : (isLowStock ? 'exclamation-circle' : 'check-circle');
+            return `<div class="shop-card ${isOutOfStock ? 'out-of-stock' : ''}"><div class="shop-card-header"><div class="shop-card-title">${U.esc(p.name)}</div>${p.category ? `<div class="shop-card-category">${U.esc(p.category)}</div>` : ''}</div><div class="shop-card-description">${U.esc(p.description) || 'بدون توضیحات'}</div><div class="shop-card-price"><i class="fas fa-coins"></i><div><div class="price-value">${U.fmtNum(p.price)} سکه</div><div class="price-label">قیمت محصول</div></div></div><div class="shop-card-stock ${stockClass}"><span><i class="fas fa-${stockIcon}"></i> ${stockText}</span>${p.mincoins > 0 ? `<span>حداقل: ${p.mincoins} سکه</span>` : ''}</div><div class="shop-card-actions">${isOutOfStock ? `<button class="btn-small danger-btn" disabled><i class="fas fa-ban"></i> ناموجود</button>` : `<button class="btn-small success-btn" onclick="window.app.buyProduct('${U.esc(p.shenaseh)}')"><i class="fas fa-shopping-cart"></i> خرید با سکه</button>`}</div></div>`;
+        }).join('');
     }
     
     buyProduct(shenaseh) {
@@ -1194,7 +1142,6 @@ class App {
         }, 100);
     }
     
-    // ✅ مشکل ۲: render_smsStatus اصلاح شده
     render_smsStatus(c) {
         const isAdmin = this.currentUser.role === 'admin';
         if (isAdmin) {
@@ -1211,20 +1158,16 @@ class App {
         }
     }
     
-    // ✅ مشکل ۲: renderSmsForMember اصلاح شده با همه سامانه‌ها
     renderSmsForMember(mid, container) {
         const member = this.dm.members.find(m => m.id === mid);
         if (!member) { container.innerHTML = '<p>عضو یافت نشد</p>'; return; }
         const allTxns = this.allTransactions || [];
-        // ✅ از بزرگترین ID استفاده می‌شود
         const memberTxns = allTxns.filter(t => String(t._memberId) === String(mid) || String(t['شماره حساب']) === String(member.accountNumber)).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
         const latestTx = memberTxns.length > 0 ? memberTxns[0] : null;
         if (!latestTx) {
             container.innerHTML = `<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#ed8936;margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">هیچ تراکنشی یافت نشد</h3><p style="color:var(--text-muted)">برای این عضو هیچ تراکنشی در فایل اکسل ثبت نشده است</p></div>`;
             return;
         }
-        
-        // ✅ همه ۹ سامانه پیامکی
         const smsServices = [
             {name: 'سامانه ارسال پیامک صورتحساب',key: 'smsActive',icon: 'file-invoice-dollar',color: '#4299e1',desc: 'دریافت پیامک صورتحساب ماهانه'},
             {name: 'سامانه ارسال پیامک جلسات شورا',key: 'smsKod',icon: 'users-cog',color: '#9f7aea',desc: 'اطلاع‌رسانی جلسات شورای صندوق'},
@@ -1236,12 +1179,9 @@ class App {
             {name: 'سامانه ارسال پیامک تبریک تولد',key: 'smsTavalod',icon: 'birthday-cake',color: '#ed64a6',desc: 'پیامک تبریک تولد'},
             {name: 'سامانه ارسال پیامک مناسبت‌های ملی و مذهبی',key: 'smsMonasebat',icon: 'star-and-crescent',color: '#667eea',desc: 'تبریک مناسبت‌های ملی و مذهبی'}
         ];
-        
         let h = `<div class="dashboard-section" style="background:var(--info-bg);border-right-color:#4299e1"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px"><div><i class="fas fa-user" style="font-size:1.3rem;color:#4299e1;margin-left:8px"></i><span style="font-weight:700;color:var(--text-primary)">${U.esc(member.firstName)} ${U.esc(member.lastName||'')}</span></div><div style="font-size:.85rem;color:var(--text-muted)"><i class="fas fa-hashtag"></i> شماره حساب: <strong>${U.esc(member.accountNumber)}</strong></div><div style="font-size:.85rem;color:var(--text-muted)"><i class="fas fa-barcode"></i> آخرین تراکنش (بزرگترین ID): <strong style="font-family:monospace">${U.esc(latestTx['ID'] || '---')}</strong></div></div></div>`;
         h += `<div class="dashboard-section"><h3><i class="fas fa-list-check"></i> وضعیت سامانه‌های پیامکی</h3><div class="support-grid">`;
-        
         smsServices.forEach(service => {
-            // ✅ بررسی مقدار -1 یا 1 برای فعال، 0 برای غیرفعال
             const isActive = latestTx[service.key] === true;
             const statusText = isActive ? 'فعال' : 'غیرفعال';
             const statusIcon = isActive ? 'check-circle' : 'times-circle';
@@ -1260,7 +1200,7 @@ class App {
     render_support(c) {
         let h = `<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی صندوق اتحاد</div><div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات تماس با صندوق</h3><p style="color:var(--text-primary);line-height:1.8;margin-bottom:20px">برای هرگونه سوال، مشکل یا راهنمایی می‌توانید از طریق راه‌های زیر با ما در ارتباط باشید.</p></div>`;
         const hasAnyInfo = SUPPORT_INFO.phone || SUPPORT_INFO.accountNumber || SUPPORT_INFO.cardNumber || SUPPORT_INFO.shebaNumber || SUPPORT_INFO.itaaAddress || SUPPORT_INFO.websiteAddress;
-        if (!hasAnyInfo) {h += `<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#ed8936;margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">اطلاعات پشتیبانی هنوز تکمیل نشده است</h3><p style="color:var(--text-muted)">لطفاً ستون‌های مربوط به پشتیبانی را در فایل اکسل اضافه کنید.</p></div>`;}
+        if (!hasAnyInfo) {h += `<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#ed8936;margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">اطلاعات پشتیبانی هنوز تکمیل نشده است</h3><p style="color:var(--text-muted)">لطفاً ستون‌های مربوط به پشتیبانی را در ردیف اول فایل اکسل اضافه کنید.</p></div>`;}
         else {
             h += `<div class="support-grid">`;
             if (SUPPORT_INFO.phone) { h += `<div class="support-card"><div class="support-icon phone"><i class="fas fa-phone"></i></div><div class="support-content"><div class="support-label">شماره تلفن صندوق</div><div class="support-value fa">${U.esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" data-copy="${U.esc(SUPPORT_INFO.phone)}"><i class="fas fa-copy"></i> کپی</button><a href="tel:${U.esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="margin-top:5px;text-decoration:none"><i class="fas fa-phone"></i> تماس</a></div></div>`; }
@@ -1399,7 +1339,7 @@ class App {
             firstName: $(`#pf_firstName_${mid}`) ? $(`#pf_firstName_${mid}`).value.trim() : '',
             accountNumber: $(`#pf_accountNumber_${mid}`) ? $(`#pf_accountNumber_${mid}`).value.trim() : '',
             openDate: $(`#pf_openDate_${mid}`) ? $(`#pf_openDate_${mid}`).value.trim() : '',
-            birthDate: $(`#pf_birthDate_${mid}`) ? $(`#pf_birthDate_${mid}`).value.trim() : '',
+            birthDateShamsi: $(`#pf_birthDateShamsi_${mid}`) ? $(`#pf_birthDateShamsi_${mid}`).value.trim() : '',
             phone1: $(`#pf_phone1_${mid}`) ? $(`#pf_phone1_${mid}`).value.trim() : '',
             phone2: $(`#pf_phone2_${mid}`) ? $(`#pf_phone2_${mid}`).value.trim() : ''
         };
