@@ -8,186 +8,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
-/* ✅ متغیرهای CSS برای تم‌ها */
-:root {
-    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-    --card-bg: rgba(255,255,255,.95);
-    --text-primary: #2d3748;
-    --text-secondary: #4a5568;
-    --text-muted: #718096;
-    --text-light: #a0aec0;
-    --border-color: rgba(226,232,240,.5);
-    --input-bg: #fff;
-    --input-border: #e2e8f0;
-    --hover-bg: rgba(102,126,234,.05);
-    --section-bg: linear-gradient(135deg,rgba(247,250,252,.8),rgba(237,242,247,.8));
-    --info-bg: linear-gradient(135deg,rgba(66,153,225,.1),rgba(66,153,225,.05));
-    --shadow: 0 25px 50px rgba(0,0,0,.25);
-    --clock-bg: linear-gradient(135deg,#667eea,#764ba2);
-    --clock-text: #fff;
-    --datetime-bg: rgba(102,126,234,.1);
-    --datetime-text: #2d3748;
-    --datetime-label: #718096;
-    --welcome-text: #667eea;
-    --menu-text: #4a5568;
-    --menu-hover: rgba(102,126,234,.1);
-    --table-header: linear-gradient(135deg,#2d3748,#1a202c);
-    --table-text: #2d3748;
-    --table-hover: rgba(102,126,234,.05);
-    --warning-bg: #fff5f5;
-    --warning-border: #feb2b2;
-    --warning-text: #c53030;
-    --help-bg: #fff;
-    --help-border: #e2e8f0;
-    --help-text: #4a5568;
-    --help-title: #667eea;
-    --support-card-bg: #fff;
-    --support-card-border: #e2e8f0;
-    --support-label: #718096;
-    --support-value: #2d3748;
-    --coin-display-bg: linear-gradient(135deg,#ecc94b,#d69e2e);
-    --coin-text: #fff;
-    --shop-card-bg: #fff;
-    --shop-card-border: #e2e8f0;
-    --shop-title: #2d3748;
-    --shop-desc: #4a5568;
-    --modal-bg: #fff;
-    --modal-text: #2d3748;
-    --receipt-bg: linear-gradient(135deg,rgba(72,187,120,.05),rgba(56,161,105,.05));
-    --receipt-border: #48bb78;
-    --receipt-text: #2d3748;
-    --receipt-label: #718096;
-    --coming-soon-bg: linear-gradient(135deg,rgba(102,126,234,.08),rgba(118,75,162,.05));
-    --coming-soon-border: #667eea;
-    --coming-soon-title: #2d3748;
-    --coming-soon-text: #718096;
-    --coming-soon-icon: #667eea;
-    --stat-card-bg: #fff;
-    --stat-card-border: #e2e8f0;
-    --stat-value: #2d3748;
-    --stat-label: #718096;
-    --bar-chart-bg: #fff;
-    --bar-chart-border: #e2e8f0;
-    --calendar-event-bg: #fff;
-    --calendar-event-border: #667eea;
-    --calendar-event-title: #2d3748;
-    --calendar-event-desc: #4a5568;
-    --calendar-event-date: #718096;
-    --history-item-bg: #fff;
-    --history-item-border: #667eea;
-    --history-product: #2d3748;
-    --history-date: #a0aec0;
-    --history-code: #667eea;
-    --password-dots-bg: #edf2f7;
-    --copy-btn-bg: rgba(102,126,234,.1);
-    --copy-btn-text: #667eea;
-    --copy-btn-hover: rgba(102,126,234,.2);
-    --filter-bar-bg: rgba(247,250,252,.8);
-    --theme-switcher-bg: rgba(255,255,255,.95);
-    --theme-switcher-border: #e2e8f0;
-    --theme-btn-bg: transparent;
-    --theme-btn-text: #4a5568;
-    --theme-btn-active-bg: linear-gradient(135deg,#667eea,#764ba2);
-    --theme-btn-active-text: #fff;
-    --login-help-bg: rgba(66,153,225,.05);
-    --login-help-border: #4299e1;
-    --login-help-text: #2c5282;
-    --hamburger-bg: #667eea;
-    --hamburger-text: #fff;
-    --mobile-menu-bg: rgba(255,255,255,.98);
-    --mobile-menu-shadow: 0 10px 30px rgba(0,0,0,.2);
-}
-
-/* ✅ تم شب */
-[data-theme="dark"] {
-    --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    --card-bg: rgba(26,26,46,.95);
-    --text-primary: #fbbf24;
-    --text-secondary: #f59e0b;
-    --text-muted: #d97706;
-    --text-light: #b45309;
-    --border-color: rgba(251,191,36,.2);
-    --input-bg: #1e1e3f;
-    --input-border: #fbbf24;
-    --hover-bg: rgba(251,191,36,.1);
-    --section-bg: linear-gradient(135deg,rgba(30,30,63,.8),rgba(26,26,46,.8));
-    --info-bg: linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.1));
-    --shadow: 0 25px 50px rgba(0,0,0,.5);
-    --clock-bg: linear-gradient(135deg,#f59e0b,#d97706);
-    --clock-text: #fff;
-    --datetime-bg: rgba(251,191,36,.15);
-    --datetime-text: #fbbf24;
-    --datetime-label: #f59e0b;
-    --welcome-text: #fbbf24;
-    --menu-text: #fbbf24;
-    --menu-hover: rgba(251,191,36,.15);
-    --table-header: linear-gradient(135deg,#1e1e3f,#16213e);
-    --table-text: #fbbf24;
-    --table-hover: rgba(251,191,36,.1);
-    --warning-bg: rgba(239,68,68,.1);
-    --warning-border: #ef4444;
-    --warning-text: #fca5a5;
-    --help-bg: #1e1e3f;
-    --help-border: #fbbf24;
-    --help-text: #fbbf24;
-    --help-title: #fbbf24;
-    --support-card-bg: #1e1e3f;
-    --support-card-border: #fbbf24;
-    --support-label: #f59e0b;
-    --support-value: #fbbf24;
-    --coin-display-bg: linear-gradient(135deg,#f59e0b,#d97706);
-    --coin-text: #fff;
-    --shop-card-bg: #1e1e3f;
-    --shop-card-border: #fbbf24;
-    --shop-title: #fbbf24;
-    --shop-desc: #f59e0b;
-    --modal-bg: #1e1e3f;
-    --modal-text: #fbbf24;
-    --receipt-bg: linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));
-    --receipt-border: #fbbf24;
-    --receipt-text: #fbbf24;
-    --receipt-label: #f59e0b;
-    --coming-soon-bg: linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));
-    --coming-soon-border: #fbbf24;
-    --coming-soon-title: #fbbf24;
-    --coming-soon-text: #f59e0b;
-    --coming-soon-icon: #fbbf24;
-    --stat-card-bg: #1e1e3f;
-    --stat-card-border: #fbbf24;
-    --stat-value: #fbbf24;
-    --stat-label: #f59e0b;
-    --bar-chart-bg: #1e1e3f;
-    --bar-chart-border: #fbbf24;
-    --calendar-event-bg: #1e1e3f;
-    --calendar-event-border: #fbbf24;
-    --calendar-event-title: #fbbf24;
-    --calendar-event-desc: #f59e0b;
-    --calendar-event-date: #d97706;
-    --history-item-bg: #1e1e3f;
-    --history-item-border: #fbbf24;
-    --history-product: #fbbf24;
-    --history-date: #d97706;
-    --history-code: #fbbf24;
-    --password-dots-bg: #16213e;
-    --copy-btn-bg: rgba(251,191,36,.2);
-    --copy-btn-text: #fbbf24;
-    --copy-btn-hover: rgba(251,191,36,.3);
-    --filter-bar-bg: rgba(30,30,63,.8);
-    --theme-switcher-bg: rgba(30,30,63,.95);
-    --theme-switcher-border: #fbbf24;
-    --theme-btn-bg: transparent;
-    --theme-btn-text: #fbbf24;
-    --theme-btn-active-bg: linear-gradient(135deg,#f59e0b,#d97706);
-    --theme-btn-active-text: #fff;
-    --login-help-bg: rgba(251,191,36,.1);
-    --login-help-border: #fbbf24;
-    --login-help-text: #fbbf24;
-    --hamburger-bg: #f59e0b;
-    --hamburger-text: #1a1a2e;
-    --mobile-menu-bg: rgba(26,26,46,.98);
-    --mobile-menu-shadow: 0 10px 30px rgba(0,0,0,.5);
-}
-
+:root{--bg-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);--card-bg:rgba(255,255,255,.95);--text-primary:#2d3748;--text-secondary:#4a5568;--text-muted:#718096;--text-light:#a0aec0;--border-color:rgba(226,232,240,.5);--input-bg:#fff;--input-border:#e2e8f0;--hover-bg:rgba(102,126,234,.05);--section-bg:linear-gradient(135deg,rgba(247,250,252,.8),rgba(237,242,247,.8));--info-bg:linear-gradient(135deg,rgba(66,153,225,.1),rgba(66,153,225,.05));--shadow:0 25px 50px rgba(0,0,0,.25);--clock-bg:linear-gradient(135deg,#667eea,#764ba2);--clock-text:#fff;--datetime-bg:rgba(102,126,234,.1);--datetime-text:#2d3748;--datetime-label:#718096;--welcome-text:#667eea;--menu-text:#4a5568;--menu-hover:rgba(102,126,234,.1);--table-header:linear-gradient(135deg,#2d3748,#1a202c);--table-text:#2d3748;--table-hover:rgba(102,126,234,.05);--warning-bg:#fff5f5;--warning-border:#feb2b2;--warning-text:#c53030;--help-bg:#fff;--help-border:#e2e8f0;--help-text:#4a5568;--help-title:#667eea;--support-card-bg:#fff;--support-card-border:#e2e8f0;--support-label:#718096;--support-value:#2d3748;--coin-display-bg:linear-gradient(135deg,#ecc94b,#d69e2e);--coin-text:#fff;--shop-card-bg:#fff;--shop-card-border:#e2e8f0;--shop-title:#2d3748;--shop-desc:#4a5568;--modal-bg:#fff;--modal-text:#2d3748;--receipt-bg:linear-gradient(135deg,rgba(72,187,120,.05),rgba(56,161,105,.05));--receipt-border:#48bb78;--receipt-text:#2d3748;--receipt-label:#718096;--coming-soon-bg:linear-gradient(135deg,rgba(102,126,234,.08),rgba(118,75,162,.05));--coming-soon-border:#667eea;--coming-soon-title:#2d3748;--coming-soon-text:#718096;--coming-soon-icon:#667eea;--stat-card-bg:#fff;--stat-card-border:#e2e8f0;--stat-value:#2d3748;--stat-label:#718096;--bar-chart-bg:#fff;--bar-chart-border:#e2e8f0;--calendar-event-bg:#fff;--calendar-event-border:#667eea;--calendar-event-title:#2d3748;--calendar-event-desc:#4a5568;--calendar-event-date:#718096;--history-item-bg:#fff;--history-item-border:#667eea;--history-product:#2d3748;--history-date:#a0aec0;--history-code:#667eea;--password-dots-bg:#edf2f7;--copy-btn-bg:rgba(102,126,234,.1);--copy-btn-text:#667eea;--copy-btn-hover:rgba(102,126,234,.2);--filter-bar-bg:rgba(247,250,252,.8);--theme-switcher-bg:rgba(255,255,255,.95);--theme-switcher-border:#e2e8f0;--theme-btn-bg:transparent;--theme-btn-text:#4a5568;--theme-btn-active-bg:linear-gradient(135deg,#667eea,#764ba2);--theme-btn-active-text:#fff;--login-help-bg:rgba(66,153,225,.05);--login-help-border:#4299e1;--login-help-text:#2c5282;--hamburger-bg:#667eea;--hamburger-text:#fff;--mobile-menu-bg:rgba(255,255,255,.98);--mobile-menu-shadow:0 10px 30px rgba(0,0,0,.2)}
+[data-theme="dark"]{--bg-gradient:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);--card-bg:rgba(26,26,46,.95);--text-primary:#fbbf24;--text-secondary:#f59e0b;--text-muted:#d97706;--text-light:#b45309;--border-color:rgba(251,191,36,.2);--input-bg:#1e1e3f;--input-border:#fbbf24;--hover-bg:rgba(251,191,36,.1);--section-bg:linear-gradient(135deg,rgba(30,30,63,.8),rgba(26,26,46,.8));--info-bg:linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.1));--shadow:0 25px 50px rgba(0,0,0,.5);--clock-bg:linear-gradient(135deg,#f59e0b,#d97706);--clock-text:#fff;--datetime-bg:rgba(251,191,36,.15);--datetime-text:#fbbf24;--datetime-label:#f59e0b;--welcome-text:#fbbf24;--menu-text:#fbbf24;--menu-hover:rgba(251,191,36,.15);--table-header:linear-gradient(135deg,#1e1e3f,#16213e);--table-text:#fbbf24;--table-hover:rgba(251,191,36,.1);--warning-bg:rgba(239,68,68,.1);--warning-border:#ef4444;--warning-text:#fca5a5;--help-bg:#1e1e3f;--help-border:#fbbf24;--help-text:#fbbf24;--help-title:#fbbf24;--support-card-bg:#1e1e3f;--support-card-border:#fbbf24;--support-label:#f59e0b;--support-value:#fbbf24;--coin-display-bg:linear-gradient(135deg,#f59e0b,#d97706);--coin-text:#fff;--shop-card-bg:#1e1e3f;--shop-card-border:#fbbf24;--shop-title:#fbbf24;--shop-desc:#f59e0b;--modal-bg:#1e1e3f;--modal-text:#fbbf24;--receipt-bg:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));--receipt-border:#fbbf24;--receipt-text:#fbbf24;--receipt-label:#f59e0b;--coming-soon-bg:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));--coming-soon-border:#fbbf24;--coming-soon-title:#fbbf24;--coming-soon-text:#f59e0b;--coming-soon-icon:#fbbf24;--stat-card-bg:#1e1e3f;--stat-card-border:#fbbf24;--stat-value:#fbbf24;--stat-label:#f59e0b;--bar-chart-bg:#1e1e3f;--bar-chart-border:#fbbf24;--calendar-event-bg:#1e1e3f;--calendar-event-border:#fbbf24;--calendar-event-title:#fbbf24;--calendar-event-desc:#f59e0b;--calendar-event-date:#d97706;--history-item-bg:#1e1e3f;--history-item-border:#fbbf24;--history-product:#fbbf24;--history-date:#d97706;--history-code:#fbbf24;--password-dots-bg:#16213e;--copy-btn-bg:rgba(251,191,36,.2);--copy-btn-text:#fbbf24;--copy-btn-hover:rgba(251,191,36,.3);--filter-bar-bg:rgba(30,30,63,.8);--theme-switcher-bg:rgba(30,30,63,.95);--theme-switcher-border:#fbbf24;--theme-btn-bg:transparent;--theme-btn-text:#fbbf24;--theme-btn-active-bg:linear-gradient(135deg,#f59e0b,#d97706);--theme-btn-active-text:#fff;--login-help-bg:rgba(251,191,36,.1);--login-help-border:#fbbf24;--login-help-text:#fbbf24;--hamburger-bg:#f59e0b;--hamburger-text:#1a1a2e;--mobile-menu-bg:rgba(26,26,46,.98);--mobile-menu-shadow:0 10px 30px rgba(0,0,0,.5)}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',Tahoma,system-ui,sans-serif}
 body{background:var(--bg-gradient);min-height:100vh;padding:20px;transition:background .3s ease;color:var(--text-primary)}
 .container{max-width:1600px;margin:0 auto}
@@ -349,12 +171,7 @@ tbody tr:hover{background:var(--table-hover)}
 .support-card .support-icon.sheba{background:linear-gradient(135deg,#ed8936,#dd6b20)}
 .support-card .support-icon.itaa{background:linear-gradient(135deg,#38b2ac,#319795)}
 .support-card .support-icon.web{background:linear-gradient(135deg,#f56565,#e53e3e)}
-[data-theme="dark"] .support-card .support-icon.phone{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a2e}
-[data-theme="dark"] .support-card .support-icon.account{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
-[data-theme="dark"] .support-card .support-icon.card{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
-[data-theme="dark"] .support-card .support-icon.sheba{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
-[data-theme="dark"] .support-card .support-icon.itaa{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
-[data-theme="dark"] .support-card .support-icon.web{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
+[data-theme="dark"] .support-card .support-icon.phone,[data-theme="dark"] .support-card .support-icon.account,[data-theme="dark"] .support-card .support-icon.card,[data-theme="dark"] .support-card .support-icon.sheba,[data-theme="dark"] .support-card .support-icon.itaa,[data-theme="dark"] .support-card .support-icon.web{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
 .support-card .support-content{flex:1}
 .support-card .support-label{font-size:.85rem;color:var(--support-label);margin-bottom:5px}
 .support-card .support-value{font-weight:700;color:var(--support-value);font-size:1rem;word-break:break-all;direction:ltr;text-align:right}
@@ -416,69 +233,16 @@ tbody tr:hover{background:var(--table-hover)}
 .shop-history-item.delivered{border-right-color:#48bb78;opacity:.8}
 [data-theme="dark"] .shop-history-item.delivered{border-right-color:#fbbf24}
 .shop-history-item.pending{border-right-color:#ecc94b}
-
-/* ✅ تم سوئیچر */
 .theme-switcher{display:flex;gap:6px;background:var(--theme-switcher-bg);padding:6px;border-radius:16px;border:2px solid var(--theme-switcher-border);transition:all .3s}
 .theme-btn{background:var(--theme-btn-bg);color:var(--theme-btn-text);border:none;padding:8px 14px;border-radius:12px;cursor:pointer;font-weight:600;font-size:.85rem;display:flex;align-items:center;gap:6px;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s}
 .theme-btn:hover{background:var(--menu-hover)}
 .theme-btn.active{background:var(--theme-btn-active-bg);color:var(--theme-btn-active-text)}
-
-/* ✅ لاگین راهنما */
 .login-help{background:var(--login-help-bg);border:2px solid var(--login-help-border);border-radius:16px;padding:15px 20px;margin-top:20px;display:flex;align-items:center;gap:12px;transition:all .3s}
 .login-help i{font-size:1.5rem;color:var(--login-help-border)}
 .login-help p{color:var(--login-help-text);font-size:.9rem;line-height:1.6;font-weight:600}
-
-/* ✅ دکمه همبرگر موبایل */
 .mobile-menu-toggle{display:none;background:var(--hamburger-bg);color:var(--hamburger-text);border:none;padding:12px 18px;border-radius:16px;cursor:pointer;font-size:1.2rem;font-weight:700;margin-bottom:15px;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s;width:100%}
 .mobile-menu-toggle:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.2)}
-
-/* ✅ ریسپانسیو موبایل */
-@media(max-width:768px){
-    body{padding:10px}
-    .login-page,.app-page{padding:20px;border-radius:20px}
-    .app-layout{flex-direction:column;gap:15px}
-    .vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}
-    .vertical-menu.collapsed{display:none}
-    .vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}
-    .mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}
-    .content-area{padding:15px;min-height:400px;border-radius:16px}
-    .header-bar{grid-template-columns:1fr;padding:15px;gap:15px}
-    .datetime-display{flex-direction:column;gap:10px}
-    .datetime-card{padding:10px 15px}
-    .datetime-card .dt-value{font-size:1rem}
-    .clock-card{padding:12px 20px}
-    .clock-card .clock-time{font-size:1.5rem}
-    .header-actions{flex-direction:column;width:100%;gap:10px}
-    .theme-switcher{width:100%;justify-content:space-around}
-    .theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}
-    table{font-size:.75rem}
-    th,td{padding:8px 6px}
-    .shop-grid{grid-template-columns:1fr}
-    .shop-card{padding:18px}
-    .profile-info-grid{grid-template-columns:1fr;gap:12px}
-    .last-tx-grid{grid-template-columns:1fr}
-    .loan-info{grid-template-columns:1fr}
-    .calendar-grid{grid-template-columns:1fr}
-    .stats-grid{grid-template-columns:repeat(2,1fr)}
-    .stat-card{padding:15px}
-    .stat-card .stat-value{font-size:1.3rem}
-    .filter-bar{flex-direction:column}
-    .filter-bar input,.filter-bar select{width:100%}
-    .shop-filter-bar{flex-direction:column}
-    .shop-filter-bar input,.shop-filter-bar select{width:100%}
-    .modal-content{padding:20px}
-    .modal-actions{flex-direction:column}
-    .modal-actions .btn-small{width:100%}
-    .support-grid{grid-template-columns:1fr}
-    .date-filter{flex-direction:column;align-items:stretch}
-    .date-filter input{width:100%}
-    .search-box{flex-direction:column}
-    .search-box input{width:100%}
-    .welcome-banner{font-size:1.1rem!important;text-align:center}
-    .coin-display{width:100%;justify-content:center}
-    .last-login-box{flex-direction:column;text-align:center}
-    .bar-chart{height:150px;padding:10px}
-}
+@media(max-width:768px){body{padding:10px}.login-page,.app-page{padding:20px;border-radius:20px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}.vertical-menu.collapsed{display:none}.vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}.content-area{padding:15px;min-height:400px;border-radius:16px}.header-bar{grid-template-columns:1fr;padding:15px;gap:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{padding:10px 15px}.datetime-card .dt-value{font-size:1rem}.clock-card{padding:12px 20px}.clock-card .clock-time{font-size:1.5rem}.header-actions{flex-direction:column;width:100%;gap:10px}.theme-switcher{width:100%;justify-content:space-around}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}table{font-size:.75rem}th,td{padding:8px 6px}.shop-grid{grid-template-columns:1fr}.shop-card{padding:18px}.profile-info-grid{grid-template-columns:1fr;gap:12px}.last-tx-grid{grid-template-columns:1fr}.loan-info{grid-template-columns:1fr}.calendar-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card{padding:15px}.stat-card .stat-value{font-size:1.3rem}.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%}.shop-filter-bar{flex-direction:column}.shop-filter-bar input,.shop-filter-bar select{width:100%}.modal-content{padding:20px}.modal-actions{flex-direction:column}.modal-actions .btn-small{width:100%}.support-grid{grid-template-columns:1fr}.date-filter{flex-direction:column;align-items:stretch}.date-filter input{width:100%}.search-box{flex-direction:column}.search-box input{width:100%}.welcome-banner{font-size:1.1rem!important;text-align:center}.coin-display{width:100%;justify-content:center}.last-login-box{flex-direction:column;text-align:center}.bar-chart{height:150px;padding:10px}}
 </style>
 </head>
 <body>
@@ -494,12 +258,8 @@ tbody tr:hover{background:var(--table-hover)}
 const $=(s,p=document)=>p.querySelector(s);
 const $$=(s,p=document)=>p.querySelectorAll(s);
 
-// ✅ مدیریت تم
 const ThemeManager = {
-    init() {
-        const saved = localStorage.getItem('sandogh_theme') || 'auto';
-        this.apply(saved);
-    },
+    init() { const saved = localStorage.getItem('sandogh_theme') || 'auto'; this.apply(saved); },
     apply(theme) {
         if (theme === 'auto') {
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -525,8 +285,36 @@ const U={
     parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=String(v).replace(/[,\s]/g,'');return isNaN(parseFloat(s))?0:parseFloat(s);},
     fmtDate(s){if(!s) return '---';const str = String(s).trim();if(str.includes('/') && str.length === 10) return str;if(str.includes('-') && str.length === 10) return str.replace(/-/g, '/');const c = str.replace(/\D/g, '');if(c.length === 8) return `${c.slice(0,4)}/${c.slice(4,6)}/${c.slice(6,8)}`;if(c.length === 6) return `${c.slice(0,4)}/${c.slice(4,6)}`;return str;},
     esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;},
-    findCol(names,headers){for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers){const hh=h.toLowerCase().replace(/[_\s\-]/g,'');if(hh===nn) return h;}}for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers){const hh=h.toLowerCase().replace(/[_\s\-]/g,'');if(hh.includes(nn) || nn.includes(hh)) return h;}}return null;},
-    parseBool(v){if(v===null||v===undefined||v==='')return false;const s=String(v).trim().toLowerCase();return['true','1','yes','فعال','بله','✓','✅','on'].includes(s);},
+    findCol(names,headers){
+        for(const n of names){
+            const nn=n.toLowerCase().replace(/[_\s\-]/g,'');
+            for(const h of headers){
+                const hh=h.toLowerCase().replace(/[_\s\-]/g,'');
+                if(hh===nn) return h;
+            }
+        }
+        for(const n of names){
+            const nn=n.toLowerCase().replace(/[_\s\-]/g,'');
+            if(nn.length < 3) continue;
+            for(const h of headers){
+                const hh=h.toLowerCase().replace(/[_\s\-]/g,'');
+                if(hh.includes(nn)) return h;
+            }
+        }
+        return null;
+    },
+    // ✅ تابع parseBool اصلاح شده - پشتیبانی از -1 و 1
+    parseBool(v){
+        if(v===null||v===undefined||v==='')return false;
+        // بررسی عددی
+        if(typeof v === 'number') return v === 1 || v === -1;
+        const s=String(v).trim().toLowerCase();
+        // ✅ -1 و 1 هر دو فعال
+        if(s === '1' || s === '-1') return true;
+        if(s === '0') return false;
+        // بررسی متنی
+        return['true','yes','فعال','بله','✓','✅','on'].includes(s);
+    },
     getJalaliMonth(){const now=new Date();const gy=now.getFullYear(),gm=now.getMonth()+1,gd=now.getDate();const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy;let days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1];let jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30);const jd=1+(days<186?days%31:(days-186)%30);return {year:jy,month:jm,day:jd,str:`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`};},
     calcMembershipDuration(openDate){if(!openDate) return '---';const parts = openDate.split('/');if(parts.length !== 3) return openDate;const openYear = parseInt(parts[0]);const openMonth = parseInt(parts[1]);const openDay = parseInt(parts[2]);const today = U.toJalaliParts(new Date());let years = today.year - openYear;let months = today.month - openMonth;let days = today.day - openDay;if(days < 0){ months--; const prevMonth = today.month - 1; const daysInPrevMonth = prevMonth <= 6 ? 31 : (prevMonth <= 11 ? 30 : 29); days += daysInPrevMonth; }if(months < 0){ years--; months += 12; }let result = '';if(years > 0) result += `${years} سال`;if(months > 0) result += (result ? ' و ' : '') + `${months} ماه`;if(days > 0) result += (result ? ' و ' : '') + `${days} روز`;return result || 'کمتر از یک روز';},
     generateOrderCode(accountNumber) {const timestamp = Date.now().toString().slice(-6);const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');return `ORD-${accountNumber}-${timestamp}${random}`;}
@@ -608,8 +396,8 @@ function calculateCoins(member, transactions, ddm) {
         if (extraSavings > 3000000) {const bonusCoins = Math.floor(extraSavings / 3000000) * 2;ddm.addCoins(member.id, bonusCoins, 'پس‌انداز بالا', `${U.fmtNum(extraSavings)} ریال اضافه`);}
         ddm.markMonthlyCalculated();
     }
-    if (member.active && member.birthDate) {
-        const birthParts = member.birthDate.split('/');
+    if (member.active && member.birthDateShamsi) {
+        const birthParts = member.birthDateShamsi.split('/');
         if (birthParts.length === 3) {
             const birthMonth = parseInt(birthParts[1]);const birthDay = parseInt(birthParts[2]);
             if (birthMonth === jalali.month && birthDay === jalali.day) {
@@ -656,6 +444,7 @@ async function loadMainData() {
         const wb = XLSX.read(arrayBuffer, { type: 'array' });
         const sh = wb.Sheets[wb.SheetNames[0]];
         const rows = XLSX.utils.sheet_to_json(sh, { defval: '', raw: false });
+        
         let shopRows = [];
         if (wb.SheetNames.length > 1) {
             const shopSheetName = wb.SheetNames.find(name => name.toLowerCase().includes('shop') || name.toLowerCase().includes('فروشگاه') || name.toLowerCase().includes('محصول')) || wb.SheetNames[1];
@@ -663,26 +452,29 @@ async function loadMainData() {
             shopRows = XLSX.utils.sheet_to_json(shopSh, { defval: '', raw: false });
             console.log(`🛒 شیت فروشگاه بارگذاری شد: ${shopSheetName} (${shopRows.length} ردیف)`);
         }
+        
         if (!rows.length) return { members: [], transactions: [] };
         const headers = Object.keys(rows[0]);
+        console.log('📋 سرستون‌های اکسل:', headers);
+        
         const colMap = {
             id: U.findCol(['ID', 'id'], headers),
-            accountNumber: U.findCol(['شماره حساب', 'accountnumber', 'کدعضو'], headers),
-            name: U.findCol(['name', 'نام', 'firstname'], headers),
-            phone: U.findCol(['phone', 'تلفن', 'phone1'], headers),
+            accountNumber: U.findCol(['شماره حساب'], headers),
+            name: U.findCol(['name', 'نام'], headers),
+            phone: U.findCol(['phone', 'تلفن'], headers),
             phone2: U.findCol(['phone2', 'تلفن2'], headers),
-            balance: U.findCol(['موجودی', 'balance', 'مانده'], headers),
-            mojodiTaInLahzeh: U.findCol(['mojodi ta in lahzeh', 'mojoditainlahzeh', 'موجودی تا این لحظه'], headers),
-            savingsStatus: U.findCol(['وضعیت پس انداز', 'savingsstatus'], headers),
-            mablaghVam: U.findCol(['mablagh vam', 'مانده وام', 'loan'], headers),
+            balance: U.findCol(['موجودی'], headers),
+            mojodiTaInLahzeh: U.findCol(['mojodi ta in lahzeh'], headers),
+            savingsStatus: U.findCol(['وضعیت پس انداز'], headers),
+            mablaghVam: U.findCol(['mablagh vam', 'مانده وام'], headers),
             paidInstallments: U.findCol(['paidinstallments', 'تعداد قسط پرداخت شده'], headers),
             overdueInstallments: U.findCol(['overdueinstallments', 'تعداد قسط معوقه'], headers),
             remainingInstallments: U.findCol(['remaininginstallments', 'تعداد قسط مانده'], headers),
             monthlySalary: U.findCol(['monthlysalary', 'مقرری ماهانه'], headers),
-            monthlySalaryApproved: U.findCol(['monthlysalaryapproved', 'مقرری ماهانه مصوب'], headers),
-            openDate: U.findCol(['date ozviyat', 'تاریخ عضویت', 'تاریخ افتتاح'], headers),
+            monthlySalaryApproved: U.findCol(['مقرری ماهانه مصوب شده هر نفر', 'مقرری ماهانه مصوبه هرنفر'], headers),
+            openDate: U.findCol(['date ozviyat', 'تاریخ عضویت'], headers),
             datMiladi: U.findCol(['dat miladi', 'تاریخ تولد'], headers),
-            dateBirth: U.findCol(['date birth', 'datebirth', 'date_birth', 'تاریخ تولد شمسی', 'تاریخ_تولد_شمسی'], headers),
+            dateBirth: U.findCol(['date birth'], headers),
             dateSabt: U.findCol(['date sabt', 'تاریخ ثبت'], headers),
             dateVam: U.findCol(['date vam', 'تاریخ وام'], headers),
             akharinGhest: U.findCol(['akharin ghest', 'آخرین قسط'], headers),
@@ -694,87 +486,140 @@ async function loadMainData() {
             fishNumber: U.findCol(['fishnumber', 'شماره فیش'], headers),
             transactionName: U.findCol(['transactionname', 'نام تراکنش کننده'], headers),
             description: U.findCol(['description', 'توضیحات'], headers),
-            installmentAmountTx: U.findCol(['مبلغ قسط واریزی', 'mablagh ghest varizi', 'mablaghghestvarizi'], headers),
-            installmentDateTx: U.findCol(['تاریخ قسط واریزی', 'tarikh ghest varizi', 'tarikhghestvarizi'], headers),
+            installmentAmountTx: U.findCol(['مبلغ قسط واریزی'], headers),
+            installmentDateTx: U.findCol(['تاریخ قسط واریزی'], headers),
             total: U.findCol(['total', 'جمع واریزی'], headers),
-            kodOmomi: U.findCol(['kod omomi', 'پیامک واریز'], headers),
-            kodOverdue: U.findCol(['kod', 'پیامک اخطار'], headers),
-            kodSarparast: U.findCol(['kod sarparast', 'پیامک سرپرستان'], headers),
-            kodMoavaghe: U.findCol(['kod moavaghe', 'kodmoavaghe', 'پیامک معوقات'], headers),
-            kodMosabegheh: U.findCol(['kod mosabegheh', 'kodmosabegheh', 'پیامک مسابقات'], headers),
-            kodTavalod: U.findCol(['kod tavalod', 'kodtavalod', 'پیامک تولد'], headers),
-            kodMonasebat: U.findCol(['kod monasebat', 'kodmonasebat', 'پیامک مناسبت'], headers),
-            active: U.findCol(['active', 'فعال', 'وضعیت'], headers),
-            noVam: U.findCol(['no vam', 'novam', 'no_vam', 'شماره وام'], headers),
-            supportPhone: U.findCol(['telepen', 'telefon', 'telephone', 'telephon', 'تلفن صندوق', 'phone sandogh', 'phonesandogh', 'phone_sandogh', 'تلفن'], headers),
-            supportAccount: U.findCol(['shomareh hasab', 'shomarehhasab', 'shomareh_hasab', 'شماره حساب صندوق', 'حساب صندوق'], headers),
-            supportCard: U.findCol(['shomareh kart', 'shomarehkart', 'shomareh_kart', 'شماره کارت'], headers),
-            supportSheba: U.findCol(['adress', 'address', 'sheba', 'شماره شبا'], headers),
-            supportWeb: U.findCol(['web site', 'website', 'web_site', 'آدرس سایت'], headers)
+            // ✅ ستون‌های سامانه پیامکی
+            active: U.findCol(['active'], headers),
+            kodOmomi: U.findCol(['kod omomi'], headers),
+            kodSarparast: U.findCol(['kod sarparast'], headers),
+            kodMoavaghe: U.findCol(['kod moavaghe'], headers),
+            kodOverdue: U.findCol(['kod'], headers),
+            kodMosabegheh: U.findCol(['kod mosabegheh'], headers),
+            kodKhabarnameh: U.findCol(['kod khabarnameh'], headers),
+            kodTavalod: U.findCol(['kod tavalod'], headers),
+            kodMonasebat: U.findCol(['kod monasebat'], headers),
+            noVam: U.findCol(['no vam'], headers),
+            // ✅ مشکل ۱: فقط از ستون telepen
+            supportPhone: U.findCol(['telepen'], headers),
+            supportAccount: U.findCol(['shomareh hasab'], headers),
+            supportCard: U.findCol(['shomareh kart'], headers),
+            supportSheba: U.findCol(['adress'], headers),
+            supportWeb: U.findCol(['web site'], headers)
         };
+        
+        console.log('🔍 ستون‌های شناسایی شده:', {
+            accountNumber: colMap.accountNumber,
+            dateBirth: colMap.dateBirth,
+            monthlySalaryApproved: colMap.monthlySalaryApproved,
+            supportPhone: colMap.supportPhone,
+            active: colMap.active,
+            kodOmomi: colMap.kodOmomi,
+            kodSarparast: colMap.kodSarparast,
+            kodMoavaghe: colMap.kodMoavaghe,
+            kodOverdue: colMap.kodOverdue,
+            kodMosabegheh: colMap.kodMosabegheh,
+            kodKhabarnameh: colMap.kodKhabarnameh,
+            kodTavalod: colMap.kodTavalod,
+            kodMonasebat: colMap.kodMonasebat
+        });
+        
         if (!colMap.accountNumber) return { members: [], transactions: [] };
-        const membersMap = new Map();
-        const transactions = [];
+        
+        // ✅ مشکل ۱: بارگذاری اطلاعات پشتیبانی فقط از ردیف اول اکسل
+        if (rows.length > 0) {
+            const firstRow = rows[0];
+            SUPPORT_INFO = {
+                phone: colMap.supportPhone ? String(firstRow[colMap.supportPhone] || '').trim() : '',
+                accountNumber: colMap.supportAccount ? String(firstRow[colMap.supportAccount] || '').trim() : '',
+                cardNumber: colMap.supportCard ? String(firstRow[colMap.supportCard] || '').trim() : '',
+                shebaNumber: colMap.supportSheba ? String(firstRow[colMap.supportSheba] || '').trim() : '',
+                itaaAddress: '@ethads',
+                websiteAddress: colMap.supportWeb ? String(firstRow[colMap.supportWeb] || '').trim() : ''
+            };
+            console.log('✅ اطلاعات پشتیبانی از ردیف اول:', SUPPORT_INFO);
+        }
+        
+        const rowsByAccount = new Map();
         rows.forEach((row, index) => {
             const accNum = String(row[colMap.accountNumber] || '').trim();
             if (!accNum) return;
-            if (index === 0) {
-                SUPPORT_INFO = {
-                    phone: colMap.supportPhone ? String(row[colMap.supportPhone] || '').trim() : '',
-                    accountNumber: colMap.supportAccount ? String(row[colMap.supportAccount] || '').trim() : '',
-                    cardNumber: colMap.supportCard ? String(row[colMap.supportCard] || '').trim() : '',
-                    shebaNumber: colMap.supportSheba ? String(row[colMap.supportSheba] || '').trim() : '',
-                    itaaAddress: '@ethads',
-                    websiteAddress: colMap.supportWeb ? String(row[colMap.supportWeb] || '').trim() : ''
-                };
+            if (!rowsByAccount.has(accNum)) {
+                rowsByAccount.set(accNum, []);
             }
-            const smsGeneral = colMap.kodOmomi ? U.parseBool(row[colMap.kodOmomi]) : false;
+            rowsByAccount.get(accNum).push({ row, index });
+        });
+        
+        const membersMap = new Map();
+        const transactions = [];
+        
+        rows.forEach((row, index) => {
+            const accNum = String(row[colMap.accountNumber] || '').trim();
+            if (!accNum) return;
+            
+            // ✅ مشکل ۲: خواندن وضعیت پیامک‌ها با parseBool اصلاح شده
+            const smsActive = colMap.active ? U.parseBool(row[colMap.active]) : false;
+            const smsOmomi = colMap.kodOmomi ? U.parseBool(row[colMap.kodOmomi]) : false;
+            const smsSarparast = colMap.kodSarparast ? U.parseBool(row[colMap.kodSarparast]) : false;
+            const smsMoavaghe = colMap.kodMoavaghe ? U.parseBool(row[colMap.kodMoavaghe]) : false;
             const smsOverdue = colMap.kodOverdue ? U.parseBool(row[colMap.kodOverdue]) : false;
-            const smsStatus = { general: smsGeneral, overdue: smsOverdue };
+            const smsMosabegheh = colMap.kodMosabegheh ? U.parseBool(row[colMap.kodMosabegheh]) : false;
+            const smsKhabarnameh = colMap.kodKhabarnameh ? U.parseBool(row[colMap.kodKhabarnameh]) : false;
+            const smsTavalod = colMap.kodTavalod ? U.parseBool(row[colMap.kodTavalod]) : false;
+            const smsMonasebat = colMap.kodMonasebat ? U.parseBool(row[colMap.kodMonasebat]) : false;
+            
+            const smsStatus = { general: smsOmomi, overdue: smsOverdue };
+            
             const existingMember = membersMap.get(accNum);
+            
+            const memberRows = rowsByAccount.get(accNum) || [];
+            const maxIdRow = memberRows.reduce((max, curr) => {
+                const maxId = parseInt(max.row[colMap.id] || '0');
+                const currId = parseInt(curr.row[colMap.id] || '0');
+                return currId > maxId ? curr : max;
+            }, memberRows[0]);
+            
+            const firstRowForMember = memberRows[0].row;
+            
             if (!existingMember) {
                 const memberId = membersMap.size + 1;
                 const member = {
-                    id: memberId,firstName: colMap.name ? String(row[colMap.name] || '').trim() : '',lastName: '',accountNumber: accNum,
-                    phone1: colMap.phone ? String(row[colMap.phone] || '').trim() : '',phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
-                    balance: colMap.balance ? U.parseNum(row[colMap.balance]) : 0,currentMonthBalance: colMap.mojodiTaInLahzeh ? U.parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
-                    savingsStatus: colMap.savingsStatus ? U.parseNum(row[colMap.savingsStatus]) : 0,loanBalance: colMap.mablaghVam ? U.parseNum(row[colMap.mablaghVam]) : 0,
-                    paidInstallments: colMap.paidInstallments ? U.parseNum(row[colMap.paidInstallments]) : 0,overdueInstallments: colMap.overdueInstallments ? U.parseNum(row[colMap.overdueInstallments]) : 0,
-                    remainingInstallments: colMap.remainingInstallments ? U.parseNum(row[colMap.remainingInstallments]) : 0,monthlySalary: colMap.monthlySalary ? U.parseNum(row[colMap.monthlySalary]) : 0,
-                    monthlySalaryApproved: colMap.monthlySalaryApproved ? U.parseNum(row[colMap.monthlySalaryApproved]) : 0,
-                    openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',birthDate: colMap.datMiladi ? String(row[colMap.datMiladi] || '').trim() : '',
-                    birthDateShamsi: colMap.dateBirth ? String(row[colMap.dateBirth] || '').trim() : '',
-                    loanRequestDate: colMap.dateSabt ? String(row[colMap.dateSabt] || '').trim() : '',loanReceiveDate: colMap.dateVam ? String(row[colMap.dateVam] || '').trim() : '',
-                    lastInstallmentDate: colMap.akharinGhest ? String(row[colMap.akharinGhest] || '').trim() : '',
-                    installmentAmount: colMap.mablaghHarGhest ? U.parseNum(row[colMap.mablaghHarGhest]) : 0,feeAmount: colMap.mablaghKarmozd ? U.parseNum(row[colMap.mablaghKarmozd]) : 0,
-                    totalInstallments: colMap.tedadAghsat ? U.parseNum(row[colMap.tedadAghsat]) : 0,
-                    active: colMap.active ? U.parseBool(row[colMap.active]) : true,loanNumber: colMap.noVam ? String(row[colMap.noVam] || '').trim() : ''
+                    id: memberId,
+                    firstName: colMap.name ? String(firstRowForMember[colMap.name] || '').trim() : '',
+                    lastName: '',
+                    accountNumber: accNum,
+                    phone1: colMap.phone ? String(firstRowForMember[colMap.phone] || '').trim() : '',
+                    phone2: colMap.phone2 ? String(firstRowForMember[colMap.phone2] || '').trim() : '',
+                    openDate: colMap.openDate ? String(firstRowForMember[colMap.openDate] || '').trim() : '',
+                    datMiladi: colMap.datMiladi ? String(firstRowForMember[colMap.datMiladi] || '').trim() : '',
+                    birthDateShamsi: colMap.dateBirth ? String(firstRowForMember[colMap.dateBirth] || '').trim() : '',
+                    active: colMap.active ? U.parseBool(firstRowForMember[colMap.active]) : true,
+                    balance: colMap.balance ? U.parseNum(maxIdRow.row[colMap.balance]) : 0,
+                    currentMonthBalance: colMap.mojodiTaInLahzeh ? U.parseNum(maxIdRow.row[colMap.mojodiTaInLahzeh]) : 0,
+                    savingsStatus: colMap.savingsStatus ? U.parseNum(maxIdRow.row[colMap.savingsStatus]) : 0,
+                    loanBalance: colMap.mablaghVam ? U.parseNum(maxIdRow.row[colMap.mablaghVam]) : 0,
+                    paidInstallments: colMap.paidInstallments ? U.parseNum(maxIdRow.row[colMap.paidInstallments]) : 0,
+                    overdueInstallments: colMap.overdueInstallments ? U.parseNum(maxIdRow.row[colMap.overdueInstallments]) : 0,
+                    remainingInstallments: colMap.remainingInstallments ? U.parseNum(maxIdRow.row[colMap.remainingInstallments]) : 0,
+                    monthlySalary: colMap.monthlySalary ? U.parseNum(maxIdRow.row[colMap.monthlySalary]) : 0,
+                    monthlySalaryApproved: colMap.monthlySalaryApproved ? U.parseNum(maxIdRow.row[colMap.monthlySalaryApproved]) : 0,
+                    loanRequestDate: colMap.dateSabt ? String(maxIdRow.row[colMap.dateSabt] || '').trim() : '',
+                    loanReceiveDate: colMap.dateVam ? String(maxIdRow.row[colMap.dateVam] || '').trim() : '',
+                    lastInstallmentDate: colMap.akharinGhest ? String(maxIdRow.row[colMap.akharinGhest] || '').trim() : '',
+                    installmentAmount: colMap.mablaghHarGhest ? U.parseNum(maxIdRow.row[colMap.mablaghHarGhest]) : 0,
+                    feeAmount: colMap.mablaghKarmozd ? U.parseNum(maxIdRow.row[colMap.mablaghKarmozd]) : 0,
+                    totalInstallments: colMap.tedadAghsat ? U.parseNum(maxIdRow.row[colMap.tedadAghsat]) : 0,
+                    loanNumber: colMap.noVam ? String(maxIdRow.row[colMap.noVam] || '').trim() : ''
                 };
                 membersMap.set(accNum, member);
-            } else {
-                const m = existingMember;
-                m.balance = colMap.balance ? U.parseNum(row[colMap.balance]) : m.balance;
-                m.currentMonthBalance = colMap.mojodiTaInLahzeh ? U.parseNum(row[colMap.mojodiTaInLahzeh]) : m.currentMonthBalance;
-                m.savingsStatus = colMap.savingsStatus ? U.parseNum(row[colMap.savingsStatus]) : m.savingsStatus;
-                m.loanBalance = colMap.mablaghVam ? U.parseNum(row[colMap.mablaghVam]) : m.loanBalance;
-                m.paidInstallments = colMap.paidInstallments ? U.parseNum(row[colMap.paidInstallments]) : m.paidInstallments;
-                m.overdueInstallments = colMap.overdueInstallments ? U.parseNum(row[colMap.overdueInstallments]) : m.overdueInstallments;
-                m.remainingInstallments = colMap.remainingInstallments ? U.parseNum(row[colMap.remainingInstallments]) : m.remainingInstallments;
-                m.monthlySalary = colMap.monthlySalary ? U.parseNum(row[colMap.monthlySalary]) : m.monthlySalary;
-                m.monthlySalaryApproved = colMap.monthlySalaryApproved ? U.parseNum(row[colMap.monthlySalaryApproved]) : m.monthlySalaryApproved;
-                if (colMap.dateSabt) m.loanRequestDate = String(row[colMap.dateSabt] || '').trim();
-                if (colMap.dateVam) m.loanReceiveDate = String(row[colMap.dateVam] || '').trim();
-                if (colMap.akharinGhest) m.lastInstallmentDate = String(row[colMap.akharinGhest] || '').trim();
-                m.installmentAmount = colMap.mablaghHarGhest ? U.parseNum(row[colMap.mablaghHarGhest]) : m.installmentAmount;
-                m.feeAmount = colMap.mablaghKarmozd ? U.parseNum(row[colMap.mablaghKarmozd]) : m.feeAmount;
-                m.totalInstallments = colMap.tedadAghsat ? U.parseNum(row[colMap.tedadAghsat]) : m.totalInstallments;
-                if (colMap.dateBirth) m.birthDateShamsi = String(row[colMap.dateBirth] || '').trim();
-                if (colMap.noVam) m.loanNumber = String(row[colMap.noVam] || '').trim();
             }
-            const smsVizIcon = smsGeneral ? '✅' : '❌';
+            
+            const smsVizIcon = smsOmomi ? '✅' : '❌';
             const smsWarningIcon = smsOverdue ? '❌' : '✅';
+            
             const transaction = {
-                'ID': colMap.id ? String(row[colMap.id] || '') : String(index + 1),'شماره حساب': accNum,
+                'ID': colMap.id ? String(row[colMap.id] || '') : String(index + 1),
+                'شماره حساب': accNum,
                 'مقرری ماهانه': colMap.monthlySalary ? U.fmtNum(U.parseNum(row[colMap.monthlySalary])) : '0',
                 'شماره فیش': colMap.fishNumber ? String(row[colMap.fishNumber] || '') : '',
                 'تاریخ تراکنش': colMap.transactionDate ? String(row[colMap.transactionDate] || '') : '',
@@ -787,46 +632,70 @@ async function loadMainData() {
                 'تعداد قسط پرداخت شده': colMap.paidInstallments ? String(row[colMap.paidInstallments] || '0') : '0',
                 'تعداد قسط مانده': colMap.remainingInstallments ? String(row[colMap.remainingInstallments] || '0') : '0',
                 'وضعیت پس انداز': colMap.savingsStatus ? U.fmtNum(U.parseNum(row[colMap.savingsStatus])) : '0',
-                'پیامک واریز': smsVizIcon,'پیامک اخطار': smsWarningIcon,
+                'پیامک واریز': smsVizIcon,
+                'پیامک اخطار': smsWarningIcon,
                 'توضیحات': colMap.description ? String(row[colMap.description] || '') : '',
                 _transactionId: colMap.id ? String(row[colMap.id] || '') : String(index + 1),
-                _memberId: membersMap.get(accNum).id,_amount: colMap.amount ? U.parseNum(row[colMap.amount]) : 0,
+                _memberId: membersMap.get(accNum).id,
+                _amount: colMap.amount ? U.parseNum(row[colMap.amount]) : 0,
                 _mojodiTaInLahzeh: colMap.mojodiTaInLahzeh ? U.parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
                 _loanNumber: colMap.noVam ? String(row[colMap.noVam] || '').trim() : accNum,
                 smsStatus: smsStatus,
-                smsActive: colMap.active ? U.parseBool(row[colMap.active]) : false,
-                smsKod: colMap.kodOverdue ? U.parseBool(row[colMap.kodOverdue]) : false,
-                smsOmomi: colMap.kodOmomi ? U.parseBool(row[colMap.kodOmomi]) : false,
-                smsSarparast: colMap.kodSarparast ? U.parseBool(row[colMap.kodSarparast]) : false,
-                smsMoavaghe: colMap.kodMoavaghe ? U.parseBool(row[colMap.kodMoavaghe]) : false,
-                smsMosabegheh: colMap.kodMosabegheh ? U.parseBool(row[colMap.kodMosabegheh]) : false,
-                smsTavalod: colMap.kodTavalod ? U.parseBool(row[colMap.kodTavalod]) : false,
-                smsMonasebat: colMap.kodMonasebat ? U.parseBool(row[colMap.kodMonasebat]) : false
+                // ✅ مشکل ۲: همه سامانه‌های پیامکی
+                smsActive: smsActive,
+                smsOmomi: smsOmomi,
+                smsSarparast: smsSarparast,
+                smsMoavaghe: smsMoavaghe,
+                smsKod: smsOverdue,
+                smsMosabegheh: smsMosabegheh,
+                smsKhabarnameh: smsKhabarnameh,
+                smsTavalod: smsTavalod,
+                smsMonasebat: smsMonasebat
             };
             transactions.push(transaction);
         });
+        
         const members = Array.from(membersMap.values());
+        
         if (shopRows.length > 0) {
             const shopHeaders = Object.keys(shopRows[0]);
+            console.log('🛒 سرستون‌های فروشگاه:', shopHeaders);
+            
             const shopColMap = {
-                shenaseh: U.findCol(['shenaseh', 'شناسه', 'شناسه محصول', 'id'], shopHeaders),
-                namemahsool: U.findCol(['namemahsool', 'نام محصول', 'نام', 'name'], shopHeaders),
-                tozihmahsool: U.findCol(['tozihmahsool', 'توضیحات محصول', 'توضیحات', 'description'], shopHeaders),
-                price: U.findCol(['price', 'قیمت', 'قیمت محصول', 'قیمت به سکه'], shopHeaders),
-                mojodi: U.findCol(['mojodi sekeh', 'mojodisekeh', 'موجودی سکه', 'موجودی', 'stock'], shopHeaders),
-                category: U.findCol(['category', 'دسته بندی', 'دسته‌بندی'], shopHeaders),
-                mincoins: U.findCol(['mincoins', 'min coins', 'تعداد سکه مورد نیاز', 'حداقل سکه'], shopHeaders)
+                shenaseh: U.findCol(['shenaseh'], shopHeaders),
+                namemahsool: U.findCol(['namemahsool'], shopHeaders),
+                tozihmahsool: U.findCol(['tozihmahsool'], shopHeaders),
+                price: U.findCol(['price'], shopHeaders),
+                mojodi: U.findCol(['mojodi sekeh'], shopHeaders),
+                category: U.findCol(['category'], shopHeaders),
+                mincoins: U.findCol(['mincoins'], shopHeaders)
             };
+            
+            console.log('🔍 ستون‌های فروشگاه شناسایی شده:', shopColMap);
+            
             const productsMap = new Map();
             shopRows.forEach(row => {
                 const shenaseh = shopColMap.shenaseh ? String(row[shopColMap.shenaseh] || '').trim() : '';
                 if (!shenaseh) return;
-                if (productsMap.has(shenaseh)) return;
-                const product = {shenaseh: shenaseh,name: shopColMap.namemahsool ? String(row[shopColMap.namemahsool] || '').trim() : '',description: shopColMap.tozihmahsool ? String(row[shopColMap.tozihmahsool] || '').trim() : '',price: shopColMap.price ? U.parseNum(row[shopColMap.price]) : 0,stock: shopColMap.mojodi ? U.parseNum(row[shopColMap.mojodi]) : 0,category: shopColMap.category ? String(row[shopColMap.category] || '').trim() : '',mincoins: shopColMap.mincoins ? U.parseNum(row[shopColMap.mincoins]) : 0};
+                if (productsMap.has(shenaseh)) {
+                    console.log(`⏭️ شناسه تکراری رد شد: ${shenaseh}`);
+                    return;
+                }
+                const product = {
+                    shenaseh: shenaseh,
+                    name: shopColMap.namemahsool ? String(row[shopColMap.namemahsool] || '').trim() : '',
+                    description: shopColMap.tozihmahsool ? String(row[shopColMap.tozihmahsool] || '').trim() : '',
+                    price: shopColMap.price ? U.parseNum(row[shopColMap.price]) : 0,
+                    stock: shopColMap.mojodi ? U.parseNum(row[shopColMap.mojodi]) : 0,
+                    category: shopColMap.category ? String(row[shopColMap.category] || '').trim() : '',
+                    mincoins: shopColMap.mincoins ? U.parseNum(row[shopColMap.mincoins]) : 0
+                };
                 productsMap.set(shenaseh, product);
             });
             SHOP_PRODUCTS = Array.from(productsMap.values());
+            console.log(`✅ ${SHOP_PRODUCTS.length} محصول یکتا بارگذاری شد`);
         }
+        
         return { members, transactions };
     } catch (error) {
         console.error('❌ خطا در بارگذاری:', error);
@@ -834,7 +703,6 @@ async function loadMainData() {
     }
 }
 
-// ✅ کامپوننت تم سوئیچر
 function renderThemeSwitcher() {
     const current = ThemeManager.get();
     return `<div class="theme-switcher">
@@ -864,10 +732,7 @@ class App {
         this.dm.members.forEach(m => calculateCoins(m, this.allTransactions, this.ddm));
         this.render();
     }
-    setTheme(theme) {
-        ThemeManager.apply(theme);
-        this.render();
-    }
+    setTheme(theme) { ThemeManager.apply(theme); this.render(); }
     render() {
         const container = $('#appContainer');
         if (!this.currentUser) {
@@ -899,17 +764,11 @@ class App {
             $('#loginBtn').onclick = () => this.doLogin();
             $('#loginPassword').onkeydown = e => { if (e.key === 'Enter') this.doLogin(); };
             $('#loginUsername').onkeydown = e => { if (e.key === 'Enter') this.doLogin(); };
-            // ✅ چشم رمز در لاگین
             $('#toggleLoginPwd').onclick = () => {
                 const input = $('#loginPassword');
                 const icon = $('#loginPwdIcon');
-                if (input.type === 'password') {
-                    input.type = 'text';
-                    icon.className = 'fas fa-eye-slash';
-                } else {
-                    input.type = 'password';
-                    icon.className = 'fas fa-eye';
-                }
+                if (input.type === 'password') { input.type = 'text'; icon.className = 'fas fa-eye-slash'; }
+                else { input.type = 'password'; icon.className = 'fas fa-eye'; }
             };
         } else if (this.currentUser.role === 'admin') {
             this.renderAdminLayout(container);
@@ -1007,7 +866,6 @@ class App {
                 $$('.menu-item').forEach(e => e.classList.remove('active'));
                 el.classList.add('active');
                 this.switchTab(this.tab);
-                // در موبایل، بعد از کلیک منو بسته شود
                 if (window.innerWidth <= 768) {
                     this.mobileMenuOpen = false;
                     const menu = $('#verticalMenu');
@@ -1016,20 +874,14 @@ class App {
             };
         });
         $('#logoutBtn').onclick = () => this.doLogout();
-        // ✅ دکمه همبرگر موبایل
         const toggleBtn = $('#mobileMenuToggle');
         if (toggleBtn) {
             toggleBtn.onclick = () => {
                 this.mobileMenuOpen = !this.mobileMenuOpen;
                 const menu = $('#verticalMenu');
                 if (menu) {
-                    if (this.mobileMenuOpen) {
-                        menu.classList.remove('collapsed');
-                        toggleBtn.innerHTML = '<i class="fas fa-times"></i> بستن منو';
-                    } else {
-                        menu.classList.add('collapsed');
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i> منوی اصلی';
-                    }
+                    if (this.mobileMenuOpen) { menu.classList.remove('collapsed'); toggleBtn.innerHTML = '<i class="fas fa-times"></i> بستن منو'; }
+                    else { menu.classList.add('collapsed'); toggleBtn.innerHTML = '<i class="fas fa-bars"></i> منوی اصلی'; }
                 }
             };
         }
@@ -1079,7 +931,7 @@ class App {
         let monthlySalaryApproved = m.monthlySalaryApproved || 0;
         const accountActive = m.active !== false;
         const accountStatusHtml = accountActive ? `<span class="account-status-badge active"><i class="fas fa-check-circle"></i> فعال</span>` : `<span class="account-status-badge inactive"><i class="fas fa-times-circle"></i> غیرفعال</span>`;
-        let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">شماره حساب:</label><div style="font-weight:700;color:var(--text-primary)">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">مدت عضویت:</label><div style="font-weight:700;color:#48bb78">${duration}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700;color:var(--text-primary)">${txns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">مقرری ماهانه مصوب شده هرنفر:</label><div style="font-weight:700;color:var(--text-primary)">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">موجودی هر نفر تا این ماه:</label><div style="font-weight:700;color:var(--text-primary)">${U.fmtNum(currentMonthBalance)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-info-circle" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">وضعیت حساب:</label><div style="margin-top:4px">${accountStatusHtml}</div></div></div></div></div>`;
+        let h = `<div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات حساب</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-hashtag" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">شماره حساب:</label><div style="font-weight:700;color:var(--text-primary)">${U.esc(m.accountNumber||'---')}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-clock" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">مدت عضویت:</label><div style="font-weight:700;color:#48bb78">${duration}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-exchange-alt" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">تعداد تراکنش:</label><div style="font-weight:700;color:var(--text-primary)">${txns.length}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-money-bill" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">مقرری ماهانه مصوب شده هر نفر:</label><div style="font-weight:700;color:var(--text-primary)">${U.fmtNum(monthlySalaryApproved)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-wallet" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">موجودی هر نفر تا این ماه:</label><div style="font-weight:700;color:var(--text-primary)">${U.fmtNum(currentMonthBalance)}</div></div></div><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-info-circle" style="color:#667eea"></i><div><label style="font-weight:600;color:var(--text-muted);font-size:.85rem">وضعیت حساب:</label><div style="margin-top:4px">${accountStatusHtml}</div></div></div></div></div>`;
         if (!accountActive) {h += `<div class="warning-box inactive"><i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i><div><strong style="font-size:1.1rem;display:block;margin-bottom:5px">حساب غیرفعال</strong>عضو محترم حساب شما غیرفعال شده است جهت فعالسازی و اقدامات لازم با حسابداری تماس بگیرید</div></div>`;}
         if (latestTx) {
             h += `<div class="dashboard-section" style="border-right-color:#38b2ac"><h3 style="color:#2c7a7b"><i class="fas fa-receipt"></i> آخرین تراکنش (بزرگترین ID: ${U.esc(latestTx['ID'] || '')})</h3><div class="last-tx-grid"><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-hashtag" style="color:#667eea"></i> ID</div><div class="last-tx-value">${U.esc(latestTx['ID'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-credit-card" style="color:#4299e1"></i> شماره حساب</div><div class="last-tx-value">${U.esc(latestTx['شماره حساب'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-money-bill" style="color:#48bb78"></i> مقرری ماهانه</div><div class="last-tx-value">${U.esc(latestTx['مقرری ماهانه'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-file-invoice-dollar" style="color:#ed8936"></i> شماره فیش</div><div class="last-tx-value">${U.esc(latestTx['شماره فیش'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-calendar-day" style="color:#38b2ac"></i> تاریخ تراکنش</div><div class="last-tx-value">${U.esc(latestTx['تاریخ تراکنش'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-coins" style="color:#d69e2e"></i> مبلغ تراکنش</div><div class="last-tx-value">${U.esc(latestTx['مبلغ تراکنش'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-user-edit" style="color:#9f7aea"></i> نام تراکنش کننده</div><div class="last-tx-value">${U.esc(latestTx['نام تراکنش کننده'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-hand-holding-usd" style="color:#48bb78"></i> مبلغ قسط واریزی</div><div class="last-tx-value">${U.esc(latestTx['مبلغ قسط واریزی'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-calendar-check" style="color:#4299e1"></i> تاریخ قسط واریزی</div><div class="last-tx-value">${U.esc(latestTx['تاریخ قسط واریزی'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-calculator" style="color:#ed8936"></i> جمع واریزی</div><div class="last-tx-value">${U.esc(latestTx['جمع واریزی'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-wallet" style="color:#38b2ac"></i> موجودی</div><div class="last-tx-value">${U.esc(latestTx['موجودی'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-check-circle" style="color:#48bb78"></i> تعداد قسط پرداخت شده</div><div class="last-tx-value">${U.esc(latestTx['تعداد قسط پرداخت شده'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-hourglass-half" style="color:#ed8936"></i> تعداد قسط مانده</div><div class="last-tx-value">${U.esc(latestTx['تعداد قسط مانده'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-piggy-bank" style="color:#9f7aea"></i> وضعیت پس انداز</div><div class="last-tx-value">${U.esc(latestTx['وضعیت پس انداز'] || '0')}</div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-sms" style="color:#48bb78"></i> پیامک واریز</div><div class="last-tx-value"><span class="sms-status-icon">${latestTx['پیامک واریز'] || '---'}</span></div></div><div class="last-tx-item"><div class="last-tx-label"><i class="fas fa-exclamation-triangle" style="color:#e53e3e"></i> پیامک اخطار</div><div class="last-tx-value"><span class="sms-status-icon">${latestTx['پیامک اخطار'] || '---'}</span></div></div><div class="last-tx-item" style="grid-column:span 2"><div class="last-tx-label"><i class="fas fa-comment-dots" style="color:#667eea"></i> توضیحات</div><div class="last-tx-value">${U.esc(latestTx['توضیحات'] || '---')}</div></div></div></div>`;
@@ -1264,9 +1116,9 @@ class App {
         if (!isAdmin && !isSpecial) {c.innerHTML = `<div style="text-align:center;padding:60px"><i class="fas fa-lock" style="font-size:4rem;color:#e53e3e;margin-bottom:20px"></i><h2 style="color:var(--text-primary);margin-bottom:15px">دسترسی محدود</h2><p style="color:var(--text-muted);font-size:1.1rem;line-height:1.8">این بخش فقط برای مدیر و کاربران ویژه قابل دسترسی است</p></div>`;return;}
         const jalali = U.getJalaliMonth();
         let h = `<div class="info-box"><i class="fas fa-calendar-day"></i> تقویم رویدادها - ${jalali.year}/${String(jalali.month).padStart(2,'0')}</div>`;
-        const birthdays = this.dm.members.filter(m => { if (!m.birthDate) return false; const parts = m.birthDate.split('/'); if (parts.length !== 3) return false; return parseInt(parts[1]) === jalali.month; });
+        const birthdays = this.dm.members.filter(m => { if (!m.birthDateShamsi) return false; const parts = m.birthDateShamsi.split('/'); if (parts.length !== 3) return false; return parseInt(parts[1]) === jalali.month; });
         const installmentDue = this.dm.members.filter(m => m.overdueInstallments > 0 || (m.loanBalance > 0 && m.overdueInstallments < 0));
-        h += `<div class="dashboard-section"><h3><i class="fas fa-birthday-cake" style="color:#ecc94b"></i> تولدها در این ماه (${birthdays.length} نفر)</h3>${birthdays.length === 0 ? '<p style="color:var(--text-light);padding:15px">تولدی در این ماه ثبت نشده است</p>' : `<div class="calendar-grid">${birthdays.map(m => `<div class="calendar-event birthday"><div class="event-date"><i class="fas fa-calendar-day"></i> ${U.fmtDate(m.birthDate)}</div><div class="event-title">${U.esc(m.firstName)} ${U.esc(m.lastName)}</div><div class="event-desc">شماره حساب: ${U.esc(m.accountNumber)}</div></div>`).join('')}</div>`}</div>`;
+        h += `<div class="dashboard-section"><h3><i class="fas fa-birthday-cake" style="color:#ecc94b"></i> تولدها در این ماه (${birthdays.length} نفر)</h3>${birthdays.length === 0 ? '<p style="color:var(--text-light);padding:15px">تولدی در این ماه ثبت نشده است</p>' : `<div class="calendar-grid">${birthdays.map(m => `<div class="calendar-event birthday"><div class="event-date"><i class="fas fa-calendar-day"></i> ${U.fmtDate(m.birthDateShamsi)}</div><div class="event-title">${U.esc(m.firstName)} ${U.esc(m.lastName)}</div><div class="event-desc">شماره حساب: ${U.esc(m.accountNumber)}</div></div>`).join('')}</div>`}</div>`;
         h += `<div class="dashboard-section"><h3><i class="fas fa-hand-holding-usd" style="color:#48bb78"></i> سررسید اقساط (${installmentDue.length} نفر)</h3>${installmentDue.length === 0 ? '<p style="color:var(--text-light);padding:15px">هیچ قسط معوقه‌ای وجود ندارد</p>' : `<div class="calendar-grid">${installmentDue.map(m => `<div class="calendar-event installment"><div class="event-date"><i class="fas fa-exclamation-circle"></i> معوقه: ${m.overdueInstallments}</div><div class="event-title">${U.esc(m.firstName)} ${U.esc(m.lastName)}</div><div class="event-desc">شماره حساب: ${U.esc(m.accountNumber)} | مانده وام: ${U.fmtNum(m.loanBalance)}</div></div>`).join('')}</div>`}</div>`;
         const occasions = [{ date: '01/01', title: 'نوروز', desc: 'سال نو مبارک' },{ date: '01/13', title: 'سیزده‌بدر', desc: 'روز طبیعت' },{ date: '03/14', title: 'رحلت امام خمینی', desc: '' },{ date: '03/15', title: 'قیام 15 خرداد', desc: '' },{ date: '11/22', title: 'پیروزی انقلاب اسلامی', desc: '22 بهمن' },{ date: '12/29', title: 'روز ملی شدن صنعت نفت', desc: '' }];
         h += `<div class="dashboard-section"><h3><i class="fas fa-star" style="color:#ed8936"></i> مناسبت‌های ماه ${jalali.month}</h3><div class="calendar-grid">${occasions.filter(o => parseInt(o.date.split('/')[0]) === jalali.month).map(o => `<div class="calendar-event occasion"><div class="event-date"><i class="fas fa-star"></i> ${o.date}/${jalali.year}</div><div class="event-title">${o.title}</div>${o.desc ? `<div class="event-desc">${o.desc}</div>` : ''}</div>`).join('') || '<p style="color:var(--text-light);padding:15px">مناسبتی در این ماه ثبت نشده است</p>'}</div></div>`;
@@ -1342,6 +1194,7 @@ class App {
         }, 100);
     }
     
+    // ✅ مشکل ۲: render_smsStatus اصلاح شده
     render_smsStatus(c) {
         const isAdmin = this.currentUser.role === 'admin';
         if (isAdmin) {
@@ -1358,16 +1211,20 @@ class App {
         }
     }
     
+    // ✅ مشکل ۲: renderSmsForMember اصلاح شده با همه سامانه‌ها
     renderSmsForMember(mid, container) {
         const member = this.dm.members.find(m => m.id === mid);
         if (!member) { container.innerHTML = '<p>عضو یافت نشد</p>'; return; }
         const allTxns = this.allTransactions || [];
+        // ✅ از بزرگترین ID استفاده می‌شود
         const memberTxns = allTxns.filter(t => String(t._memberId) === String(mid) || String(t['شماره حساب']) === String(member.accountNumber)).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
         const latestTx = memberTxns.length > 0 ? memberTxns[0] : null;
         if (!latestTx) {
             container.innerHTML = `<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#ed8936;margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">هیچ تراکنشی یافت نشد</h3><p style="color:var(--text-muted)">برای این عضو هیچ تراکنشی در فایل اکسل ثبت نشده است</p></div>`;
             return;
         }
+        
+        // ✅ همه ۹ سامانه پیامکی
         const smsServices = [
             {name: 'سامانه ارسال پیامک صورتحساب',key: 'smsActive',icon: 'file-invoice-dollar',color: '#4299e1',desc: 'دریافت پیامک صورتحساب ماهانه'},
             {name: 'سامانه ارسال پیامک جلسات شورا',key: 'smsKod',icon: 'users-cog',color: '#9f7aea',desc: 'اطلاع‌رسانی جلسات شورای صندوق'},
@@ -1375,12 +1232,16 @@ class App {
             {name: 'سامانه ارسال پیامک برای سرپرستان',key: 'smsSarparast',icon: 'user-shield',color: '#ed8936',desc: 'پیامک‌های ویژه سرپرستان'},
             {name: 'سامانه ارسال پیامک معوقات',key: 'smsMoavaghe',icon: 'exclamation-triangle',color: '#e53e3e',desc: 'هشدار اقساط معوقه'},
             {name: 'سامانه ارسال پیامک مسابقات و نظرسنجی',key: 'smsMosabegheh',icon: 'trophy',color: '#ecc94b',desc: 'اطلاع‌رسانی مسابقات و نظرسنجی‌ها'},
+            {name: 'سامانه ارسال پیامک خبرنامه',key: 'smsKhabarnameh',icon: 'newspaper',color: '#38b2ac',desc: 'دریافت خبرنامه‌های صندوق'},
             {name: 'سامانه ارسال پیامک تبریک تولد',key: 'smsTavalod',icon: 'birthday-cake',color: '#ed64a6',desc: 'پیامک تبریک تولد'},
-            {name: 'سامانه ارسال پیامک مناسبت‌های ملی و مذهبی',key: 'smsMonasebat',icon: 'star-and-crescent',color: '#38b2ac',desc: 'تبریک مناسبت‌های ملی و مذهبی'}
+            {name: 'سامانه ارسال پیامک مناسبت‌های ملی و مذهبی',key: 'smsMonasebat',icon: 'star-and-crescent',color: '#667eea',desc: 'تبریک مناسبت‌های ملی و مذهبی'}
         ];
-        let h = `<div class="dashboard-section" style="background:var(--info-bg);border-right-color:#4299e1"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px"><div><i class="fas fa-user" style="font-size:1.3rem;color:#4299e1;margin-left:8px"></i><span style="font-weight:700;color:var(--text-primary)">${U.esc(member.firstName)} ${U.esc(member.lastName||'')}</span></div><div style="font-size:.85rem;color:var(--text-muted)"><i class="fas fa-hashtag"></i> شماره حساب: <strong>${U.esc(member.accountNumber)}</strong></div><div style="font-size:.85rem;color:var(--text-muted)"><i class="fas fa-barcode"></i> آخرین تراکنش: <strong style="font-family:monospace">${U.esc(latestTx['ID'] || '---')}</strong></div></div></div>`;
+        
+        let h = `<div class="dashboard-section" style="background:var(--info-bg);border-right-color:#4299e1"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px"><div><i class="fas fa-user" style="font-size:1.3rem;color:#4299e1;margin-left:8px"></i><span style="font-weight:700;color:var(--text-primary)">${U.esc(member.firstName)} ${U.esc(member.lastName||'')}</span></div><div style="font-size:.85rem;color:var(--text-muted)"><i class="fas fa-hashtag"></i> شماره حساب: <strong>${U.esc(member.accountNumber)}</strong></div><div style="font-size:.85rem;color:var(--text-muted)"><i class="fas fa-barcode"></i> آخرین تراکنش (بزرگترین ID): <strong style="font-family:monospace">${U.esc(latestTx['ID'] || '---')}</strong></div></div></div>`;
         h += `<div class="dashboard-section"><h3><i class="fas fa-list-check"></i> وضعیت سامانه‌های پیامکی</h3><div class="support-grid">`;
+        
         smsServices.forEach(service => {
+            // ✅ بررسی مقدار -1 یا 1 برای فعال، 0 برای غیرفعال
             const isActive = latestTx[service.key] === true;
             const statusText = isActive ? 'فعال' : 'غیرفعال';
             const statusIcon = isActive ? 'check-circle' : 'times-circle';
@@ -1444,7 +1305,7 @@ class App {
     render_coinRules(c) {
         const member = this.currentUser.role === 'admin' ? null : this.dm.members.find(m => m.id === this.currentUser.memberId);
         const isActive = member ? member.active !== false : true;
-        c.innerHTML = `<div class="info-box"><i class="fas fa-list-check"></i> قوانین کسب سکه</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین ماهانه:</h3>${this.renderRuleItem('پرداخت به موقع قسط', 2, member ? (U.parseNum(member.loanBalance) !== 0 && U.parseNum(member.paidInstallments) > 0) : null)}${this.renderRuleItem('بدون قسط معوقه', 3, member ? (U.parseNum(member.overdueInstallments) === 0 && U.parseNum(member.loanBalance) !== 0) : null)}${this.renderRuleItem('موجودی بالاتر از مقرری', 2, member ? (U.parseNum(member.balance) > U.parseNum(member.monthlySalary)) : null)}${this.renderRuleItem('پس‌انداز بالا (2 سکه به ازای هر 3,000,000 ریال)', 2, member ? (U.parseNum(member.savingsStatus) - U.parseNum(member.currentMonthBalance) > 3000000) : null)}</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین سالانه:</h3>${this.renderRuleItem('تولد مبارک (5 سکه)', 5, member ? (member.active && member.birthDate && this.isBirthdayToday(member.birthDate)) : null)}${this.renderRuleItem('هدیه سالانه حساب فعال (5 سکه)', 5, member ? (isActive && member.openDate && this.isOpeningDayToday(member.openDate)) : null)}${!isActive ? `<div class="coin-rule-item locked"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-lock" style="color:#a0aec0"></i><span>محرومیت - حساب غیرفعال (0 سکه)</span></div><span style="color:#a0aec0">0</span></div>` : ''}</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین هر واریزی:</h3>${this.renderRuleItem('پیامک واریز فعال', 3, null)}${this.renderRuleItem('بدون پیامک اخطار', 2, null)}</div>`;
+        c.innerHTML = `<div class="info-box"><i class="fas fa-list-check"></i> قوانین کسب سکه</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین ماهانه:</h3>${this.renderRuleItem('پرداخت به موقع قسط', 2, member ? (U.parseNum(member.loanBalance) !== 0 && U.parseNum(member.paidInstallments) > 0) : null)}${this.renderRuleItem('بدون قسط معوقه', 3, member ? (U.parseNum(member.overdueInstallments) === 0 && U.parseNum(member.loanBalance) !== 0) : null)}${this.renderRuleItem('موجودی بالاتر از مقرری', 2, member ? (U.parseNum(member.balance) > U.parseNum(member.monthlySalary)) : null)}${this.renderRuleItem('پس‌انداز بالا (2 سکه به ازای هر 3,000,000 ریال)', 2, member ? (U.parseNum(member.savingsStatus) - U.parseNum(member.currentMonthBalance) > 3000000) : null)}</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین سالانه:</h3>${this.renderRuleItem('تولد مبارک (5 سکه)', 5, member ? (member.active && member.birthDateShamsi && this.isBirthdayToday(member.birthDateShamsi)) : null)}${this.renderRuleItem('هدیه سالانه حساب فعال (5 سکه)', 5, member ? (isActive && member.openDate && this.isOpeningDayToday(member.openDate)) : null)}${!isActive ? `<div class="coin-rule-item locked"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-lock" style="color:#a0aec0"></i><span>محرومیت - حساب غیرفعال (0 سکه)</span></div><span style="color:#a0aec0">0</span></div>` : ''}</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین هر واریزی:</h3>${this.renderRuleItem('پیامک واریز فعال', 3, null)}${this.renderRuleItem('بدون پیامک اخطار', 2, null)}</div>`;
     }
     
     renderRuleItem(name, coins, achieved) {
@@ -1561,9 +1422,7 @@ class App {
     }
 }
 
-// ✅ راه‌اندازی تم در ابتدای برنامه
 ThemeManager.init();
-
 window.app = new App();
 })();
 </script>
