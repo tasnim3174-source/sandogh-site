@@ -56,29 +56,27 @@ tbody tr:hover{background:var(--table-hover)}
 .filter-bar input{flex:1}
 .header-bar{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding:20px 30px;border-radius:24px;margin-bottom:25px;background:var(--card-bg);transition:all .3s}
 .datetime-display{display:flex;gap:15px;flex-wrap:wrap}
+
+/* ✅ باکس تاریخ ترکیبی جدید */
 .date-combined-box{background:var(--datetime-bg);border-radius:16px;padding:15px 20px;display:flex;flex-direction:column;gap:8px;min-width:200px;transition:all .3s}
 .date-combined-box .date-row{display:flex;align-items:center;gap:10px;font-size:.95rem;color:var(--datetime-text)}
 .date-combined-box .date-row i{color:#667eea;width:20px}
 [data-theme="dark"] .date-combined-box .date-row i{color:#fbbf24}
 .date-combined-box .date-row.day-name{font-weight:700;font-size:1rem;color:#667eea;border-top:1px dashed var(--border-color);padding-top:8px;margin-top:4px}
 [data-theme="dark"] .date-combined-box .date-row.day-name{color:#fbbf24}
+
+/* ✅ باکس پیام سیستم */
 .system-message-box{background:linear-gradient(135deg,rgba(236,201,75,.1),rgba(214,158,46,.05));border:2px solid #ecc94b;border-radius:12px;padding:10px 15px;font-size:.9rem;color:var(--text-primary);max-width:400px;line-height:1.6;transition:all .3s}
 [data-theme="dark"] .system-message-box{background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));border-color:#fbbf24}
 .system-message-box .message-icon{color:#ecc94b;margin-left:8px}
 [data-theme="dark"] .system-message-box .message-icon{color:#fbbf24}
-.congratulations-box{background:linear-gradient(135deg,rgba(236,201,75,.15),rgba(214,158,46,.08));border:2px solid #ecc94b;border-radius:16px;padding:15px 20px;min-width:280px;max-width:400px;display:flex;flex-direction:column;gap:10px;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(236,201,75,.4)}50%{box-shadow:0 0 0 10px rgba(236,201,75,0)}}
-.congratulations-box .congrats-item{display:flex;align-items:flex-start;gap:10px;color:var(--text-primary);font-size:.9rem;line-height:1.5}
-.congratulations-box .congrats-item i{font-size:1.2rem;margin-top:2px;flex-shrink:0}
-.congratulations-box .congrats-item.birthday i{color:#ed64a6}
-.congratulations-box .congrats-item.anniversary i{color:#48bb78}
-.congratulations-box .congrats-item.occasion i{color:#4299e1}
-.congratulations-box .congrats-title{font-weight:700;color:#ecc94b;font-size:.95rem;border-bottom:1px dashed #ecc94b;padding-bottom:8px}
-[data-theme="dark"] .congratulations-box .congrats-title{color:#fbbf24}
+
+/* ✅ باکس خوش‌آمدگویی با ساعت */
 .welcome-with-greeting{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
 .welcome-with-greeting .greeting-text{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:8px 16px;border-radius:12px;font-size:.9rem;font-weight:600;transition:all .3s}
 [data-theme="dark"] .welcome-with-greeting .greeting-text{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e}
 .welcome-with-greeting .welcome-text{font-size:1.3rem;font-weight:700;color:var(--welcome-text)}
+
 .datetime-card{display:flex;align-items:center;gap:12px;padding:12px 20px;border-radius:16px;background:var(--datetime-bg);transition:all .3s}
 .datetime-card i{font-size:1.5rem;color:#667eea}
 [data-theme="dark"] .datetime-card i{color:#fbbf24}
@@ -288,7 +286,7 @@ tbody tr:hover{background:var(--table-hover)}
 .mobile-menu-toggle{display:none;background:#667eea;color:#fff;border:none;padding:12px 18px;border-radius:16px;cursor:pointer;font-size:1.2rem;font-weight:700;margin-bottom:15px;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s;width:100%}
 [data-theme="dark"] .mobile-menu-toggle{background:#f59e0b;color:#1a1a2e}
 .mobile-menu-toggle:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.2)}
-@media(max-width:768px){body{padding:10px}.login-page,.app-page{padding:20px;border-radius:20px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}.vertical-menu.collapsed{display:none}.vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}.content-area{padding:15px;min-height:400px;border-radius:16px}.header-bar{grid-template-columns:1fr;padding:15px;gap:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{padding:10px 15px}.datetime-card .dt-value{font-size:1rem}.clock-card{padding:12px 20px}.clock-card .clock-time{font-size:1.5rem}.header-actions{flex-direction:column;width:100%;gap:10px}.theme-switcher{width:100%;justify-content:space-around}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}table{font-size:.75rem}th,td{padding:8px 6px}.shop-grid{grid-template-columns:1fr}.shop-card{padding:18px}.profile-info-grid{grid-template-columns:1fr;gap:12px}.last-tx-grid{grid-template-columns:1fr}.loan-info{grid-template-columns:1fr}.calendar-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card{padding:15px}.stat-card .stat-value{font-size:1.3rem}.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%}.shop-filter-bar{flex-direction:column}.shop-filter-bar input,.shop-filter-bar select{width:100%}.modal-content{padding:20px}.modal-actions{flex-direction:column}.modal-actions .btn-small{width:100%}.support-grid{grid-template-columns:1fr}.date-filter{flex-direction:column;align-items:stretch}.date-filter input{width:100%}.search-box{flex-direction:column}.search-box input{width:100%}.welcome-banner{font-size:1.1rem!important;text-align:center}.coin-display{width:100%;justify-content:center}.last-login-box{flex-direction:column;text-align:center}.bar-chart{height:150px;padding:10px}.date-combined-box{min-width:auto;width:100%}.system-message-box{max-width:100%}.welcome-with-greeting{flex-direction:column;align-items:flex-start}.congratulations-box{min-width:auto;width:100%;max-width:100%}}
+@media(max-width:768px){body{padding:10px}.login-page,.app-page{padding:20px;border-radius:20px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}.vertical-menu.collapsed{display:none}.vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}.content-area{padding:15px;min-height:400px;border-radius:16px}.header-bar{grid-template-columns:1fr;padding:15px;gap:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{padding:10px 15px}.datetime-card .dt-value{font-size:1rem}.clock-card{padding:12px 20px}.clock-card .clock-time{font-size:1.5rem}.header-actions{flex-direction:column;width:100%;gap:10px}.theme-switcher{width:100%;justify-content:space-around}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}table{font-size:.75rem}th,td{padding:8px 6px}.shop-grid{grid-template-columns:1fr}.shop-card{padding:18px}.profile-info-grid{grid-template-columns:1fr;gap:12px}.last-tx-grid{grid-template-columns:1fr}.loan-info{grid-template-columns:1fr}.calendar-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card{padding:15px}.stat-card .stat-value{font-size:1.3rem}.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%}.shop-filter-bar{flex-direction:column}.shop-filter-bar input,.shop-filter-bar select{width:100%}.modal-content{padding:20px}.modal-actions{flex-direction:column}.modal-actions .btn-small{width:100%}.support-grid{grid-template-columns:1fr}.date-filter{flex-direction:column;align-items:stretch}.date-filter input{width:100%}.search-box{flex-direction:column}.search-box input{width:100%}.welcome-banner{font-size:1.1rem!important;text-align:center}.coin-display{width:100%;justify-content:center}.last-login-box{flex-direction:column;text-align:center}.bar-chart{height:150px;padding:10px}.date-combined-box{min-width:auto;width:100%}.system-message-box{max-width:100%}.welcome-with-greeting{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -360,6 +358,7 @@ const U={
     getJalaliMonth(){const now=new Date();const gy=now.getFullYear(),gm=now.getMonth()+1,gd=now.getDate();const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy;let days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1];let jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30);const jd=1+(days<186?days%31:(days-186)%30);return{year:jy,month:jm,day:jd,str:`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`};},
     calcMembershipDuration(openDate){if(!openDate)return'---';const parts=openDate.split('/');if(parts.length!==3)return openDate;const openYear=parseInt(parts[0]);const openMonth=parseInt(parts[1]);const openDay=parseInt(parts[2]);const today=U.toJalaliParts(new Date());let years=today.year-openYear;let months=today.month-openMonth;let days=today.day-openDay;if(days<0){months--;const prevMonth=today.month-1;const daysInPrevMonth=prevMonth<=6?31:(prevMonth<=11?30:29);days+=daysInPrevMonth;}if(months<0){years--;months+=12;}let result='';if(years>0)result+=`${years} سال`;if(months>0)result+=(result?' و ':'')+`${months} ماه`;if(days>0)result+=(result?' و ':'')+`${days} روز`;return result||'کمتر از یک روز';},
     generateOrderCode(accountNumber){const timestamp=Date.now().toString().slice(-6);const random=Math.floor(Math.random()*1000).toString().padStart(3,'0');return`ORD-${accountNumber}-${timestamp}${random}`;},
+    // ✅ تابع جدید برای پیام خوش‌آمدگویی بر اساس ساعت
     getGreeting(){
         const hour=new Date().getHours();
         if(hour>=5&&hour<12)return'صبح بخیر';
@@ -367,6 +366,7 @@ const U={
         if(hour>=17&&hour<21)return'عصر بخیر';
         return'شب بخیر';
     },
+    // ✅ تابع جدید برای نام روز هفته
     getDayName(){
         const days=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه','شنبه'];
         return days[new Date().getDay()];
@@ -374,6 +374,7 @@ const U={
 };
 
 let SUPPORT_INFO={phone:'',accountNumber:'',cardNumber:'',shebaNumber:'',itaaAddress:'@ethads',websiteAddress:''};
+// ✅ متغیر جدید برای پیام سیستم
 let SYSTEM_MESSAGE='';
 
 class DynamicDataManager{
@@ -519,30 +520,6 @@ const TX_COLUMNS=['ID','شماره حساب','مقرری ماهانه','شمار
 
 let SHOP_PRODUCTS=[];
 
-// ✅ تابع جدید برای دریافت مناسبت‌های تقویم
-function getOccasions(){
-    const now=new Date();
-    const jalali=U.toJalaliParts(now);
-    const todayStr=`${jalali.month}/${jalali.day}`;
-    const occasions=[
-        {date:'1/1',title:'🎉 عید نوروز - سال نو مبارک'},
-        {date:'1/2',title:'🎊 عید نوروز مبارک'},
-        {date:'1/3',title:'🎊 عید نوروز مبارک'},
-        {date:'1/4',title:'🎊 عید نوروز مبارک'},
-        {date:'1/12',title:'🏛️ روز جمهوری اسلامی'},
-        {date:'1/13',title:'🌿 روز طبیعت - سیزده‌بدر'},
-        {date:'3/14',title:'🕊️ رحلت امام خمینی (ره)'},
-        {date:'3/15',title:'✊ قیام 15 خرداد'},
-        {date:'6/31',title:'🎖️ آغاز هفته دفاع مقدس'},
-        {date:'8/8',title:'👥 روز بسیج'},
-        {date:'9/16',title:'📚 روز دانشجو'},
-        {date:'10/5',title:'🔥 شهادت امام حسن عسکری (ع)'},
-        {date:'11/22',title:'🇮🇷 پیروزی انقلاب اسلامی - 22 بهمن'},
-        {date:'12/29',title:'🛢️ روز ملی شدن صنعت نفت'}
-    ];
-    return occasions.filter(o=>o.date===todayStr);
-}
-
 async function loadMainData(){
     try{
         console.log('📥 بارگذاری فایل اکسل...');
@@ -564,6 +541,7 @@ async function loadMainData(){
             const supportCardCol=U.findCol(['shomareh kart','شماره کارت صندوق'],headers);
             const supportShebaCol=U.findCol(['adress','شماره شبا صندوق'],headers);
             const supportWebCol=U.findCol(['web site','آدرس سایت صندوق'],headers);
+            // ✅ ستون پیام سیستم
             const systemMessageCol=U.findCol(['پیام سیستم','پیام','system message','message'],headers);
             
             SUPPORT_INFO={
@@ -575,6 +553,7 @@ async function loadMainData(){
                 websiteAddress:supportWebCol?String(firstRow[supportWebCol]||'').trim():''
             };
             
+            // ✅ بارگذاری پیام سیستم
             SYSTEM_MESSAGE=systemMessageCol?String(firstRow[systemMessageCol]||'').trim():'';
             
             console.log('✅ اطلاعات پشتیبانی از ردیف اول:',SUPPORT_INFO);
@@ -791,6 +770,7 @@ function renderThemeSwitcher(){
     </div>`;
 }
 
+// ✅ تابع جدید برای رندر باکس تاریخ ترکیبی
 function renderDateCombinedBox(){
     const jalali=U.toJalali(new Date());
     const gregorian=`${new Date().getFullYear()}/${String(new Date().getMonth()+1).padStart(2,'0')}/${String(new Date().getDate()).padStart(2,'0')}`;
@@ -802,53 +782,12 @@ function renderDateCombinedBox(){
     </div>`;
 }
 
+// ✅ تابع جدید برای رندر باکس پیام سیستم
 function renderSystemMessageBox(){
     if(!SYSTEM_MESSAGE)return'';
     return`<div class="system-message-box">
         <i class="fas fa-info-circle message-icon"></i>
         <span>${U.esc(SYSTEM_MESSAGE)}</span>
-    </div>`;
-}
-
-// ✅ تابع جدید برای باکس تبریکات
-function renderCongratulationsBox(member){
-    const jalali=U.toJalaliParts(new Date());
-    const todayStr=`${jalali.month}/${jalali.day}`;
-    const items=[];
-    
-    // بررسی تاریخ تولد
-    if(member&&member.birthDateShamsi){
-        const birthParts=member.birthDateShamsi.split('/');
-        if(birthParts.length===3){
-            const birthStr=`${parseInt(birthParts[1])}/${parseInt(birthParts[2])}`;
-            if(birthStr===todayStr){
-                items.push({type:'birthday',icon:'fa-birthday-cake',text:'🎂 تولدتان مبارک! با آرزوی بهترین‌ها برای شما'});
-            }
-        }
-    }
-    
-    // بررسی سالروز افتتاح حساب
-    if(member&&member.openDate){
-        const openParts=member.openDate.split('/');
-        if(openParts.length===3){
-            const openStr=`${parseInt(openParts[1])}/${parseInt(openParts[2])}`;
-            if(openStr===todayStr){
-                items.push({type:'anniversary',icon:'fa-star',text:'⭐ سالروز افتتاح حساب شما در صندوق افتخار ماست'});
-            }
-        }
-    }
-    
-    // بررسی مناسبت‌های تقویم
-    const occasions=getOccasions();
-    occasions.forEach(o=>{
-        items.push({type:'occasion',icon:'fa-flag',text:o.title});
-    });
-    
-    if(items.length===0)return'';
-    
-    return`<div class="congratulations-box">
-        <div class="congrats-title">🎉 تبریکات امروز</div>
-        ${items.map(item=>`<div class="congrats-item ${item.type}"><i class="fas ${item.icon}"></i><span>${item.text}</span></div>`).join('')}
     </div>`;
 }
 
@@ -876,7 +815,6 @@ class App{
     render(){
         const container=$('#appContainer');
         if(!this.currentUser){
-            // ✅ حذف باکس پیام از صفحه لاگین
             container.innerHTML=`<div class="login-page">
                 <div style="text-align:center;margin-bottom:30px">
                     <i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px"></i>
@@ -884,6 +822,7 @@ class App{
                     <p style="color:var(--text-muted)">ورود با رمز اختصاصی</p>
                 </div>
                 <div style="display:flex;justify-content:center;margin-bottom:25px">${renderThemeSwitcher()}</div>
+                ${renderSystemMessageBox()}
                 <div class="input-group">
                     <label><i class="fas fa-user"></i> نام کاربری</label>
                     <input type="text" id="loginUsername" placeholder="admin یا شماره حساب">
@@ -919,7 +858,6 @@ class App{
     }
     renderAdminLayout(container){
         const greeting=U.getGreeting();
-        const member=this.dm.members[0]; // برای تبریکات مدیر
         container.innerHTML=`<div class="app-page">
             <div class="header-bar">
                 <div class="datetime-display">
@@ -932,7 +870,6 @@ class App{
                 <span class="greeting-text"><i class="fas fa-hand-wave"></i> ${greeting}</span>
                 <span class="welcome-text"><i class="fas fa-star"></i> خوش آمدید مدیر محترم <i class="fas fa-star"></i></span>
                 ${renderSystemMessageBox()}
-                ${renderCongratulationsBox(member)}
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> منوی اصلی</button>
             <div class="app-layout">
@@ -980,7 +917,6 @@ class App{
                 <span class="greeting-text"><i class="fas fa-hand-wave"></i> ${greeting}</span>
                 <span class="welcome-text"><i class="fas fa-star"></i> خوش آمدید ${member?member.firstName:''} <i class="fas fa-star"></i></span>
                 ${renderSystemMessageBox()}
-                ${renderCongratulationsBox(member)}
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> منوی اصلی</button>
             <div class="app-layout">
@@ -1109,60 +1045,33 @@ class App{
         if(overdueInstallments<=-1&&overdueInstallments>=-6){h+=`<div class="warning-box loan" style="margin-top:15px"><i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i><div><strong style="font-size:1.1rem;display:block;margin-bottom:5px">هشدار اقساط</strong>اقساط شما عقب افتاده نسبت به پرداخت آن سریعا اقدام نمایید</div></div>`;}
         else if(overdueInstallments<-6){h+=`<div class="warning-box loan-critical" style="margin-top:15px"><i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i><div><strong style="font-size:1.1rem;display:block;margin-bottom:5px">هشدار جدی اقساط</strong>با توجه به اینکه تعداد اقساط معوقه بیش از حد مجاز است اقساط شما از پس انداز کسر و ضمانت شما به اجرا گذاشته خواهد شد</div></div>`;}
         h+=`</div>`;
-        
-        // ✅ بخش جدید: اقساط پرداخت شده - نمایش خودکار آخرین شماره وام
         const memberLoanNumbers=[...new Set(txns.map(t=>t._loanNumber).filter(ln=>ln&&ln.trim()!==''))];
-        const lastLoanNumber=loanNumber&&loanNumber!=='---'?loanNumber:(memberLoanNumbers.length>0?memberLoanNumbers[0]:'');
-        
-        h+=`<div class="dashboard-section"><h3><i class="fas fa-clipboard-list"></i> اقساط پرداخت شده شما</h3>`;
-        
-        if(lastLoanNumber){
-            // پیدا کردن اقساط پرداخت شده برای آخرین شماره وام
-            const loanInstallments=txns.filter(t=>{
-                const txLoan=(t._loanNumber||'').trim();
-                const amountStr=(t['مبلغ قسط واریزی']||'').replace(/[,\s]/g,'');
-                const amount=parseFloat(amountStr)||0;
-                return txLoan===lastLoanNumber&&amount>0;
-            }).sort((a,b)=>(a['تاریخ قسط واریزی']||'').localeCompare(b['تاریخ قسط واریزی']||''));
-            
-            if(loanInstallments.length>0){
-                h+=`<div style="background:var(--info-bg);padding:12px 15px;border-radius:12px;margin-bottom:15px">
-                    <strong>شماره وام فعلی: ${U.esc(lastLoanNumber)}</strong>
-                </div>`;
-                
-                h+=`<div class="table-wrapper"><table><thead><tr><th>ردیف</th><th>تاریخ پرداخت قسط</th><th>مبلغ قسط واریزی</th></tr></thead><tbody>`;
-                loanInstallments.forEach((inst,idx)=>{
-                    h+=`<tr><td>${idx+1}</td><td>${U.esc(inst['تاریخ قسط واریزی']||'---')}</td><td style="font-weight:700;color:#48bb78">${U.esc(inst['مبلغ قسط واریزی']||'0')}</td></tr>`;
-                });
-                h+=`</tbody></table></div>`;
-                
-                const totalPaid=loanInstallments.reduce((sum,inst)=>{
-                    const amountStr=(inst['مبلغ قسط واریزی']||'').replace(/[,\s]/g,'');
-                    return sum+(parseFloat(amountStr)||0);
-                },0);
-                
-                h+=`<div style="margin-top:15px;padding:15px;background:rgba(72,187,120,.1);border-radius:12px;display:flex;justify-content:space-between;align-items:center">
-                    <span style="font-weight:700;color:var(--text-primary)">مجموع اقساط پرداخت شده (${loanInstallments.length} قسط):</span>
-                    <span style="font-size:1.3rem;font-weight:700;color:#48bb78">${U.fmtNum(totalPaid)} ریال</span>
-                </div>`;
-            }else{
-                h+=`<p style="text-align:center;color:var(--text-light);padding:20px">هیچ قسطی برای این وام پرداخت نشده است</p>`;
-            }
-        }else{
-            h+=`<p style="text-align:center;color:var(--text-light);padding:20px">شماره وامی یافت نشد</p>`;
-        }
-        
-        h+=`</div>`;
-        
+        h+=`<div class="dashboard-section"><h3><i class="fas fa-clipboard-list"></i> اقساط پرداخت شده شما</h3><select id="loanNumberSelect" class="installment-select"><option value="">-- انتخاب شماره وام --</option>${memberLoanNumbers.map(ln=>`<option value="${U.esc(ln)}">${U.esc(ln)}</option>`).join('')}</select><div id="installmentList"></div></div>`;
         h+=`<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب کامل</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${TX_COLUMNS.map(function(col){return`<th>${U.esc(col)}</th>`;}).join('')}</tr></thead><tbody>${txns.length===0?`<tr><td colspan="${TX_COLUMNS.length}" style="text-align:center;padding:30px;color:var(--text-light)">هیچ تراکنشی ثبت نشده است</td></tr>`:txns.map(function(t){return`<tr>${TX_COLUMNS.map(function(col){let cellValue=t[col]||'';if(col==='پیامک واریز'||col==='پیامک اخطار'){return`<td style="font-size:1.3rem;text-align:center">${cellValue}</td>`;}return`<td title="${U.esc(String(cellValue))}">${U.esc(String(cellValue))}</td>`;}).join('')}</tr>`;}).join('')}</tbody></table></div></div>`;
         c.innerHTML=h;
+        const loanSelect=$('#loanNumberSelect',c);const installmentList=$('#installmentList',c);
+        if(loanSelect&&installmentList){
+            loanSelect.onchange=()=>{
+                const selectedLoan=loanSelect.value.trim();
+                if(!selectedLoan){installmentList.innerHTML='<p style="text-align:center;color:var(--text-light);padding:20px">لطفاً شماره وام را انتخاب کنید</p>';return;}
+                const loanInstallments=txns.filter(t=>{const txLoan=(t._loanNumber||'').trim();const amountStr=(t['مبلغ قسط واریزی']||'').replace(/[,\s]/g,'');const amount=parseFloat(amountStr)||0;return txLoan===selectedLoan&&amount>0;}).sort((a,b)=>(a['تاریخ قسط واریزی']||'').localeCompare(b['تاریخ قسط واریزی']||''));
+                if(loanInstallments.length===0){installmentList.innerHTML='<p style="text-align:center;color:var(--text-light);padding:20px">هیچ قسطی برای این وام پرداخت نشده است</p>';return;}
+                let tableHtml=`<div class="table-wrapper"><table><thead><tr><th>ردیف</th><th>تاریخ پرداخت قسط</th><th>مبلغ قسط واریزی</th></tr></thead><tbody>`;
+                loanInstallments.forEach((inst,idx)=>{tableHtml+=`<tr><td>${idx+1}</td><td>${U.esc(inst['تاریخ قسط واریزی']||'---')}</td><td style="font-weight:700;color:#48bb78">${U.esc(inst['مبلغ قسط واریزی']||'0')}</td></tr>`;});
+                tableHtml+=`</tbody></table></div>`;
+                const totalPaid=loanInstallments.reduce((sum,inst)=>{const amountStr=(inst['مبلغ قسط واریزی']||'').replace(/[,\s]/g,'');return sum+(parseFloat(amountStr)||0);},0);
+                tableHtml+=`<div style="margin-top:15px;padding:15px;background:rgba(72,187,120,.1);border-radius:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;color:var(--text-primary)">مجموع اقساط پرداخت شده (${loanInstallments.length} قسط):</span><span style="font-size:1.3rem;font-weight:700;color:#48bb78">${U.fmtNum(totalPaid)} ریال</span></div>`;
+                installmentList.innerHTML=tableHtml;
+            };
+        }
         const ft=function(){const q=$('#mes',c).value.trim().toLowerCase();const tb=$('#met',c).querySelector('tbody');if(!tb)return;tb.querySelectorAll('tr').forEach(function(r){if(!q||r.textContent.toLowerCase().includes(q))r.style.display='';else r.style.display='none';});};
         $('#mes',c).oninput=ft;$('#mesb',c).onclick=ft;
         $('#mecb',c).onclick=function(){$('#mes',c).value='';ft();};
         $('#downloadExcel',c).onclick=function(){const data=txns.map(function(t){const row={};TX_COLUMNS.forEach(function(col){row[col]=t[col]||'';});return row;});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'صورتحساب');XLSX.writeFile(wb,'صورتحساب.xlsx');};
         $('#printPDF',c).onclick=function(){window.print();};
     }
-        render_shop(c){
+    
+    render_shop(c){
         const isAdmin=this.currentUser.role==='admin';
         const member=isAdmin?null:this.dm.members.find(m=>m.id===this.currentUser.memberId);
         const userCoins=member?this.ddm.getTotalCoins(member.id):0;
