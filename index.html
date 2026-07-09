@@ -34,6 +34,8 @@ body{background:var(--bg-gradient);min-height:100vh;padding:20px;transition:back
 [data-theme="dark"] .vertical-menu .menu-item.active{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e}
 .admin-badge{background:rgba(255,255,255,.25);padding:2px 8px;border-radius:8px;font-size:.7rem;margin-right:auto;font-weight:700;letter-spacing:.5px}
 [data-theme="dark"] .admin-badge{background:rgba(26,26,46,.4);color:#fbbf24}
+.council-badge{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a2e;padding:2px 8px;border-radius:8px;font-size:.7rem;margin-right:auto;font-weight:700;letter-spacing:.5px;box-shadow:0 2px 8px rgba(251,191,36,.3)}
+[data-theme="dark"] .council-badge{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
 .content-area{flex:1;background:var(--card-bg);border-radius:24px;padding:30px;min-height:600px;overflow-y:auto;transition:all .3s}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem}
 th,td{padding:12px 15px;text-align:right;border-bottom:1px solid var(--border-color);color:var(--table-text)}
@@ -349,8 +351,8 @@ if(loadingTextEl){
     msgInterval=setInterval(()=>{
         msgIndex=(msgIndex+1)%loadingMessages.length;
         loadingTextEl.style.opacity='0';
-        setTimeout(()=>{loadingTextEl.textContent=loadingMessages[msgIndex];loadingTextEl.style.opacity='1';},1500);
-    },1500);
+        setTimeout(()=>{loadingTextEl.textContent=loadingMessages[msgIndex];loadingTextEl.style.opacity='1';},1000);
+    },1000);
 }
 const ThemeManager={
     init(){const saved=localStorage.getItem('sandogh_theme')||'auto';this.apply(saved);},
@@ -689,6 +691,7 @@ async function loadMainData(){
             if(!existingMember){
                 const memberId=membersMap.size+1;
                 const rawLoanNum=colMap.noVam?String(firstRowForMember[colMap.noVam]||'').trim():'';
+                const isCouncil=colMap.kodOverdue?U.parseBool(maxIdRow.row[colMap.kodOverdue]):false;
                 const member={
                     id:memberId,
                     firstName:colMap.name?String(firstRowForMember[colMap.name]||'').trim():'',
@@ -715,7 +718,8 @@ async function loadMainData(){
                     installmentAmount:colMap.mablaghHarGhest?U.parseNum(maxIdRow.row[colMap.mablaghHarGhest]):0,
                     feeAmount:colMap.mablaghKarmozd?U.parseNum(maxIdRow.row[colMap.mablaghKarmozd]):0,
                     totalInstallments:colMap.tedadAghsat?U.parseNum(maxIdRow.row[colMap.tedadAghsat]):0,
-                    loanNumber:rawLoanNum||accNum
+                    loanNumber:rawLoanNum||accNum,
+                    isCouncil:isCouncil
                 };
                 membersMap.set(accNum,member);
             }
@@ -806,7 +810,7 @@ class App{
         const mainData=await loadMainData();
         this.dm.members=mainData.members;
         this.allTransactions=mainData.transactions;
-        this.dm.users=this.dm.members.map(m=>({id:m.id,username:m.accountNumber,password:m.accountNumber,role:'member',memberId:m.id}));
+        this.dm.users=this.dm.members.map(m=>({id:m.id,username:m.accountNumber,password:m.accountNumber,role:m.isCouncil?'council':'member',memberId:m.id}));
         this.dm.users.push({id:999,username:'admin',password:'admin123',role:'admin',memberId:null});
         this.dm.members.forEach(m=>calculateCoins(m,this.allTransactions,this.ddm));
         if(msgInterval){clearInterval(msgInterval);msgInterval=null;}
@@ -890,7 +894,7 @@ class App{
                     <div class="menu-item ${this.tab==='backup'?'active':''}" data-tab="backup"><i class="fas fa-download"></i><span>پشتیبان‌گیری</span><span class="admin-badge">مدیر</span></div>
                     <div class="menu-item ${this.tab==='help'?'active':''}" data-tab="help"><i class="fas fa-question-circle"></i><span>راهنما</span><span class="admin-badge">مدیر</span></div>
                     <div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid var(--border-color)">
-                        <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700"><i class="fas fa-crown"></i> مدیر</span>
+                        <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">👑 مدیر</span>
                         <button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px;font-family:'Vazirmatn',Tahoma,sans-serif"><i class="fas fa-sign-out-alt"></i> خروج</button>
                     </div>
                 </div>
@@ -902,6 +906,9 @@ class App{
     renderMemberLayout(container){
         const member=this.dm.members.find(m=>m.id===this.currentUser.memberId);
         const greeting=U.getGreeting();
+        const isCouncil=this.currentUser.role==='council';
+        const roleBadge=isCouncil?'🌟 عضو شورا':'👤 عضو عادی';
+        const badgeClass=isCouncil?'council-badge':'';
         container.innerHTML=`<div class="app-page">
             <div class="header-bar">
                 <div class="datetime-display">
@@ -933,8 +940,17 @@ class App{
                     <div class="menu-item ${this.tab==='sendMessage'?'active':''}" data-tab="sendMessage"><i class="fas fa-paper-plane"></i> ارسال پیام</div>
                     <div class="menu-item ${this.tab==='support'?'active':''}" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>
                     <div class="menu-item ${this.tab==='help'?'active':''}" data-tab="help"><i class="fas fa-question-circle"></i> راهنما</div>
+                    ${isCouncil?`
+                    <div style="margin-top:20px;padding-top:20px;border-top:2px dashed var(--border-color)">
+                        <div style="font-size:.9rem;font-weight:700;color:var(--welcome-text);margin-bottom:10px;text-align:center">🌟 دسترسی‌های شورا</div>
+                        <div class="menu-item ${this.tab==='shopAdmin'?'active':''}" data-tab="shopAdmin"><i class="fas fa-clipboard-check"></i><span>سفارشات فروشگاه</span><span class="${badgeClass}">شورا</span></div>
+                        <div class="menu-item ${this.tab==='calendar'?'active':''}" data-tab="calendar"><i class="fas fa-calendar-day"></i><span>تقویم رویدادها</span><span class="${badgeClass}">شورا</span></div>
+                        <div class="menu-item ${this.tab==='statistics'?'active':''}" data-tab="statistics"><i class="fas fa-chart-bar"></i><span>گزارش‌های آماری</span><span class="${badgeClass}">شورا</span></div>
+                        <div class="menu-item ${this.tab==='backup'?'active':''}" data-tab="backup"><i class="fas fa-download"></i><span>پشتیبان‌گیری</span><span class="${badgeClass}">شورا</span></div>
+                    </div>
+                    `:''}
                     <div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid var(--border-color)">
-                        <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700"><i class="fas fa-user"></i> عضو</span>
+                        <span style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 16px;border-radius:24px;font-size:.8rem;font-weight:700">${roleBadge}</span>
                         <button id="logoutBtn" style="background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff;border:none;padding:10px 20px;border-radius:24px;cursor:pointer;font-weight:700;margin-right:auto;display:flex;align-items:center;gap:6px;font-family:'Vazirmatn',Tahoma,sans-serif"><i class="fas fa-sign-out-alt"></i> خروج</button>
                     </div>
                 </div>
@@ -1154,7 +1170,7 @@ class App{
         c.innerHTML=h;
     }
     render_shopAdmin(c){
-        if(this.currentUser.role!=='admin'){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر</p></div>';return;}
+        if(this.currentUser.role!=='admin'&&this.currentUser.role!=='council'){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر و اعضای شورا</p></div>';return;}
         const allPurchases=this.ddm.getAllPurchases();
         let h=`<div class="info-box"><i class="fas fa-clipboard-check"></i> سفارشات فروشگاه</div>`;
         if(allPurchases.length===0){h+=`<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-inbox" style="font-size:4rem;color:var(--text-light);margin-bottom:15px"></i><h3 style="color:var(--text-primary);margin-bottom:10px">هنوز سفارشی ثبت نشده است</h3></div>`;c.innerHTML=h;return;}
@@ -1174,7 +1190,8 @@ class App{
             const list=$('#adminOrdersList',c);
             if(!list)return;
             if(orders.length===0){list.innerHTML='<div style="text-align:center;padding:40px;color:var(--text-light)"><i class="fas fa-search" style="font-size:3rem;margin-bottom:15px"></i><p>هیچ سفارشی یافت نشد</p></div>';return;}
-            list.innerHTML=`<div class="dashboard-section"><div class="table-wrapper"><table><thead><tr><th>کد سفارش</th><th>نام خریدار</th><th>شماره حساب</th><th>محصول</th><th>سکه</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>${orders.map(o=>{const statusBadge=o.delivered?`<span class="account-status-badge active">تحویل شده</span>`:`<span class="account-status-badge inactive">در انتظار</span>`;return`<tr><td style="font-family:monospace;font-size:.8rem">${U.esc(o.orderCode)}</td><td>${U.esc(o.memberName)}</td><td>${U.esc(o.accountNumber)}</td><td>${U.esc(o.productName)}</td><td style="font-weight:700;color:#d69e2e">${U.fmtNum(o.price)}</td><td style="font-size:.85rem">${U.esc(o.date)}</td><td>${statusBadge}</td><td>${o.delivered?`<button class="btn-small edit-btn" onclick="window.app.toggleDelivery('${o.orderCode}')"><i class="fas fa-undo"></i> بازگردانی</button>`:`<button class="btn-small success-btn" onclick="window.app.toggleDelivery('${o.orderCode}')"><i class="fas fa-check"></i> تحویل شد</button>`}</td></tr>`;}).join('')}</tbody></table></div></div>`;
+            const canToggle=this.currentUser.role==='admin';
+            list.innerHTML=`<div class="dashboard-section"><div class="table-wrapper"><table><thead><tr><th>کد سفارش</th><th>نام خریدار</th><th>شماره حساب</th><th>محصول</th><th>سکه</th><th>تاریخ</th><th>وضعیت</th>${canToggle?'<th>عملیات</th>':''}</tr></thead><tbody>${orders.map(o=>{const statusBadge=o.delivered?`<span class="account-status-badge active">تحویل شده</span>`:`<span class="account-status-badge inactive">در انتظار</span>`;return`<tr><td style="font-family:monospace;font-size:.8rem">${U.esc(o.orderCode)}</td><td>${U.esc(o.memberName)}</td><td>${U.esc(o.accountNumber)}</td><td>${U.esc(o.productName)}</td><td style="font-weight:700;color:#d69e2e">${U.fmtNum(o.price)}</td><td style="font-size:.85rem">${U.esc(o.date)}</td><td>${statusBadge}</td>${canToggle?`<td>${o.delivered?`<button class="btn-small edit-btn" onclick="window.app.toggleDelivery('${o.orderCode}')"><i class="fas fa-undo"></i> بازگردانی</button>`:`<button class="btn-small success-btn" onclick="window.app.toggleDelivery('${o.orderCode}')"><i class="fas fa-check"></i> تحویل شد</button>`}</td>`:''}</tr>`;}).join('')}</tbody></table></div></div>`;
         };
         setTimeout(()=>{
             $('#adminSearch',c).oninput=renderOrders;
@@ -1190,6 +1207,7 @@ class App{
         },50);
     }
     toggleDelivery(orderCode){
+        if(this.currentUser.role!=='admin'){alert('❌ فقط مدیر می‌تواند وضعیت تحویل را تغییر دهد');return;}
         const purchase=this.ddm.shopPurchases.find(p=>p.orderCode===orderCode);
         if(!purchase)return;
         purchase.delivered=!purchase.delivered;
@@ -1199,8 +1217,9 @@ class App{
     }
     render_calendar(c){
         const isAdmin=this.currentUser.role==='admin';
+        const isCouncil=this.currentUser.role==='council';
         const isSpecial=SPECIAL_USERS.includes(String(this.currentUser.username));
-        if(!isAdmin&&!isSpecial){c.innerHTML=`<div style="text-align:center;padding:60px"><i class="fas fa-lock" style="font-size:4rem;color:#e53e3e;margin-bottom:20px"></i><h2 style="color:var(--text-primary);margin-bottom:15px">دسترسی محدود</h2><p style="color:var(--text-muted);font-size:1.1rem;line-height:1.8">این بخش فقط برای مدیر و کاربران ویژه قابل دسترسی است</p></div>`;return;}
+        if(!isAdmin&&!isCouncil&&!isSpecial){c.innerHTML=`<div style="text-align:center;padding:60px"><i class="fas fa-lock" style="font-size:4rem;color:#e53e3e;margin-bottom:20px"></i><h2 style="color:var(--text-primary);margin-bottom:15px">دسترسی محدود</h2><p style="color:var(--text-muted);font-size:1.1rem;line-height:1.8">این بخش فقط برای مدیر و اعضای شورا قابل دسترسی است</p></div>`;return;}
         const jalali=U.getJalaliMonth();
         let h=`<div class="info-box"><i class="fas fa-calendar-day"></i> تقویم رویدادها - ${jalali.year}/${String(jalali.month).padStart(2,'0')}</div>`;
         const birthdays=this.dm.members.filter(m=>{if(!m.birthDateShamsi)return false;const parts=m.birthDateShamsi.split('/');if(parts.length!==3)return false;return parseInt(parts[1])===jalali.month;});
@@ -1212,7 +1231,9 @@ class App{
         c.innerHTML=h;
     }
     render_statistics(c){
-        if(this.currentUser.role!=='admin'){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر</p></div>';return;}
+        const isAdmin=this.currentUser.role==='admin';
+        const isCouncil=this.currentUser.role==='council';
+        if(!isAdmin&&!isCouncil){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر و اعضای شورا</p></div>';return;}
         const totalMembers=this.dm.members.length;
         const activeMembers=this.dm.members.filter(m=>m.active!==false).length;
         const inactiveMembers=totalMembers-activeMembers;
@@ -1222,12 +1243,14 @@ class App{
         const totalSavings=this.dm.members.reduce((sum,m)=>sum+(m.savingsStatus||0),0);
         const totalTransactions=this.allTransactions.length;
         const totalCoins=Object.values(this.ddm.coins).reduce((sum,c)=>sum+c,0);
-        const topBalance=[...this.dm.members].sort((a,b)=>(b.balance||0)-(a.balance||0)).slice(0,5);
-        const topCoins=[...this.dm.members].sort((a,b)=>(this.ddm.getTotalCoins(b.id)||0)-(this.ddm.getTotalCoins(a.id)||0)).slice(0,5);
         let h=`<div class="info-box"><i class="fas fa-chart-bar"></i> گزارش‌های آماری صندوق</div><div class="stats-grid"><div class="stat-card blue"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-value">${U.fmtNum(totalMembers)}</div><div class="stat-label">کل اعضا</div></div><div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value">${U.fmtNum(activeMembers)}</div><div class="stat-label">حساب‌های فعال</div></div><div class="stat-card red"><div class="stat-icon"><i class="fas fa-times-circle"></i></div><div class="stat-value">${U.fmtNum(inactiveMembers)}</div><div class="stat-label">حساب‌های غیرفعال</div></div><div class="stat-card yellow"><div class="stat-icon"><i class="fas fa-wallet"></i></div><div class="stat-value">${U.fmtNum(totalBalance)}</div><div class="stat-label">مجموع موجودی (ریال)</div></div><div class="stat-card purple"><div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-value">${U.fmtNum(totalLoan)}</div><div class="stat-label">مجموع مانده وام (ریال)</div></div><div class="stat-card red"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-value">${U.fmtNum(totalOverdue)}</div><div class="stat-label">اعضای دارای قسط معوقه</div></div><div class="stat-card green"><div class="stat-icon"><i class="fas fa-piggy-bank"></i></div><div class="stat-value">${U.fmtNum(totalSavings)}</div><div class="stat-label">مجموع پس‌انداز (ریال)</div></div><div class="stat-card blue"><div class="stat-icon"><i class="fas fa-exchange-alt"></i></div><div class="stat-value">${U.fmtNum(totalTransactions)}</div><div class="stat-label">کل تراکنش‌ها</div></div><div class="stat-card yellow"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-value">${U.fmtNum(totalCoins)}</div><div class="stat-label">مجموع سکه‌های توزیع شده</div></div></div>`;
         h+=`<div class="dashboard-section"><h3><i class="fas fa-chart-bar"></i> نمودار وضعیت اعضا</h3><div class="bar-chart"><div class="bar-item"><div class="bar-value">${activeMembers}</div><div class="bar" style="height:${Math.max((activeMembers/totalMembers)*100,5)}%;background:linear-gradient(180deg,#48bb78,#38a169)"></div><div class="bar-label">فعال</div></div><div class="bar-item"><div class="bar-value">${inactiveMembers}</div><div class="bar" style="height:${Math.max((inactiveMembers/totalMembers)*100,5)}%;background:linear-gradient(180deg,#e53e3e,#c53030)"></div><div class="bar-label">غیرفعال</div></div><div class="bar-item"><div class="bar-value">${totalOverdue}</div><div class="bar" style="height:${Math.max((totalOverdue/totalMembers)*100,5)}%;background:linear-gradient(180deg,#ed8936,#dd6b20)"></div><div class="bar-label">معوقه</div></div></div></div>`;
-        h+=`<div class="dashboard-section"><h3><i class="fas fa-trophy" style="color:#ecc94b"></i> برترین موجودی‌ها</h3><div class="table-wrapper"><table><thead><tr><th>رتبه</th><th>نام</th><th>شماره حساب</th><th>موجودی</th></tr></thead><tbody>${topBalance.map((m,idx)=>`<tr><td>${idx+1}</td><td>${U.esc(m.firstName)} ${U.esc(m.lastName)}</td><td>${U.esc(m.accountNumber)}</td><td style="font-weight:700">${U.fmtNum(m.balance)}</td></tr>`).join('')}</tbody></table></div></div>`;
-        h+=`<div class="dashboard-section"><h3><i class="fas fa-coins" style="color:#ecc94b"></i> برترین سکه‌ها</h3><div class="table-wrapper"><table><thead><tr><th>رتبه</th><th>نام</th><th>شماره حساب</th><th>سکه</th></tr></thead><tbody>${topCoins.map((m,idx)=>`<tr><td>${idx+1}</td><td>${U.esc(m.firstName)} ${U.esc(m.lastName)}</td><td>${U.esc(m.accountNumber)}</td><td><span class="coin-amount-badge">${this.ddm.getTotalCoins(m.id)}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+        if(isAdmin){
+            const topBalance=[...this.dm.members].sort((a,b)=>(b.balance||0)-(a.balance||0)).slice(0,5);
+            const topCoins=[...this.dm.members].sort((a,b)=>(this.ddm.getTotalCoins(b.id)||0)-(this.ddm.getTotalCoins(a.id)||0)).slice(0,5);
+            h+=`<div class="dashboard-section"><h3><i class="fas fa-trophy" style="color:#ecc94b"></i> برترین موجودی‌ها</h3><div class="table-wrapper"><table><thead><tr><th>رتبه</th><th>نام</th><th>شماره حساب</th><th>موجودی</th></tr></thead><tbody>${topBalance.map((m,idx)=>`<tr><td>${idx+1}</td><td>${U.esc(m.firstName)} ${U.esc(m.lastName)}</td><td>${U.esc(m.accountNumber)}</td><td style="font-weight:700">${U.fmtNum(m.balance)}</td></tr>`).join('')}</tbody></table></div></div>`;
+            h+=`<div class="dashboard-section"><h3><i class="fas fa-coins" style="color:#ecc94b"></i> برترین سکه‌ها</h3><div class="table-wrapper"><table><thead><tr><th>رتبه</th><th>نام</th><th>شماره حساب</th><th>سکه</th></tr></thead><tbody>${topCoins.map((m,idx)=>`<tr><td>${idx+1}</td><td>${U.esc(m.firstName)} ${U.esc(m.lastName)}</td><td>${U.esc(m.accountNumber)}</td><td><span class="coin-amount-badge">${this.ddm.getTotalCoins(m.id)}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+        }
         c.innerHTML=h;
     }
     render_coins(c){
@@ -1419,10 +1442,16 @@ class App{
             });
         },100);
     }
-    render_backup(c){c.innerHTML=`<div class="info-box"><i class="fas fa-download"></i> پشتیبان‌گیری سکه‌ها</div><div class="dashboard-section"><h3>دانلود فایل اکسل سکه‌ها</h3><p>فایل اکسل شامل سکه‌ها، تاریخچه و خریدهای فروشگاه را دانلود کنید.</p><button class="btn-small success-btn" onclick="window.app.downloadBackup()"><i class="fas fa-download"></i> دانلود فایل اکسل</button></div><div class="dashboard-section"><h3>آپلود فایل پشتیبان</h3><p>فایل اکسل پشتیبان را آپلود کنید تا سکه‌ها بازیابی شوند.</p><input type="file" id="backupFile" accept=".xlsx,.xls" style="margin-bottom:10px"><button class="btn-small info-btn" onclick="window.app.uploadBackup()"><i class="fas fa-upload"></i> آپلود فایل پشتیبان</button></div>`;}
+    render_backup(c){
+        const isAdmin=this.currentUser.role==='admin';
+        const isCouncil=this.currentUser.role==='council';
+        if(!isAdmin&&!isCouncil){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر و اعضای شورا</p></div>';return;}
+        c.innerHTML=`<div class="info-box"><i class="fas fa-download"></i> پشتیبان‌گیری سکه‌ها</div><div class="dashboard-section"><h3>دانلود فایل اکسل سکه‌ها</h3><p>فایل اکسل شامل سکه‌ها، تاریخچه و خریدهای فروشگاه را دانلود کنید.</p><button class="btn-small success-btn" onclick="window.app.downloadBackup()"><i class="fas fa-download"></i> دانلود فایل اکسل</button></div><div class="dashboard-section"><h3>آپلود فایل پشتیبان</h3><p>فایل اکسل پشتیبان را آپلود کنید تا سکه‌ها بازیابی شوند.</p><input type="file" id="backupFile" accept=".xlsx,.xls" style="margin-bottom:10px"><button class="btn-small info-btn" onclick="window.app.uploadBackup()"><i class="fas fa-upload"></i> آپلود فایل پشتیبان</button></div>`;
+    }
     render_help(c){
         const isAdmin=this.currentUser.role==='admin';
-        let h=`<div class="info-box"><i class="fas fa-question-circle"></i> راهنمای استفاده از سیستم</div><div class="help-section"><h4><i class="fas fa-info-circle"></i> درباره سیستم</h4><p>سیستم حسابداری صندوق اتحاد یک برنامه تحت وب برای مدیریت حساب‌های اعضا، وام‌ها، اقساط، سکه‌های تشویقی و فروشگاه است.</p></div><div class="help-section"><h4><i class="fas fa-sign-in-alt"></i> ورود به سیستم</h4>${isAdmin?`<ul><li><strong>مدیر:</strong> نام کاربری: admin | رمز عبور: admin123</li><li><strong>اعضا:</strong> با شماره حساب خود وارد شوند (رمز عبور = شماره حساب)</li></ul>`:`<ul><li><strong>اعضا:</strong> با شماره حساب خود وارد شوید</li><li><strong>رمز عبور:</strong> رمز عبور شما همان شماره حساب شماست (در صورت تغییر، از رمز جدید استفاده کنید)</li><li>در صورت فراموشی رمز، با حسابداری صندوق تماس بگیرید</li></ul>`}</div><div class="help-section"><h4><i class="fas fa-store"></i> فروشگاه</h4><ul><li>محصولات فروشگاه با سکه خریداری می‌شوند</li><li>پس از خرید، یک رسید و پیام آماده برای ارسال به مدیر نمایش داده می‌شود</li><li>پیام را کپی کرده و در ایتا برای مدیر صندوق ارسال کنید</li><li>پس از تحویل محصول توسط مدیر، وضعیت سفارش به "تحویل شده" تغییر می‌کند</li></ul></div><div class="help-section"><h4><i class="fas fa-coins"></i> قوانین سکه</h4><ul><li><strong>پرداخت به موقع قسط:</strong> 2 سکه در ماه</li><li><strong>بدون قسط معوقه:</strong> 3 سکه در ماه</li><li><strong>موجودی بالاتر از مقرری:</strong> 2 سکه در ماه</li><li><strong>پس‌انداز بالا:</strong> 2 سکه به ازای هر 3,000,000 ریال اضافه</li><li><strong>تولد مبارک:</strong> 5 سکه در سال (فقط حساب فعال)</li><li><strong>هدیه سالانه حساب فعال:</strong> 5 سکه در سالروز افتتاح (فقط حساب فعال)</li><li><strong>حساب غیرفعال:</strong> محروم از دریافت سکه سالانه</li><li><strong>پیامک واریز فعال:</strong> 3 سکه به ازای هر واریزی</li><li><strong>بدون پیامک اخطار:</strong> 2 سکه به ازای هر واریزی</li></ul></div><div class="help-section"><h4><i class="fas fa-palette"></i> تم‌های برنامه</h4><ul><li><strong>روز:</strong> تم روشن با رنگ‌های آبی و بنفش</li><li><strong>شب:</strong> تم تاریک با رنگ‌های طلایی، زرد و نارنجی</li><li><strong>خودکار:</strong> بر اساس تنظیمات دستگاه شما تغییر می‌کند (پیش‌فرض)</li></ul></div><div class="help-section"><h4><i class="fas fa-chart-line"></i> بخش‌های اصلی</h4><ul><li><strong>پروفایل و مدیریت اعضا:</strong> مشاهده و ویرایش اطلاعات اعضا (مدیر) / پروفایل شخصی (عضو)</li><li><strong>صورتحساب:</strong> مشاهده تراکنش‌ها، وام، اقساط پرداخت شده</li><li><strong>فروشگاه:</strong> خرید محصولات با سکه</li><li><strong>خریدهای من:</strong> مشاهده تاریخچه خریدها (اعضا)</li><li><strong>سکه‌ها و تاریخچه:</strong> مشاهده سکه‌های خود و تاریخچه کامل</li><li><strong>قوانین سکه:</strong> مشاهده قوانین و وضعیت فعلی</li><li><strong>پشتیبانی:</strong> اطلاعات تماس با صندوق</li>${isAdmin?`<li><strong>سفارشات فروشگاه:</strong> مدیریت تحویل سفارشات (مدیر)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق</li><li><strong>وضعیت سامانه پیامکی:</strong> مشاهده وضعیت سامانه‌های پیامکی اعضا</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها</li>`:''}</ul></div><div class="help-section"><h4><i class="fas fa-shield-alt"></i> نکات امنیتی</h4><ul><li>رمز عبور خود را در اختیار دیگران قرار ندهید</li><li>پس از اتمام کار، از سیستم خارج شوید</li><li>اطلاعات حساب شما محرمانه است</li><li>از مرورگرهای به‌روز استفاده کنید</li></ul></div><div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>در صورت بروز مشکل یا سوال، از بخش <strong>پشتیبانی</strong> اطلاعات تماس با صندوق را مشاهده کنید.</p></div>`;
+        const isCouncil=this.currentUser.role==='council';
+        let h=`<div class="info-box"><i class="fas fa-question-circle"></i> راهنمای استفاده از سیستم</div><div class="help-section"><h4><i class="fas fa-info-circle"></i> درباره سیستم</h4><p>سیستم حسابداری صندوق اتحاد یک برنامه تحت وب برای مدیریت حساب‌های اعضا، وام‌ها، اقساط، سکه‌های تشویقی و فروشگاه است.</p></div><div class="help-section"><h4><i class="fas fa-sign-in-alt"></i> ورود به سیستم</h4>${isAdmin?`<ul><li><strong>مدیر:</strong> نام کاربری: admin | رمز عبور: admin123</li><li><strong>اعضا:</strong> با شماره حساب خود وارد شوند (رمز عبور = شماره حساب)</li></ul>`:`<ul><li><strong>اعضا:</strong> با شماره حساب خود وارد شوید</li><li><strong>رمز عبور:</strong> رمز عبور شما همان شماره حساب شماست (در صورت تغییر، از رمز جدید استفاده کنید)</li><li>در صورت فراموشی رمز، با حسابداری صندوق تماس بگیرید</li></ul>`}</div><div class="help-section"><h4><i class="fas fa-store"></i> فروشگاه</h4><ul><li>محصولات فروشگاه با سکه خریداری می‌شوند</li><li>پس از خرید، یک رسید و پیام آماده برای ارسال به مدیر نمایش داده می‌شود</li><li>پیام را کپی کرده و در ایتا برای مدیر صندوق ارسال کنید</li><li>پس از تحویل محصول توسط مدیر، وضعیت سفارش به "تحویل شده" تغییر می‌کند</li></ul></div><div class="help-section"><h4><i class="fas fa-coins"></i> قوانین سکه</h4><ul><li><strong>پرداخت به موقع قسط:</strong> 2 سکه در ماه</li><li><strong>بدون قسط معوقه:</strong> 3 سکه در ماه</li><li><strong>موجودی بالاتر از مقرری:</strong> 2 سکه در ماه</li><li><strong>پس‌انداز بالا:</strong> 2 سکه به ازای هر 3,000,000 ریال اضافه</li><li><strong>تولد مبارک:</strong> 5 سکه در سال (فقط حساب فعال)</li><li><strong>هدیه سالانه حساب فعال:</strong> 5 سکه در سالروز افتتاح (فقط حساب فعال)</li><li><strong>حساب غیرفعال:</strong> محروم از دریافت سکه سالانه</li><li><strong>پیامک واریز فعال:</strong> 3 سکه به ازای هر واریزی</li><li><strong>بدون پیامک اخطار:</strong> 2 سکه به ازای هر واریزی</li></ul></div><div class="help-section"><h4><i class="fas fa-palette"></i> تم‌های برنامه</h4><ul><li><strong>روز:</strong> تم روشن با رنگ‌های آبی و بنفش</li><li><strong>شب:</strong> تم تاریک با رنگ‌های طلایی، زرد و نارنجی</li><li><strong>خودکار:</strong> بر اساس تنظیمات دستگاه شما تغییر می‌کند (پیش‌فرض)</li></ul></div><div class="help-section"><h4><i class="fas fa-chart-line"></i> بخش‌های اصلی</h4><ul><li><strong>پروفایل و مدیریت اعضا:</strong> مشاهده و ویرایش اطلاعات اعضا (مدیر) / پروفایل شخصی (عضو)</li><li><strong>صورتحساب:</strong> مشاهده تراکنش‌ها، وام، اقساط پرداخت شده</li><li><strong>فروشگاه:</strong> خرید محصولات با سکه</li><li><strong>خریدهای من:</strong> مشاهده تاریخچه خریدها (اعضا)</li><li><strong>سکه‌ها و تاریخچه:</strong> مشاهده سکه‌های خود و تاریخچه کامل</li><li><strong>قوانین سکه:</strong> مشاهده قوانین و وضعیت فعلی</li><li><strong>پشتیبانی:</strong> اطلاعات تماس با صندوق</li>${isAdmin?`<li><strong>سفارشات فروشگاه:</strong> مدیریت تحویل سفارشات (مدیر)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق</li><li><strong>وضعیت سامانه پیامکی:</strong> مشاهده وضعیت سامانه‌های پیامکی اعضا</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها</li>`:isCouncil?`<li><strong>سفارشات فروشگاه:</strong> مشاهده سفارشات (شورا)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها (شورا)</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق (شورا)</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها (شورا)</li>`:''}</ul></div><div class="help-section"><h4><i class="fas fa-shield-alt"></i> نکات امنیتی</h4><ul><li>رمز عبور خود را در اختیار دیگران قرار ندهید</li><li>پس از اتمام کار، از سیستم خارج شوید</li><li>اطلاعات حساب شما محرمانه است</li><li>از مرورگرهای به‌روز استفاده کنید</li></ul></div><div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>در صورت بروز مشکل یا سوال، از بخش <strong>پشتیبانی</strong> اطلاعات تماس با صندوق را مشاهده کنید.</p></div>`;
         c.innerHTML=h;
     }
     search(inputId,tableSelector,container){
