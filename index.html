@@ -285,32 +285,34 @@ tbody tr:hover{background:var(--table-hover)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 .loading-spinner{position:relative;width:140px;height:140px;margin:0 auto 30px}
 .spinner-ring{position:absolute;border:3px solid transparent;border-radius:50%;animation:spin 1.5s linear infinite}
-.spinner-ring:nth-child(1){top:0;left:0;right:0;bottom:0;border-top-color:#667eea;border-right-color:#667eea;animation-duration:1.5s}
-.spinner-ring:nth-child(2){top:12px;left:12px;right:12px;bottom:12px;border-bottom-color:#764ba2;border-left-color:#764ba2;animation-duration:2s;animation-direction:reverse}
-.spinner-ring:nth-child(3){top:24px;left:24px;right:24px;bottom:24px;border-top-color:#f093fb;border-right-color:#f093fb;animation-duration:2.5s}
+.spinner-ring:nth-child(1){top:0;left:0;right:0;bottom:0;border-top-color:#e53e3e;border-right-color:#e53e3e;animation-duration:1.5s}
+.spinner-ring:nth-child(2){top:12px;left:12px;right:12px;bottom:12px;border-bottom-color:#ed8936;border-left-color:#ed8936;animation-duration:2s;animation-direction:reverse}
+.spinner-ring:nth-child(3){top:24px;left:24px;right:24px;bottom:24px;border-top-color:#ecc94b;border-right-color:#ecc94b;animation-duration:2.5s}
 @keyframes spin{to{transform:rotate(360deg)}}
-.loading-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.8rem;color:#667eea;animation:pulse 2s ease-in-out infinite}
+.loading-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2.8rem;color:#e53e3e;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.15);opacity:.7}}
-.loading-title{color:#667eea;font-size:1.8rem;margin-bottom:12px;font-weight:700;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-[data-theme="dark"] .loading-title{background:linear-gradient(135deg,#fbbf24,#f59e0b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.loading-title{color:#e53e3e;font-size:1.8rem;margin-bottom:12px;font-weight:700;background:linear-gradient(135deg,#e53e3e,#ed8936,#ecc94b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+[data-theme="dark"] .loading-title{background:linear-gradient(135deg,#fbbf24,#f59e0b,#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 [data-theme="dark"] .loading-icon{color:#fbbf24}
 [data-theme="dark"] .spinner-ring:nth-child(1){border-top-color:#fbbf24;border-right-color:#fbbf24}
 [data-theme="dark"] .spinner-ring:nth-child(2){border-bottom-color:#f59e0b;border-left-color:#f59e0b}
 [data-theme="dark"] .spinner-ring:nth-child(3){border-top-color:#d97706;border-right-color:#d97706}
-.loading-text{color:var(--text-muted);font-size:1.1rem;margin-bottom:25px;min-height:1.5em;transition:opacity .3s ease;font-weight:600}
-.loading-progress{width:320px;max-width:100%;height:6px;background:rgba(102,126,234,.15);border-radius:10px;margin:0 auto 25px;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,#667eea,#764ba2,#f093fb,#667eea);background-size:300% 100%;border-radius:10px;animation:progressAnim 2s ease-in-out infinite}
+.loading-text{color:#2d3748;font-size:1.1rem;margin-bottom:25px;min-height:1.5em;transition:opacity .3s ease;font-weight:600}
+[data-theme="dark"] .loading-text{color:#fbbf24}
+.loading-progress{width:320px;max-width:100%;height:6px;background:rgba(229,62,62,.15);border-radius:10px;margin:0 auto 25px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#e53e3e,#ed8936,#ecc94b,#e53e3e);background-size:300% 100%;border-radius:10px;animation:progressAnim 1.5s ease-in-out infinite}
 [data-theme="dark"] .progress-bar{background:linear-gradient(90deg,#fbbf24,#f59e0b,#d97706,#fbbf24);background-size:300% 100%}
 @keyframes progressAnim{0%{background-position:0% 50%;width:30%}50%{background-position:100% 50%;width:100%}100%{background-position:0% 50%;width:30%}}
 .loading-dots{display:flex;justify-content:center;gap:10px}
-.loading-dots span{width:12px;height:12px;background:linear-gradient(135deg,#667eea,#764ba2);border-radius:50%;animation:bounce 1.4s ease-in-out infinite}
+.loading-dots span{width:12px;height:12px;background:linear-gradient(135deg,#e53e3e,#ed8936);border-radius:50%;animation:bounce 1.4s ease-in-out infinite}
 [data-theme="dark"] .loading-dots span{background:linear-gradient(135deg,#fbbf24,#d97706)}
 .loading-dots span:nth-child(2){animation-delay:.2s}
 .loading-dots span:nth-child(3){animation-delay:.4s}
 @keyframes bounce{0%,80%,100%{transform:scale(0);opacity:.5}40%{transform:scale(1);opacity:1}}
 .loading-features{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:30px;max-width:600px;margin-left:auto;margin-right:auto}
-.loading-feature{display:flex;align-items:center;gap:8px;color:var(--text-muted);font-size:.9rem;opacity:.8}
-.loading-feature i{color:#667eea;font-size:1.1rem}
+.loading-feature{display:flex;align-items:center;gap:8px;color:#4a5568;font-size:.9rem;opacity:.8}
+[data-theme="dark"] .loading-feature{color:#f59e0b}
+.loading-feature i{color:#e53e3e;font-size:1.1rem}
 [data-theme="dark"] .loading-feature i{color:#fbbf24}
 @media(max-width:768px){body{padding:10px}.login-page,.app-page{padding:20px;border-radius:20px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}.vertical-menu.collapsed{display:none}.vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}.content-area{padding:15px;min-height:400px;border-radius:16px}.header-bar{grid-template-columns:1fr;padding:15px;gap:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{padding:10px 15px}.datetime-card .dt-value{font-size:1rem}.clock-card{padding:12px 20px}.clock-card .clock-time{font-size:1.5rem}.header-actions{flex-direction:column;width:100%;gap:10px}.theme-switcher{width:100%;justify-content:space-around}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}table{font-size:.75rem}th,td{padding:8px 6px}.shop-grid{grid-template-columns:1fr}.shop-card{padding:18px}.profile-info-grid{grid-template-columns:1fr;gap:12px}.last-tx-grid{grid-template-columns:1fr}.loan-info{grid-template-columns:1fr}.calendar-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card{padding:15px}.stat-card .stat-value{font-size:1.3rem}.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%}.shop-filter-bar{flex-direction:column}.shop-filter-bar input,.shop-filter-bar select{width:100%}.modal-content{padding:20px}.modal-actions{flex-direction:column}.modal-actions .btn-small{width:100%}.support-grid{grid-template-columns:1fr}.date-filter{flex-direction:column;align-items:stretch}.date-filter input{width:100%}.search-box{flex-direction:column}.search-box input{width:100%}.welcome-banner{font-size:1.1rem!important;text-align:center}.coin-display{width:100%;justify-content:center}.last-login-box{flex-direction:column;text-align:center}.bar-chart{height:150px;padding:10px}.date-combined-box{min-width:auto;width:100%}.system-message-box{max-width:100%}.welcome-with-greeting{flex-direction:column;align-items:flex-start}.loading-spinner{width:110px;height:110px}.loading-title{font-size:1.4rem}.loading-features{gap:12px}.loading-feature{font-size:.8rem}}
 </style>
@@ -347,8 +349,8 @@ if(loadingTextEl){
     msgInterval=setInterval(()=>{
         msgIndex=(msgIndex+1)%loadingMessages.length;
         loadingTextEl.style.opacity='0';
-        setTimeout(()=>{loadingTextEl.textContent=loadingMessages[msgIndex];loadingTextEl.style.opacity='1';},300);
-    },2200);
+        setTimeout(()=>{loadingTextEl.textContent=loadingMessages[msgIndex];loadingTextEl.style.opacity='1';},1500);
+    },1500);
 }
 const ThemeManager={
     init(){const saved=localStorage.getItem('sandogh_theme')||'auto';this.apply(saved);},
@@ -926,6 +928,9 @@ class App{
                     <div class="menu-item ${this.tab==='shopHistory'?'active':''}" data-tab="shopHistory"><i class="fas fa-receipt"></i> خریدهای من</div>
                     <div class="menu-item ${this.tab==='coins'?'active':''}" data-tab="coins"><i class="fas fa-coins"></i> سکه‌های من و تاریخچه</div>
                     <div class="menu-item ${this.tab==='coinRules'?'active':''}" data-tab="coinRules"><i class="fas fa-list-check"></i> قوانین سکه</div>
+                    <div class="menu-item ${this.tab==='smsStatus'?'active':''}" data-tab="smsStatus"><i class="fas fa-sms"></i> وضعیت سامانه پیامکی</div>
+                    <div class="menu-item ${this.tab==='announcements'?'active':''}" data-tab="announcements"><i class="fas fa-bullhorn"></i> اطلاعیه‌ها و نظرسنجی</div>
+                    <div class="menu-item ${this.tab==='sendMessage'?'active':''}" data-tab="sendMessage"><i class="fas fa-paper-plane"></i> ارسال پیام</div>
                     <div class="menu-item ${this.tab==='support'?'active':''}" data-tab="support"><i class="fas fa-headset"></i> پشتیبانی</div>
                     <div class="menu-item ${this.tab==='help'?'active':''}" data-tab="help"><i class="fas fa-question-circle"></i> راهنما</div>
                     <div style="display:flex;align-items:center;gap:12px;padding:20px 18px 0;margin-top:20px;border-top:3px solid var(--border-color)">
@@ -1040,56 +1045,21 @@ class App{
         if(overdueInstallments<=-1&&overdueInstallments>=-6){h+=`<div class="warning-box loan" style="margin-top:15px"><i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i><div><strong style="font-size:1.1rem;display:block;margin-bottom:5px">هشدار اقساط</strong>اقساط شما عقب افتاده نسبت به پرداخت آن سریعا اقدام نمایید</div></div>`;}
         else if(overdueInstallments<-6){h+=`<div class="warning-box loan-critical" style="margin-top:15px"><i class="fas fa-exclamation-triangle" style="font-size:1.5rem"></i><div><strong style="font-size:1.1rem;display:block;margin-bottom:5px">هشدار جدی اقساط</strong>با توجه به اینکه تعداد اقساط معوقه بیش از حد مجاز است اقساط شما از پس انداز کسر و ضمانت شما به اجرا گذاشته خواهد شد</div></div>`;}
         h+=`</div>`;
-        const loanNumSet=new Set();
+        const uniqueTxns=[];
+        const seenIds=new Set();
         txns.forEach(t=>{
-            const ln=(t._loanNumber||'').trim();
-            if(ln)loanNumSet.add(ln);
-        });
-        const memberLoanNumbers=Array.from(loanNumSet);
-        h+=`<div class="dashboard-section"><h3><i class="fas fa-clipboard-list"></i> اقساط پرداخت شده شما</h3><select id="loanNumberSelect" class="installment-select"><option value="">-- انتخاب شماره وام --</option>${memberLoanNumbers.map(ln=>`<option value="${U.esc(ln)}">${U.esc(ln)}</option>`).join('')}</select><div id="installmentList"></div></div>`;
-        h+=`<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب کامل</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${TX_COLUMNS.map(function(col){return`<th>${U.esc(col)}</th>`;}).join('')}</tr></thead><tbody>${txns.length===0?`<tr><td colspan="${TX_COLUMNS.length}" style="text-align:center;padding:30px;color:var(--text-light)">هیچ تراکنشی ثبت نشده است</td></tr>`:txns.map(function(t){return`<tr>${TX_COLUMNS.map(function(col){let cellValue=t[col]||'';if(col==='پیامک واریز'||col==='پیامک اخطار'){return`<td style="font-size:1.3rem;text-align:center">${cellValue}</td>`;}return`<td title="${U.esc(String(cellValue))}">${U.esc(String(cellValue))}</td>`;}).join('')}</tr>`;}).join('')}</tbody></table></div></div>`;
-        c.innerHTML=h;
-        const loanSelect=$('#loanNumberSelect',c);const installmentList=$('#installmentList',c);
-        if(loanSelect&&installmentList){
-            loanSelect.onchange=()=>{
-                const selectedLoan=loanSelect.value.trim();
-                if(!selectedLoan){installmentList.innerHTML='<p style="text-align:center;color:var(--text-light);padding:20px">لطفاً شماره وام را انتخاب کنید</p>';return;}
-                const loanInstallments=txns.filter(t=>{
-                    const txLoan=(t._loanNumber||'').trim();
-                    const txAcc=(t['شماره حساب']||'').trim();
-                    const amount=U.parseNum(t['مبلغ قسط واریزی']);
-                    const rawAmount=t._installmentAmount||0;
-                    const hasInstallment=amount>0||rawAmount>0;
-                    const hasInstallmentDate=(t['تاریخ قسط واریزی']||'').trim()!==''||(t._installmentDate||'').trim()!=='';
-                    return (txLoan===selectedLoan||txAcc===selectedLoan)&&(hasInstallment||hasInstallmentDate);
-                }).sort((a,b)=>{
-                    const dateA=(a['تاریخ قسط واریزی']||a._installmentDate||'').trim();
-                    const dateB=(b['تاریخ قسط واریزی']||b._installmentDate||'').trim();
-                    return dateA.localeCompare(dateB);
-                });
-                if(loanInstallments.length===0){installmentList.innerHTML='<p style="text-align:center;color:var(--text-light);padding:20px">هیچ قسطی برای این وام پرداخت نشده است</p>';return;}
-                let tableHtml=`<div class="table-wrapper"><table><thead><tr><th>ردیف</th><th>تاریخ قسط واریزی</th><th>مبلغ قسط واریزی</th></tr></thead><tbody>`;
-                let totalPaid=0;
-                loanInstallments.forEach((inst,idx)=>{
-                    const installmentDate=(inst['تاریخ قسط واریزی']||inst._installmentDate||'---').trim()||'---';
-                    const installmentAmount=inst['مبلغ قسط واریزی']||'0';
-                    const rawAmount=U.parseNum(installmentAmount);
-                    totalPaid+=rawAmount;
-                    tableHtml+=`<tr><td>${idx+1}</td><td>${U.esc(installmentDate)}</td><td style="font-weight:700;color:#48bb78">${U.esc(installmentAmount)}</td></tr>`;
-                });
-                tableHtml+=`</tbody></table></div>`;
-                tableHtml+=`<div style="margin-top:15px;padding:15px;background:rgba(72,187,120,.1);border-radius:12px;display:flex;justify-content:space-between;align-items:center"><span style="font-weight:700;color:var(--text-primary)">مجموع اقساط پرداخت شده (${loanInstallments.length} قسط):</span><span style="font-size:1.3rem;font-weight:700;color:#48bb78">${U.fmtNum(totalPaid)} ریال</span></div>`;
-                installmentList.innerHTML=tableHtml;
-            };
-            if(memberLoanNumbers.length>0){
-                loanSelect.value=memberLoanNumbers[0];
-                loanSelect.dispatchEvent(new Event('change'));
+            const txId=(t['ID']||'').toString().trim();
+            if(txId&&!seenIds.has(txId)){
+                seenIds.add(txId);
+                uniqueTxns.push(t);
             }
-        }
+        });
+        h+=`<div class="dashboard-section"><h3><i class="fas fa-file-invoice"></i> صورت‌حساب کامل</h3><div class="filter-bar"><input type="text" id="mes" placeholder="جستجو در تمام ستون‌ها ..."><button class="btn-small success-btn" id="mesb"><i class="fas fa-search"></i> جستجو</button><button class="btn-small edit-btn" id="mecb"><i class="fas fa-eraser"></i> پاک کردن</button><button class="btn-small info-btn" id="downloadExcel"><i class="fas fa-download"></i> دانلود اکسل</button><button class="btn-small edit-btn" id="printPDF"><i class="fas fa-print"></i> چاپ / PDF</button></div><div class="table-wrapper"><table id="met"><thead><tr>${TX_COLUMNS.map(function(col){return`<th>${U.esc(col)}</th>`;}).join('')}</tr></thead><tbody>${uniqueTxns.length===0?`<tr><td colspan="${TX_COLUMNS.length}" style="text-align:center;padding:30px;color:var(--text-light)">هیچ تراکنشی ثبت نشده است</td></tr>`:uniqueTxns.map(function(t){return`<tr>${TX_COLUMNS.map(function(col){let cellValue=t[col]||'';if(col==='پیامک واریز'||col==='پیامک اخطار'){return`<td style="font-size:1.3rem;text-align:center">${cellValue}</td>`;}return`<td title="${U.esc(String(cellValue))}">${U.esc(String(cellValue))}</td>`;}).join('')}</tr>`;}).join('')}</tbody></table></div></div>`;
+        c.innerHTML=h;
         const ft=function(){const q=$('#mes',c).value.trim().toLowerCase();const tb=$('#met',c).querySelector('tbody');if(!tb)return;tb.querySelectorAll('tr').forEach(function(r){if(!q||r.textContent.toLowerCase().includes(q))r.style.display='';else r.style.display='none';});};
         $('#mes',c).oninput=ft;$('#mesb',c).onclick=ft;
         $('#mecb',c).onclick=function(){$('#mes',c).value='';ft();};
-        $('#downloadExcel',c).onclick=function(){const data=txns.map(function(t){const row={};TX_COLUMNS.forEach(function(col){row[col]=t[col]||'';});return row;});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'صورتحساب');XLSX.writeFile(wb,'صورتحساب.xlsx');};
+        $('#downloadExcel',c).onclick=function(){const data=uniqueTxns.map(function(t){const row={};TX_COLUMNS.forEach(function(col){row[col]=t[col]||'';});return row;});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'صورتحساب');XLSX.writeFile(wb,'صورتحساب.xlsx');};
         $('#printPDF',c).onclick=function(){window.print();};
     }
     render_shop(c){
