@@ -306,7 +306,79 @@ tbody tr:hover{background:var(--table-hover)}
 .loading-features{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-top:30px;max-width:600px;margin-left:auto;margin-right:auto}
 .loading-feature{display:flex;align-items:center;gap:8px;color:#e2e8f0;font-size:.9rem;opacity:.8}
 .loading-feature i{color:#48bb78;font-size:1.1rem}
-@media(max-width:768px){body{padding:10px}.login-page,.app-page{padding:20px;border-radius:20px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}.vertical-menu.collapsed{display:none}.vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}.content-area{padding:15px;min-height:400px;border-radius:16px}.header-bar{grid-template-columns:1fr;padding:15px;gap:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{padding:10px 15px}.datetime-card .dt-value{font-size:1rem}.clock-card{padding:12px 20px}.clock-card .clock-time{font-size:1.5rem}.header-actions{flex-direction:column;width:100%;gap:10px}.theme-switcher{width:100%;justify-content:space-around}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}table{font-size:.75rem}th,td{padding:8px 6px}.shop-grid{grid-template-columns:1fr}.shop-card{padding:18px}.profile-info-grid{grid-template-columns:1fr;gap:12px}.last-tx-grid{grid-template-columns:1fr}.loan-info{grid-template-columns:1fr}.calendar-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card{padding:15px}.stat-card .stat-value{font-size:1.3rem}.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%}.shop-filter-bar{flex-direction:column}.shop-filter-bar input,.shop-filter-bar select{width:100%}.modal-content{padding:20px}.modal-actions{flex-direction:column}.modal-actions .btn-small{width:100%}.support-grid{grid-template-columns:1fr}.date-filter{flex-direction:column;align-items:stretch}.date-filter input{width:100%}.search-box{flex-direction:column}.search-box input{width:100%}.welcome-banner{font-size:1.1rem!important;text-align:center}.coin-display{width:100%;justify-content:center}.last-login-box{flex-direction:column;text-align:center}.bar-chart{height:150px;padding:10px}.date-combined-box{min-width:auto;width:100%}.system-message-box{max-width:100%}.welcome-with-greeting{flex-direction:column;align-items:flex-start}.loading-spinner{width:110px;height:110px}.loading-title{font-size:1.4rem}.loading-features{gap:12px}.loading-feature{font-size:.8rem}}
+
+/* ====== سیستم دسته‌بندی اعضا (طلایی/نقره‌ای/سیاه) ====== */
+.member-tier-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-weight:700;font-size:.85rem;box-shadow:0 2px 8px rgba(0,0,0,.1);white-space:nowrap}
+.member-tier-badge.gold{background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e;box-shadow:0 2px 12px rgba(255,215,0,.4)}
+.member-tier-badge.silver{background:linear-gradient(135deg,#E8E8E8,#A8A8A8);color:#1a1a2e;box-shadow:0 2px 12px rgba(192,192,192,.4)}
+.member-tier-badge.black{background:linear-gradient(135deg,#6B7280,#374151);color:#fff;box-shadow:0 2px 12px rgba(74,85,104,.4)}
+.member-tier-badge.small{padding:2px 8px;font-size:.7rem}
+
+.score-header-box{background:var(--card-bg);border-radius:16px;padding:10px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.1);border:2px solid var(--input-border);transition:all .3s}
+.score-header-box:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}
+.score-header-info{display:flex;flex-direction:column;gap:2px}
+.score-header-label{font-size:.7rem;color:var(--text-muted);font-weight:600}
+.score-header-value{font-size:.95rem;font-weight:700;color:var(--text-primary)}
+
+.gauge-chart{display:block}
+.gauge-progress{transition:stroke-dasharray 1.5s ease-out}
+
+.welcome-tier-modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:10001;padding:20px;animation:fadeIn .3s ease-out;backdrop-filter:blur(5px)}
+.welcome-tier-content{background:var(--card-bg);border-radius:24px;padding:40px 30px;max-width:480px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4);animation:slideUp .5s ease-out;position:relative;overflow:hidden}
+.welcome-tier-content::before{content:'';position:absolute;top:0;left:0;right:0;height:6px}
+.welcome-tier-content.gold::before{background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700)}
+.welcome-tier-content.silver::before{background:linear-gradient(90deg,#E8E8E8,#A8A8A8,#E8E8E8)}
+.welcome-tier-content.black::before{background:linear-gradient(90deg,#6B7280,#374151,#6B7280)}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.welcome-tier-emoji{font-size:4rem;margin-bottom:15px;animation:emojiPop .6s ease-out}
+@keyframes emojiPop{0%{transform:scale(0) rotate(-180deg)}60%{transform:scale(1.2) rotate(10deg)}100%{transform:scale(1) rotate(0)}}
+.welcome-tier-title{font-size:1.6rem;font-weight:700;margin-bottom:8px;color:var(--text-primary)}
+.welcome-tier-subtitle{font-size:1rem;color:var(--text-secondary);margin-bottom:20px;line-height:1.6}
+.welcome-tier-score{font-size:3rem;font-weight:700;margin:15px 0}
+.welcome-tier-score.gold{color:#FFA500}
+.welcome-tier-score.silver{color:#A8A8A8}
+.welcome-tier-score.black{color:#4A5568}
+.welcome-tier-message{background:var(--info-bg);border-radius:12px;padding:15px;margin:20px 0;color:var(--text-primary);font-size:.95rem;line-height:1.6}
+
+.score-details-box{background:var(--section-bg);border-radius:16px;padding:20px;margin-top:20px}
+.score-details-title{font-size:1rem;font-weight:700;color:var(--text-primary);margin-bottom:15px;display:flex;align-items:center;gap:8px}
+.score-detail-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color)}
+.score-detail-item:last-child{border-bottom:none}
+.score-detail-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:#fff;flex-shrink:0}
+.score-detail-icon.installment{background:linear-gradient(135deg,#4299e1,#3182ce)}
+.score-detail-icon.savings{background:linear-gradient(135deg,#48bb78,#38a169)}
+.score-detail-icon.coins{background:linear-gradient(135deg,#ecc94b,#d69e2e)}
+.score-detail-icon.activity{background:linear-gradient(135deg,#9f7aea,#805ad5)}
+.score-detail-info{flex:1;min-width:0}
+.score-detail-label{font-size:.85rem;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.score-detail-bar{height:6px;background:rgba(128,128,128,.2);border-radius:10px;overflow:hidden}
+.score-detail-bar-fill{height:100%;border-radius:10px;transition:width 1.2s ease-out}
+.score-detail-bar-fill.installment{background:linear-gradient(90deg,#4299e1,#3182ce)}
+.score-detail-bar-fill.savings{background:linear-gradient(90deg,#48bb78,#38a169)}
+.score-detail-bar-fill.coins{background:linear-gradient(90deg,#ecc94b,#d69e2e)}
+.score-detail-bar-fill.activity{background:linear-gradient(90deg,#9f7aea,#805ad5)}
+.score-detail-value{font-size:.85rem;font-weight:700;color:var(--text-primary);min-width:60px;text-align:left}
+
+.tier-profile-box{background:var(--card-bg);border-radius:20px;padding:25px;margin-bottom:25px;box-shadow:0 4px 20px rgba(0,0,0,.08);border:2px solid var(--input-border);display:flex;align-items:center;gap:25px;flex-wrap:wrap}
+.tier-profile-gauge{flex-shrink:0}
+.tier-profile-info{flex:1;min-width:200px}
+.tier-profile-name{font-size:1.4rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tier-profile-message{font-size:.95rem;color:var(--text-secondary);line-height:1.6;margin-bottom:12px}
+.tier-profile-stats{display:flex;gap:15px;flex-wrap:wrap}
+.tier-profile-stat{display:flex;flex-direction:column;gap:2px}
+.tier-profile-stat-label{font-size:.75rem;color:var(--text-muted);font-weight:600}
+.tier-profile-stat-value{font-size:1.1rem;font-weight:700;color:var(--text-primary)}
+
+.tier-filter-bar{display:flex;gap:8px;margin-bottom:15px;flex-wrap:wrap}
+.tier-filter-btn{padding:6px 14px;border-radius:20px;border:2px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);cursor:pointer;font-weight:600;font-size:.85rem;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s;display:inline-flex;align-items:center;gap:6px}
+.tier-filter-btn:hover{transform:translateY(-1px)}
+.tier-filter-btn.active{color:#fff;border-color:transparent}
+.tier-filter-btn.all.active{background:linear-gradient(135deg,#667eea,#764ba2)}
+.tier-filter-btn.gold.active{background:linear-gradient(135deg,#FFD700,#FFA500);color:#1a1a2e}
+.tier-filter-btn.silver.active{background:linear-gradient(135deg,#C0C0C0,#A8A8A8);color:#1a1a2e}
+.tier-filter-btn.black.active{background:linear-gradient(135deg,#6B7280,#374151)}
+
+@media(max-width:768px){body{padding:10px}.login-page,.app-page{padding:20px;border-radius:20px}.app-layout{flex-direction:column;gap:15px}.vertical-menu{width:100%;max-height:none;padding:15px;border-radius:16px}.vertical-menu.collapsed{display:none}.vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:4px 0}.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px}.content-area{padding:15px;min-height:400px;border-radius:16px}.header-bar{grid-template-columns:1fr;padding:15px;gap:15px}.datetime-display{flex-direction:column;gap:10px}.datetime-card{padding:10px 15px}.datetime-card .dt-value{font-size:1rem}.clock-card{padding:12px 20px}.clock-card .clock-time{font-size:1.5rem}.header-actions{flex-direction:column;width:100%;gap:10px}.theme-switcher{width:100%;justify-content:space-around}.theme-btn{flex:1;justify-content:center;padding:8px 10px;font-size:.8rem}table{font-size:.75rem}th,td{padding:8px 6px}.shop-grid{grid-template-columns:1fr}.shop-card{padding:18px}.profile-info-grid{grid-template-columns:1fr;gap:12px}.last-tx-grid{grid-template-columns:1fr}.loan-info{grid-template-columns:1fr}.calendar-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(2,1fr)}.stat-card{padding:15px}.stat-card .stat-value{font-size:1.3rem}.filter-bar{flex-direction:column}.filter-bar input,.filter-bar select{width:100%}.shop-filter-bar{flex-direction:column}.shop-filter-bar input,.shop-filter-bar select{width:100%}.modal-content{padding:20px}.modal-actions{flex-direction:column}.modal-actions .btn-small{width:100%}.support-grid{grid-template-columns:1fr}.date-filter{flex-direction:column;align-items:stretch}.date-filter input{width:100%}.search-box{flex-direction:column}.search-box input{width:100%}.welcome-banner{font-size:1.1rem!important;text-align:center}.coin-display{width:100%;justify-content:center}.last-login-box{flex-direction:column;text-align:center}.bar-chart{height:150px;padding:10px}.date-combined-box{min-width:auto;width:100%}.system-message-box{max-width:100%}.welcome-with-greeting{flex-direction:column;align-items:flex-start}.loading-spinner{width:110px;height:110px}.loading-title{font-size:1.4rem}.loading-features{gap:12px}.loading-feature{font-size:.8rem}.tier-profile-box{flex-direction:column;text-align:center}.tier-profile-stats{justify-content:center}.welcome-tier-content{padding:30px 20px}.welcome-tier-emoji{font-size:3rem}.welcome-tier-title{font-size:1.3rem}.welcome-tier-score{font-size:2.5rem}}
 </style>
 </head>
 <body>
@@ -410,6 +482,129 @@ const U={
         return days[new Date().getDay()];
     }
 };
+
+// ====== سیستم محاسبه امتیاز و دسته‌بندی اعضا ======
+function calculateMemberScore(member,ddm,allTransactions){
+    let score=0;
+    const details={};
+    
+    // 1. اقساط (40 امتیاز)
+    const totalInstallments=member.totalInstallments||0;
+    const paidInstallments=member.paidInstallments||0;
+    const overdueInstallments=Math.abs(member.overdueInstallments||0);
+    let installmentScore=0;
+    if(totalInstallments>0){
+        installmentScore=(paidInstallments/totalInstallments)*40;
+        installmentScore=Math.max(0,installmentScore-(overdueInstallments*5));
+    }else{
+        installmentScore=40;
+    }
+    installmentScore=Math.max(0,Math.min(40,installmentScore));
+    details.installment={score:Math.round(installmentScore),max:40};
+    
+    // 2. پس‌انداز (25 امتیاز)
+    const savings=member.savingsStatus||0;
+    let savingsScore=0;
+    if(savings>=0){
+        savingsScore=25;
+    }else{
+        const monthlySalary=member.monthlySalary||1;
+        const ratio=Math.abs(savings)/monthlySalary;
+        savingsScore=Math.max(0,25-(ratio*25));
+    }
+    savingsScore=Math.max(0,Math.min(25,savingsScore));
+    details.savings={score:Math.round(savingsScore),max:25};
+    
+    // 3. سکه‌ها (20 امتیاز)
+    const coins=ddm?ddm.getTotalCoins(member.id):0;
+    let coinsScore=Math.min(coins/50,1)*20;
+    coinsScore=Math.max(0,Math.min(20,coinsScore));
+    details.coins={score:Math.round(coinsScore),max:20,value:coins};
+    
+    // 4. فعالیت (15 امتیاز)
+    const txCount=allTransactions?allTransactions.filter(t=>String(t._memberId)===String(member.id)).length:0;
+    let activityScore=Math.min(txCount/10,1)*15;
+    activityScore=Math.max(0,Math.min(15,activityScore));
+    details.activity={score:Math.round(activityScore),max:15,value:txCount};
+    
+    score=installmentScore+savingsScore+coinsScore+activityScore;
+    score=Math.max(0,Math.min(100,score));
+    score=Math.round(score);
+    
+    let tier,tierName,tierEmoji,tierColor,tierMessage;
+    if(score>=80){
+        tier='gold';tierName='طلایی';tierEmoji='⭐';tierColor='#FFD700';
+        tierMessage='🌟 عالی! شما عضو طلایی صندوق هستید. به همین خوبی ادامه دهید!';
+    }else if(score>=50){
+        tier='silver';tierName='نقره‌ای';tierEmoji='🥈';tierColor='#C0C0C0';
+        tierMessage='💪 خوب! کمی دیگر تا طلایی شدن فاصله دارید. ادامه دهید!';
+    }else{
+        tier='black';tierName='سیاه';tierEmoji='⚫';tierColor='#4A5568';
+        tierMessage='⚠️ توجه! وضعیت حساب شما نیاز به بهبود دارد. لطفاً اقساط خود را پرداخت کنید.';
+    }
+    
+    return{score,tier,tierName,tierEmoji,tierColor,tierMessage,details};
+}
+
+function renderGaugeChart(score,size='large'){
+    const sizes={
+        small:{width:70,height:70,strokeWidth:7,fontSize:14,textSize:8,cy:45},
+        medium:{width:110,height:110,strokeWidth:9,fontSize:22,textSize:10,cy:68},
+        large:{width:180,height:180,strokeWidth:13,fontSize:36,textSize:14,cy:110}
+    };
+    const s=sizes[size];
+    let gradientId,startColor,endColor,tierName,tierEmoji;
+    if(score>=80){
+        gradientId='goldGrad';startColor='#FFD700';endColor='#FFA500';tierName='طلایی';tierEmoji='⭐';
+    }else if(score>=50){
+        gradientId='silverGrad';startColor='#E8E8E8';endColor='#A8A8A8';tierName='نقره‌ای';tierEmoji='🥈';
+    }else{
+        gradientId='blackGrad';startColor='#6B7280';endColor='#374151';tierName='سیاه';tierEmoji='⚫';
+    }
+    const radius=(s.width-s.strokeWidth)/2;
+    const circumference=Math.PI*radius;
+    const progress=(score/100)*circumference;
+    const cx=s.width/2;
+    const cy=s.cy;
+    const uid='g_'+Math.random().toString(36).substr(2,9);
+    return`<svg width="${s.width}" height="${s.height}" class="gauge-chart" viewBox="0 0 ${s.width} ${s.height}">
+        <defs>
+            <linearGradient id="${uid}" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:${startColor};stop-opacity:1"/>
+                <stop offset="100%" style="stop-color:${endColor};stop-opacity:1"/>
+            </linearGradient>
+        </defs>
+        <path d="M ${cx-radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx+radius} ${cy}" fill="none" stroke="rgba(128,128,128,0.2)" stroke-width="${s.strokeWidth}" stroke-linecap="round"/>
+        <path d="M ${cx-radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx+radius} ${cy}" fill="none" stroke="url(#${uid})" stroke-width="${s.strokeWidth}" stroke-linecap="round" stroke-dasharray="${progress} ${circumference}" class="gauge-progress"/>
+        <text x="${cx}" y="${cy-2}" text-anchor="middle" font-size="${s.fontSize}" font-weight="700" fill="currentColor">${Math.round(score)}</text>
+        <text x="${cx}" y="${cy+s.textSize+4}" text-anchor="middle" font-size="${s.textSize}" fill="currentColor" opacity="0.7">${tierEmoji} ${tierName}</text>
+    </svg>`;
+}
+
+function renderWelcomeTierModal(scoreData){
+    const modal=document.createElement('div');
+    modal.className='welcome-tier-modal';
+    modal.id='welcomeTierModal';
+    modal.innerHTML=`<div class="welcome-tier-content ${scoreData.tier}">
+        <div class="welcome-tier-emoji">${scoreData.tierEmoji}</div>
+        <h2 class="welcome-tier-title">خوش آمدید!</h2>
+        <p class="welcome-tier-subtitle">وضعیت حساب شما در صندوق اتحاد</p>
+        <div style="display:flex;justify-content:center;margin:15px 0">
+            ${renderGaugeChart(scoreData.score,'medium')}
+        </div>
+        <div class="welcome-tier-score ${scoreData.tier}">${scoreData.score} از ۱۰۰</div>
+        <div style="margin-bottom:15px">
+            <span class="member-tier-badge ${scoreData.tier}" style="font-size:1rem;padding:6px 18px">${scoreData.tierEmoji} عضو ${scoreData.tierName}</span>
+        </div>
+        <div class="welcome-tier-message">${scoreData.tierMessage}</div>
+        <button class="btn" onclick="document.getElementById('welcomeTierModal').remove()" style="margin-top:15px"><i class="fas fa-arrow-left"></i> ورود به سیستم</button>
+    </div>`;
+    document.body.appendChild(modal);
+    setTimeout(()=>{
+        modal.onclick=(e)=>{if(e.target===modal)modal.remove();};
+    },100);
+}
+
 let SUPPORT_INFO={phone:'',accountNumber:'',cardNumber:'',shebaNumber:'',itaaAddress:'@ethads',websiteAddress:''};
 let SYSTEM_MESSAGE='';
 class DynamicDataManager{
@@ -794,6 +989,8 @@ class App{
         this.tab=localStorage.getItem('activeTab')||'profile';
         this.ci=null;
         this.mobileMenuOpen=true;
+        this.memberScores={};
+        this.tierFilter='all';
         this.init();
     }
     async init(){
@@ -803,6 +1000,10 @@ class App{
         this.dm.users=this.dm.members.map(m=>({id:m.id,username:m.accountNumber,password:m.accountNumber,role:m.isCouncil?'council':'member',memberId:m.id}));
         this.dm.users.push({id:999,username:'admin',password:'admin123',role:'admin',memberId:null});
         this.dm.members.forEach(m=>calculateCoins(m,this.allTransactions,this.ddm));
+        // محاسبه امتیاز همه اعضا
+        this.dm.members.forEach(m=>{
+            this.memberScores[m.id]=calculateMemberScore(m,this.ddm,this.allTransactions);
+        });
         if(msgInterval){clearInterval(msgInterval);msgInterval=null;}
         this.render();
     }
@@ -899,6 +1100,15 @@ class App{
         const isCouncil=this.currentUser.role==='council';
         const roleBadge=isCouncil?'🌟 عضو شورا':'👤 عضو عادی';
         const badgeClass=isCouncil?'council-badge':'';
+        const scoreData=this.memberScores[member?.id];
+        const scoreBoxHtml=scoreData?`<div class="score-header-box">
+            ${renderGaugeChart(scoreData.score,'small')}
+            <div class="score-header-info">
+                <div class="score-header-label">امتیاز شما</div>
+                <div class="score-header-value">${scoreData.score} از ۱۰۰</div>
+                <span class="member-tier-badge ${scoreData.tier} small">${scoreData.tierEmoji} ${scoreData.tierName}</span>
+            </div>
+        </div>`:'';
         container.innerHTML=`<div class="app-page">
             <div class="header-bar">
                 <div class="datetime-display">
@@ -906,6 +1116,7 @@ class App{
                     <div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div>
                 </div>
                 <div class="header-actions">
+                    ${scoreBoxHtml}
                     <div class="coin-badge"><i class="fas fa-coins"></i><span>${this.ddm.getTotalCoins(this.currentUser.memberId)}</span></div>
                     ${renderThemeSwitcher()}
                 </div>
@@ -980,15 +1191,40 @@ class App{
     switchTab(tab){const c=$('#contentArea');if(!c)return;c.innerHTML='';const fn='render_'+tab;if(typeof this[fn]==='function')this[fn](c);}
     render_profile(c){
         if(this.currentUser.role==='admin'){
+            const goldCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='gold').length;
+            const silverCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='silver').length;
+            const blackCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='black').length;
             let h=`<div class="info-box"><i class="fas fa-users-cog"></i> پروفایل و مدیریت اعضا</div>`;
             h+=`<div class="info-box" style="background:var(--info-bg);border-right-color:#48bb78"><i class="fas fa-info-circle" style="color:#48bb78"></i><strong>تعداد اعضا:</strong> ${this.dm.members.length} عضو</div>`;
+            h+=`<div class="dashboard-section" style="border-right-color:#ecc94b"><h3><i class="fas fa-trophy" style="color:#ecc94b"></i> آمار دسته‌بندی اعضا</h3>
+                <div class="stats-grid">
+                    <div class="stat-card" style="border-color:#FFD700"><div class="stat-icon" style="color:#FFD700">⭐</div><div class="stat-value" style="color:#FFA500">${goldCount}</div><div class="stat-label">عضو طلایی</div></div>
+                    <div class="stat-card" style="border-color:#C0C0C0"><div class="stat-icon" style="color:#A8A8A8">🥈</div><div class="stat-value" style="color:#808080">${silverCount}</div><div class="stat-label">عضو نقره‌ای</div></div>
+                    <div class="stat-card" style="border-color:#4A5568"><div class="stat-icon" style="color:#4A5568">⚫</div><div class="stat-value" style="color:#2D3748">${blackCount}</div><div class="stat-label">عضو سیاه</div></div>
+                </div>
+                <div class="tier-filter-bar">
+                    <button class="tier-filter-btn all ${this.tierFilter==='all'?'active':''}" onclick="window.app.setTierFilter('all')"><i class="fas fa-users"></i> همه (${this.dm.members.length})</button>
+                    <button class="tier-filter-btn gold ${this.tierFilter==='gold'?'active':''}" onclick="window.app.setTierFilter('gold')">⭐ طلایی (${goldCount})</button>
+                    <button class="tier-filter-btn silver ${this.tierFilter==='silver'?'active':''}" onclick="window.app.setTierFilter('silver')">🥈 نقره‌ای (${silverCount})</button>
+                    <button class="tier-filter-btn black ${this.tierFilter==='black'?'active':''}" onclick="window.app.setTierFilter('black')">⚫ سیاه (${blackCount})</button>
+                </div>
+            </div>`;
             h+=`<div class="search-box"><span><i class="fas fa-search"></i> جستجو:</span><input type="text" id="spi" placeholder="نام، شماره حساب، تلفن، موجودی..."><button id="spi_cl" style="background:none;border:none;cursor:pointer;color:#e53e3e"><i class="fas fa-times"></i></button></div>`;
-            h+=`<div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد شمسی</th><th>تلفن</th><th>تلفن۲</th><th>موجودی</th><th>سکه</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>`;
-            this.dm.members.forEach(m=>{
+            h+=`<div class="table-wrapper"><table id="pt"><thead><tr><th>نام</th><th>دسته</th><th>امتیاز</th><th>نام کاربری</th><th>رمز</th><th>شماره حساب</th><th>تاریخ افتتاح</th><th>تاریخ تولد شمسی</th><th>تلفن</th><th>تلفن۲</th><th>موجودی</th><th>سکه</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>`;
+            let filteredMembers=[...this.dm.members];
+            if(this.tierFilter!=='all'){
+                filteredMembers=filteredMembers.filter(m=>this.memberScores[m.id]?.tier===this.tierFilter);
+            }
+            filteredMembers.forEach(m=>{
                 const ui=this.dm.users.find(u=>u.memberId===m.id);
                 const statusBadge=m.active!==false?`<span class="account-status-badge active">فعال</span>`:`<span class="account-status-badge inactive">غیرفعال</span>`;
-                h+=`<tr>
+                const scoreData=this.memberScores[m.id];
+                const tierBadge=scoreData?`<span class="member-tier-badge ${scoreData.tier}">${scoreData.tierEmoji} ${scoreData.tierName}</span>`:'---';
+                const scoreCell=scoreData?`<div style="display:flex;align-items:center;gap:8px"><strong style="font-size:1.1rem">${scoreData.score}</strong><div style="width:50px;height:6px;background:rgba(128,128,128,.2);border-radius:10px;overflow:hidden"><div style="height:100%;width:${scoreData.score}%;background:linear-gradient(90deg,${scoreData.tierColor},${scoreData.tierColor});border-radius:10px"></div></div></div>`:'---';
+                h+=`<tr data-tier="${scoreData?.tier||''}">
                     <td><input id="pf_firstName_${m.id}" value="${U.esc(m.firstName||'')}" style="width:90px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td>
+                    <td>${tierBadge}</td>
+                    <td>${scoreCell}</td>
                     <td><input id="pfu_${m.id}" value="${U.esc(ui?ui.username||'':'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td>
                     <td><input id="pfp_${m.id}" value="${U.esc(ui?ui.password||'':'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td>
                     <td><input id="pf_accountNumber_${m.id}" value="${U.esc(m.accountNumber||'')}" style="width:100px;padding:6px;border:2px solid var(--input-border);border-radius:8px;background:var(--input-bg);color:var(--text-primary)"></td>
@@ -1013,9 +1249,66 @@ class App{
             const totalCoins=this.ddm.getTotalCoins(m.id);
             const lastLogin=localStorage.getItem('sandogh_lastLogin_'+m.id)||'---';
             const loginCount=parseInt(localStorage.getItem('sandogh_loginCount_'+m.id)||'0');
-            c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div><div class="coin-display"><i class="fas fa-coins" style="font-size:1.3rem"></i><div><div class="coin-label">سکه‌های شما</div><div class="coin-amount">${totalCoins}</div></div></div><div class="dashboard-section"><div class="profile-info-grid"><div class="profile-info-item"><i class="fas fa-user"></i><div class="info-content"><div class="info-label">نام:</div><div class="info-value">${U.esc(m.firstName||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-hashtag"></i><div class="info-content"><div class="info-label">شماره حساب:</div><div class="info-value">${U.esc(m.accountNumber||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar-plus"></i><div class="info-content"><div class="info-label">تاریخ افتتاح حساب (شمسی):</div><div class="info-value">${U.fmtDate(m.openDate)}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar"></i><div class="info-content"><div class="info-label">تاریخ افتتاح حساب (میلادی):</div><div class="info-value">${U.fmtDate(m.datMiladi)}</div></div></div><div class="profile-info-item"><i class="fas fa-birthday-cake"></i><div class="info-content"><div class="info-label">تاریخ تولد (شمسی):</div><div class="info-value">${U.fmtDate(m.birthDateShamsi)}</div></div></div><div class="profile-info-item"><i class="fas fa-phone"></i><div class="info-content"><div class="info-label">تلفن ۱:</div><div class="info-value">${U.esc(m.phone1||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-mobile-alt"></i><div class="info-content"><div class="info-label">تلفن ۲:</div><div class="info-value">${U.esc(m.phone2||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-user-tag"></i><div class="info-content"><div class="info-label">نام کاربری:</div><div class="info-value">${U.esc(ui?ui.username||'':'---')}</div></div></div><div class="profile-info-item" style="position:relative"><i class="fas fa-key"></i><div class="info-content"><div class="info-label">رمز عبور:</div><div class="info-value"><span id="pwdDisplay" style="font-family:monospace">••••••</span><button id="togglePwdBtn" style="background:none;border:none;cursor:pointer;color:#667eea;font-size:1.1rem;margin-right:8px" title="نمایش/مخفی کردن رمز"><i class="fas fa-eye" id="pwdIcon"></i></button></div></div></div></div><div class="last-login-box"><i class="fas fa-clock"></i><div><div class="ll-label">آخرین ورود شما:</div><div class="ll-value">${lastLogin}</div></div><div style="margin-right:auto;display:flex;align-items:center;gap:8px"><i class="fas fa-sign-in-alt" style="font-size:1.3rem;color:#48bb78"></i><div><div class="ll-label">تعداد ورود:</div><div class="ll-value" style="color:#48bb78">${loginCount} بار</div></div></div></div></div>`;
+            const scoreData=this.memberScores[m.id];
+            const tierBoxHtml=scoreData?`<div class="tier-profile-box">
+                <div class="tier-profile-gauge">${renderGaugeChart(scoreData.score,'large')}</div>
+                <div class="tier-profile-info">
+                    <div class="tier-profile-name">
+                        ${U.esc(m.firstName||'---')} ${U.esc(m.lastName||'')}
+                        <span class="member-tier-badge ${scoreData.tier}">${scoreData.tierEmoji} عضو ${scoreData.tierName}</span>
+                    </div>
+                    <div class="tier-profile-message">${scoreData.tierMessage}</div>
+                    <div class="tier-profile-stats">
+                        <div class="tier-profile-stat"><div class="tier-profile-stat-label">امتیاز کل</div><div class="tier-profile-stat-value">${scoreData.score} از ۱۰۰</div></div>
+                        <div class="tier-profile-stat"><div class="tier-profile-stat-label">سکه‌ها</div><div class="tier-profile-stat-value">${totalCoins}</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="score-details-box">
+                <div class="score-details-title"><i class="fas fa-chart-pie"></i> جزئیات امتیاز شما</div>
+                <div class="score-detail-item">
+                    <div class="score-detail-icon installment"><i class="fas fa-hand-holding-usd"></i></div>
+                    <div class="score-detail-info">
+                        <div class="score-detail-label">پرداخت اقساط</div>
+                        <div class="score-detail-bar"><div class="score-detail-bar-fill installment" style="width:${(scoreData.details.installment.score/scoreData.details.installment.max)*100}%"></div></div>
+                    </div>
+                    <div class="score-detail-value">${scoreData.details.installment.score}/${scoreData.details.installment.max}</div>
+                </div>
+                <div class="score-detail-item">
+                    <div class="score-detail-icon savings"><i class="fas fa-piggy-bank"></i></div>
+                    <div class="score-detail-info">
+                        <div class="score-detail-label">پس‌انداز</div>
+                        <div class="score-detail-bar"><div class="score-detail-bar-fill savings" style="width:${(scoreData.details.savings.score/scoreData.details.savings.max)*100}%"></div></div>
+                    </div>
+                    <div class="score-detail-value">${scoreData.details.savings.score}/${scoreData.details.savings.max}</div>
+                </div>
+                <div class="score-detail-item">
+                    <div class="score-detail-icon coins"><i class="fas fa-coins"></i></div>
+                    <div class="score-detail-info">
+                        <div class="score-detail-label">سکه‌ها (${scoreData.details.coins.value} سکه)</div>
+                        <div class="score-detail-bar"><div class="score-detail-bar-fill coins" style="width:${(scoreData.details.coins.score/scoreData.details.coins.max)*100}%"></div></div>
+                    </div>
+                    <div class="score-detail-value">${scoreData.details.coins.score}/${scoreData.details.coins.max}</div>
+                </div>
+                <div class="score-detail-item">
+                    <div class="score-detail-icon activity"><i class="fas fa-bolt"></i></div>
+                    <div class="score-detail-info">
+                        <div class="score-detail-label">فعالیت (${scoreData.details.activity.value} تراکنش)</div>
+                        <div class="score-detail-bar"><div class="score-detail-bar-fill activity" style="width:${(scoreData.details.activity.score/scoreData.details.activity.max)*100}%"></div></div>
+                    </div>
+                    <div class="score-detail-value">${scoreData.details.activity.score}/${scoreData.details.activity.max}</div>
+                </div>
+            </div>`:'';
+            c.innerHTML=`<div class="info-box"><i class="fas fa-user-circle"></i> پروفایل</div>
+            ${tierBoxHtml}
+            <div class="coin-display"><i class="fas fa-coins" style="font-size:1.3rem"></i><div><div class="coin-label">سکه‌های شما</div><div class="coin-amount">${totalCoins}</div></div></div>
+            <div class="dashboard-section"><div class="profile-info-grid"><div class="profile-info-item"><i class="fas fa-user"></i><div class="info-content"><div class="info-label">نام:</div><div class="info-value">${U.esc(m.firstName||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-hashtag"></i><div class="info-content"><div class="info-label">شماره حساب:</div><div class="info-value">${U.esc(m.accountNumber||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar-plus"></i><div class="info-content"><div class="info-label">تاریخ افتتاح حساب (شمسی):</div><div class="info-value">${U.fmtDate(m.openDate)}</div></div></div><div class="profile-info-item"><i class="fas fa-calendar"></i><div class="info-content"><div class="info-label">تاریخ افتتاح حساب (میلادی):</div><div class="info-value">${U.fmtDate(m.datMiladi)}</div></div></div><div class="profile-info-item"><i class="fas fa-birthday-cake"></i><div class="info-content"><div class="info-label">تاریخ تولد (شمسی):</div><div class="info-value">${U.fmtDate(m.birthDateShamsi)}</div></div></div><div class="profile-info-item"><i class="fas fa-phone"></i><div class="info-content"><div class="info-label">تلفن ۱:</div><div class="info-value">${U.esc(m.phone1||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-mobile-alt"></i><div class="info-content"><div class="info-label">تلفن ۲:</div><div class="info-value">${U.esc(m.phone2||'---')}</div></div></div><div class="profile-info-item"><i class="fas fa-user-tag"></i><div class="info-content"><div class="info-label">نام کاربری:</div><div class="info-value">${U.esc(ui?ui.username||'':'---')}</div></div></div><div class="profile-info-item" style="position:relative"><i class="fas fa-key"></i><div class="info-content"><div class="info-label">رمز عبور:</div><div class="info-value"><span id="pwdDisplay" style="font-family:monospace">••••••</span><button id="togglePwdBtn" style="background:none;border:none;cursor:pointer;color:#667eea;font-size:1.1rem;margin-right:8px" title="نمایش/مخفی کردن رمز"><i class="fas fa-eye" id="pwdIcon"></i></button></div></div></div></div><div class="last-login-box"><i class="fas fa-clock"></i><div><div class="ll-label">آخرین ورود شما:</div><div class="ll-value">${lastLogin}</div></div><div style="margin-right:auto;display:flex;align-items:center;gap:8px"><i class="fas fa-sign-in-alt" style="font-size:1.3rem;color:#48bb78"></i><div><div class="ll-label">تعداد ورود:</div><div class="ll-value" style="color:#48bb78">${loginCount} بار</div></div></div></div></div>`;
             $('#togglePwdBtn',c).onclick=()=>{const display=$('#pwdDisplay',c);const icon=$('#pwdIcon',c);if(display.textContent==='••••••'){display.textContent=ui?(ui.password||'---'):'---';icon.className='fas fa-eye-slash';}else{display.textContent='••••••';icon.className='fas fa-eye';}};
         }
+    }
+    setTierFilter(filter){
+        this.tierFilter=filter;
+        this.render_profile($('#contentArea'));
     }
     render_dashboard(c){
         if(this.currentUser.role==='admin'){
@@ -1233,7 +1526,17 @@ class App{
         const totalSavings=this.dm.members.reduce((sum,m)=>sum+(m.savingsStatus||0),0);
         const totalTransactions=this.allTransactions.length;
         const totalCoins=Object.values(this.ddm.coins).reduce((sum,c)=>sum+c,0);
+        const goldCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='gold').length;
+        const silverCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='silver').length;
+        const blackCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='black').length;
         let h=`<div class="info-box"><i class="fas fa-chart-bar"></i> گزارش‌های آماری صندوق</div><div class="stats-grid"><div class="stat-card blue"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-value">${U.fmtNum(totalMembers)}</div><div class="stat-label">کل اعضا</div></div><div class="stat-card green"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-value">${U.fmtNum(activeMembers)}</div><div class="stat-label">حساب‌های فعال</div></div><div class="stat-card red"><div class="stat-icon"><i class="fas fa-times-circle"></i></div><div class="stat-value">${U.fmtNum(inactiveMembers)}</div><div class="stat-label">حساب‌های غیرفعال</div></div><div class="stat-card yellow"><div class="stat-icon"><i class="fas fa-wallet"></i></div><div class="stat-value">${U.fmtNum(totalBalance)}</div><div class="stat-label">مجموع موجودی (ریال)</div></div><div class="stat-card purple"><div class="stat-icon"><i class="fas fa-hand-holding-usd"></i></div><div class="stat-value">${U.fmtNum(totalLoan)}</div><div class="stat-label">مجموع مانده وام (ریال)</div></div><div class="stat-card red"><div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div><div class="stat-value">${U.fmtNum(totalOverdue)}</div><div class="stat-label">اعضای دارای قسط معوقه</div></div><div class="stat-card green"><div class="stat-icon"><i class="fas fa-piggy-bank"></i></div><div class="stat-value">${U.fmtNum(totalSavings)}</div><div class="stat-label">مجموع پس‌انداز (ریال)</div></div><div class="stat-card blue"><div class="stat-icon"><i class="fas fa-exchange-alt"></i></div><div class="stat-value">${U.fmtNum(totalTransactions)}</div><div class="stat-label">کل تراکنش‌ها</div></div><div class="stat-card yellow"><div class="stat-icon"><i class="fas fa-coins"></i></div><div class="stat-value">${U.fmtNum(totalCoins)}</div><div class="stat-label">مجموع سکه‌های توزیع شده</div></div></div>`;
+        h+=`<div class="dashboard-section" style="border-right-color:#ecc94b"><h3><i class="fas fa-trophy" style="color:#ecc94b"></i> آمار دسته‌بندی اعضا</h3>
+            <div class="stats-grid">
+                <div class="stat-card" style="border-color:#FFD700"><div class="stat-icon" style="color:#FFD700">⭐</div><div class="stat-value" style="color:#FFA500">${goldCount}</div><div class="stat-label">عضو طلایی</div></div>
+                <div class="stat-card" style="border-color:#C0C0C0"><div class="stat-icon" style="color:#A8A8A8">🥈</div><div class="stat-value" style="color:#808080">${silverCount}</div><div class="stat-label">عضو نقره‌ای</div></div>
+                <div class="stat-card" style="border-color:#4A5568"><div class="stat-icon" style="color:#4A5568">⚫</div><div class="stat-value" style="color:#2D3748">${blackCount}</div><div class="stat-label">عضو سیاه</div></div>
+            </div>
+        </div>`;
         h+=`<div class="dashboard-section"><h3><i class="fas fa-chart-bar"></i> نمودار وضعیت اعضا</h3><div class="bar-chart"><div class="bar-item"><div class="bar-value">${activeMembers}</div><div class="bar" style="height:${Math.max((activeMembers/totalMembers)*100,5)}%;background:linear-gradient(180deg,#48bb78,#38a169)"></div><div class="bar-label">فعال</div></div><div class="bar-item"><div class="bar-value">${inactiveMembers}</div><div class="bar" style="height:${Math.max((inactiveMembers/totalMembers)*100,5)}%;background:linear-gradient(180deg,#e53e3e,#c53030)"></div><div class="bar-label">غیرفعال</div></div><div class="bar-item"><div class="bar-value">${totalOverdue}</div><div class="bar" style="height:${Math.max((totalOverdue/totalMembers)*100,5)}%;background:linear-gradient(180deg,#ed8936,#dd6b20)"></div><div class="bar-label">معوقه</div></div></div></div>`;
         if(isAdmin||isCouncil){
             const topBalance=[...this.dm.members].sort((a,b)=>(b.balance||0)-(a.balance||0)).slice(0,5);
@@ -1441,7 +1744,7 @@ class App{
     render_help(c){
         const isAdmin=this.currentUser.role==='admin';
         const isCouncil=this.currentUser.role==='council';
-        let h=`<div class="info-box"><i class="fas fa-question-circle"></i> راهنمای استفاده از سیستم</div><div class="help-section"><h4><i class="fas fa-info-circle"></i> درباره سیستم</h4><p>سیستم حسابداری صندوق اتحاد یک برنامه تحت وب برای مدیریت حساب‌های اعضا، وام‌ها، اقساط، سکه‌های تشویقی و فروشگاه است.</p></div><div class="help-section"><h4><i class="fas fa-sign-in-alt"></i> ورود به سیستم</h4>${isAdmin?`<ul><li><strong>مدیر:</strong> نام کاربری: admin | رمز عبور: admin123</li><li><strong>اعضا:</strong> با شماره حساب خود وارد شوند (رمز عبور = شماره حساب)</li></ul>`:`<ul><li><strong>اعضا:</strong> با شماره حساب خود وارد شوید</li><li><strong>رمز عبور:</strong> رمز عبور شما همان شماره حساب شماست (در صورت تغییر، از رمز جدید استفاده کنید)</li><li>در صورت فراموشی رمز، با حسابداری صندوق تماس بگیرید</li></ul>`}</div><div class="help-section"><h4><i class="fas fa-store"></i> فروشگاه</h4><ul><li>محصولات فروشگاه با سکه خریداری می‌شوند</li><li>پس از خرید، یک رسید و پیام آماده برای ارسال به مدیر نمایش داده می‌شود</li><li>پیام را کپی کرده و در ایتا برای مدیر صندوق ارسال کنید</li><li>پس از تحویل محصول توسط مدیر، وضعیت سفارش به "تحویل شده" تغییر می‌کند</li></ul></div><div class="help-section"><h4><i class="fas fa-coins"></i> قوانین سکه</h4><ul><li><strong>پرداخت به موقع قسط:</strong> 2 سکه در ماه</li><li><strong>بدون قسط معوقه:</strong> 3 سکه در ماه</li><li><strong>موجودی بالاتر از مقرری:</strong> 2 سکه در ماه</li><li><strong>پس‌انداز بالا:</strong> 2 سکه به ازای هر 3,000,000 ریال اضافه</li><li><strong>تولد مبارک:</strong> 5 سکه در سال (فقط حساب فعال)</li><li><strong>هدیه سالانه حساب فعال:</strong> 5 سکه در سالروز افتتاح (فقط حساب فعال)</li><li><strong>حساب غیرفعال:</strong> محروم از دریافت سکه سالانه</li><li><strong>پیامک واریز فعال:</strong> 3 سکه به ازای هر واریزی</li><li><strong>بدون پیامک اخطار:</strong> 2 سکه به ازای هر واریزی</li></ul></div><div class="help-section"><h4><i class="fas fa-palette"></i> تم‌های برنامه</h4><ul><li><strong>روز:</strong> تم روشن با رنگ‌های آبی و بنفش</li><li><strong>شب:</strong> تم تاریک با رنگ‌های طلایی، زرد و نارنجی</li><li><strong>خودکار:</strong> بر اساس تنظیمات دستگاه شما تغییر می‌کند (پیش‌فرض)</li></ul></div><div class="help-section"><h4><i class="fas fa-chart-line"></i> بخش‌های اصلی</h4><ul><li><strong>پروفایل و مدیریت اعضا:</strong> مشاهده و ویرایش اطلاعات اعضا (مدیر) / پروفایل شخصی (عضو)</li><li><strong>صورتحساب:</strong> مشاهده تراکنش‌ها، وام، اقساط پرداخت شده</li><li><strong>فروشگاه:</strong> خرید محصولات با سکه</li><li><strong>خریدهای من:</strong> مشاهده تاریخچه خریدها (اعضا)</li><li><strong>سکه‌ها و تاریخچه:</strong> مشاهده سکه‌های خود و تاریخچه کامل</li><li><strong>قوانین سکه:</strong> مشاهده قوانین و وضعیت فعلی</li><li><strong>پشتیبانی:</strong> اطلاعات تماس با صندوق</li>${isAdmin?`<li><strong>سفارشات فروشگاه:</strong> مدیریت تحویل سفارشات (مدیر)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق</li><li><strong>وضعیت سامانه پیامکی:</strong> مشاهده وضعیت سامانه‌های پیامکی اعضا</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها</li>`:isCouncil?`<li><strong>سفارشات فروشگاه:</strong> مشاهده سفارشات (شورا)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها (شورا)</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق (شورا)</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها (شورا)</li>`:''}</ul></div><div class="help-section"><h4><i class="fas fa-shield-alt"></i> نکات امنیتی</h4><ul><li>رمز عبور خود را در اختیار دیگران قرار ندهید</li><li>پس از اتمام کار، از سیستم خارج شوید</li><li>اطلاعات حساب شما محرمانه است</li><li>از مرورگرهای به‌روز استفاده کنید</li></ul></div><div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>در صورت بروز مشکل یا سوال، از بخش <strong>پشتیبانی</strong> اطلاعات تماس با صندوق را مشاهده کنید.</p></div>`;
+        let h=`<div class="info-box"><i class="fas fa-question-circle"></i> راهنمای استفاده از سیستم</div><div class="help-section"><h4><i class="fas fa-info-circle"></i> درباره سیستم</h4><p>سیستم حسابداری صندوق اتحاد یک برنامه تحت وب برای مدیریت حساب‌های اعضا، وام‌ها، اقساط، سکه‌های تشویقی و فروشگاه است.</p></div><div class="help-section"><h4><i class="fas fa-sign-in-alt"></i> ورود به سیستم</h4>${isAdmin?`<ul><li><strong>مدیر:</strong> نام کاربری: admin | رمز عبور: admin123</li><li><strong>اعضا:</strong> با شماره حساب خود وارد شوند (رمز عبور = شماره حساب)</li></ul>`:`<ul><li><strong>اعضا:</strong> با شماره حساب خود وارد شوید</li><li><strong>رمز عبور:</strong> رمز عبور شما همان شماره حساب شماست (در صورت تغییر، از رمز جدید استفاده کنید)</li><li>در صورت فراموشی رمز، با حسابداری صندوق تماس بگیرید</li></ul>`}</div><div class="help-section"><h4><i class="fas fa-store"></i> فروشگاه</h4><ul><li>محصولات فروشگاه با سکه خریداری می‌شوند</li><li>پس از خرید، یک رسید و پیام آماده برای ارسال به مدیر نمایش داده می‌شود</li><li>پیام را کپی کرده و در ایتا برای مدیر صندوق ارسال کنید</li><li>پس از تحویل محصول توسط مدیر، وضعیت سفارش به "تحویل شده" تغییر می‌کند</li></ul></div><div class="help-section"><h4><i class="fas fa-coins"></i> قوانین سکه</h4><ul><li><strong>پرداخت به موقع قسط:</strong> 2 سکه در ماه</li><li><strong>بدون قسط معوقه:</strong> 3 سکه در ماه</li><li><strong>موجودی بالاتر از مقرری:</strong> 2 سکه در ماه</li><li><strong>پس‌انداز بالا:</strong> 2 سکه به ازای هر 3,000,000 ریال اضافه</li><li><strong>تولد مبارک:</strong> 5 سکه در سال (فقط حساب فعال)</li><li><strong>هدیه سالانه حساب فعال:</strong> 5 سکه در سالروز افتتاح (فقط حساب فعال)</li><li><strong>حساب غیرفعال:</strong> محروم از دریافت سکه سالانه</li><li><strong>پیامک واریز فعال:</strong> 3 سکه به ازای هر واریزی</li><li><strong>بدون پیامک اخطار:</strong> 2 سکه به ازای هر واریزی</li></ul></div><div class="help-section"><h4><i class="fas fa-trophy"></i> دسته‌بندی اعضا</h4><ul><li><strong>⭐ عضو طلایی:</strong> امتیاز ۸۰ تا ۱۰۰ - وضعیت عالی</li><li><strong>🥈 عضو نقره‌ای:</strong> امتیاز ۵۰ تا ۷۹ - وضعیت خوب</li><li><strong>⚫ عضو سیاه:</strong> امتیاز ۰ تا ۴۹ - نیاز به بهبود</li><li>امتیاز بر اساس: پرداخت اقساط (۴۰٪)، پس‌انداز (۲۵٪)، سکه‌ها (۲۰٪)، فعالیت (۱۵٪)</li></ul></div><div class="help-section"><h4><i class="fas fa-palette"></i> تم‌های برنامه</h4><ul><li><strong>روز:</strong> تم روشن با رنگ‌های آبی و بنفش</li><li><strong>شب:</strong> تم تاریک با رنگ‌های طلایی، زرد و نارنجی</li><li><strong>خودکار:</strong> بر اساس تنظیمات دستگاه شما تغییر می‌کند (پیش‌فرض)</li></ul></div><div class="help-section"><h4><i class="fas fa-chart-line"></i> بخش‌های اصلی</h4><ul><li><strong>پروفایل و مدیریت اعضا:</strong> مشاهده و ویرایش اطلاعات اعضا (مدیر) / پروفایل شخصی (عضو)</li><li><strong>صورتحساب:</strong> مشاهده تراکنش‌ها، وام، اقساط پرداخت شده</li><li><strong>فروشگاه:</strong> خرید محصولات با سکه</li><li><strong>خریدهای من:</strong> مشاهده تاریخچه خریدها (اعضا)</li><li><strong>سکه‌ها و تاریخچه:</strong> مشاهده سکه‌های خود و تاریخچه کامل</li><li><strong>قوانین سکه:</strong> مشاهده قوانین و وضعیت فعلی</li><li><strong>پشتیبانی:</strong> اطلاعات تماس با صندوق</li>${isAdmin?`<li><strong>سفارشات فروشگاه:</strong> مدیریت تحویل سفارشات (مدیر)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق</li><li><strong>وضعیت سامانه پیامکی:</strong> مشاهده وضعیت سامانه‌های پیامکی اعضا</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها</li>`:isCouncil?`<li><strong>سفارشات فروشگاه:</strong> مشاهده سفارشات (شورا)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها (شورا)</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق (شورا)</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها (شورا)</li>`:''}</ul></div><div class="help-section"><h4><i class="fas fa-shield-alt"></i> نکات امنیتی</h4><ul><li>رمز عبور خود را در اختیار دیگران قرار ندهید</li><li>پس از اتمام کار، از سیستم خارج شوید</li><li>اطلاعات حساب شما محرمانه است</li><li>از مرورگرهای به‌روز استفاده کنید</li></ul></div><div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>در صورت بروز مشکل یا سوال، از بخش <strong>پشتیبانی</strong> اطلاعات تماس با صندوق را مشاهده کنید.</p></div>`;
         c.innerHTML=h;
     }
     search(inputId,tableSelector,container){
@@ -1487,6 +1790,13 @@ class App{
                 localStorage.setItem('sandogh_loginCount_'+user.memberId,String(currentCount+1));
             }
             this.render();
+            // نمایش مدال خوش‌آمدگویی برای اعضا
+            if(user.memberId&&user.role!=='admin'){
+                const scoreData=this.memberScores[user.memberId];
+                if(scoreData){
+                    setTimeout(()=>{renderWelcomeTierModal(scoreData);},300);
+                }
+            }
         }else{$('#loginError').textContent='نام کاربری یا رمز عبور اشتباه است';}
     }
     doLogout(){this.currentUser=null;this.render();}
