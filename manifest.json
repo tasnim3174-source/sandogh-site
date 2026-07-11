@@ -1,13 +1,17 @@
 {
-  "background_color": "#ffffff",
+  "background_color": "#05df21",
   "dir": "ltr",
   "display": "standalone",
-  "name": "tasnim3174-source.github",
+  "name": "صندوق اتحاد",
   "orientation": "portrait",
   "scope": "/",
-  "short_name": "tasnim3174-source.github",
+  "short_name": "صندوق",
   "start_url": "/",
   "theme_color": "#667eea",
-  "description": "سیستم حسابداری صندوق اتحاد",
-  "lang": "fa"
+  "description": "سیستم حسابداری صندوق",
+  "lang": "fa",
+  "prefer_related_applications": true,
+  "categories": [
+    "business"
+  ]
 }
