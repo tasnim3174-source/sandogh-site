@@ -1,24 +1,13 @@
 {
-  "name": "صندوق اتحاد - سیستم حسابداری",
-  "short_name": "صندوق اتحاد",
-  "description": "سیستم حسابداری هوشمند صندوق اتحاد با امکان مدیریت حساب، سکه‌های تشویقی و فروشگاه",
-  "start_url": "/",
+  "background_color": "#ffffff",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#667eea",
-  "theme_color": "#667eea",
+  "name": "tasnim3174-source.github",
   "orientation": "portrait",
-  "lang": "fa",
-  "dir": "rtl",
-  "icons": [
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/2991/2991148.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/512/2991/2991148.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "scope": "/",
+  "short_name": "tasnim3174-source.github",
+  "start_url": "/",
+  "theme_color": "#667eea",
+  "description": "سیستم حسابداری صندوق اتحاد",
+  "lang": "fa"
 }
