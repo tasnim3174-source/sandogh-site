@@ -2,14 +2,14 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>سیستم حسابداری صندوق اتحاد</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
-:root{--bg-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);--card-bg:rgba(255,255,255,.95);--text-primary:#2d3748;--text-secondary:#4a5568;--text-muted:#718096;--text-light:#a0aec0;--border-color:rgba(226,232,240,.5);--input-bg:#fff;--input-border:#e2e8f0;--hover-bg:rgba(102,126,234,.05);--section-bg:linear-gradient(135deg,rgba(247,250,252,.8),rgba(237,242,247,.8));--info-bg:linear-gradient(135deg,rgba(66,153,225,.1),rgba(66,153,225,.05));--shadow:0 25px 50px rgba(0,0,0,.25);--clock-bg:linear-gradient(135deg,#667eea,#764ba2);--clock-text:#fff;--datetime-bg:rgba(102,126,234,.1);--datetime-text:#2d3748;--datetime-label:#718096;--welcome-text:#667eea;--menu-text:#4a5568;--menu-hover:rgba(102,126,234,.1);--table-header:linear-gradient(135deg,#2d3748,#1a202c);--table-text:#2d3748;--table-hover:rgba(102,126,234,.05)}
-[data-theme="dark"]{--bg-gradient:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);--card-bg:rgba(26,26,46,.95);--text-primary:#fbbf24;--text-secondary:#f59e0b;--text-muted:#d97706;--text-light:#b45309;--border-color:rgba(251,191,36,.2);--input-bg:#1e1e3f;--input-border:#fbbf24;--hover-bg:rgba(251,191,36,.1);--section-bg:linear-gradient(135deg,rgba(30,30,63,.8),rgba(26,26,46,.8));--info-bg:linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.1));--shadow:0 25px 50px rgba(0,0,0,.5);--clock-bg:linear-gradient(135deg,#f59e0b,#d97706);--clock-text:#fff;--datetime-bg:rgba(251,191,36,.15);--datetime-text:#fbbf24;--datetime-label:#f59e0b;--welcome-text:#fbbf24;--menu-text:#fbbf24;--menu-hover:rgba(251,191,36,.15);--table-header:linear-gradient(135deg,#1e1e3f,#16213e);--table-text:#fbbf24;--table-hover:rgba(251,191,36,.1)}
+:root{--bg-gradient:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);--card-bg:rgba(255,255,255,.95);--text-primary:#2d3748;--text-secondary:#4a5568;--text-muted:#718096;--text-light:#a0aec0;--border-color:rgba(226,232,240,.5);--input-bg:#fff;--input-border:#e2e8f0;--hover-bg:rgba(102,126,234,.05);--section-bg:linear-gradient(135deg,rgba(247,250,252,.8),rgba(237,242,247,.8));--info-bg:linear-gradient(135deg,rgba(66,153,225,.1),rgba(66,153,225,.05));--shadow:0 25px 50px rgba(0,0,0,.25);--clock-bg:linear-gradient(135deg,#667eea,#764ba2);--clock-text:#fff;--datetime-bg:rgba(102,126,234,.1);--datetime-text:#2d3748;--datetime-label:#718096;--welcome-text:#667eea;--menu-text:#4a5568;--menu-hover:rgba(102,126,234,.1);--table-header:linear-gradient(135deg,#2d3748,#1a202c);--table-text:#2d3748;--table-hover:rgba(102,126,234,.05);--weather-bg:linear-gradient(135deg,#4facfe,#00f2fe);--keyboard-bg:linear-gradient(135deg,rgba(236,201,75,.1),rgba(214,158,46,.05));--keyboard-border:#ecc94b}
+[data-theme="dark"]{--bg-gradient:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);--card-bg:rgba(26,26,46,.95);--text-primary:#fbbf24;--text-secondary:#f59e0b;--text-muted:#d97706;--text-light:#b45309;--border-color:rgba(251,191,36,.2);--input-bg:#1e1e3f;--input-border:#fbbf24;--hover-bg:rgba(251,191,36,.1);--section-bg:linear-gradient(135deg,rgba(30,30,63,.8),rgba(26,26,46,.8));--info-bg:linear-gradient(135deg,rgba(251,191,36,.15),rgba(245,158,11,.1));--shadow:0 25px 50px rgba(0,0,0,.5);--clock-bg:linear-gradient(135deg,#f59e0b,#d97706);--clock-text:#fff;--datetime-bg:rgba(251,191,36,.15);--datetime-text:#fbbf24;--datetime-label:#f59e0b;--welcome-text:#fbbf24;--menu-text:#fbbf24;--menu-hover:rgba(251,191,36,.15);--table-header:linear-gradient(135deg,#1e1e3f,#16213e);--table-text:#fbbf24;--table-hover:rgba(251,191,36,.1);--weather-bg:linear-gradient(135deg,#f59e0b,#d97706);--keyboard-bg:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));--keyboard-border:#fbbf24}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',Tahoma,system-ui,sans-serif}
 body{background:var(--bg-gradient);min-height:100vh;padding:20px;transition:background .3s ease;color:var(--text-primary)}
 .container{max-width:1600px;margin:0 auto}
@@ -18,14 +18,14 @@ body{background:var(--bg-gradient);min-height:100vh;padding:20px;transition:back
 .btn{width:100%;padding:14px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:16px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s}
 [data-theme="dark"] .btn{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e}
 .btn:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.2)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .btn-small{padding:8px 16px;font-size:.85rem;border-radius:20px;border:none;cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s}
 .btn-small:hover{transform:translateY(-1px)}
 .success-btn{background:linear-gradient(135deg,#48bb78,#38a169);color:#fff}
 .danger-btn{background:linear-gradient(135deg,#f56565,#e53e3e);color:#fff}
 .edit-btn{background:linear-gradient(135deg,#ed8936,#dd6b20);color:#fff}
 .info-btn{background:linear-gradient(135deg,#4299e1,#3182ce);color:#fff}
-[data-theme="dark"] .success-btn{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a2e}
-[data-theme="dark"] .info-btn{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
+[data-theme="dark"] .success-btn,[data-theme="dark"] .info-btn{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
 .app-layout{display:flex;gap:25px;margin-top:25px}
 .vertical-menu{width:240px;background:var(--card-bg);border-radius:24px;padding:25px 15px;flex-shrink:0;max-height:calc(100vh - 200px);overflow-y:auto;transition:all .3s}
 .vertical-menu .menu-item{display:flex;align-items:center;gap:12px;padding:14px 18px;margin:6px 0;border-radius:16px;color:var(--menu-text);font-weight:600;cursor:pointer;transition:all .2s}
@@ -35,7 +35,6 @@ body{background:var(--bg-gradient);min-height:100vh;padding:20px;transition:back
 .admin-badge{background:rgba(255,255,255,.25);padding:2px 8px;border-radius:8px;font-size:.7rem;margin-right:auto;font-weight:700;letter-spacing:.5px}
 [data-theme="dark"] .admin-badge{background:rgba(26,26,46,.4);color:#fbbf24}
 .council-badge{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a2e;padding:2px 8px;border-radius:8px;font-size:.7rem;margin-right:auto;font-weight:700;letter-spacing:.5px;box-shadow:0 2px 8px rgba(251,191,36,.3)}
-[data-theme="dark"] .council-badge{background:linear-gradient(135deg,#fbbf24,#d97706);color:#1a1a2e}
 .content-area{flex:1;background:var(--card-bg);border-radius:24px;padding:30px;min-height:600px;overflow-y:auto;transition:all .3s}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:.9rem}
 th,td{padding:12px 15px;text-align:right;border-bottom:1px solid var(--border-color);color:var(--table-text)}
@@ -55,39 +54,45 @@ tbody tr:hover{background:var(--table-hover)}
 .dashboard-section{background:var(--section-bg);border-radius:20px;padding:25px;margin-bottom:25px;border-right:5px solid #667eea;color:var(--text-primary);transition:all .3s}
 [data-theme="dark"] .dashboard-section{border-right-color:#fbbf24}
 .dashboard-section h3{color:var(--text-primary);margin-bottom:15px;display:flex;align-items:center;gap:10px}
-.filter-bar{display:flex;gap:12px;margin-bottom:25px;flex-wrap:wrap;background:var(--section-bg);padding:15px;border-radius:16px}
-.filter-bar input,.filter-bar select{padding:10px 15px;border:2px solid var(--input-border);border-radius:12px;background:var(--input-bg);color:var(--text-primary);font-family:'Vazirmatn',Tahoma,sans-serif}
-.filter-bar input{flex:1}
+.filter-bar,.shop-filter-bar{display:flex;gap:12px;margin-bottom:25px;flex-wrap:wrap;background:var(--section-bg);padding:15px;border-radius:16px}
+.filter-bar input,.filter-bar select,.shop-filter-bar input,.shop-filter-bar select{padding:10px 15px;border:2px solid var(--input-border);border-radius:12px;background:var(--input-bg);color:var(--text-primary);font-family:'Vazirmatn',Tahoma,sans-serif}
+.filter-bar input,.shop-filter-bar input{flex:1}
 .header-bar{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding:20px 30px;border-radius:24px;margin-bottom:25px;background:var(--card-bg);transition:all .3s}
-.datetime-display{display:flex;gap:15px;flex-wrap:wrap}
+.datetime-display{display:flex;gap:15px;flex-wrap:wrap;align-items:center}
 .date-combined-box{background:var(--datetime-bg);border-radius:16px;padding:15px 20px;display:flex;flex-direction:column;gap:8px;min-width:200px;transition:all .3s}
 .date-combined-box .date-row{display:flex;align-items:center;gap:10px;font-size:.95rem;color:var(--datetime-text)}
 .date-combined-box .date-row i{color:#667eea;width:20px}
 [data-theme="dark"] .date-combined-box .date-row i{color:#fbbf24}
 .date-combined-box .date-row.day-name{font-weight:700;font-size:1rem;color:#667eea;border-top:1px dashed var(--border-color);padding-top:8px;margin-top:4px}
 [data-theme="dark"] .date-combined-box .date-row.day-name{color:#fbbf24}
+.date-combined-box .date-row.time-row{display:flex;align-items:center;gap:10px;font-size:1.1rem;font-weight:700;color:#667eea;border-top:1px dashed var(--border-color);padding-top:8px;margin-top:4px}
+[data-theme="dark"] .date-combined-box .date-row.time-row{color:#fbbf24}
+.date-combined-box .date-row.time-row .time-value{font-family:'Vazirmatn',monospace;letter-spacing:1px}
+
+/* ساعت آنالوگ */
+.analog-clock-container{display:flex;align-items:center;gap:15px}
+.analog-clock{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);box-shadow:0 4px 15px rgba(102,126,234,.3);position:relative;transition:all .3s}
+[data-theme="dark"] .analog-clock{background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 4px 15px rgba(251,191,36,.3)}
+.analog-clock::before{content:'';position:absolute;top:50%;left:50%;width:8px;height:8px;background:#fff;border-radius:50%;transform:translate(-50%,-50%);z-index:10}
+.clock-hand{position:absolute;top:50%;left:50%;transform-origin:bottom center;background:#fff;border-radius:4px}
+.clock-hand.hour{width:3px;height:20px;margin-left:-1.5px;margin-top:-20px}
+.clock-hand.minute{width:2px;height:28px;margin-left:-1px;margin-top:-28px}
+.clock-hand.second{width:1px;height:32px;margin-left:-.5px;margin-top:-32px;background:#e53e3e}
+.clock-mark{position:absolute;width:2px;height:6px;background:rgba(255,255,255,.6);top:4px;left:50%;margin-left:-1px;transform-origin:bottom center}
+
 .system-message-box{background:linear-gradient(135deg,rgba(236,201,75,.1),rgba(214,158,46,.05));border:2px solid #ecc94b;border-radius:12px;padding:10px 15px;font-size:.9rem;color:var(--text-primary);max-width:400px;line-height:1.6;transition:all .3s}
 [data-theme="dark"] .system-message-box{background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));border-color:#fbbf24}
 .system-message-box .message-icon{color:#ecc94b;margin-left:8px}
 [data-theme="dark"] .system-message-box .message-icon{color:#fbbf24}
 .welcome-with-greeting{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
-.welcome-with-greeting .greeting-text{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:8px 16px;border-radius:12px;font-size:.9rem;font-weight:600;transition:all .3s}
+.welcome-with-greeting .welcome-text{font-size:1.3rem;font-weight:700;color:var(--welcome-text);display:flex;align-items:center;gap:8px}
+.welcome-with-greeting .greeting-text{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:6px 14px;border-radius:10px;font-size:.85rem;font-weight:600;transition:all .3s}
 [data-theme="dark"] .welcome-with-greeting .greeting-text{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e}
-.welcome-with-greeting .welcome-text{font-size:1.3rem;font-weight:700;color:var(--welcome-text)}
-.datetime-card{display:flex;align-items:center;gap:12px;padding:12px 20px;border-radius:16px;background:var(--datetime-bg);transition:all .3s}
-.datetime-card i{font-size:1.5rem;color:#667eea}
-[data-theme="dark"] .datetime-card i{color:#fbbf24}
-.datetime-card .dt-label{font-size:.75rem;color:var(--datetime-label)}
-.datetime-card .dt-value{font-size:1.1rem;font-weight:700;color:var(--datetime-text)}
-.clock-card{background:var(--clock-bg);color:var(--clock-text);padding:15px 25px;border-radius:20px;display:flex;align-items:center;gap:15px;box-shadow:0 5px 15px rgba(102,126,234,.3);transition:all .3s}
-[data-theme="dark"] .clock-card{box-shadow:0 5px 15px rgba(251,191,36,.3)}
-.clock-card .clock-time{font-size:1.8rem;font-weight:700;font-family:'Vazirmatn',monospace;letter-spacing:2px;text-shadow:0 2px 4px rgba(0,0,0,.2)}
-.header-actions{display:flex;gap:15px;align-items:center}
+.header-actions{display:flex;gap:15px;align-items:center;flex-wrap:wrap}
 .coin-badge{display:flex;align-items:center;gap:8px;padding:10px 18px;background:linear-gradient(135deg,#ecc94b,#d69e2e);color:#fff;border-radius:20px;font-weight:700}
 .search-box{margin-bottom:20px;display:flex;gap:12px;align-items:center;background:var(--section-bg);padding:12px 18px;border-radius:16px}
 .search-box input{flex:1;padding:10px 15px;border:2px solid var(--input-border);border-radius:12px;background:var(--input-bg);color:var(--text-primary);font-family:'Vazirmatn',Tahoma,sans-serif}
 .table-wrapper{overflow-x:auto;max-height:600px;overflow-y:auto;border:2px solid var(--border-color);border-radius:16px;background:var(--input-bg)}
-.password-dots{font-family:monospace;font-size:1.2rem;cursor:pointer;background:var(--input-bg);padding:6px 12px;border-radius:12px;display:inline-flex;align-items:center;gap:8px;color:var(--text-primary)}
 .warning-box{background:#fff5f5;border:2px solid #feb2b2;border-radius:16px;padding:18px 20px;color:#c53030;display:flex;align-items:center;gap:12px;margin-top:15px;transition:all .3s}
 .warning-box.inactive{background:var(--warning-bg);border-color:#e53e3e}
 .warning-box.savings{background:#fffff0;border-color:#d69e2e;color:#975a16}
@@ -143,7 +148,6 @@ tbody tr:hover{background:var(--table-hover)}
 [data-theme="dark"] .coming-soon-box i{color:#fbbf24}
 .coming-soon-box h2{color:var(--text-primary);margin-bottom:15px;font-size:1.8rem}
 .coming-soon-box p{color:var(--text-muted);font-size:1.1rem;line-height:1.8}
-.installment-select{width:100%;padding:12px;border:2px solid var(--input-border);border-radius:12px;font-size:1rem;margin-bottom:15px;background:var(--input-bg);color:var(--text-primary);font-family:'Vazirmatn',Tahoma,sans-serif}
 .calendar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:15px}
 .calendar-event{background:var(--input-bg);border-radius:14px;padding:15px;border-right:4px solid #667eea;box-shadow:0 2px 8px rgba(0,0,0,.05);transition:all .3s}
 [data-theme="dark"] .calendar-event{border-right-color:#fbbf24}
@@ -160,14 +164,20 @@ tbody tr:hover{background:var(--table-hover)}
 .stat-card .stat-value{font-size:1.8rem;font-weight:700;color:var(--text-primary)}
 .stat-card .stat-label{font-size:.85rem;color:var(--text-muted);margin-top:5px}
 .stat-card.blue{border-color:#4299e1}.stat-card.blue .stat-icon{color:#4299e1}
+[data-theme="dark"] .stat-card.blue{border-color:#fbbf24}
+[data-theme="dark"] .stat-card.blue .stat-icon{color:#fbbf24}
 .stat-card.green{border-color:#48bb78}.stat-card.green .stat-icon{color:#48bb78}
+[data-theme="dark"] .stat-card.green{border-color:#fbbf24}
+[data-theme="dark"] .stat-card.green .stat-icon{color:#fbbf24}
 .stat-card.red{border-color:#e53e3e}.stat-card.red .stat-icon{color:#e53e3e}
-.stat-card.yellow{border-color:#ecc94b}.stat-card.yellow .stat-icon{color:#d69e2e}
-.stat-card.purple{border-color:#9f7aea}.stat-card.purple .stat-icon{color:#9f7aea}
-[data-theme="dark"] .stat-card.blue,[data-theme="dark"] .stat-card.green,[data-theme="dark"] .stat-card.yellow,[data-theme="dark"] .stat-card.purple{border-color:#fbbf24}
-[data-theme="dark"] .stat-card.blue .stat-icon,[data-theme="dark"] .stat-card.green .stat-icon,[data-theme="dark"] .stat-card.yellow .stat-icon,[data-theme="dark"] .stat-card.purple .stat-icon{color:#fbbf24}
 [data-theme="dark"] .stat-card.red{border-color:#ef4444}
 [data-theme="dark"] .stat-card.red .stat-icon{color:#ef4444}
+.stat-card.yellow{border-color:#ecc94b}.stat-card.yellow .stat-icon{color:#d69e2e}
+[data-theme="dark"] .stat-card.yellow{border-color:#fbbf24}
+[data-theme="dark"] .stat-card.yellow .stat-icon{color:#fbbf24}
+.stat-card.purple{border-color:#9f7aea}.stat-card.purple .stat-icon{color:#9f7aea}
+[data-theme="dark"] .stat-card.purple{border-color:#fbbf24}
+[data-theme="dark"] .stat-card.purple .stat-icon{color:#fbbf24}
 .bar-chart{display:flex;align-items:flex-end;gap:10px;height:200px;padding:20px;background:var(--input-bg);border-radius:16px;border:2px solid var(--input-border);transition:all .3s}
 .bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
 .bar{width:100%;background:linear-gradient(180deg,#667eea,#764ba2);border-radius:8px 8px 0 0;min-height:5px}
@@ -179,8 +189,6 @@ tbody tr:hover{background:var(--table-hover)}
 [data-theme="dark"] .help-section h4{color:#fbbf24}
 .help-section p,.help-section li{color:var(--text-secondary);line-height:1.8;font-size:.95rem}
 .help-section ul{padding-right:20px}
-.date-filter{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:15px}
-.date-filter input{padding:10px;border:2px solid var(--input-border);border-radius:12px;background:var(--input-bg);color:var(--text-primary);font-family:'Vazirmatn',Tahoma,sans-serif}
 .support-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
 .support-card{background:var(--input-bg);border-radius:16px;padding:20px;border:2px solid var(--input-border);display:flex;align-items:center;gap:15px;transition:all .3s}
 .support-card:hover{border-color:#667eea;box-shadow:0 4px 12px rgba(102,126,234,.15);transform:translateY(-2px)}
@@ -229,9 +237,6 @@ tbody tr:hover{background:var(--table-hover)}
 [data-theme="dark"] .shop-card-stock.out-of-stock{color:#ef4444}
 .shop-card-actions{display:flex;gap:8px;flex-wrap:wrap}
 .shop-card-actions .btn-small{flex:1;justify-content:center}
-.shop-filter-bar{display:flex;gap:12px;margin-bottom:25px;flex-wrap:wrap;background:var(--section-bg);padding:15px;border-radius:16px;align-items:center}
-.shop-filter-bar input,.shop-filter-bar select{padding:10px 15px;border:2px solid var(--input-border);border-radius:12px;background:var(--input-bg);color:var(--text-primary);font-family:'Vazirmatn',Tahoma,sans-serif}
-.shop-filter-bar input{flex:1;min-width:200px}
 .modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
 .modal-content{background:var(--card-bg);border-radius:24px;padding:30px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);color:var(--text-primary)}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid var(--border-color)}
@@ -264,14 +269,12 @@ tbody tr:hover{background:var(--table-hover)}
 .theme-btn:hover{background:var(--menu-hover)}
 .theme-btn.active{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff}
 [data-theme="dark"] .theme-btn.active{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e}
-.login-help{background:var(--info-bg);border:2px solid #4299e1;border-radius:16px;padding:15px 20px;margin-top:20px;display:flex;align-items:center;gap:12px;transition:all .3s}
-[data-theme="dark"] .login-help{border-color:#fbbf24}
-.login-help i{font-size:1.5rem;color:#4299e1}
-[data-theme="dark"] .login-help i{color:#fbbf24}
-.login-help p{color:var(--text-primary);font-size:.9rem;line-height:1.6;font-weight:600}
-.mobile-menu-toggle{display:none;background:#667eea;color:#fff;border:none;padding:12px 18px;border-radius:16px;cursor:pointer;font-size:1.2rem;font-weight:700;margin-bottom:15px;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s;width:100%}
+
+/* منوی موبایل - از سمت راست */
+.mobile-menu-toggle{display:none;background:#667eea;color:#fff;border:none;padding:8px 14px;border-radius:12px;cursor:pointer;font-size:.9rem;font-weight:700;margin-bottom:15px;font-family:'Vazirmatn',Tahoma,sans-serif;transition:all .3s;position:fixed;top:15px;right:15px;z-index:1001;box-shadow:0 4px 12px rgba(0,0,0,.2)}
 [data-theme="dark"] .mobile-menu-toggle{background:#f59e0b;color:#1a1a2e}
 .mobile-menu-toggle:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,0,0,.2)}
+
 .loading-container{text-align:center;padding:60px 20px;animation:fadeIn .6s ease-out;background:linear-gradient(135deg,#1a1a2e 0%,#0f3460 50%,#16213e 100%);min-height:100vh;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9998;transition:opacity .5s ease}
 .loading-container.fade-out{opacity:0;pointer-events:none}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -286,7 +289,8 @@ tbody tr:hover{background:var(--table-hover)}
 .loading-title{color:#48bb78;font-size:1.8rem;margin-bottom:12px;font-weight:700;background:linear-gradient(135deg,#48bb78,#38a169,#68d391);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .loading-text{color:#e2e8f0;font-size:1.1rem;margin-bottom:25px;min-height:1.5em;transition:opacity .3s ease;font-weight:600}
 .loading-progress{width:320px;max-width:100%;height:6px;background:rgba(72,187,120,.2);border-radius:10px;margin:0 auto 25px;overflow:hidden}
-.progress-bar{height:100%;background:linear-gradient(90deg,#48bb78,#38a169,#68d391,#48bb78);background-size:300% 100%;border-radius:10px;transition:width .3s ease-out;width:0%}
+.progress-bar{height:100%;background:linear-gradient(90deg,#48bb78,#38a169,#68d391,#48bb78);background-size:300% 100%;border-radius:10px;animation:progressAnim 1s ease-in-out infinite}
+@keyframes progressAnim{0%{background-position:0% 50%;width:30%}50%{background-position:100% 50%;width:100%}100%{background-position:0% 50%;width:30%}}
 .loading-dots{display:flex;justify-content:center;gap:10px}
 .loading-dots span{width:12px;height:12px;background:linear-gradient(135deg,#48bb78,#38a169);border-radius:50%;animation:bounce 1.4s ease-in-out infinite}
 .loading-dots span:nth-child(2){animation-delay:.2s}
@@ -359,142 +363,166 @@ tbody tr:hover{background:var(--table-hover)}
 .tier-filter-btn.silver.active{background:linear-gradient(135deg,#C0C0C0,#A8A8A8);color:#1a1a2e}
 .tier-filter-btn.black.active{background:linear-gradient(135deg,#6B7280,#374151)}
 
-/* ====== راهنمای کیبورد انگلیسی ====== */
-.keyboard-hint{background:linear-gradient(135deg,rgba(236,201,75,.1),rgba(214,158,46,.05));border:2px solid #ecc94b;border-radius:12px;padding:12px 15px;margin-bottom:20px;display:flex;align-items:center;gap:12px;font-size:.88rem;color:var(--text-primary);transition:all .3s;line-height:1.6}
-[data-theme="dark"] .keyboard-hint{background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));border-color:#fbbf24}
-.keyboard-hint i{color:#ecc94b;font-size:1.4rem;flex-shrink:0}
-[data-theme="dark"] .keyboard-hint i{color:#fbbf24}
-.keyboard-hint strong{color:#d69e2e;font-weight:700}
-[data-theme="dark"] .keyboard-hint strong{color:#fbbf24}
+/* باکس هشدار ترکیبی در صفحه ورود */
+.login-combined-hint{background:linear-gradient(135deg,rgba(236,201,75,.1),rgba(214,158,46,.05));border:2px solid var(--keyboard-border);border-radius:16px;padding:18px 20px;margin-bottom:20px;transition:all .3s}
+[data-theme="dark"] .login-combined-hint{background:linear-gradient(135deg,rgba(251,191,36,.1),rgba(245,158,11,.05));border-color:#fbbf24}
+.login-combined-hint .hint-title{display:flex;align-items:center;gap:10px;font-weight:700;color:#d69e2e;margin-bottom:12px;font-size:1rem;padding-bottom:10px;border-bottom:1px dashed var(--border-color)}
+[data-theme="dark"] .login-combined-hint .hint-title{color:#fbbf24}
+.login-combined-hint .hint-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;font-size:.9rem;color:var(--text-primary);line-height:1.7}
+.login-combined-hint .hint-item i{color:#ecc94b;font-size:1.1rem;flex-shrink:0;margin-top:4px}
+[data-theme="dark"] .login-combined-hint .hint-item i{color:#fbbf24}
+.login-combined-hint .hint-item strong{color:#d69e2e;font-weight:700}
+[data-theme="dark"] .login-combined-hint .hint-item strong{color:#fbbf24}
 
-/* ====== نشانگر آماده‌سازی کوچک ====== */
-.preparing-indicator{position:fixed;top:15px;left:15px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;padding:8px 16px;border-radius:20px;font-size:.85rem;font-weight:600;display:flex;align-items:center;gap:8px;z-index:9997;box-shadow:0 4px 15px rgba(102,126,234,.4);animation:slideInLeft .4s ease-out}
-[data-theme="dark"] .preparing-indicator{background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e;box-shadow:0 4px 15px rgba(251,191,36,.4)}
-.preparing-indicator i{animation:spin 1s linear infinite}
-.preparing-indicator.hidden{display:none}
-@keyframes slideInLeft{from{transform:translateX(-100%);opacity:0}to{transform:translateX(0);opacity:1}}
+/* انیمیشن لودینگ هنگام انتظار برای بارگذاری داده‌ها */
+.login-waiting-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:10003;backdrop-filter:blur(8px);animation:fadeIn .3s ease-out}
+.login-waiting-box{background:var(--card-bg);padding:40px 50px;border-radius:24px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 30px 80px rgba(0,0,0,.5);animation:slideUp .4s ease-out;min-width:320px;text-align:center}
+.login-waiting-spinner{width:70px;height:70px;border:6px solid rgba(102,126,234,.2);border-top-color:#667eea;border-right-color:#667eea;border-radius:50%;animation:spin 1s linear infinite}
+[data-theme="dark"] .login-waiting-spinner{border-color:rgba(251,191,36,.2);border-top-color:#fbbf24;border-right-color:#fbbf24}
+.login-waiting-text{color:var(--text-primary);font-weight:700;font-size:1.15rem;margin:0}
+.login-waiting-subtext{color:var(--text-muted);font-size:.9rem;margin:0;line-height:1.8}
 
-/* ====== بهینه‌سازی کامل موبایل ====== */
+/* انیمیشن لرزش برای خطای ورود */
+@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-5px)}20%,40%,60%,80%{transform:translateX(5px)}}
+
+/* =========================================
+   بهینه‌سازی ویژه موبایل - منوی کشویی از راست
+   ========================================= */
 @media(max-width:768px){
-body{padding:8px}
-.login-page,.app-page{padding:18px;border-radius:20px}
-.app-layout{flex-direction:column;gap:12px;margin-top:15px}
-.vertical-menu{width:100%;max-height:none;padding:12px;border-radius:16px}
-.vertical-menu.collapsed{display:none}
-.vertical-menu .menu-item{padding:12px 14px;font-size:.92rem;margin:3px 0;gap:10px}
-.vertical-menu .menu-item i{font-size:1rem}
-.mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;font-size:1rem}
-.content-area{padding:15px;min-height:400px;border-radius:16px}
-.header-bar{grid-template-columns:1fr;padding:12px;gap:12px;margin-bottom:15px;border-radius:16px}
-.datetime-display{flex-direction:column;gap:8px;width:100%}
-.date-combined-box{min-width:auto;width:100%;padding:10px 14px}
-.date-combined-box .date-row{font-size:.85rem}
-.datetime-card{padding:10px 14px;width:100%}
-.datetime-card .dt-value{font-size:.95rem}
-.clock-card{padding:10px 16px;width:100%}
-.clock-card .clock-time{font-size:1.3rem}
-.clock-card i{font-size:1.2rem}
-.header-actions{flex-direction:column;width:100%;gap:8px;align-items:stretch}
-.theme-switcher{width:100%;justify-content:space-around}
-.theme-btn{flex:1;justify-content:center;padding:8px 8px;font-size:.78rem;gap:4px}
-.score-header-box{width:100%;justify-content:center}
-.coin-badge{width:100%;justify-content:center;padding:10px 14px}
-.welcome-with-greeting{flex-direction:column;align-items:flex-start;gap:8px}
-.welcome-with-greeting .welcome-text{font-size:1.05rem}
-.welcome-with-greeting .greeting-text{font-size:.82rem;padding:6px 12px}
-.system-message-box{max-width:100%;font-size:.85rem;padding:8px 12px}
-table{font-size:.72rem;display:block;overflow-x:auto;white-space:nowrap}
-th,td{padding:8px 6px}
-.shop-grid{grid-template-columns:1fr;gap:12px}
-.shop-card{padding:16px}
-.shop-card-title{font-size:1.05rem}
-.shop-card-price .price-value{font-size:1.15rem}
-.profile-info-grid{grid-template-columns:1fr;gap:10px}
-.profile-info-item{padding:12px 14px}
-.profile-info-item i{font-size:1.2rem}
-.profile-info-item .info-value{font-size:.92rem}
-.last-tx-grid{grid-template-columns:1fr;gap:8px}
-.loan-info{grid-template-columns:1fr 1fr;gap:8px}
-.calendar-grid{grid-template-columns:1fr;gap:10px}
-.calendar-event{padding:12px}
-.stats-grid{grid-template-columns:repeat(2,1fr);gap:10px}
-.stat-card{padding:12px}
-.stat-card .stat-icon{font-size:1.5rem;margin-bottom:6px}
-.stat-card .stat-value{font-size:1.2rem}
-.stat-card .stat-label{font-size:.75rem}
-.filter-bar{flex-direction:column;gap:8px;padding:12px}
-.filter-bar input,.filter-bar select{width:100%}
-.shop-filter-bar{flex-direction:column;gap:8px;padding:12px}
-.shop-filter-bar input,.shop-filter-bar select{width:100%;min-width:auto}
-.modal-content{padding:18px;border-radius:18px;max-height:95vh}
-.modal-title{font-size:1.1rem}
-.modal-actions{flex-direction:column;gap:8px}
-.modal-actions .btn-small{width:100%;justify-content:center;padding:10px}
-.support-grid{grid-template-columns:1fr;gap:12px}
-.support-card{padding:15px;gap:12px}
-.support-card .support-icon{width:42px;height:42px;font-size:1.2rem}
-.support-card .support-value{font-size:.9rem}
-.date-filter{flex-direction:column;align-items:stretch;gap:8px}
-.date-filter input{width:100%}
-.search-box{flex-direction:column;gap:8px;padding:10px 14px}
-.search-box input{width:100%}
-.info-box{padding:12px 14px;font-size:.88rem;margin-bottom:15px}
-.dashboard-section{padding:15px;margin-bottom:15px}
-.dashboard-section h3{font-size:1rem;margin-bottom:10px}
-.coin-display{width:100%;justify-content:center;padding:10px 16px}
-.coin-display .coin-amount{font-size:1.2rem}
-.last-login-box{flex-direction:column;align-items:flex-start;gap:8px;padding:12px 14px}
-.bar-chart{height:150px;padding:10px;gap:6px}
-.bar-label{font-size:.65rem}
-.bar-value{font-size:.7rem}
-.coming-soon-box{padding:40px 20px;margin:20px auto}
-.coming-soon-box i{font-size:3.5rem}
-.coming-soon-box h2{font-size:1.4rem}
-.coming-soon-box p{font-size:.95rem}
-.help-section{padding:15px;margin-bottom:12px}
-.help-section h4{font-size:.95rem;margin-bottom:8px}
-.help-section p,.help-section li{font-size:.88rem;line-height:1.7}
-.help-section ul{padding-right:16px}
-.tier-profile-box{flex-direction:column;text-align:center;padding:18px;gap:15px}
-.tier-profile-stats{justify-content:center;gap:12px}
-.tier-profile-name{font-size:1.15rem;justify-content:center}
-.tier-profile-message{font-size:.88rem}
-.tier-filter-bar{gap:6px}
-.tier-filter-btn{padding:5px 10px;font-size:.78rem}
-.welcome-tier-content{padding:25px 18px}
-.welcome-tier-emoji{font-size:2.8rem}
-.welcome-tier-title{font-size:1.25rem}
-.welcome-tier-score{font-size:2rem}
-.welcome-tier-subtitle{font-size:.9rem}
-.welcome-tier-message{font-size:.88rem;padding:12px}
-.score-details-box{padding:15px}
-.score-detail-item{gap:8px}
-.score-detail-icon{width:30px;height:30px;font-size:.9rem}
-.score-detail-label{font-size:.78rem}
-.score-detail-value{font-size:.78rem;min-width:50px}
-.keyboard-hint{padding:10px 12px;font-size:.82rem;gap:10px}
-.keyboard-hint i{font-size:1.2rem}
-.preparing-indicator{top:10px;left:10px;padding:6px 12px;font-size:.78rem}
-.input-group{margin-bottom:18px}
-.input-group input,.input-group select,.input-group textarea{padding:12px;font-size:.95rem}
-.input-group label{font-size:.9rem;margin-bottom:6px}
-.btn{padding:13px;font-size:.95rem}
-.login-help{padding:12px 14px;margin-top:15px}
-.login-help i{font-size:1.3rem}
-.login-help p{font-size:.82rem}
+  body{padding:8px;padding-top:60px}
+  .login-page,.app-page{padding:18px;border-radius:20px}
+  
+  /* هدر - ساده‌تر و فشرده‌تر */
+  .header-bar{grid-template-columns:1fr;padding:12px 15px;gap:10px;margin-bottom:15px}
+  .datetime-display{flex-direction:row;flex-wrap:wrap;gap:10px;justify-content:center}
+  .date-combined-box{min-width:auto;width:100%;padding:12px 15px}
+  .date-combined-box .date-row{font-size:.85rem}
+  .date-combined-box .date-row.day-name,.date-combined-box .date-row.time-row{font-size:.9rem;padding-top:6px;margin-top:3px}
+  
+  /* ساعت آنالوگ در موبایل */
+  .analog-clock{width:60px;height:60px}
+  .clock-hand.hour{height:15px;margin-top:-15px}
+  .clock-hand.minute{height:21px;margin-top:-21px}
+  .clock-hand.second{height:24px;margin-top:-24px}
+  
+  /* خوش‌آمدگویی در یک خط */
+  .welcome-with-greeting{flex-direction:row;align-items:center;gap:10px;flex-wrap:wrap}
+  .welcome-with-greeting .welcome-text{font-size:1.1rem}
+  .welcome-with-greeting .greeting-text{font-size:.8rem;padding:5px 12px}
+  
+  /* اکشن‌های هدر در یک خط */
+  .header-actions{flex-direction:row;width:100%;gap:8px;justify-content:center;flex-wrap:wrap}
+  .score-header-box{padding:8px 10px;gap:8px}
+  .score-header-box .gauge-chart{width:45px;height:45px}
+  .score-header-value{font-size:.8rem}
+  .score-header-label{font-size:.65rem}
+  .coin-badge{padding:8px 12px;font-size:.85rem}
+  .theme-switcher{width:auto;padding:4px}
+  .theme-btn{padding:6px 10px;font-size:.75rem}
+  
+  /* منوی موبایل - کشویی از سمت راست */
+  .mobile-menu-toggle{display:flex;align-items:center;justify-content:center;gap:6px}
+  
+  .app-layout{flex-direction:column;gap:12px;margin-top:12px}
+  .vertical-menu{
+    position:fixed;
+    top:0;
+    right:-280px;
+    width:260px;
+    height:100vh;
+    max-height:100vh;
+    border-radius:0;
+    z-index:1000;
+    transition:right .3s ease;
+    padding-top:70px;
+    box-shadow:-4px 0 20px rgba(0,0,0,.3);
+    overflow-y:auto;
+  }
+  .vertical-menu:not(.collapsed){
+    right:0;
+  }
+  .vertical-menu.collapsed{
+    right:-280px;
+  }
+  .vertical-menu .menu-item{padding:12px 16px;font-size:.9rem;margin:3px 0}
+  
+  /* overlay برای منو */
+  .menu-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,.5);
+    z-index:999;
+    display:none;
+  }
+  .menu-overlay.active{
+    display:block;
+  }
+  
+  .content-area{padding:15px;min-height:400px;border-radius:16px}
+  
+  /* جداول کوچک‌تر */
+  table{font-size:.75rem}
+  th,td{padding:8px 6px}
+  
+  /* گریدها تک ستونه */
+  .shop-grid,.profile-info-grid,.last-tx-grid,.loan-info,.calendar-grid,.support-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  
+  /* فیلترها عمودی */
+  .filter-bar,.shop-filter-bar,.modal-actions{flex-direction:column}
+  .filter-bar input,.filter-bar select,.shop-filter-bar input,.shop-filter-bar select,.modal-actions .btn-small{width:100%}
+  
+  /* باکس‌ها تمام عرض */
+  .coin-display,.last-login-box{width:100%;justify-content:center;text-align:center;flex-direction:column}
+  .system-message-box{max-width:100%}
+  
+  /* لودینگ کوچک‌تر */
+  .loading-spinner{width:110px;height:110px}
+  .loading-title{font-size:1.4rem}
+  .loading-features{gap:12px}
+  .loading-feature{font-size:.8rem}
+  
+  /* پروفایل تیر */
+  .tier-profile-box{flex-direction:column;text-align:center}
+  .tier-profile-stats{justify-content:center}
+  .welcome-tier-content{padding:30px 20px}
+  .welcome-tier-emoji{font-size:3rem}
+  .welcome-tier-title{font-size:1.3rem}
+  .welcome-tier-score{font-size:2.5rem}
+  
+  /* لودینگ ورود */
+  .login-waiting-box{padding:35px 30px;gap:18px;min-width:280px}
+  .login-waiting-spinner{width:55px;height:55px}
+  .login-waiting-text{font-size:1rem}
+  .login-waiting-subtext{font-size:.82rem}
+  
+  /* هشدار ورود */
+  .login-combined-hint{padding:15px 16px}
+  .login-combined-hint .hint-title{font-size:.95rem}
+  .login-combined-hint .hint-item{font-size:.85rem}
+  .login-combined-hint .hint-item i{font-size:1rem}
 }
 
-/* ====== بهینه‌سازی موبایل خیلی کوچک ====== */
 @media(max-width:400px){
-body{padding:5px}
-.login-page,.app-page{padding:14px;border-radius:16px}
-.content-area{padding:12px}
-.stats-grid{grid-template-columns:1fr}
-.loan-info{grid-template-columns:1fr}
-.header-bar{padding:10px}
-.clock-card .clock-time{font-size:1.15rem}
-.date-combined-box .date-row{font-size:.78rem}
-.welcome-with-greeting .welcome-text{font-size:.95rem}
+  body{padding:5px;padding-top:55px}
+  .login-page,.app-page{padding:14px;border-radius:16px}
+  .content-area{padding:12px}
+  .stats-grid,.loan-info{grid-template-columns:1fr}
+  .header-bar{padding:10px}
+  .date-combined-box .date-row{font-size:.78rem}
+  .header-actions{gap:5px}
+  .score-header-box{padding:6px 8px;gap:6px}
+  .score-header-box .gauge-chart{width:38px;height:38px}
+  .score-header-value{font-size:.68rem}
+  .coin-badge{padding:6px 10px;font-size:.78rem}
+  .theme-btn{padding:5px 6px;font-size:.65rem}
+  .analog-clock{width:50px;height:50px}
+  .clock-hand.hour{height:12px;margin-top:-12px}
+  .clock-hand.minute{height:17px;margin-top:-17px}
+  .clock-hand.second{height:20px;margin-top:-20px}
 }
 </style>
 </head>
@@ -508,8 +536,8 @@ body{padding:5px}
 <i class="fas fa-university loading-icon"></i>
 </div>
 <h2 class="loading-title">سیستم حسابداری صندوق اتحاد</h2>
-<p class="loading-text" id="loadingText">در حال آماده‌سازی...</p>
-<div class="loading-progress"><div class="progress-bar" id="progressBar"></div></div>
+<p class="loading-text" id="loadingText">در حال بارگذاری اطلاعات...</p>
+<div class="loading-progress"><div class="progress-bar"></div></div>
 <div class="loading-dots"><span></span><span></span><span></span></div>
 <div class="loading-features">
 <div class="loading-feature"><i class="fas fa-shield-alt"></i><span>امن و مطمئن</span></div>
@@ -518,65 +546,22 @@ body{padding:5px}
 </div>
 </div>
 </div>
-
-<!-- نشانگر آماده‌سازی -->
-<div class="preparing-indicator hidden" id="preparingIndicator">
-<i class="fas fa-spinner"></i>
-<span>در حال آماده‌سازی...</span>
-</div>
-
 <script>
 (function(){"use strict";
 const $=(s,p=document)=>p.querySelector(s);
 const $$=(s,p=document)=>p.querySelectorAll(s);
 
-// ====== سیستم کش هوشمند ======
-const CACHE_KEY='sandogh_data_v6';
-const CACHE_TIME_KEY='sandogh_cache_time_v6';
-const CACHE_DURATION=10*60*1000;
-
-function getCachedData(){
-try{
-const cached=localStorage.getItem(CACHE_KEY);
-const cacheTime=localStorage.getItem(CACHE_TIME_KEY);
-if(!cached||!cacheTime)return null;
-if(Date.now()-parseInt(cacheTime)>CACHE_DURATION)return null;
-return JSON.parse(cached);
-}catch(e){return null;}
+const loadingMessages=['در حال بارگذاری اطلاعات...','لطفاً کمی صبر کنید...','در حال آماده‌سازی سیستم...','بارگذاری داده‌های اعضا...','محاسبه سکه‌های تشویقی...','آماده‌سازی فروشگاه...','بررسی وام‌ها و اقساط...','نزدیک به اتمام...'];
+let msgIndex=0;
+const loadingTextEl=$('#loadingText');
+let msgInterval=null;
+if(loadingTextEl){
+msgInterval=setInterval(()=>{
+msgIndex=(msgIndex+1)%loadingMessages.length;
+loadingTextEl.style.opacity='0';
+setTimeout(()=>{loadingTextEl.textContent=loadingMessages[msgIndex];loadingTextEl.style.opacity='1';},600);
+},600);
 }
-
-function setCachedData(data){
-try{
-localStorage.setItem(CACHE_KEY,JSON.stringify(data));
-localStorage.setItem(CACHE_TIME_KEY,Date.now().toString());
-}catch(e){}
-}
-
-// ====== مدیریت صفحه بارگذاری ======
-const LoadingScreen={
-el:$('#loadingScreen'),
-bar:$('#progressBar'),
-text:$('#loadingText'),
-setProgress(p,t){
-if(this.bar)this.bar.style.width=p+'%';
-if(t&&this.text){
-this.text.style.opacity='0';
-setTimeout(()=>{this.text.textContent=t;this.text.style.opacity='1';},150);
-}
-},
-hide(){
-if(!this.el)return;
-this.el.classList.add('fade-out');
-setTimeout(()=>{if(this.el)this.el.style.display='none';},500);
-}
-};
-
-// ====== نشانگر آماده‌سازی ======
-const PreparingIndicator={
-el:$('#preparingIndicator'),
-show(){if(this.el)this.el.classList.remove('hidden');},
-hide(){if(this.el)this.el.classList.add('hidden');}
-};
 
 const ThemeManager={
 init(){const saved=localStorage.getItem('sandogh_theme')||'auto';this.apply(saved);},
@@ -593,10 +578,12 @@ this.current=theme;
 get(){return this.current||localStorage.getItem('sandogh_theme')||'auto';}
 };
 
-// ⚡ استفاده از jsDelivr CDN (سریع‌تر)
-const DATA_URL='https://cdn.jsdelivr.net/gh/tasnim3174-source/sandogh-site@main/data.xlsx';
-const FALLBACK_URL='https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
+const DATA_URL='https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
 const SPECIAL_USERS=[];
+let SUPPORT_INFO={phone:'',accountNumber:'',cardNumber:'',shebaNumber:'',itaaAddress:'@ethads',websiteAddress:''};
+let SYSTEM_MESSAGE='';
+let SHOP_PRODUCTS=[];
+const TX_COLUMNS=['ID','شماره حساب','مقرری ماهانه','شماره فیش','تاریخ تراکنش','مبلغ تراکنش','نام تراکنش کننده','مبلغ قسط واریزی','تاریخ قسط واریزی','جمع واریزی','موجودی','تعداد قسط پرداخت شده','تعداد قسط مانده','وضعیت پس انداز','پیامک واریز','پیامک اخطار','توضیحات'];
 
 const U={
 norm(s){if(s===null||s===undefined||s==='')return'';return String(s).toLowerCase().replace(/[\s\-_]/g,'');},
@@ -608,8 +595,21 @@ parseNum(v){if(v==null||v==='')return 0;if(typeof v==='number')return v;let s=St
 fmtDate(s){if(!s)return'---';const str=String(s).trim();if(str.includes('/')&&str.length===10)return str;if(str.includes('-')&&str.length===10)return str.replace(/-/g,'/');const c=str.replace(/\D/g,'');if(c.length===8)return`${c.slice(0,4)}/${c.slice(4,6)}/${c.slice(6,8)}`;if(c.length===6)return`${c.slice(0,4)}/${c.slice(4,6)}`;return str;},
 esc(s){if(s===null||s===undefined)return'';const d=document.createElement('div');d.textContent=String(s);return d.innerHTML;},
 findCol(names,headers){
-for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');for(const h of headers){const hh=h.toLowerCase().replace(/[_\s\-]/g,'');if(hh===nn)return h;}}
-for(const n of names){const nn=n.toLowerCase().replace(/[_\s\-]/g,'');if(nn.length<3)continue;for(const h of headers){const hh=h.toLowerCase().replace(/[_\s\-]/g,'');if(hh.includes(nn))return h;}}
+for(const n of names){
+const nn=n.toLowerCase().replace(/[_\s\-]/g,'');
+for(const h of headers){
+const hh=h.toLowerCase().replace(/[_\s\-]/g,'');
+if(hh===nn)return h;
+}
+}
+for(const n of names){
+const nn=n.toLowerCase().replace(/[_\s\-]/g,'');
+if(nn.length<3)continue;
+for(const h of headers){
+const hh=h.toLowerCase().replace(/[_\s\-]/g,'');
+if(hh.includes(nn))return h;
+}
+}
 return null;
 },
 parseBool(v){
@@ -623,11 +623,19 @@ return['true','yes','فعال','بله','✓','✅','on'].includes(s);
 getJalaliMonth(){const now=new Date();const gy=now.getFullYear(),gm=now.getMonth()+1,gd=now.getDate();const gdm=[0,31,59,90,120,151,181,212,243,273,304,334];let gy2=gm>2?gy+1:gy;let days=355666+365*gy+~~((gy2+3)/4)-~~((gy2+99)/100)+~~((gy2+399)/400)+gd+gdm[gm-1];let jy=-1595+33*~~(days/12053);days%=12053;jy+=4*~~(days/1461);days%=1461;if(days>365){jy+=~~((days-1)/365);days=(days-1)%365;}const jm=days<186?1+~~(days/31):7+~~((days-186)/30);const jd=1+(days<186?days%31:(days-186)%30);return{year:jy,month:jm,day:jd,str:`${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}`};},
 calcMembershipDuration(openDate){if(!openDate)return'---';const parts=openDate.split('/');if(parts.length!==3)return openDate;const openYear=parseInt(parts[0]);const openMonth=parseInt(parts[1]);const openDay=parseInt(parts[2]);const today=U.toJalaliParts(new Date());let years=today.year-openYear;let months=today.month-openMonth;let days=today.day-openDay;if(days<0){months--;const prevMonth=today.month-1;const daysInPrevMonth=prevMonth<=6?31:(prevMonth<=11?30:29);days+=daysInPrevMonth;}if(months<0){years--;months+=12;}let result='';if(years>0)result+=`${years} سال`;if(months>0)result+=(result?' و ':'')+`${months} ماه`;if(days>0)result+=(result?' و ':'')+`${days} روز`;return result||'کمتر از یک روز';},
 generateOrderCode(accountNumber){const timestamp=Date.now().toString().slice(-6);const random=Math.floor(Math.random()*1000).toString().padStart(3,'0');return`ORD-${accountNumber}-${timestamp}${random}`;},
-getGreeting(){const hour=new Date().getHours();if(hour>=5&&hour<12)return'صبح بخیر';if(hour>=12&&hour<17)return'ظهر بخیر';if(hour>=17&&hour<21)return'عصر بخیر';return'شب بخیر';},
-getDayName(){const days=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه','شنبه'];return days[new Date().getDay()];}
+getGreeting(){
+const hour=new Date().getHours();
+if(hour>=5&&hour<12)return'صبح بخیر';
+if(hour>=12&&hour<17)return'ظهر بخیر';
+if(hour>=17&&hour<21)return'عصر بخیر';
+return'شب بخیر';
+},
+getDayName(){
+const days=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنج‌شنبه','جمعه','شنبه'];
+return days[new Date().getDay()];
+}
 };
 
-// ====== سیستم محاسبه امتیاز و دسته‌بندی اعضا ======
 function calculateMemberScore(member,ddm,allTransactions){
 let score=0;
 const details={};
@@ -686,10 +694,14 @@ medium:{width:110,height:110,strokeWidth:9,fontSize:22,textSize:10,cy:68},
 large:{width:180,height:180,strokeWidth:13,fontSize:36,textSize:14,cy:110}
 };
 const s=sizes[size];
-let startColor,endColor,tierName,tierEmoji;
-if(score>=80){startColor='#FFD700';endColor='#FFA500';tierName='طلایی';tierEmoji='⭐';}
-else if(score>=50){startColor='#E8E8E8';endColor='#A8A8A8';tierName='نقره‌ای';tierEmoji='🥈';}
-else{startColor='#6B7280';endColor='#374151';tierName='سیاه';tierEmoji='⚫';}
+let gradientId,startColor,endColor,tierName,tierEmoji;
+if(score>=80){
+gradientId='goldGrad';startColor='#FFD700';endColor='#FFA500';tierName='طلایی';tierEmoji='⭐';
+}else if(score>=50){
+gradientId='silverGrad';startColor='#E8E8E8';endColor='#A8A8A8';tierName='نقره‌ای';tierEmoji='🥈';
+}else{
+gradientId='blackGrad';startColor='#6B7280';endColor='#374151';tierName='سیاه';tierEmoji='⚫';
+}
 const radius=(s.width-s.strokeWidth)/2;
 const circumference=Math.PI*radius;
 const progress=(score/100)*circumference;
@@ -729,11 +741,10 @@ ${renderGaugeChart(scoreData.score,'medium')}
 <button class="btn" onclick="document.getElementById('welcomeTierModal').remove()" style="margin-top:15px"><i class="fas fa-arrow-left"></i> ورود به سیستم</button>
 </div>`;
 document.body.appendChild(modal);
-setTimeout(()=>{modal.onclick=(e)=>{if(e.target===modal)modal.remove();};},100);
+setTimeout(()=>{
+modal.onclick=(e)=>{if(e.target===modal)modal.remove();};
+},100);
 }
-
-let SUPPORT_INFO={phone:'',accountNumber:'',cardNumber:'',shebaNumber:'',itaaAddress:'@ethads',websiteAddress:''};
-let SYSTEM_MESSAGE='';
 
 class DynamicDataManager{
 constructor(){
@@ -874,34 +885,10 @@ ddm.markTxCalculated(tx._transactionId);
 });
 }
 
-// ⚡ حذف ستون "شماره حساب" از صورتحساب کامل
-const TX_COLUMNS=['ID','مقرری ماهانه','شماره فیش','تاریخ تراکنش','مبلغ تراکنش','نام تراکنش کننده','مبلغ قسط واریزی','تاریخ قسط واریزی','جمع واریزی','موجودی','تعداد قسط پرداخت شده','تعداد قسط مانده','وضعیت پس انداز','پیامک واریز','پیامک اخطار','توضیحات'];
-let SHOP_PRODUCTS=[];
-
-// ⚡ بارگذاری داده‌ها در پس‌زمینه با سیستم کش
-let dataReady=false;
-let dataPromise=null;
-
 async function loadMainData(){
 try{
-const cached=getCachedData();
-if(cached){
-LoadingScreen.setProgress(80,'بارگذاری از کش...');
-await new Promise(r=>setTimeout(r,200));
-LoadingScreen.setProgress(100,'آماده!');
-await new Promise(r=>setTimeout(r,200));
-return cached;
-}
-LoadingScreen.setProgress(30,'دانلود داده‌ها...');
-let response;
-try{
-response=await fetch(DATA_URL,{cache:'no-store'});
-if(!response.ok)throw new Error('CDN failed');
-}catch(e){
-response=await fetch(FALLBACK_URL,{cache:'no-store'});
+const response=await fetch(DATA_URL,{cache:'no-store'});
 if(!response.ok)throw new Error('HTTP '+response.status);
-}
-LoadingScreen.setProgress(60,'پردازش داده‌ها...');
 const arrayBuffer=await response.arrayBuffer();
 const wb=XLSX.read(arrayBuffer,{type:'array'});
 const sh=wb.Sheets[wb.SheetNames[0]];
@@ -997,7 +984,9 @@ const rowsByAccount=new Map();
 rows.forEach((row,index)=>{
 const accNum=String(row[colMap.accountNumber]||'').trim();
 if(!accNum)return;
-if(!rowsByAccount.has(accNum))rowsByAccount.set(accNum,[]);
+if(!rowsByAccount.has(accNum)){
+rowsByAccount.set(accNum,[]);
+}
 rowsByAccount.get(accNum).push({row,index});
 });
 const membersMap=new Map();
@@ -1100,12 +1089,10 @@ smsMonasebat:smsMonasebat
 transactions.push(transaction);
 });
 const members=Array.from(membersMap.values());
-const result={members,transactions,supportInfo:SUPPORT_INFO,systemMessage:SYSTEM_MESSAGE,shopProducts:SHOP_PRODUCTS};
-setCachedData(result);
-return result;
+return{members,transactions};
 }catch(error){
-console.error('Load error:',error);
-throw error;
+console.error('Data load error:',error);
+return{members:[],transactions:[]};
 }
 }
 
@@ -1118,14 +1105,39 @@ return`<div class="theme-switcher">
 </div>`;
 }
 
+function updateAnalogClock(){
+const now=new Date();
+const hours=now.getHours()%12;
+const minutes=now.getMinutes();
+const seconds=now.getSeconds();
+const hourDeg=(hours*30)+(minutes*0.5);
+const minuteDeg=minutes*6;
+const secondDeg=seconds*6;
+const hourHand=document.querySelector('.clock-hand.hour');
+const minuteHand=document.querySelector('.clock-hand.minute');
+const secondHand=document.querySelector('.clock-hand.second');
+if(hourHand)hourHand.style.transform=`rotate(${hourDeg}deg)`;
+if(minuteHand)minuteHand.style.transform=`rotate(${minuteDeg}deg)`;
+if(secondHand)secondHand.style.transform=`rotate(${secondDeg}deg)`;
+}
+
 function renderDateCombinedBox(){
 const jalali=U.toJalali(new Date());
 const gregorian=`${new Date().getFullYear()}/${String(new Date().getMonth()+1).padStart(2,'0')}/${String(new Date().getDate()).padStart(2,'0')}`;
 const dayName=U.getDayName();
-return`<div class="date-combined-box">
+const now=new Date();
+const timeStr=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+return`<div class="analog-clock-container">
+<div class="date-combined-box">
 <div class="date-row"><i class="fas fa-calendar-alt"></i> تاریخ شمسی: <strong>${jalali}</strong></div>
 <div class="date-row"><i class="fas fa-calendar"></i> تاریخ میلادی: <strong>${gregorian}</strong></div>
-<div class="date-row day-name"><i class="fas fa-calendar-week"></i> ${dayName}</div>
+<div class="date-row day-name"><i class="fas fa-calendar-week"></i> ${dayName} - ساعت: <span class="time-value" id="inlineClock">${timeStr}</span></div>
+</div>
+<div class="analog-clock">
+<div class="clock-hand hour"></div>
+<div class="clock-hand minute"></div>
+<div class="clock-hand second"></div>
+</div>
 </div>`;
 }
 
@@ -1145,28 +1157,19 @@ this.ddm=new DynamicDataManager();
 this.currentUser=null;
 this.tab=localStorage.getItem('activeTab')||'profile';
 this.ci=null;
-this.mobileMenuOpen=true;
+this.mobileMenuOpen=false;
 this.memberScores={};
 this.tierFilter='all';
 this.dataReady=false;
+this.dataPromise=null;
 this.init();
 }
-
 async init(){
-// ⚡ نمایش فوری صفحه لاگین و بارگذاری داده‌ها در پس‌زمینه
-LoadingScreen.hide();
 this.renderLogin();
-
-// نمایش نشانگر آماده‌سازی
-PreparingIndicator.show();
-
-// شروع بارگذاری داده‌ها در پس‌زمینه
-dataPromise=loadMainData().then(mainData=>{
+try{
+const mainData=await loadMainData();
 this.dm.members=mainData.members;
 this.allTransactions=mainData.transactions;
-if(mainData.supportInfo)SUPPORT_INFO=mainData.supportInfo;
-if(mainData.systemMessage)SYSTEM_MESSAGE=mainData.systemMessage;
-if(mainData.shopProducts&&mainData.shopProducts.length)SHOP_PRODUCTS=mainData.shopProducts;
 this.dm.users=this.dm.members.map(m=>({id:m.id,username:m.accountNumber,password:m.accountNumber,role:m.isCouncil?'council':'member',memberId:m.id}));
 this.dm.users.push({id:999,username:'admin',password:'admin123',role:'admin',memberId:null});
 this.dm.members.forEach(m=>calculateCoins(m,this.allTransactions,this.ddm));
@@ -1174,65 +1177,25 @@ this.dm.members.forEach(m=>{
 this.memberScores[m.id]=calculateMemberScore(m,this.ddm,this.allTransactions);
 });
 this.dataReady=true;
-PreparingIndicator.hide();
-// اگر کاربر در صفحه لاگین است، شماره تلفن را به‌روزرسانی کن
+const loadingEl=$('#loadingScreen');
+if(loadingEl){
+loadingEl.classList.add('fade-out');
+setTimeout(()=>{loadingEl.style.display='none';},500);
+}
 if(!this.currentUser){
-const loginHelpEl=document.querySelector('.login-help p');
+const loginHelpEl=document.querySelector('.login-combined-hint .hint-contact');
 if(loginHelpEl&&SUPPORT_INFO.phone){
-loginHelpEl.innerHTML=`برای تغییر یا فراموشی رمز عبور و نام کاربری با حسابداری تماس بگیرید: <strong style="direction:ltr;display:inline-block">${U.esc(SUPPORT_INFO.phone)}</strong>`;
+loginHelpEl.innerHTML=`<i class="fas fa-phone"></i><span>برای تغییر یا فراموشی رمز عبور و نام کاربری با حسابداری تماس بگیرید: <strong style="direction:ltr;display:inline-block">${U.esc(SUPPORT_INFO.phone)}</strong></span>`;
 }
 }
-}).catch(error=>{
+}catch(error){
 console.error('Init error:',error);
-PreparingIndicator.hide();
-alert('❌ خطا در بارگذاری داده‌ها. لطفاً اتصال اینترنت خود را بررسی کنید و صفحه را رفرش کنید.');
-});
+alert('⚠️ خطا در بارگذاری داده‌ها از سرور. لطفاً اتصال اینترنت خود را بررسی کرده و صفحه را رفرش کنید.');
+const loadingEl=$('#loadingScreen');
+if(loadingEl)loadingEl.style.display='none';
 }
-
-renderLogin(){
-const container=$('#appContainer');
-container.innerHTML=`<div class="login-page">
-<div style="text-align:center;margin-bottom:25px">
-<i class="fas fa-university" style="font-size:4rem;color:#667eea;margin-bottom:15px"></i>
-<h1 style="color:var(--text-primary);margin-bottom:10px;font-size:1.8rem">سیستم حسابداری صندوق اتحاد</h1>
-<p style="color:var(--text-muted)">ورود با رمز اختصاصی</p>
-</div>
-<div style="display:flex;justify-content:center;margin-bottom:20px">${renderThemeSwitcher()}</div>
-<div class="keyboard-hint">
-<i class="fas fa-keyboard"></i>
-<span>لطفاً هنگام وارد کردن نام کاربری و رمز عبور، صفحه کلید خود را روی حالت <strong>انگلیسی (EN)</strong> قرار دهید</span>
-</div>
-<div class="input-group">
-<label><i class="fas fa-user"></i> نام کاربری</label>
-<input type="text" id="loginUsername" placeholder="admin یا شماره حساب" autocomplete="username">
-</div>
-<div class="input-group">
-<label><i class="fas fa-lock"></i> رمز عبور</label>
-<input type="password" id="loginPassword" placeholder="رمز عبور" autocomplete="current-password">
-<button type="button" class="toggle-password" id="toggleLoginPwd" title="نمایش/مخفی کردن رمز">
-<i class="fas fa-eye" id="loginPwdIcon"></i>
-</button>
-</div>
-<button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button>
-<div id="loginError" class="error-msg"></div>
-<div class="login-help">
-<i class="fas fa-info-circle"></i>
-<p>برای تغییر یا فراموشی رمز عبور و نام کاربری با حسابداری تماس بگیرید${SUPPORT_INFO.phone?`: <strong style="direction:ltr;display:inline-block">${U.esc(SUPPORT_INFO.phone)}</strong>`:''}</p>
-</div>
-</div>`;
-$('#loginBtn').onclick=()=>this.doLogin();
-$('#loginPassword').onkeydown=e=>{if(e.key==='Enter')this.doLogin();};
-$('#loginUsername').onkeydown=e=>{if(e.key==='Enter')this.doLogin();};
-$('#toggleLoginPwd').onclick=()=>{
-const input=$('#loginPassword');
-const icon=$('#loginPwdIcon');
-if(input.type==='password'){input.type='text';icon.className='fas fa-eye-slash';}
-else{input.type='password';icon.className='fas fa-eye';}
-};
 }
-
-setTheme(theme){ThemeManager.apply(theme);if(this.currentUser)this.render();}
-
+setTheme(theme){ThemeManager.apply(theme);this.render();}
 render(){
 const container=$('#appContainer');
 if(!this.currentUser){
@@ -1245,26 +1208,124 @@ this.renderAdminLayout(container);
 this.renderMemberLayout(container);
 }
 }
-
+renderLogin(){
+const container=$('#appContainer');
+container.innerHTML=`<div class="login-page">
+<div style="text-align:center;margin-bottom:30px">
+<h1 style="color:var(--text-primary);margin-bottom:10px;font-size:1.8rem">سیستم حسابداری صندوق اتحاد</h1>
+<p style="color:var(--text-muted)">ورود با رمز اختصاصی</p>
+</div>
+<div class="login-combined-hint">
+<div class="hint-title"><i class="fas fa-exclamation-triangle"></i> نکات مهم قبل از ورود</div>
+<div class="hint-item"><i class="fas fa-keyboard"></i><span>لطفاً هنگام وارد کردن نام کاربری و رمز عبور، صفحه کلید خود را روی حالت <strong>انگلیسی (EN)</strong> قرار دهید</span></div>
+<div class="hint-item hint-contact"><i class="fas fa-phone"></i><span>برای تغییر یا فراموشی رمز عبور و نام کاربری با حسابداری تماس بگیرید${SUPPORT_INFO.phone?`: <strong style="direction:ltr;display:inline-block">${U.esc(SUPPORT_INFO.phone)}</strong>`:''}</span></div>
+<div class="hint-item"><i class="fas fa-wifi"></i><span>چنانچه سرعت اینترنت شما کند باشد و یا سایت شلوغ باشد، ورود کمی طولانی خواهد شد. لطفاً صبور باشید</span></div>
+</div>
+<div class="input-group">
+<label><i class="fas fa-user"></i> نام کاربری</label>
+<input type="text" id="loginUsername" placeholder="admin یا شماره حساب">
+</div>
+<div class="input-group">
+<label><i class="fas fa-lock"></i> رمز عبور</label>
+<input type="password" id="loginPassword" placeholder="رمز عبور">
+<button type="button" class="toggle-password" id="toggleLoginPwd" title="نمایش/مخفی کردن رمز">
+<i class="fas fa-eye" id="loginPwdIcon"></i>
+</button>
+</div>
+<button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button>
+<div id="loginError" class="error-msg"></div>
+</div>`;
+$('#loginBtn').onclick=()=>this.doLogin();
+$('#loginPassword').onkeydown=e=>{if(e.key==='Enter')this.doLogin();};
+$('#loginUsername').onkeydown=e=>{if(e.key==='Enter')this.doLogin();};
+$('#toggleLoginPwd').onclick=()=>{
+const input=$('#loginPassword');
+const icon=$('#loginPwdIcon');
+if(input.type==='password'){input.type='text';icon.className='fas fa-eye-slash';}
+else{input.type='password';icon.className='fas fa-eye';}
+};
+}
+doLogin(){
+if(!this.dataReady){
+const waitingOverlay=document.createElement('div');
+waitingOverlay.className='login-waiting-overlay';
+waitingOverlay.id='loginWaitingOverlay';
+waitingOverlay.innerHTML=`<div class="login-waiting-box">
+<div class="login-waiting-spinner"></div>
+<p class="login-waiting-text">اطلاعات در حال بارگذاری...</p>
+<p class="login-waiting-subtext">لطفاً صبور باشید<br>در حال دریافت داده‌ها از سرور</p>
+</div>`;
+document.body.appendChild(waitingOverlay);
+const checkReady=setInterval(()=>{
+if(this.dataReady){
+clearInterval(checkReady);
+const overlay=$('#loginWaitingOverlay');
+if(overlay){
+overlay.style.opacity='0';
+overlay.style.transition='opacity 0.3s';
+setTimeout(()=>{
+document.body.removeChild(overlay);
+this.doLogin();
+},300);
+}
+}
+},500);
+return;
+}
+const un=$('#loginUsername').value.trim();
+const pw=$('#loginPassword').value.trim();
+const user=this.dm.users.find(u=>u.username===un&&u.password===pw);
+if(user){
+this.currentUser=user;
+const loginOverlay=document.createElement('div');
+loginOverlay.className='login-waiting-overlay';
+loginOverlay.id='loginSuccessOverlay';
+loginOverlay.innerHTML=`<div class="login-waiting-box">
+<div class="login-waiting-spinner"></div>
+<p class="login-waiting-text">ورود موفقیت‌آمیز</p>
+<p class="login-waiting-subtext">در حال آماده‌سازی پنل کاربری...</p>
+</div>`;
+document.body.appendChild(loginOverlay);
+setTimeout(()=>{
+if(user.memberId){
+localStorage.setItem('sandogh_lastLogin_'+user.memberId,U.now());
+const currentCount=parseInt(localStorage.getItem('sandogh_loginCount_'+user.memberId)||'0');
+localStorage.setItem('sandogh_loginCount_'+user.memberId,String(currentCount+1));
+}
+this.render();
+const successOverlay=$('#loginSuccessOverlay');
+if(successOverlay)document.body.removeChild(successOverlay);
+if(user.memberId&&user.role!=='admin'){
+const scoreData=this.memberScores[user.memberId];
+if(scoreData){
+setTimeout(()=>{renderWelcomeTierModal(scoreData);},300);
+}
+}
+},800);
+}else{
+$('#loginError').textContent='❌ نام کاربری یا رمز عبور اشتباه است (کیبورد انگلیسی باشد)';
+const errorBox=$('#loginError');
+errorBox.style.animation='none';
+errorBox.offsetHeight;
+errorBox.style.animation='shake 0.5s';
+}
+}
 renderAdminLayout(container){
 const greeting=U.getGreeting();
 container.innerHTML=`<div class="app-page">
 <div class="header-bar">
-<div class="datetime-display">
-${renderDateCombinedBox()}
-<div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div>
-</div>
+<div class="datetime-display">${renderDateCombinedBox()}</div>
 ${renderThemeSwitcher()}
 </div>
 <div class="welcome-with-greeting">
-<span class="greeting-text"><i class="fas fa-hand-wave"></i> ${greeting}</span>
 <span class="welcome-text"><i class="fas fa-star"></i> خوش آمدید مدیر محترم <i class="fas fa-star"></i></span>
+<span class="greeting-text"><i class="fas fa-hand-wave"></i> ${greeting}</span>
 ${renderSystemMessageBox()}
 </div>
-<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> منوی اصلی</button>
+<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> منو</button>
+<div class="menu-overlay" id="menuOverlay"></div>
 <div class="app-layout">
-<div class="vertical-menu ${this.mobileMenuOpen?'':'collapsed'}" id="verticalMenu">
-<div style="font-size:1.3rem;font-weight:700;color:var(--welcome-text);padding-bottom:20px;border-bottom:3px solid var(--border-color);text-align:center"><i class="fas fa-university"></i> صندوق اتحاد</div>
+<div class="vertical-menu collapsed" id="verticalMenu">
 <div class="menu-item ${this.tab==='profile'?'active':''}" data-tab="profile"><i class="fas fa-users-cog"></i><span>پروفایل و مدیریت اعضا</span><span class="admin-badge">مدیر</span></div>
 <div class="menu-item ${this.tab==='dashboard'?'active':''}" data-tab="dashboard"><i class="fas fa-chart-line"></i><span>صورتحساب</span><span class="admin-badge">مدیر</span></div>
 <div class="menu-item ${this.tab==='shop'?'active':''}" data-tab="shop"><i class="fas fa-store"></i><span>فروشگاه</span><span class="admin-badge">مدیر</span></div>
@@ -1289,7 +1350,6 @@ ${renderSystemMessageBox()}
 </div>`;
 this.bindMenu();this.startClock();this.switchTab(this.tab);
 }
-
 renderMemberLayout(container){
 const member=this.dm.members.find(m=>m.id===this.currentUser.memberId);
 const greeting=U.getGreeting();
@@ -1307,10 +1367,7 @@ ${renderGaugeChart(scoreData.score,'small')}
 </div>`:'';
 container.innerHTML=`<div class="app-page">
 <div class="header-bar">
-<div class="datetime-display">
-${renderDateCombinedBox()}
-<div class="clock-card"><i class="fas fa-clock"></i><div><div class="dt-label" style="color:rgba(255,255,255,.8)">ساعت</div><div class="clock-time" id="clockDisplay">--:--:--</div></div></div>
-</div>
+<div class="datetime-display">${renderDateCombinedBox()}</div>
 <div class="header-actions">
 ${scoreBoxHtml}
 <div class="coin-badge"><i class="fas fa-coins"></i><span>${this.ddm.getTotalCoins(this.currentUser.memberId)}</span></div>
@@ -1318,14 +1375,14 @@ ${renderThemeSwitcher()}
 </div>
 </div>
 <div class="welcome-with-greeting">
-<span class="greeting-text"><i class="fas fa-hand-wave"></i> ${greeting}</span>
 <span class="welcome-text"><i class="fas fa-star"></i> خوش آمدید ${member?member.firstName:''} <i class="fas fa-star"></i></span>
+<span class="greeting-text"><i class="fas fa-hand-wave"></i> ${greeting}</span>
 ${renderSystemMessageBox()}
 </div>
-<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> منوی اصلی</button>
+<button class="mobile-menu-toggle" id="mobileMenuToggle"><i class="fas fa-bars"></i> منو</button>
+<div class="menu-overlay" id="menuOverlay"></div>
 <div class="app-layout">
-<div class="vertical-menu ${this.mobileMenuOpen?'':'collapsed'}" id="verticalMenu">
-<div style="font-size:1.3rem;font-weight:700;color:var(--welcome-text);padding-bottom:20px;border-bottom:3px solid var(--border-color);text-align:center"><i class="fas fa-university"></i> صندوق اتحاد</div>
+<div class="vertical-menu collapsed" id="verticalMenu">
 <div class="menu-item ${this.tab==='profile'?'active':''}" data-tab="profile"><i class="fas fa-user"></i> پروفایل</div>
 <div class="menu-item ${this.tab==='dashboard'?'active':''}" data-tab="dashboard"><i class="fas fa-chart-line"></i> صورتحساب</div>
 <div class="menu-item ${this.tab==='shop'?'active':''}" data-tab="shop"><i class="fas fa-store"></i> فروشگاه</div>
@@ -1356,7 +1413,6 @@ ${isCouncil?`
 </div>`;
 this.bindMenu();this.startClock();this.switchTab(this.tab);
 }
-
 bindMenu(){
 $$('.menu-item[data-tab]').forEach(el=>{
 el.onclick=()=>{
@@ -1368,28 +1424,45 @@ this.switchTab(this.tab);
 if(window.innerWidth<=768){
 this.mobileMenuOpen=false;
 const menu=$('#verticalMenu');
-if(menu)menu.classList.add('collapsed');
+const overlay=$('#menuOverlay');
 const toggleBtn=$('#mobileMenuToggle');
-if(toggleBtn)toggleBtn.innerHTML='<i class="fas fa-bars"></i> منوی اصلی';
+if(menu)menu.classList.add('collapsed');
+if(overlay)overlay.classList.remove('active');
+if(toggleBtn)toggleBtn.innerHTML='<i class="fas fa-bars"></i> منو';
 }
 };
 });
 $('#logoutBtn').onclick=()=>this.doLogout();
 const toggleBtn=$('#mobileMenuToggle');
+const overlay=$('#menuOverlay');
 if(toggleBtn){
 toggleBtn.onclick=()=>{
 this.mobileMenuOpen=!this.mobileMenuOpen;
 const menu=$('#verticalMenu');
 if(menu){
-if(this.mobileMenuOpen){menu.classList.remove('collapsed');toggleBtn.innerHTML='<i class="fas fa-times"></i> بستن منو';}
-else{menu.classList.add('collapsed');toggleBtn.innerHTML='<i class="fas fa-bars"></i> منوی اصلی';}
+if(this.mobileMenuOpen){
+menu.classList.remove('collapsed');
+if(overlay)overlay.classList.add('active');
+toggleBtn.innerHTML='<i class="fas fa-times"></i> بستن';
+}else{
+menu.classList.add('collapsed');
+if(overlay)overlay.classList.remove('active');
+toggleBtn.innerHTML='<i class="fas fa-bars"></i> منو';
+}
 }
 };
 }
+if(overlay){
+overlay.onclick=()=>{
+this.mobileMenuOpen=false;
+const menu=$('#verticalMenu');
+if(menu)menu.classList.add('collapsed');
+overlay.classList.remove('active');
+if(toggleBtn)toggleBtn.innerHTML='<i class="fas fa-bars"></i> منو';
+};
 }
-
+}
 switchTab(tab){const c=$('#contentArea');if(!c)return;c.innerHTML='';const fn='render_'+tab;if(typeof this[fn]==='function')this[fn](c);}
-
 render_profile(c){
 if(this.currentUser.role==='admin'){
 const goldCount=this.dm.members.filter(m=>this.memberScores[m.id]?.tier==='gold').length;
@@ -1507,12 +1580,10 @@ ${tierBoxHtml}
 $('#togglePwdBtn',c).onclick=()=>{const display=$('#pwdDisplay',c);const icon=$('#pwdIcon',c);if(display.textContent==='••••••'){display.textContent=ui?(ui.password||'---'):'---';icon.className='fas fa-eye-slash';}else{display.textContent='••••••';icon.className='fas fa-eye';}};
 }
 }
-
 setTierFilter(filter){
 this.tierFilter=filter;
 this.render_profile($('#contentArea'));
 }
-
 render_dashboard(c){
 if(this.currentUser.role==='admin'){
 let h=`<div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب اعضا</div><div class="dashboard-section"><div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap"><label style="font-weight:700;color:var(--text-secondary)">انتخاب عضو:</label><select id="dashboardMemberSelect" style="flex:1;min-width:200px;padding:10px;border:2px solid var(--input-border);border-radius:12px;background:var(--input-bg);color:var(--text-primary)">${this.dm.members.map(mem=>`<option value="${mem.id}">${U.esc(mem.firstName||'')} - ${U.esc(mem.accountNumber||'')}</option>`).join('')}</select><button class="btn-small info-btn" id="loadDashboardBtn"><i class="fas fa-sync"></i> بارگذاری</button></div><div id="dashboardContent"></div></div>`;
@@ -1521,7 +1592,6 @@ $('#loadDashboardBtn',c).onclick=()=>{const mid=parseInt($('#dashboardMemberSele
 if(this.dm.members.length>0)this.renderDashboardForMember(this.dm.members[0].id,$('#dashboardContent',c));
 }else{this.renderDashboardForMember(this.currentUser.memberId,c);}
 }
-
 renderDashboardForMember(mid,c){
 const m=this.dm.members.find(mem=>mem.id===mid);
 if(!m){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">اطلاعات یافت نشد</p></div>';return;}
@@ -1565,7 +1635,6 @@ $('#mecb',c).onclick=function(){$('#mes',c).value='';ft();};
 $('#downloadExcel',c).onclick=function(){const data=uniqueTxns.map(function(t){const row={};TX_COLUMNS.forEach(function(col){row[col]=t[col]||'';});return row;});const ws=XLSX.utils.json_to_sheet(data);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'صورتحساب');XLSX.writeFile(wb,'صورتحساب.xlsx');};
 $('#printPDF',c).onclick=function(){window.print();};
 }
-
 render_shop(c){
 const isAdmin=this.currentUser.role==='admin';
 const member=isAdmin?null:this.dm.members.find(m=>m.id===this.currentUser.memberId);
@@ -1599,7 +1668,6 @@ return`<div class="shop-card ${isOutOfStock?'out-of-stock':''}"><div class="shop
 };
 setTimeout(()=>{$('#shopSearch',c).oninput=renderProducts;$('#shopCategoryFilter',c).onchange=renderProducts;$('#shopSortFilter',c).onchange=renderProducts;renderProducts();},50);
 }
-
 buyProduct(shenaseh){
 const product=SHOP_PRODUCTS.find(p=>p.shenaseh===shenaseh);
 if(!product){alert('❌ محصول یافت نشد');return;}
@@ -1623,7 +1691,6 @@ const purchase={orderCode:orderCode,productId:product.shenaseh,productName:produ
 this.ddm.addShopPurchase(purchase);
 this.showPurchaseReceipt(purchase);
 }
-
 showPurchaseReceipt(purchase){
 const messageText=`🛒 سفارش جدید فروشگاه صندوق اتحاد
 ━━━━━━━━━━━━━━━━━━━━
@@ -1658,7 +1725,6 @@ XLSX.writeFile(wb,`رسید_${purchase.orderCode}.xlsx`);
 };
 },100);
 }
-
 render_shopHistory(c){
 const member=this.dm.members.find(m=>m.id===this.currentUser.memberId);
 if(!member){c.innerHTML='<div style="text-align:center;padding:40px">خطا</div>';return;}
@@ -1675,7 +1741,6 @@ h+=`<div class="shop-history-item ${statusClass}"><div class="history-info"><div
 h+=`</div>`;
 c.innerHTML=h;
 }
-
 render_shopAdmin(c){
 if(this.currentUser.role!=='admin'&&this.currentUser.role!=='council'){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر و اعضای شورا</p></div>';return;}
 const allPurchases=this.ddm.getAllPurchases();
@@ -1713,7 +1778,6 @@ XLSX.writeFile(wb,'سفارشات_فروشگاه_'+new Date().toISOString().slic
 renderOrders();
 },50);
 }
-
 toggleDelivery(orderCode){
 if(this.currentUser.role!=='admin'){alert('❌ فقط مدیر می‌تواند وضعیت تحویل را تغییر دهد');return;}
 const purchase=this.ddm.shopPurchases.find(p=>p.orderCode===orderCode);
@@ -1723,7 +1787,6 @@ this.ddm.save('shopPurchases',this.ddm.shopPurchases);
 alert(purchase.delivered?'✅ تحویل ثبت شد':'↩️ تحویل بازگردانی شد');
 this.render_shopAdmin($('#contentArea'));
 }
-
 render_calendar(c){
 const isAdmin=this.currentUser.role==='admin';
 const isCouncil=this.currentUser.role==='council';
@@ -1739,7 +1802,6 @@ const occasions=[{date:'01/01',title:'نوروز',desc:'سال نو مبارک'}
 h+=`<div class="dashboard-section"><h3><i class="fas fa-star" style="color:#ed8936"></i> مناسبت‌های ماه ${jalali.month}</h3><div class="calendar-grid">${occasions.filter(o=>parseInt(o.date.split('/')[0])===jalali.month).map(o=>`<div class="calendar-event occasion"><div class="event-date"><i class="fas fa-star"></i> ${o.date}/${jalali.year}</div><div class="event-title">${o.title}</div>${o.desc?`<div class="event-desc">${o.desc}</div>`:''}</div>`).join('')||'<p style="color:var(--text-light);padding:15px">مناسبتی در این ماه ثبت نشده است</p>'}</div></div>`;
 c.innerHTML=h;
 }
-
 render_statistics(c){
 const isAdmin=this.currentUser.role==='admin';
 const isCouncil=this.currentUser.role==='council';
@@ -1773,7 +1835,6 @@ h+=`<div class="dashboard-section"><h3><i class="fas fa-coins" style="color:#ecc
 }
 c.innerHTML=h;
 }
-
 render_coins(c){
 const isAdmin=this.currentUser.role==='admin';
 if(isAdmin){
@@ -1846,7 +1907,6 @@ h+=`</div>`;
 c.innerHTML=h;
 }
 }
-
 showMemberCoinHistory(memberId){
 const member=this.dm.members.find(m=>String(m.id)===String(memberId));
 if(!member)return;
@@ -1871,13 +1931,11 @@ h+=`</div>`;
 section.innerHTML=h;
 section.scrollIntoView({behavior:'smooth'});
 }
-
 render_coinRules(c){
 const member=this.currentUser.role==='admin'?null:this.dm.members.find(m=>m.id===this.currentUser.memberId);
 const isActive=member?member.active!==false:true;
 c.innerHTML=`<div class="info-box"><i class="fas fa-list-check"></i> قوانین کسب سکه</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین ماهانه:</h3>${this.renderRuleItem('پرداخت به موقع قسط',2,member?(U.parseNum(member.loanBalance)!==0&&U.parseNum(member.paidInstallments)>0):null)}${this.renderRuleItem('بدون قسط معوقه',3,member?(U.parseNum(member.overdueInstallments)===0&&U.parseNum(member.loanBalance)!==0):null)}${this.renderRuleItem('موجودی بالاتر از مقرری',2,member?(U.parseNum(member.balance)>U.parseNum(member.monthlySalary)):null)}${this.renderRuleItem('پس‌انداز بالا (2 سکه به ازای هر 3,000,000 ریال)',2,member?(U.parseNum(member.savingsStatus)-U.parseNum(member.currentMonthBalance)>3000000):null)}</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین سالانه:</h3>${this.renderRuleItem('تولد مبارک (5 سکه)',5,member?(member.active&&member.birthDateShamsi&&this.isBirthdayToday(member.birthDateShamsi)):null)}${this.renderRuleItem('هدیه سالانه حساب فعال (5 سکه)',5,member?(isActive&&member.openDate&&this.isOpeningDayToday(member.openDate)):null)}${!isActive?`<div class="coin-rule-item locked"><div style="display:flex;align-items:center;gap:10px"><i class="fas fa-lock" style="color:#a0aec0"></i><span>محرومیت - حساب غیرفعال (0 سکه)</span></div><span style="color:#a0aec0">0</span></div>`:''}</div><div class="coin-rules-box"><h3 style="margin-bottom:15px;color:var(--text-primary)">قوانین هر واریزی:</h3>${this.renderRuleItem('پیامک واریز فعال',3,null)}${this.renderRuleItem('بدون پیامک اخطار',2,null)}</div>`;
 }
-
 renderRuleItem(name,coins,achieved){
 let cls='coin-rule-item';let icon='';
 if(achieved===true){cls+=' achieved';icon='<i class="fas fa-check-circle" style="color:#48bb78"></i>';}
@@ -1885,10 +1943,8 @@ else if(achieved===false){cls+=' not-achieved';icon='<i class="fas fa-times-circ
 else{icon='<i class="fas fa-info-circle" style="color:#4299e1"></i>';}
 return`<div class="${cls}"><div style="display:flex;align-items:center;gap:10px">${icon}<span style="color:var(--text-primary)">${name}</span></div><span class="coin-amount-badge">+${coins}</span></div>`;
 }
-
 isBirthdayToday(birthDate){const jalali=U.getJalaliMonth();const parts=birthDate.split('/');if(parts.length!==3)return false;return parseInt(parts[1])===jalali.month&&parseInt(parts[2])===jalali.day;}
 isOpeningDayToday(openDate){const jalali=U.getJalaliMonth();const parts=openDate.split('/');if(parts.length!==3)return false;return parseInt(parts[1])===jalali.month&&parseInt(parts[2])===jalali.day;}
-
 render_smsStatus(c){
 const isAdmin=this.currentUser.role==='admin';
 if(isAdmin){
@@ -1904,7 +1960,6 @@ c.innerHTML=h;
 this.renderSmsForMember(member.id,$('#smsContent',c));
 }
 }
-
 renderSmsForMember(mid,container){
 const member=this.dm.members.find(m=>m.id===mid);
 if(!member){container.innerHTML='<p>عضو یافت نشد</p>';return;}
@@ -1940,10 +1995,8 @@ h+=`</div></div>`;
 h+=`<div class="dashboard-section" style="background:var(--info-bg);border-right-color:#ecc94b"><h3><i class="fas fa-info-circle" style="color:#ecc94b"></i> راهنما</h3><p style="color:var(--text-primary);line-height:2;font-size:1rem"><i class="fas fa-lightbulb" style="color:#ecc94b;margin-left:8px"></i>در صورتیکه می‌خواهید ارسال پیامک‌های مختلف را فعال یا غیرفعال کنید، با حسابداری صندوق تماس بگیرید.</p>${SUPPORT_INFO.phone?`<div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap"><a href="tel:${U.esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="text-decoration:none"><i class="fas fa-phone"></i> تماس با حسابداری: ${U.esc(SUPPORT_INFO.phone)}</a>${SUPPORT_INFO.itaaAddress?`<a href="https://eitaa.com/${SUPPORT_INFO.itaaAddress.replace('@','')}" target="_blank" class="btn-small info-btn" style="text-decoration:none"><i class="fas fa-comment-dots"></i> پیام در ایتا</a>`:''}</div>`:''}</div>`;
 container.innerHTML=h;
 }
-
 render_announcements(c){c.innerHTML=`<div class="coming-soon-box"><i class="fas fa-bullhorn"></i><h2>اطلاعیه‌ها و نظرسنجی</h2><p>این بخش به زودی راه اندازی می‌گردد</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-muted)"><i class="fas fa-clock"></i> لطفاً شکیبا باشید</p></div>`;}
 render_sendMessage(c){c.innerHTML=`<div class="coming-soon-box"><i class="fas fa-paper-plane"></i><h2>ارسال پیام</h2><p>این بخش به زودی راه اندازی می‌گردد</p><p style="margin-top:15px;font-size:.9rem;color:var(--text-muted)"><i class="fas fa-clock"></i> لطفاً شکیبا باشید</p></div>`;}
-
 render_support(c){
 let h=`<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی صندوق اتحاد</div><div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات تماس با صندوق</h3><p style="color:var(--text-primary);line-height:1.8;margin-bottom:20px">برای هرگونه سوال، مشکل یا راهنمایی می‌توانید از طریق راه‌های زیر با ما در ارتباط باشید.</p></div>`;
 const hasAnyInfo=SUPPORT_INFO.phone||SUPPORT_INFO.accountNumber||SUPPORT_INFO.cardNumber||SUPPORT_INFO.shebaNumber||SUPPORT_INFO.itaaAddress||SUPPORT_INFO.websiteAddress;
@@ -1971,21 +2024,18 @@ document.body.removeChild(textarea);
 });
 },100);
 }
-
 render_backup(c){
 const isAdmin=this.currentUser.role==='admin';
 const isCouncil=this.currentUser.role==='council';
 if(!isAdmin&&!isCouncil){c.innerHTML='<div style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e"></i><p style="margin-top:15px">دسترسی فقط برای مدیر و اعضای شورا</p></div>';return;}
 c.innerHTML=`<div class="info-box"><i class="fas fa-download"></i> پشتیبان‌گیری سکه‌ها</div><div class="dashboard-section"><h3>دانلود فایل اکسل سکه‌ها</h3><p>فایل اکسل شامل سکه‌ها، تاریخچه و خریدهای فروشگاه را دانلود کنید.</p><button class="btn-small success-btn" onclick="window.app.downloadBackup()"><i class="fas fa-download"></i> دانلود فایل اکسل</button></div><div class="dashboard-section"><h3>آپلود فایل پشتیبان</h3><p>فایل اکسل پشتیبان را آپلود کنید تا سکه‌ها بازیابی شوند.</p><input type="file" id="backupFile" accept=".xlsx,.xls" style="margin-bottom:10px"><button class="btn-small info-btn" onclick="window.app.uploadBackup()"><i class="fas fa-upload"></i> آپلود فایل پشتیبان</button></div>`;
 }
-
 render_help(c){
 const isAdmin=this.currentUser.role==='admin';
 const isCouncil=this.currentUser.role==='council';
 let h=`<div class="info-box"><i class="fas fa-question-circle"></i> راهنمای استفاده از سیستم</div><div class="help-section"><h4><i class="fas fa-info-circle"></i> درباره سیستم</h4><p>سیستم حسابداری صندوق اتحاد یک برنامه تحت وب برای مدیریت حساب‌های اعضا، وام‌ها، اقساط، سکه‌های تشویقی و فروشگاه است.</p></div><div class="help-section"><h4><i class="fas fa-sign-in-alt"></i> ورود به سیستم</h4>${isAdmin?`<ul><li><strong>مدیر:</strong> نام کاربری: admin | رمز عبور: admin123</li><li><strong>اعضا:</strong> با شماره حساب خود وارد شوند (رمز عبور = شماره حساب)</li></ul>`:`<ul><li><strong>اعضا:</strong> با شماره حساب خود وارد شوید</li><li><strong>رمز عبور:</strong> رمز عبور شما همان شماره حساب شماست (در صورت تغییر، از رمز جدید استفاده کنید)</li><li>در صورت فراموشی رمز، با حسابداری صندوق تماس بگیرید</li></ul>`}</div><div class="help-section"><h4><i class="fas fa-store"></i> فروشگاه</h4><ul><li>محصولات فروشگاه با سکه خریداری می‌شوند</li><li>پس از خرید، یک رسید و پیام آماده برای ارسال به مدیر نمایش داده می‌شود</li><li>پیام را کپی کرده و در ایتا برای مدیر صندوق ارسال کنید</li><li>پس از تحویل محصول توسط مدیر، وضعیت سفارش به "تحویل شده" تغییر می‌کند</li></ul></div><div class="help-section"><h4><i class="fas fa-coins"></i> قوانین سکه</h4><ul><li><strong>پرداخت به موقع قسط:</strong> 2 سکه در ماه</li><li><strong>بدون قسط معوقه:</strong> 3 سکه در ماه</li><li><strong>موجودی بالاتر از مقرری:</strong> 2 سکه در ماه</li><li><strong>پس‌انداز بالا:</strong> 2 سکه به ازای هر 3,000,000 ریال اضافه</li><li><strong>تولد مبارک:</strong> 5 سکه در سال (فقط حساب فعال)</li><li><strong>هدیه سالانه حساب فعال:</strong> 5 سکه در سالروز افتتاح (فقط حساب فعال)</li><li><strong>حساب غیرفعال:</strong> محروم از دریافت سکه سالانه</li><li><strong>پیامک واریز فعال:</strong> 3 سکه به ازای هر واریزی</li><li><strong>بدون پیامک اخطار:</strong> 2 سکه به ازای هر واریزی</li></ul></div><div class="help-section"><h4><i class="fas fa-trophy"></i> دسته‌بندی اعضا</h4><ul><li><strong>⭐ عضو طلایی:</strong> امتیاز ۸۰ تا ۱۰۰ - وضعیت عالی</li><li><strong>🥈 عضو نقره‌ای:</strong> امتیاز ۵۰ تا ۷۹ - وضعیت خوب</li><li><strong>⚫ عضو سیاه:</strong> امتیاز ۰ تا ۴۹ - نیاز به بهبود</li><li>امتیاز بر اساس: پرداخت اقساط (۴۰٪)، پس‌انداز (۲۵٪)، سکه‌ها (۲۰٪)، فعالیت (۱۵٪)</li></ul></div><div class="help-section"><h4><i class="fas fa-palette"></i> تم‌های برنامه</h4><ul><li><strong>روز:</strong> تم روشن با رنگ‌های آبی و بنفش</li><li><strong>شب:</strong> تم تاریک با رنگ‌های طلایی، زرد و نارنجی</li><li><strong>خودکار:</strong> بر اساس تنظیمات دستگاه شما تغییر می‌کند (پیش‌فرض)</li></ul></div><div class="help-section"><h4><i class="fas fa-chart-line"></i> بخش‌های اصلی</h4><ul><li><strong>پروفایل و مدیریت اعضا:</strong> مشاهده و ویرایش اطلاعات اعضا (مدیر) / پروفایل شخصی (عضو)</li><li><strong>صورتحساب:</strong> مشاهده تراکنش‌ها، وام، اقساط پرداخت شده</li><li><strong>فروشگاه:</strong> خرید محصولات با سکه</li><li><strong>خریدهای من:</strong> مشاهده تاریخچه خریدها (اعضا)</li><li><strong>سکه‌ها و تاریخچه:</strong> مشاهده سکه‌های خود و تاریخچه کامل</li><li><strong>قوانین سکه:</strong> مشاهده قوانین و وضعیت فعلی</li><li><strong>پشتیبانی:</strong> اطلاعات تماس با صندوق</li>${isAdmin?`<li><strong>سفارشات فروشگاه:</strong> مدیریت تحویل سفارشات (مدیر)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق</li><li><strong>وضعیت سامانه پیامکی:</strong> مشاهده وضعیت سامانه‌های پیامکی اعضا</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها</li>`:isCouncil?`<li><strong>سفارشات فروشگاه:</strong> مشاهده سفارشات (شورا)</li><li><strong>تقویم رویدادها:</strong> تولدها، سررسید اقساط، مناسبت‌ها (شورا)</li><li><strong>گزارش‌های آماری:</strong> آمار کلی صندوق (شورا)</li><li><strong>پشتیبان‌گیری:</strong> دانلود/آپلود فایل اکسل سکه‌ها (شورا)</li>`:''}</ul></div><div class="help-section"><h4><i class="fas fa-shield-alt"></i> نکات امنیتی</h4><ul><li>رمز عبور خود را در اختیار دیگران قرار ندهید</li><li>پس از اتمام کار، از سیستم خارج شوید</li><li>اطلاعات حساب شما محرمانه است</li><li>از مرورگرهای به‌روز استفاده کنید</li></ul></div><div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>در صورت بروز مشکل یا سوال، از بخش <strong>پشتیبانی</strong> اطلاعات تماس با صندوق را مشاهده کنید.</p></div>`;
 c.innerHTML=h;
 }
-
 search(inputId,tableSelector,container){
 container=container||document;
 const input=$(inputId,container);
@@ -2004,62 +2054,23 @@ input.oninput=filter;
 if(clearBtn)clearBtn.onclick=function(){input.value='';filter();input.focus();};
 setTimeout(filter,50);
 }
-
 startClock(){
 if(this.ci)clearInterval(this.ci);
-const tick=function(){
+const tick=()=>{
 const n=new Date();
 const h=String(n.getHours()).padStart(2,'0');
 const m=String(n.getMinutes()).padStart(2,'0');
 const s=String(n.getSeconds()).padStart(2,'0');
 const cl=$('#clockDisplay');
 if(cl)cl.innerHTML=`${h}:${m}<span style="font-size:1rem;opacity:.8">:${s}</span>`;
+const inlineClock=$('#inlineClock');
+if(inlineClock)inlineClock.textContent=`${h}:${m}:${s}`;
+updateAnalogClock();
 };
 tick();
 this.ci=setInterval(tick,1000);
 }
-
-async doLogin(){
-// ⚡ اگر داده‌ها آماده نیستند، منتظر بمانیم
-if(!this.dataReady){
-const btn=$('#loginBtn');
-const originalHtml=btn.innerHTML;
-btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> در حال آماده‌سازی...';
-btn.disabled=true;
-try{
-await dataPromise;
-}catch(e){
-btn.innerHTML=originalHtml;
-btn.disabled=false;
-$('#loginError').textContent='❌ خطا در بارگذاری داده‌ها. لطفاً صفحه را رفرش کنید.';
-return;
-}
-btn.innerHTML=originalHtml;
-btn.disabled=false;
-}
-
-const un=$('#loginUsername').value.trim();
-const pw=$('#loginPassword').value.trim();
-const user=this.dm.users.find(u=>u.username===un&&u.password===pw);
-if(user){
-this.currentUser=user;
-if(user.memberId){
-localStorage.setItem('sandogh_lastLogin_'+user.memberId,U.now());
-const currentCount=parseInt(localStorage.getItem('sandogh_loginCount_'+user.memberId)||'0');
-localStorage.setItem('sandogh_loginCount_'+user.memberId,String(currentCount+1));
-}
-this.render();
-if(user.memberId&&user.role!=='admin'){
-const scoreData=this.memberScores[user.memberId];
-if(scoreData){
-setTimeout(()=>{renderWelcomeTierModal(scoreData);},300);
-}
-}
-}else{$('#loginError').textContent='نام کاربری یا رمز عبور اشتباه است';}
-}
-
 doLogout(){this.currentUser=null;this.render();}
-
 saveProfile(mid){
 const m=this.dm.members.find(mem=>mem.id===mid);
 if(!m)return;
@@ -2078,7 +2089,6 @@ Object.assign(m,data);
 alert('✅ اطلاعات ذخیره شد');
 this.render();
 }
-
 downloadBackup(){this.ddm.exportToExcel(this.dm.members);alert('✅ فایل پشتیبان دانلود شد');}
 uploadBackup(){
 const file=$('#backupFile').files[0];
@@ -2089,7 +2099,6 @@ else{alert('❌ خطا در آپلود فایل');}
 });
 }
 }
-
 ThemeManager.init();
 window.app=new App();
 })();
