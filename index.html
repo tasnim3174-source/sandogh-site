@@ -957,7 +957,7 @@ if(!rows.length)return{members:[],transactions:[]};
 const headers=Object.keys(rows[0]);
 if(rows.length>0){
 const firstRow=rows[0];
-const supportPhoneCol=U.findCol(['تلفن صندوق','telepen','telefon','phone sandogh'],headers);
+const supportPhoneCol=U.findCol(['telepon'],headers);
 const supportAccountCol=U.findCol(['shomareh hasab','شماره حساب صندوق'],headers);
 const supportCardCol=U.findCol(['shomareh kart','شماره کارت صندوق'],headers);
 const supportShebaCol=U.findCol(['adress','شماره شبا صندوق'],headers);
@@ -2338,6 +2338,16 @@ h+=`<div class="dashboard-section" style="border-right-color:#ecc94b"><h3><i cla
 <div class="stat-card" style="border-color:#4A5568"><div class="stat-icon" style="color:#4A5568">⚫</div><div class="stat-value" style="color:#2D3748">${blackCount}</div><div class="stat-label">سیاه</div></div>
 </div></div>`;
 h+=`<div class="dashboard-section"><h3><i class="fas fa-chart-bar"></i> نمودار</h3><div class="bar-chart"><div class="bar-item"><div class="bar-value">${activeMembers}</div><div class="bar" style="height:${Math.max((activeMembers/totalMembers)*100,5)}%;background:linear-gradient(180deg,#48bb78,#38a169)"></div><div class="bar-label">فعال</div></div><div class="bar-item"><div class="bar-value">${inactiveMembers}</div><div class="bar" style="height:${Math.max((inactiveMembers/totalMembers)*100,5)}%;background:linear-gradient(180deg,#e53e3e,#c53030)"></div><div class="bar-label">غیرفعال</div></div><div class="bar-item"><div class="bar-value">${totalOverdue}</div><div class="bar" style="height:${Math.max((totalOverdue/totalMembers)*100,5)}%;background:linear-gradient(180deg,#ed8936,#dd6b20)"></div><div class="bar-label">معوقه</div></div></div></div>`;
+
+// اضافه کردن تولدها و سررسید اقساط برای اعضای شورا
+const jalali=U.getJalaliMonth();
+const birthdays=this.dm.members.filter(m=>{if(!m.birthDateShamsi)return false;const parts=m.birthDateShamsi.split('/');if(parts.length!==3)return false;return parseInt(parts[1])===jalali.month;});
+const installmentDue=this.dm.members.filter(m=>m.overdueInstallments>0||(m.loanBalance>0&&m.overdueInstallments<0));
+
+h+=`<div class="dashboard-section"><h3><i class="fas fa-birthday-cake" style="color:#ecc94b"></i> تولدهای این ماه (${birthdays.length} نفر)</h3>${birthdays.length===0?'<p style="color:var(--text-light);padding:15px">تولدی ثبت نشده</p>':`<div class="calendar-grid">${birthdays.map(m=>`<div class="calendar-event birthday"><div class="event-date"><i class="fas fa-calendar-day"></i> ${U.fmtDate(m.birthDateShamsi)}</div><div class="event-title">${U.esc(m.firstName)} ${U.esc(m.lastName)}</div><div class="event-desc">حساب: ${U.esc(m.accountNumber)}</div></div>`).join('')}</div>`}</div>`;
+
+h+=`<div class="dashboard-section"><h3><i class="fas fa-hand-holding-usd" style="color:#48bb78"></i> سررسید اقساط (${installmentDue.length} نفر)</h3>${installmentDue.length===0?'<p style="color:var(--text-light);padding:15px">معوقه‌ای نیست</p>':`<div class="calendar-grid">${installmentDue.map(m=>`<div class="calendar-event installment"><div class="event-date"><i class="fas fa-exclamation-circle"></i> معوقه: ${m.overdueInstallments}</div><div class="event-title">${U.esc(m.firstName)} ${U.esc(m.lastName)}</div><div class="event-desc">حساب: ${U.esc(m.accountNumber)} | مانده: ${U.fmtNum(m.loanBalance)}</div></div>`).join('')}</div>`}</div>`;
+
 c.innerHTML=h;
 }
 render_coins(c){
@@ -2457,6 +2467,24 @@ const statusBg=isActive?'rgba(72,187,120,.1)':'rgba(229,62,62,.1)';
 h+=`<div class="support-card" style="border-color:${statusColor}"><div style="width:50px;height:50px;border-radius:12px;background:${service.color};display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff"><i class="fas fa-${service.icon}"></i></div><div class="support-content"><div style="font-weight:700;margin-bottom:5px">${service.name}</div><div style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:${statusBg};border-radius:12px;font-weight:700;color:${statusColor}"><i class="fas fa-${statusIcon}"></i>${statusText}</div></div></div>`;
 });
 h+=`</div></div>`;
+
+// اضافه کردن پیام تماس با حسابداری
+h+=`<div class="dashboard-section" style="background:var(--info-bg);border-right-color:#ecc94b;margin-top:20px">
+<h3><i class="fas fa-info-circle" style="color:#ecc94b"></i> راهنما</h3>
+<p style="color:var(--text-primary);line-height:2;font-size:1rem">
+<i class="fas fa-lightbulb" style="color:#ecc94b;margin-left:8px"></i>
+جهت فعال یا غیرفعال‌سازی سامانه پیامکی با حسابداری تماس بگیرید.
+</p>
+${SUPPORT_INFO.phone?`<div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap">
+<a href="tel:${U.esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="text-decoration:none">
+<i class="fas fa-phone"></i> تماس با حسابداری: ${U.esc(SUPPORT_INFO.phone)}
+</a>
+${SUPPORT_INFO.itaaAddress?`<a href="https://eitaa.com/${SUPPORT_INFO.itaaAddress.replace('@','')}" target="_blank" class="btn-small info-btn" style="text-decoration:none">
+<i class="fas fa-comment-dots"></i> پیام در ایتا
+</a>`:''}
+</div>`:''}
+</div>`;
+
 container.innerHTML=h;
 }
 render_announcements(c){
@@ -2564,7 +2592,7 @@ const hasAnyInfo=SUPPORT_INFO.phone||SUPPORT_INFO.accountNumber||SUPPORT_INFO.ca
 if(!hasAnyInfo){h+=`<div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-exclamation-circle" style="font-size:3rem;color:#ed8936"></i><p>اطلاعات پشتیبانی تکمیل نشده</p></div>`;}
 else{
 h+=`<div class="support-grid">`;
-if(SUPPORT_INFO.phone){h+=`<div class="support-card"><div class="support-icon phone"><i class="fas fa-phone"></i></div><div class="support-content"><div class="support-label">تلفن</div><div class="support-value fa">${U.esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" data-copy="${U.esc(SUPPORT_INFO.phone)}"><i class="fas fa-copy"></i> کپی</button><a href="tel:${U.esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="margin-top:5px;text-decoration:none"><i class="fas fa-phone"></i> تماس</a></div></div>`;}
+if(SUPPORT_INFO.phone){h+=`<div class="support-card"><div class="support-icon phone"><i class="fas fa-phone"></i></div><div class="support-content"><div class="support-label">شماره تلفن صندوق</div><div class="support-value fa">${U.esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" data-copy="${U.esc(SUPPORT_INFO.phone)}"><i class="fas fa-copy"></i> کپی</button><a href="tel:${U.esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="margin-top:5px;text-decoration:none"><i class="fas fa-phone"></i> تماس</a></div></div>`;}
 if(SUPPORT_INFO.accountNumber){h+=`<div class="support-card"><div class="support-icon account"><i class="fas fa-university"></i></div><div class="support-content"><div class="support-label">شماره حساب</div><div class="support-value">${U.esc(SUPPORT_INFO.accountNumber)}</div><button class="copy-btn" data-copy="${U.esc(SUPPORT_INFO.accountNumber)}"><i class="fas fa-copy"></i> کپی</button></div></div>`;}
 if(SUPPORT_INFO.cardNumber){h+=`<div class="support-card"><div class="support-icon card"><i class="fas fa-credit-card"></i></div><div class="support-content"><div class="support-label">کارت</div><div class="support-value">${U.esc(SUPPORT_INFO.cardNumber)}</div><button class="copy-btn" data-copy="${U.esc(SUPPORT_INFO.cardNumber)}"><i class="fas fa-copy"></i> کپی</button></div></div>`;}
 if(SUPPORT_INFO.shebaNumber){h+=`<div class="support-card"><div class="support-icon sheba"><i class="fas fa-file-invoice"></i></div><div class="support-content"><div class="support-label">شبا</div><div class="support-value">${U.esc(SUPPORT_INFO.shebaNumber)}</div><button class="copy-btn" data-copy="${U.esc(SUPPORT_INFO.shebaNumber)}"><i class="fas fa-copy"></i> کپی</button></div></div>`;}
