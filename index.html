@@ -1742,7 +1742,7 @@ if(!this.dataReady){
 const waitingOverlay=document.createElement('div');
 waitingOverlay.className='login-waiting-overlay';
 waitingOverlay.id='loginWaitingOverlay';
-waitingOverlay.innerHTML=`<div class="login-waiting-box"><div class="login-waiting-spinner"></div><p class="login-waiting-text">در حال بارگذاری...</p><p class="login-waiting-subtext">لطفاً صبور باشید<br>در حال اتصال به سرور داده‌ها</p></div>`;
+waitingOverlay.innerHTML=`<div class="login-waiting-box"><div class="login-waiting-spinner"></div><p class="login-waiting-text">در حال بارگذاری...</p><p class="login-waiting-subtext">لطفاً صبور باشید</p></div>`;
 document.body.appendChild(waitingOverlay);
 const checkReady=setInterval(()=>{
 if(this.dataReady){
