@@ -83,6 +83,7 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.8rem}
 .loan-info{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:15px}
 .loan-info-item{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);padding:12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
 .loan-info-label{font-size:0.8rem;color:#64748b;margin-bottom:5px;font-weight:bold}
+.loan-info-label i{color:#9f7aea}
 .loan-info-value{font-size:0.95rem;font-weight:bold;color:#1e293b}
 [data-theme="dark"] .loan-info-value{color:#f1f5f9}
 .warning-box{background:linear-gradient(135deg,#fef2f2 0%,#fee2e2 100%);border-right:5px solid #ef4444;padding:15px;color:#991b1b;margin-top:15px;font-size:0.9rem;font-weight:bold;border-radius:10px;box-shadow:0 4px 12px rgba(239,68,68,0.2)}
@@ -304,6 +305,7 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.8rem}
 <div class="input-group">
 <label><i class="fas fa-lock"></i> رمز عبور</label>
 <input type="password" id="loginPassword" placeholder="رمز عبور">
+<button type="button" class="toggle-btn" style="position:absolute; left:10px; top:38px; background:none; border:none; cursor:pointer; font-size:1.1rem; color:#64748b;" onclick="togglePassword('loginPassword', 'loginPwdIcon')"><i id="loginPwdIcon" class="fas fa-eye"></i></button>
 </div>
 <button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> ورود</button>
 </div>
@@ -325,7 +327,6 @@ let SUPPORT_INFO={phone:'09138944709',accountNumber:'',cardNumber:'',shebaNumber
 let SYSTEM_MESSAGE='';
 const DATA_URL='https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
 
-// تعریف تمام توابع
 function getGreeting(){
 const hour=new Date().getHours();
 if(hour>=5&&hour<12)return'صبح بخیر';
@@ -450,6 +451,23 @@ currentUser=null;
 location.reload();
 }
 
+// تابع اصلاح شده برای نمایش/مخفی کردن رمز عبور
+function togglePassword(inputId, iconId) {
+const input = document.getElementById(inputId);
+const icon = document.getElementById(iconId);
+if (input && icon) {
+if (input.type === 'password') {
+input.type = 'text';
+icon.classList.remove('fa-eye');
+icon.classList.add('fa-eye-slash');
+} else {
+input.type = 'password';
+icon.classList.remove('fa-eye-slash');
+icon.classList.add('fa-eye');
+}
+}
+}
+
 async function loadMainData(){
 try{
 console.log('در حال بارگذاری داده‌ها...');
@@ -467,9 +485,16 @@ if(!rows.length)return{members:[],transactions:[],users:[]};
 const headers=Object.keys(rows[0]);
 if(rows.length>0){
 const firstRow=rows[0];
-const supportPhoneCol=findCol(['telepon'],headers);
-SUPPORT_INFO.phone=supportPhoneCol?String(firstRow[supportPhoneCol]||'').trim():'09138944709';
+const supportPhoneCol=findCol(['telepon', 'تلفن', 'شماره تماس'],headers);
+const supportAccountCol=findCol(['شماره حساب', 'شماره حساب صندوق', 'account'],headers);
+const supportCardCol=findCol(['شماره کارت', 'شماره کارت صندوق', 'card'],headers);
+const supportShebaCol=findCol(['شماره شبا', 'شماره شبا صندوق', 'sheba', 'شبا'],headers);
 const systemMessageCol=findCol(['پیام سیستم','system message','message','پیام'],headers);
+
+SUPPORT_INFO.phone=supportPhoneCol?String(firstRow[supportPhoneCol]||'').trim():'09138944709';
+SUPPORT_INFO.accountNumber=supportAccountCol?String(firstRow[supportAccountCol]||'').trim():'';
+SUPPORT_INFO.cardNumber=supportCardCol?String(firstRow[supportCardCol]||'').trim():'';
+SUPPORT_INFO.shebaNumber=supportShebaCol?String(firstRow[supportShebaCol]||'').trim():'';
 if(systemMessageCol){
 SYSTEM_MESSAGE=String(firstRow[systemMessageCol]||'').trim();
 }
@@ -478,8 +503,8 @@ const colMap={
 id:findCol(['ID','id'],headers),
 accountNumber:findCol(['شماره حساب'],headers),
 name:findCol(['name','نام'],headers),
-phone:findCol(['phone','تلفن'],headers),
-phone2:findCol(['phone2','تلفن2'],headers),
+phone:findCol(['phone','تلفن','تلفن 1'],headers),
+phone2:findCol(['phone2','تلفن2','تلفن 2'],headers),
 balance:findCol(['موجودی'],headers),
 savingsStatus:findCol(['وضعیت پس انداز'],headers),
 loanBalanceCol:findCol(['مانده وام'],headers),
@@ -882,7 +907,8 @@ const hehRole=member&&member.heh2==='01'?' | سرپرست خانوار':'';
 roleText.textContent=roleLabel+hehRole;
 if(member&&memberScores[member.id]){
 const sd=memberScores[member.id];
-tierBadge.innerHTML=`<span style="background:${sd.tier==='gold'?'#FFD700':sd.tier==='silver'?'#C0C0C0':'#6B7280'};color:#fff;padding:3px 10px;border-radius:8px;font-size:0.8rem">${sd.tierEmoji} ${sd.tierName}</span>`;
+// اصلاح شده: اضافه شدن "رتبه شما :"
+tierBadge.innerHTML=`<span style="background:${sd.tier==='gold'?'#FFD700':sd.tier==='silver'?'#C0C0C0':'#6B7280'};color:#fff;padding:3px 10px;border-radius:8px;font-size:0.8rem">رتبه شما: ${sd.tierName}</span>`;
 }else{
 tierBadge.innerHTML='';
 }
@@ -983,6 +1009,9 @@ if(el)el.textContent=new Date().toLocaleTimeString('fa-IR');
 setTimeout(()=>{
 if(member)checkAutoNotifications(member);
 },1000);
+
+waitingOverlay.remove();
+
 }else{
 console.log('کاربر پیدا نشد!');
 console.log('لیست کاربران:',users.map(u=>u.username));
@@ -1100,7 +1129,7 @@ content.innerHTML=`
 <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi||'---')}</div></div>
 <div class="last-tx-item" style="grid-column:span 2"><div class="last-tx-label">مدت زمان عضویت</div><div class="last-tx-value" style="color:#667eea">${membershipDuration}</div></div>
 <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
-<div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="passwordValue">••••••••</span><button class="toggle-btn" onclick="togglePassword()"><i class="fas fa-eye" id="pwdIcon"></i></button></div></div>
+<div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="dashPwdValue">••••••••</span><button class="toggle-btn" onclick="togglePassword('dashPwdValue', 'dashPwdIcon')"><i id="dashPwdIcon" class="fas fa-eye"></i></button></div></div>
 <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role==='admin'?'مدیر':(member.isCouncil?'عضو شورا':'عضو')}</div></div>
 <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
 </div>
@@ -1108,7 +1137,7 @@ content.innerHTML=`
 ${!accountActive?`<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> حساب غیرفعال - جهت فعالسازی با حسابداری تماس بگیرید</div>`:''}
 ${member.savingsStatus<0?`<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> کسری موجودی - موجودی شما کسری دارد</div>`:''}
 ${member.overdueInstallments<=-1&&member.overdueInstallments>=-6?`<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار اقساط - اقساط شما عقب افتاده است</div>`:''}
-${member.overdueInstallments<-6?`<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار جدی اقساط - اقساط شما از پس انداز کسر خواهد شد</div>`:''}
+${member.overdueInstallments<-6?`<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار جدی اقساط - با توجه به اینکه تعداد اقساط معوقه بیش از حد مجاز است اقساط شما از پس انداز کسر و ضمانت شما به اجرا گذاشته خواهد شد</div>`:''}
 
 <div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب</div>
 
@@ -1257,33 +1286,6 @@ renderHelpContent(content);
 }
 }
 
-function togglePassword(){
-const pwdValue=$('#passwordValue');
-const pwdIcon=$('#pwdIcon');
-const member=members.find(m=>m.id===currentUser.memberId);
-const ui=users.find(u=>u.memberId===member.id);
-const actualPassword=ui?ui.password||'---':'---';
-if(pwdValue.textContent==='••••••••'){
-pwdValue.textContent=actualPassword;
-pwdIcon.className='fas fa-eye-slash';
-}else{
-pwdValue.textContent='••••••••';
-pwdIcon.className='fas fa-eye';
-}
-}
-
-function filterExcelTransactions(){
-const search=$('#searchTx').value.toLowerCase();
-const member=members.find(m=>m.id===currentUser.memberId);
-const allTxns=transactions.filter(t=>String(t._memberId)===String(member.id)).sort((a,b)=>(parseInt(b._transactionId)||0)-(parseInt(a._transactionId)||0));
-if(!search){
-renderExcelTransactions(allTxns,'txExcelContainer');
-return;
-}
-const filtered=allTxns.filter(tx=>Object.values(tx).some(val=>String(val).toLowerCase().includes(search)));
-renderExcelTransactions(filtered,'txExcelContainer');
-}
-
 function renderFamilyContent(content){
 if(!isHeadOfHousehold()){
 content.innerHTML=`<div class="info-box"><i class="fas fa-users"></i> خانواده من</div><div class="dashboard-section" style="text-align:center;padding:40px"><i class="fas fa-lock" style="font-size:3rem;color:#e53e3e;margin-bottom:15px"></i><p style="color:#4a5568">فقط سرپرست خانوار به این بخش دسترسی دارد</p></div>`;
@@ -1292,6 +1294,8 @@ return;
 const familyMembers=getFamilyMembers();
 const totalFamilyBalance=familyMembers.reduce((sum,m)=>sum+(m.balance||0),0);
 const activeCount=familyMembers.filter(m=>m.active!==false).length;
+// محاسبه مجموع بدهی خانواده
+const totalFamilyDebt=familyMembers.reduce((sum,m)=>sum+(parseFloat(m.loanBalance)||0),0);
 
 content.innerHTML=`
 <div class="info-box"><i class="fas fa-users"></i> خانواده من</div>
@@ -1301,7 +1305,7 @@ content.innerHTML=`
 <div class="stat-card"><div class="stat-icon"><i class="fas fa-users" style="color:#4299e1"></i></div><div class="stat-value">${familyMembers.length}</div><div class="stat-label">تعداد اعضا</div></div>
 <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle" style="color:#48bb78"></i></div><div class="stat-value">${activeCount}</div><div class="stat-label">اعضای فعال</div></div>
 <div class="stat-card"><div class="stat-icon"><i class="fas fa-wallet" style="color:#d69e2e"></i></div><div class="stat-value">${fmtNum(totalFamilyBalance)}</div><div class="stat-label">مجموع موجودی</div></div>
-<div class="stat-card"><div class="stat-icon"><i class="fas fa-coins" style="color:#9f7aea"></i></div><div class="stat-value">${fmtNum(userCoins)}</div><div class="stat-label">امتیازهای شما</div></div>
+<div class="stat-card"><div class="stat-icon"><i class="fas fa-hand-holding-usd" style="color:#ef4444"></i></div><div class="stat-value">${fmtNum(totalFamilyDebt)}</div><div class="stat-label">مجموع بدهی خانواده</div></div>
 </div>
 </div>
 
@@ -1333,7 +1337,7 @@ return;
 const roleInfo=getFamilyRole(member.heh2);
 const roleBadge=roleInfo?`<span style="background:#48bb78;color:#fff;padding:3px 10px;border-radius:8px;font-size:0.8rem">${roleInfo.label}</span>`:'';
 const sd=memberScores[member.id];
-const tierBadge=sd?`<span style="background:${sd.tier==='gold'?'#FFD700':sd.tier==='silver'?'#C0C0C0':'#6B7280'};color:#fff;padding:3px 10px;border-radius:8px;font-size:0.8rem">${sd.tierEmoji} ${sd.tierName}</span>`:'';
+const tierBadge=sd?`<span style="background:${sd.tier==='gold'?'#FFD700':sd.tier==='silver'?'#C0C0C0':'#6B7280'};color:#fff;padding:3px 10px;border-radius:8px;font-size:0.8rem">رتبه شما: ${sd.tierName}</span>`:'';
 const mTxns=transactions.filter(t=>String(t._memberId)===String(member.id)).sort((a,b)=>(parseInt(b._transactionId)||0)-(parseInt(a._transactionId)||0));
 const membershipDuration=calculateMembershipDuration(member.datMiladi);
 const ui=users.find(u=>u.memberId===member.id);
@@ -1404,7 +1408,7 @@ let html=`<div class="family-card">
 <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi||'---')}</div></div>
 <div class="last-tx-item"><div class="last-tx-label">مدت عضویت</div><div class="last-tx-value">${membershipDuration}</div></div>
 <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(ui?ui.username||'---':'---')}</div></div>
-<div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value">••••••••</span><button class="toggle-btn" onclick="this.previousElementSibling.textContent=this.previousElementSibling.textContent==='•••••••●'?'${esc(ui?ui.password||'---':'---')}':'•••••••●';this.innerHTML=this.innerHTML.includes('eye')?'<i class=\'fas fa-eye-slash\'></i>':'<i class=\'fas fa-eye\'></i>'"><i class="fas fa-eye"></i></button></div></div>
+<div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="famPwd_${member.id}">••••••••</span><button class="toggle-btn" onclick="togglePassword('famPwd_${member.id}', 'famPwdIcon_${member.id}')"><i id="famPwdIcon_${member.id}" class="fas fa-eye"></i></button></div></div>
 </div>
 </div>
 <div class="detail-section">
@@ -1598,7 +1602,7 @@ function renderSupportContent(content){
 content.innerHTML=`<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی</div>
 <div class="dashboard-section"><h3><i class="fas fa-info-circle"></i> اطلاعات تماس</h3>
 <div class="support-grid">
-${SUPPORT_INFO.phone?`<div class="support-card"><div class="support-icon" style="background:#48bb78"><i class="fas fa-phone"></i></div><div><div class="support-label">تلفن حسابداری</div><div class="support-value">${esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.phone)}',this)">کپی</button><a href="tel:${esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="margin-top:8px;text-decoration:none">تماس</a></div></div>`:''}
+${SUPPORT_INFO.phone?`<div class="support-card"><div class="support-icon" style="background:#48bb78"><i class="fas fa-phone"></i></div><div><div class="support-label">تلفن حسابداری</div><div class="support-value">${esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.phone)}',this)">کپی</button><a href="tel:${esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="margin-top:5px;text-decoration:none"><i class="fas fa-phone"></i> تماس</a></div></div>`:''}
 ${SUPPORT_INFO.accountNumber?`<div class="support-card"><div class="support-icon" style="background:#4299e1"><i class="fas fa-university"></i></div><div><div class="support-label">شماره حساب</div><div class="support-value">${esc(SUPPORT_INFO.accountNumber)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.accountNumber)}',this)">کپی</button></div></div>`:''}
 ${SUPPORT_INFO.cardNumber?`<div class="support-card"><div class="support-icon" style="background:#9f7aea"><i class="fas fa-credit-card"></i></div><div><div class="support-label">شماره کارت</div><div class="support-value">${esc(SUPPORT_INFO.cardNumber)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.cardNumber)}',this)">کپی</button></div></div>`:''}
 ${SUPPORT_INFO.shebaNumber?`<div class="support-card"><div class="support-icon" style="background:#ed8936"><i class="fas fa-file-invoice"></i></div><div><div class="support-label">شماره شبا</div><div class="support-value">${esc(SUPPORT_INFO.shebaNumber)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.shebaNumber)}',this)">کپی</button></div></div>`:''}
@@ -1618,7 +1622,16 @@ content.innerHTML=`<div class="info-box"><i class="fas fa-question-circle"></i> 
 <div class="help-section"><h4><i class="fas fa-trophy"></i> دسته‌بندی</h4><ul><li>⭐ طلایی: ۸۰-۱۰۰</li><li>🥈 نقره‌ای: ۵۰-۷۹</li><li>⚫ سیاه: ۰-۴۹</li></ul></div>
 <div class="help-section"><h4><i class="fas fa-palette"></i> تم‌ها</h4><ul><li>خودکار: بر اساس ساعت (۶ صبح تا ۸ شب = روشن)</li><li>روز: روشن</li><li>شب: تاریک</li></ul></div>
 <div class="help-section"><h4><i class="fas fa-shield-alt"></i> امنیت</h4><ul><li>رمز را در اختیار دیگران نگذارید</li><li>پس از اتمام کار خارج شوید</li><li>از مرورگر به‌روز استفاده کنید</li></ul></div>
-<div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>از بخش <strong>پشتیبانی</strong> استفاده کنید.</p></div>`;
+<div class="help-section"><h4><i class="fas fa-headset"></i> پشتیبانی</h4><p>از بخش <strong>پشتیبانی</strong> استفاده کنید.</p></div>
+<div class="help-section" style="background:linear-gradient(135deg,rgba(255,215,0,0.1) 0%,rgba(255,165,0,0.1) 100%); border-right:4px solid #FFD700;">
+<h4 style="color:#d97706"><i class="fas fa-crown"></i> نحوه ارتقا به رتبه طلایی</div>
+<ul>
+<li>✅ پرداخت به موقع و منظم اقساط ماهانه</li>
+<li>✅ نداشتن هیچگونه قسط معوقه یا بدهی عقب افتاده</li>
+<li>✅ حفظ موجودی حساب بالاتر از مقرری ماهانه تعیین شده</li>
+<li>✅ کسب مجموع امتیاز ۸۰ به بالا در سیستم امتیازدهی صندوق</li>
+</ul>
+</div>`;
 }
 
 function showHelpFor(section){
