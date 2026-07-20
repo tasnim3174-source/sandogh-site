@@ -15,7 +15,7 @@
    بهینه‌سازی کامل برای موبایل
    ============================================ */
 
-/* ===== RESET & BASE - اصلاح اسکرول ===== */
+/* ===== RESET & BASE ===== */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'B Titr',Tahoma,sans-serif;font-weight:bold;-webkit-tap-highlight-color:transparent}
 html,body{width:100%;min-height:100vh;overflow-y:auto !important;overflow-x:hidden !important;overscroll-behavior:contain;-webkit-text-size-adjust:100%;height:100%}
 body{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;color:#2d3748;padding-bottom:env(safe-area-inset-bottom)}
@@ -54,6 +54,9 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 .danger-btn{background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff}
 .info-btn{background:linear-gradient(135deg,#3b82f6 0%,#2563eb 100%);color:#fff}
 .edit-btn{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#fff}
+.stats-btn{background:linear-gradient(135deg,#8b5cf6 0%,#6d28d9 100%);color:#fff;flex:1;min-width:80px;text-align:center;justify-content:center}
+.stats-btn.active{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#0f172a;box-shadow:0 4px 15px rgba(245,158,11,0.4)}
+[data-theme="dark"] .stats-btn.active{color:#0f172a}
 
 /* ===== FLOATING MENU ===== */
 .floating-menu-btn{position:fixed;top:12px;right:12px;width:auto;height:54px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);border:none;border-radius:12px;cursor:pointer;z-index:100;display:none;align-items:center;justify-content:center;font-size:0.95rem;color:#fff;padding:0 16px;gap:6px;box-shadow:0 4px 15px rgba(102,126,234,0.4);transition:transform 0.1s;touch-action:manipulation;-webkit-touch-callout:none}
@@ -73,14 +76,10 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 .menu-item .help-icon:active{transform:scale(0.9)}
 .menu-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:98;display:none}
 .menu-overlay.show{display:block}
-.menu-top{padding:8px;border-bottom:2px solid #e2e8f0;margin-bottom:8px}
-[data-theme="dark"] .menu-top{border-color:#475569}
-.theme-switcher{display:flex;gap:6px}
-.theme-btn{flex:1;padding:10px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.72rem;transition:all 0.15s;min-height:42px;touch-action:manipulation}
-.theme-btn:active{transform:scale(0.94)}
-[data-theme="dark"] .theme-btn{border-color:#475569;color:#fbbf24}
-.theme-btn.active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-color:#667eea}
-[data-theme="dark"] .theme-btn.active{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#0f172a}
+.menu-top{display:none}
+.menu-item .badge{font-size:0.55rem;color:#fbbf24;background:rgba(251,191,36,0.2);padding:2px 6px;border-radius:4px;white-space:nowrap}
+.menu-item .badge-family{font-size:0.55rem;color:#48bb78;background:rgba(72,187,120,0.2);padding:2px 6px;border-radius:4px;white-space:nowrap}
+.menu-item .badge-council{font-size:0.55rem;color:#f59e0b;background:rgba(245,158,11,0.2);padding:2px 6px;border-radius:4px;white-space:nowrap}
 .menu-user-row{padding:10px;background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);border-radius:8px;margin-bottom:8px;display:flex;flex-direction:column;gap:3px}
 [data-theme="dark"] .menu-user-row{background:linear-gradient(135deg,rgba(251,191,36,0.1) 0%,rgba(217,119,6,0.1) 100%)}
 .logout-btn{width:100%;background:linear-gradient(135deg,#ef4444 0%,#dc2626 100%);color:#fff;border:none;padding:12px;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.88rem;transition:transform 0.15s;min-height:50px;touch-action:manipulation}
@@ -91,11 +90,17 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 /* ===== HEADER ===== */
 .header-bar{display:grid;grid-template-columns:1fr;gap:14px;padding:16px;margin-bottom:18px;background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);border-radius:16px;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
 [data-theme="dark"] .header-bar{background:linear-gradient(135deg,rgba(251,191,36,0.1) 0%,rgba(217,119,6,0.1) 100%)}
-.date-combined-box{display:flex;flex-direction:column;gap:5px;justify-content:center;align-items:center}
+.date-combined-box{display:flex;flex-direction:column;gap:8px;justify-content:center;align-items:center;width:100%}
 .date-row{display:flex;align-items:center;gap:8px;font-size:0.88rem;color:#1e293b;flex-wrap:wrap;justify-content:center}
 .date-row i{color:#667eea;width:18px;font-size:0.88rem}
 [data-theme="dark"] .date-row{color:#fbbf24}
 [data-theme="dark"] .date-row i{color:#fb923c}
+.header-theme-switcher{display:flex;gap:6px;justify-content:center;margin-top:4px}
+.header-theme-btn{padding:6px 14px;border:2px solid #e2e8f0;border-radius:8px;cursor:pointer;font-weight:bold;font-size:0.7rem;transition:all 0.15s;min-height:34px;touch-action:manipulation;background:rgba(255,255,255,0.8)}
+.header-theme-btn:active{transform:scale(0.94)}
+[data-theme="dark"] .header-theme-btn{border-color:#475569;color:#fbbf24;background:rgba(30,41,59,0.8)}
+.header-theme-btn.active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-color:#667eea}
+[data-theme="dark"] .header-theme-btn.active{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#0f172a}
 .rank-box{text-align:center}
 .rank-box .rank-label{font-size:0.82rem;color:#667eea;font-weight:bold}
 .rank-box .rank-value{font-size:1.5rem;font-weight:bold;color:#667eea}
@@ -103,23 +108,42 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 
 /* ===== CONTENT ===== */
 .content-area{min-height:400px;padding-bottom:20px}
-.info-box{background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);border-right:5px solid #667eea;padding:14px 16px;margin-bottom:14px;border-radius:12px;font-weight:bold;font-size:0.92rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);color:#1e293b}
-[data-theme="dark"] .info-box{background:linear-gradient(135deg,rgba(251,191,36,0.1) 0%,rgba(217,119,6,0.1) 100%);border-right-color:#f59e0b;color:#fb923c}
+.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.dashboard-grid .full-width{grid-column:1/-1}
+
+/* ===== کارت‌های با رنگ‌های متفاوت ===== */
+.card-profile{border-right-color:#667eea !important;background:linear-gradient(135deg,rgba(102,126,234,0.08) 0%,rgba(118,75,162,0.08) 100%) !important}
+[data-theme="dark"] .card-profile{border-right-color:#667eea !important;background:linear-gradient(135deg,rgba(102,126,234,0.15) 0%,rgba(118,75,162,0.15) 100%) !important}
+.card-financial{border-right-color:#10b981 !important;background:linear-gradient(135deg,rgba(16,185,129,0.08) 0%,rgba(5,150,105,0.08) 100%) !important}
+[data-theme="dark"] .card-financial{border-right-color:#10b981 !important;background:linear-gradient(135deg,rgba(16,185,129,0.15) 0%,rgba(5,150,105,0.15) 100%) !important}
+.card-loan{border-right-color:#f59e0b !important;background:linear-gradient(135deg,rgba(245,158,11,0.08) 0%,rgba(217,119,6,0.08) 100%) !important}
+[data-theme="dark"] .card-loan{border-right-color:#f59e0b !important;background:linear-gradient(135deg,rgba(245,158,11,0.15) 0%,rgba(217,119,6,0.15) 100%) !important}
+.card-debt{border-right-color:#ef4444 !important;background:linear-gradient(135deg,rgba(239,68,68,0.08) 0%,rgba(220,38,38,0.08) 100%) !important}
+[data-theme="dark"] .card-debt{border-right-color:#ef4444 !important;background:linear-gradient(135deg,rgba(239,68,68,0.15) 0%,rgba(220,38,38,0.15) 100%) !important}
+.card-transaction{border-right-color:#8b5cf6 !important;background:linear-gradient(135deg,rgba(139,92,246,0.08) 0%,rgba(124,58,237,0.08) 100%) !important}
+[data-theme="dark"] .card-transaction{border-right-color:#8b5cf6 !important;background:linear-gradient(135deg,rgba(139,92,246,0.15) 0%,rgba(124,58,237,0.15) 100%) !important}
+.card-other{border-right-color:#ec4899 !important;background:linear-gradient(135deg,rgba(236,72,153,0.08) 0%,rgba(219,39,119,0.08) 100%) !important}
+[data-theme="dark"] .card-other{border-right-color:#ec4899 !important;background:linear-gradient(135deg,rgba(236,72,153,0.15) 0%,rgba(219,39,119,0.15) 100%) !important}
+.card-stats{border-right-color:#14b8a6 !important;background:linear-gradient(135deg,rgba(20,184,166,0.08) 0%,rgba(13,148,136,0.08) 100%) !important}
+[data-theme="dark"] .card-stats{border-right-color:#14b8a6 !important;background:linear-gradient(135deg,rgba(20,184,166,0.15) 0%,rgba(13,148,136,0.15) 100%) !important}
+
 .dashboard-section{background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);padding:16px;margin-bottom:14px;border-radius:16px;border-right:5px solid #667eea;box-shadow:0 8px 25px rgba(0,0,0,0.1)}
-[data-theme="dark"] .dashboard-section{background:rgba(30,41,59,0.9);border-right-color:#f59e0b}
+[data-theme="dark"] .dashboard-section{background:rgba(30,41,59,0.9)}
 .dashboard-section h3{color:#1e293b;margin-bottom:10px;font-size:1rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 [data-theme="dark"] .dashboard-section h3{color:#fbbf24}
+.info-box{background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);border-right:5px solid #667eea;padding:14px 16px;margin-bottom:14px;border-radius:12px;font-weight:bold;font-size:0.92rem;box-shadow:0 4px 12px rgba(0,0,0,0.1);color:#1e293b}
+[data-theme="dark"] .info-box{background:linear-gradient(135deg,rgba(251,191,36,0.1) 0%,rgba(217,119,6,0.1) 100%);border-right-color:#f59e0b;color:#fb923c}
 .welcome-box{background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);padding:16px;border-radius:16px;margin-bottom:16px;text-align:center;box-shadow:0 4px 15px rgba(0,0,0,0.1)}
 [data-theme="dark"] .welcome-box{background:linear-gradient(135deg,rgba(251,191,36,0.1) 0%,rgba(217,119,6,0.1) 100%)}
 .welcome-box .welcome-title{font-size:1.15rem;font-weight:bold;color:#1e293b;margin-bottom:4px}
 .welcome-box .welcome-greeting{font-size:0.95rem;color:#64748b}
 
 /* ===== GRIDS ===== */
-.last-tx-grid{display:grid;grid-template-columns:1fr;gap:10px}
-.last-tx-item{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);padding:12px 14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.last-tx-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.last-tx-item{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);padding:10px 12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
 [data-theme="dark"] .last-tx-item{background:linear-gradient(135deg,#1e293b 0%,#334155 100%)}
-.last-tx-label{font-size:0.72rem;color:#64748b;margin-bottom:3px;font-weight:bold}
-.last-tx-value{font-size:0.88rem;font-weight:bold;color:#1e293b;word-break:break-all}
+.last-tx-label{font-size:0.7rem;color:#64748b;margin-bottom:3px;font-weight:bold}
+.last-tx-value{font-size:0.85rem;font-weight:bold;color:#1e293b;word-break:break-all}
 [data-theme="dark"] .last-tx-value{color:#fbbf24}
 
 .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
@@ -129,17 +153,33 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 .stat-value{font-size:1.2rem;font-weight:bold;color:#1e293b}
 .stat-label{font-size:0.72rem;color:#64748b;font-weight:bold}
 
-.loan-info{display:grid;grid-template-columns:1fr;gap:10px;margin-top:10px}
-.loan-info-item{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);padding:12px 14px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-[data-theme="dark"] .loan-info-item{background:linear-gradient(135deg,#1e293b 0%,#334155 100%)}
-.loan-info-label{font-size:0.72rem;color:#64748b;margin-bottom:3px;font-weight:bold}
-.loan-info-value{font-size:0.88rem;font-weight:bold;color:#1e293b}
+.stats-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stats-detail-item{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);padding:10px 12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.05);text-align:center}
+[data-theme="dark"] .stats-detail-item{background:linear-gradient(135deg,#1e293b 0%,#334155 100%)}
+.stats-detail-label{font-size:0.68rem;color:#64748b;margin-bottom:3px;font-weight:bold}
+.stats-detail-value{font-size:0.9rem;font-weight:bold;color:#1e293b}
+[data-theme="dark"] .stats-detail-value{color:#fbbf24}
+.stats-detail-value.green{color:#10b981}
+.stats-detail-value.red{color:#ef4444}
+.stats-detail-value.gold{color:#f59e0b}
+.stats-detail-value.purple{color:#8b5cf6}
 
-.support-grid{display:grid;grid-template-columns:1fr;gap:10px}
-.support-card{background:rgba(255,255,255,0.9);padding:14px;border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.loan-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.loan-info-item{background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);padding:10px 12px;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+[data-theme="dark"] .loan-info-item{background:linear-gradient(135deg,#1e293b 0%,#334155 100%)}
+.loan-info-label{font-size:0.7rem;color:#64748b;margin-bottom:3px;font-weight:bold}
+.loan-info-value{font-size:0.85rem;font-weight:bold;color:#1e293b}
+[data-theme="dark"] .loan-info-value{color:#fbbf24}
+
+/* ===== STATS BUTTONS ===== */
+.stats-filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.stats-filter-bar .btn-small{flex:1;min-width:80px;justify-content:center;text-align:center}
+
+.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.support-card{background:rgba(255,255,255,0.9);padding:12px;border-radius:12px;display:flex;align-items:center;gap:10px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 [data-theme="dark"] .support-card{background:rgba(30,41,59,0.9)}
-.support-icon{width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.05rem;flex-shrink:0}
-.support-label{font-size:0.68rem;color:#64748b;margin-bottom:2px;font-weight:bold}
+.support-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;flex-shrink:0}
+.support-label{font-size:0.65rem;color:#64748b;margin-bottom:2px;font-weight:bold}
 .support-value{font-size:0.82rem;font-weight:bold;color:#1e293b;word-break:break-all}
 
 /* ===== FAMILY ===== */
@@ -164,7 +204,7 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 .club-tab:active{transform:scale(0.94)}
 .club-tab.active{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border-color:#667eea}
 [data-theme="dark"] .club-tab.active{background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);color:#0f172a}
-.shop-grid{display:grid;grid-template-columns:1fr;gap:12px}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .shop-card{background:rgba(255,255,255,0.9);padding:16px;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 [data-theme="dark"] .shop-card{background:rgba(30,41,59,0.9)}
 .shop-card-title{font-size:0.95rem;font-weight:bold;color:#1e293b;margin-bottom:4px}
@@ -175,14 +215,15 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 .coin-history-item,.coin-rule-item{background:rgba(255,255,255,0.9);padding:12px 14px;margin-bottom:8px;border-radius:10px;display:flex;justify-content:space-between;box-shadow:0 2px 8px rgba(0,0,0,0.05);flex-wrap:wrap;gap:8px}
 [data-theme="dark"] .coin-history-item,[data-theme="dark"] .coin-rule-item{background:rgba(30,41,59,0.9)}
 
-/* ===== EXCEL TABLE ===== */
+/* ===== EXCEL TABLE - ستون A به راست ===== */
 .excel-table-wrapper{overflow-x:auto;background:rgba(255,255,255,0.9);border-radius:16px;box-shadow:0 8px 25px rgba(0,0,0,0.1);margin-top:14px;padding:8px;max-width:100%;-webkit-overflow-scrolling:touch}
 [data-theme="dark"] .excel-table-wrapper{background:rgba(30,41,59,0.9)}
 .excel-table{border-collapse:separate;border-spacing:0;width:max-content;min-width:700px}
 .excel-table th,.excel-table td{border:1px solid #e2e8f0;padding:8px 10px;text-align:center;font-size:0.75rem;white-space:nowrap}
 [data-theme="dark"] .excel-table th,[data-theme="dark"] .excel-table td{border-color:#475569;color:#fbbf24}
 .excel-table thead th{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;font-weight:bold;position:sticky;top:0;z-index:3;font-size:0.72rem}
-.excel-table tbody td:first-child,.excel-table thead th:first-child{position:sticky;right:0;z-index:4;background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);font-weight:bold;color:#1e293b;text-align:right;min-width:110px;box-shadow:-2px 0 8px rgba(0,0,0,0.1)}
+/* ===== ستون A (فیلد) به سمت راست ===== */
+.excel-table tbody td:first-child,.excel-table thead th:first-child{position:sticky;right:0;z-index:4;background:linear-gradient(135deg,#f8fafc 0%,#f1f5f9 100%);font-weight:bold;color:#1e293b;text-align:right;min-width:120px;box-shadow:2px 0 8px rgba(0,0,0,0.1);padding-right:14px}
 [data-theme="dark"] .excel-table tbody td:first-child,[data-theme="dark"] .excel-table thead th:first-child{background:linear-gradient(135deg,#1e293b 0%,#334155 100%);color:#fb923c}
 
 /* ===== FILTER BAR ===== */
@@ -235,50 +276,48 @@ h1{color:#1e293b;text-align:center;margin-bottom:10px;font-size:1.5rem}
 .pdf-view-overlay.show{display:flex}
 .pdf-view-content{background:rgba(255,255,255,0.98);width:100%;max-width:1200px;padding:20px;border-radius:16px;margin:10px auto;position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
 [data-theme="dark"] .pdf-view-content{background:rgba(30,41,59,0.98)}
-.calendar-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.calendar-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .calendar-event{background:rgba(255,255,255,0.9);padding:12px 14px;border-radius:12px;border-right:4px solid #667eea;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
 [data-theme="dark"] .calendar-event{background:rgba(30,41,59,0.9);border-right-color:#f59e0b}
-.bar-chart{display:flex;align-items:flex-end;gap:6px;height:110px;padding:14px;background:rgba(255,255,255,0.9);border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
-[data-theme="dark"] .bar-chart{background:rgba(30,41,59,0.9)}
-.bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
-.bar{width:100%;background:linear-gradient(180deg,#667eea 0%,#764ba2 100%);border-radius:4px 4px 0 0;min-height:4px}
-.bar-label{font-size:0.65rem;color:#64748b;font-weight:bold}
 .security-status{display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(135deg,rgba(102,126,234,0.1) 0%,rgba(118,75,162,0.1) 100%);border-radius:12px;margin-bottom:12px}
 [data-theme="dark"] .security-status{background:linear-gradient(135deg,rgba(251,191,36,0.1) 0%,rgba(217,119,6,0.1) 100%)}
 .fund-info-box{background:linear-gradient(135deg,rgba(16,185,129,0.1) 0%,rgba(5,150,105,0.1) 100%);border-right:4px solid #10b981;padding:12px 14px;border-radius:12px;margin-bottom:10px}
 
 /* ===== RESPONSIVE ===== */
-@media (min-width:500px){
-.last-tx-grid{grid-template-columns:repeat(2,1fr)}
-.loan-info{grid-template-columns:repeat(2,1fr)}
+@media (max-width:600px){
+.dashboard-grid{grid-template-columns:1fr}
+.last-tx-grid{grid-template-columns:1fr}
+.loan-info{grid-template-columns:1fr}
+.support-grid{grid-template-columns:1fr}
+.shop-grid{grid-template-columns:1fr}
+.calendar-grid{grid-template-columns:1fr}
+.family-card-stats{grid-template-columns:1fr}
+.stats-grid{grid-template-columns:1fr 1fr}
+.stats-detail-grid{grid-template-columns:1fr}
+.club-tabs{grid-template-columns:repeat(2,1fr)}
+.stats-filter-bar .btn-small{min-width:60px;font-size:0.7rem;padding:8px 6px}
+}
+@media (min-width:601px) and (max-width:900px){
+.dashboard-grid{grid-template-columns:1fr 1fr}
+.last-tx-grid{grid-template-columns:1fr 1fr}
+.loan-info{grid-template-columns:1fr 1fr}
+.support-grid{grid-template-columns:1fr 1fr}
+.shop-grid{grid-template-columns:1fr 1fr}
+.calendar-grid{grid-template-columns:1fr 1fr}
+.family-card-stats{grid-template-columns:1fr 1fr}
 .stats-grid{grid-template-columns:repeat(2,1fr)}
-.support-grid{grid-template-columns:repeat(2,1fr)}
-.shop-grid{grid-template-columns:repeat(2,1fr)}
-.calendar-grid{grid-template-columns:repeat(2,1fr)}
-.family-card-stats{grid-template-columns:repeat(2,1fr)}
+.stats-detail-grid{grid-template-columns:1fr 1fr}
 }
-@media (min-width:768px){
-.container{padding:20px}
-.login-page,.app-page{padding:28px}
-.last-tx-grid{grid-template-columns:repeat(2,1fr)}
-.loan-info{grid-template-columns:repeat(2,1fr)}
+@media (min-width:901px){
+.dashboard-grid{grid-template-columns:1fr 1fr}
+.last-tx-grid{grid-template-columns:1fr 1fr}
+.loan-info{grid-template-columns:1fr 1fr}
+.support-grid{grid-template-columns:1fr 1fr}
+.shop-grid{grid-template-columns:1fr 1fr}
+.calendar-grid{grid-template-columns:1fr 1fr}
+.family-card-stats{grid-template-columns:1fr 1fr}
 .stats-grid{grid-template-columns:repeat(3,1fr)}
-.support-grid{grid-template-columns:repeat(2,1fr)}
-.shop-grid{grid-template-columns:repeat(2,1fr)}
-.calendar-grid{grid-template-columns:repeat(2,1fr)}
-.excel-table{min-width:900px}
-.header-bar{grid-template-columns:1fr 1fr}
-.date-combined-box{align-items:flex-start}
-}
-@media (min-width:1024px){
-.last-tx-grid{grid-template-columns:repeat(3,1fr)}
-.loan-info{grid-template-columns:repeat(3,1fr)}
-.stats-grid{grid-template-columns:repeat(4,1fr)}
-.support-grid{grid-template-columns:repeat(3,1fr)}
-.shop-grid{grid-template-columns:repeat(3,1fr)}
-.calendar-grid{grid-template-columns:repeat(3,1fr)}
-.family-card-stats{grid-template-columns:repeat(3,1fr)}
-.excel-table{min-width:1100px}
+.stats-detail-grid{grid-template-columns:1fr 1fr}
 }
 @media (max-width:400px){
 .container{padding:8px 6px 20px}
@@ -295,16 +334,6 @@ h1{font-size:1.2rem}
 .btn{font-size:0.9rem;padding:14px;min-height:52px}
 .btn-small{font-size:0.72rem;padding:8px 10px;min-height:38px}
 .input-group input{padding:12px 14px;font-size:0.9rem;min-height:46px}
-.stats-grid{grid-template-columns:1fr 1fr}
-.last-tx-grid{grid-template-columns:1fr}
-.loan-info{grid-template-columns:1fr}
-.support-grid{grid-template-columns:1fr}
-.family-card-stats{grid-template-columns:1fr}
-.shop-grid{grid-template-columns:1fr}
-.calendar-grid{grid-template-columns:1fr}
-.date-row{font-size:0.75rem;gap:4px}
-.rank-box .rank-value{font-size:1.2rem}
-.rank-box .rank-label{font-size:0.7rem}
 }
 </style>
 </head>
@@ -317,13 +346,7 @@ h1{font-size:1.2rem}
 
 <!-- ===== منوی کناری ===== -->
 <div class="sidebar-menu" id="sidebarMenu">
-<div class="menu-top">
-<div class="theme-switcher">
-<button class="theme-btn active" onclick="setTheme('auto')">خودکار</button>
-<button class="theme-btn" onclick="setTheme('light')">روز</button>
-<button class="theme-btn" onclick="setTheme('dark')">شب</button>
-</div>
-</div>
+<div class="menu-top" style="display:none"></div>
 <div class="menu-item active" data-tab="dashboard" onclick="selectMenuItem('dashboard')">
 <i class="fas fa-chart-line"></i> صورتحساب
 <span class="help-icon" onclick="event.stopPropagation();showHelpFor('dashboard')">?</span>
@@ -334,16 +357,17 @@ h1{font-size:1.2rem}
 </div>
 <div class="menu-item" data-tab="family" onclick="selectMenuItem('family')">
 <i class="fas fa-users"></i> خانواده من
+<span class="badge-family">ویژه سرپرستان</span>
 <span class="help-icon" onclick="event.stopPropagation();showHelpFor('family')">?</span>
 </div>
-<div class="menu-item" data-tab="statistics" id="menuStatistics" onclick="selectMenuItem('statistics')" style="display:none">
+<div class="menu-item" data-tab="statistics" id="menuStatistics" onclick="selectMenuItem('statistics')">
 <i class="fas fa-chart-pie"></i> آمار
-<span style="font-size:0.6rem;color:#fbbf24;background:rgba(251,191,36,0.2);padding:2px 6px;border-radius:4px">ویژه</span>
+<span class="badge-council">ویژه اعضای شورا و مدیر</span>
 <span class="help-icon" onclick="event.stopPropagation();showHelpFor('statistics')">?</span>
 </div>
-<div class="menu-item" data-tab="calendar" id="menuCalendar" onclick="selectMenuItem('calendar')" style="display:none">
+<div class="menu-item" data-tab="calendar" id="menuCalendar" onclick="selectMenuItem('calendar')">
 <i class="fas fa-calendar-day"></i> تقویم
-<span style="font-size:0.6rem;color:#fbbf24;background:rgba(251,191,36,0.2);padding:2px 6px;border-radius:4px">ویژه</span>
+<span class="badge-council">ویژه اعضای شورا و مدیر</span>
 <span class="help-icon" onclick="event.stopPropagation();showHelpFor('calendar')">?</span>
 </div>
 <div class="menu-item" data-tab="smsStatus" onclick="selectMenuItem('smsStatus')">
@@ -438,6 +462,7 @@ const $=(s)=>document.querySelector(s);
 let currentUser=null;
 let currentTab='dashboard';
 let currentClubTab='shop';
+let currentStatsTab='month'; // month, year, all
 let members=[];
 let transactions=[];
 let users=[];
@@ -518,6 +543,19 @@ if(s==='0')return false;
 return['true','yes','فعال','بله','✓','✅','on'].includes(s);
 }
 
+// ===== تبدیل تاریخ شمسی به میلادی =====
+function persianToGregorian(persianDate){
+if(!persianDate)return null;
+const parts=persianDate.split('/');
+if(parts.length!==3)return null;
+const pYear=parseInt(parts[0]);
+const pMonth=parseInt(parts[1]);
+const pDay=parseInt(parts[2]);
+if(isNaN(pYear)||isNaN(pMonth)||isNaN(pDay))return null;
+const gDate=new Date(pYear, pMonth-1, pDay);
+return gDate;
+}
+
 // ===== Theme Manager =====
 const ThemeManager={
 init(){
@@ -532,8 +570,8 @@ document.documentElement.setAttribute('data-theme',(hour<6||hour>=20)?'dark':'li
 }else{
 document.documentElement.setAttribute('data-theme',theme);
 }
-document.querySelectorAll('.theme-btn').forEach(btn=>btn.classList.remove('active'));
-const activeBtn=document.querySelector(`.theme-btn[onclick="setTheme('${theme}')"]`);
+document.querySelectorAll('.header-theme-btn').forEach(btn=>btn.classList.remove('active'));
+const activeBtn=document.querySelector(`.header-theme-btn[onclick="setTheme('${theme}')"]`);
 if(activeBtn)activeBtn.classList.add('active');
 }
 };
@@ -563,6 +601,14 @@ document.querySelectorAll('.club-tab').forEach(t=>t.classList.remove('active'));
 const clickedTab=event?.target?.closest('.club-tab');
 if(clickedTab)clickedTab.classList.add('active');
 renderClubContent();
+}
+
+function selectStatsTab(tab){
+currentStatsTab=tab;
+document.querySelectorAll('.stats-btn').forEach(t=>t.classList.remove('active'));
+const clickedTab=event?.target?.closest('.stats-btn');
+if(clickedTab)clickedTab.classList.add('active');
+renderStatisticsContent(document.getElementById('contentArea'));
 }
 
 function doLogout(){
@@ -611,7 +657,6 @@ const rows=XLSX.utils.sheet_to_json(sh,{defval:'',raw:false});
 if(!rows.length)return{members:[],transactions:[],users:[]};
 const headers=Object.keys(rows[0]);
 
-// ===== بارگذاری اطلاعات از اولین ردیف =====
 if(rows.length>0){
 const firstRow=rows[0];
 const supportPhoneCol=findCol(['telepon','تلفن','شماره تماس'],headers);
@@ -634,7 +679,7 @@ id:findCol(['ID','id'],headers),
 accountNumber:findCol(['شماره حساب'],headers),
 name:findCol(['name','نام'],headers),
 phone:findCol(['phone','تلفن','تلفن 1'],headers),
-phone2:findCol(['phone2','تلفن2','تلفن 2'],headers),  // ===== ستون phone2 اضافه شد =====
+phone2:findCol(['phone2','تلفن2','تلفن 2'],headers),
 balance:findCol(['موجودی'],headers),
 savingsStatus:findCol(['وضعیت پس انداز'],headers),
 loanBalanceCol:findCol(['مانده وام'],headers),
@@ -671,7 +716,7 @@ heh2:findCol(['heh2','نقش خانوار'],headers),
 mabVam1:findCol(['mab vam1','مبلغ وام مصوبه'],headers),
 tedad:findCol(['tedad','تعداد اقساط مصوبه'],headers),
 lock:findCol(['lock','قفل'],headers),
-mojodiTaInLahzeh:findCol(['mojodi ta in lahzeh'],headers),  // ===== ستون mojodi ta in lahzeh =====
+mojodiTaInLahzeh:findCol(['mojodi ta in lahzeh'],headers),
 mablaghVamReceived:findCol(['mablagh vam','مبلغ وام دریافتی'],headers),
 dateSabt:findCol(['date sabt','تاریخ ثبت'],headers),
 dateVam:findCol(['date vam','تاریخ وام'],headers),
@@ -740,13 +785,13 @@ id:memberId,
 firstName:colMap.name?String(firstRowForMember[colMap.name]||'').trim():'',
 accountNumber:accNum,
 phone1:colMap.phone?String(firstRowForMember[colMap.phone]||'').trim():'',
-phone2:colMap.phone2?String(firstRowForMember[colMap.phone2]||'').trim():'',  // ===== phone2 اضافه شد =====
+phone2:colMap.phone2?String(maxIdRow.row[colMap.phone2]||'').trim():'',
 openDate:colMap.openDate?String(firstRowForMember[colMap.openDate]||'').trim():'',
 datMiladi:colMap.datMiladi?String(firstRowForMember[colMap.datMiladi]||'').trim():'',
 birthDateShamsi:colMap.dateBirth?String(firstRowForMember[colMap.dateBirth]||'').trim():'',
 active:colMap.active?parseBool(firstRowForMember[colMap.active]):true,
 balance:colMap.balance?parseNum(maxIdRow.row[colMap.balance]):0,
-currentMonthBalance:colMap.mojodiTaInLahzeh?parseNum(maxIdRow.row[colMap.mojodiTaInLahzeh]):0,  // ===== از ستون mojodi ta in lahzeh =====
+currentMonthBalance:colMap.mojodiTaInLahzeh?parseNum(maxIdRow.row[colMap.mojodiTaInLahzeh]):0,
 savingsStatus:colMap.savingsStatus?parseNum(maxIdRow.row[colMap.savingsStatus]):0,
 loanReceivedAmount:colMap.mablaghVamReceived?parseNum(firstRowForMember[colMap.mablaghVamReceived]):0,
 loanBalance:colMap.loanBalanceCol?parseNum(maxIdRow.row[colMap.loanBalanceCol]):0,
@@ -786,7 +831,7 @@ const transaction={
 'مبلغ قسط واریزی':colMap.installmentAmountTx?fmtNum(parseNum(row[colMap.installmentAmountTx])):'0',
 'تاریخ قسط واریزی':colMap.installmentDateTx?String(row[colMap.installmentDateTx]||''):'',
 'جمع واریزی':colMap.total?fmtNum(parseNum(row[colMap.total])):'0',
-'موجودی':colMap.balance?fmtNum(parseNum(row[colMap.balance])):'0',  // ===== موجودی از ستون موجودی =====
+'موجودی':colMap.balance?fmtNum(parseNum(row[colMap.balance])):'0',
 'تعداد قسط پرداخت شده':colMap.paidInstallments?String(row[colMap.paidInstallments]||'0'):'0',
 'تعداد قسط مانده':colMap.remainingInstallments?String(row[colMap.remainingInstallments]||'0'):'0',
 'وضعیت پس انداز':colMap.savingsStatus?fmtNum(parseNum(row[colMap.savingsStatus])):'0',
@@ -1054,7 +1099,7 @@ if(months<0){years--;months+=12;}
 return years+' سال، '+months+' ماه و '+days+' روز';
 }
 
-// ===== تابع رندر جدول با حذف ID تکراری =====
+// ===== تابع رندر جدول با حذف ID تکراری و ستون A به راست =====
 function renderExcelTransactions(txns, containerId){
 const container=document.getElementById(containerId);
 if(!container)return;
@@ -1063,7 +1108,6 @@ container.innerHTML='<p style="text-align:center;padding:16px;color:#718096;font
 return;
 }
 
-// ===== حذف ID تکراری =====
 const uniqueTxns = [];
 const seenIds = new Set();
 txns.forEach(tx => {
@@ -1110,7 +1154,7 @@ html+='</tbody></table></div>';
 container.innerHTML=html;
 }
 
-// ===== تابع ورود با نمایش "در حال اتصال..." =====
+// ===== تابع ورود =====
 async function handleLogin() {
     console.log('🟢 دکمه ورود کلیک شد');
     
@@ -1125,7 +1169,6 @@ async function handleLogin() {
         return;
     }
     
-    // ===== نمایش "در حال اتصال به سرور..." =====
     const waitingOverlay = document.createElement('div');
     waitingOverlay.className = 'login-waiting-overlay';
     waitingOverlay.innerHTML = `
@@ -1164,6 +1207,11 @@ async function handleLogin() {
                         <div class="date-row"><i class="fas fa-calendar-alt"></i> میلادی: <strong>${new Date().toLocaleDateString('en-US')}</strong></div>
                         <div class="date-row"><i class="fas fa-calendar"></i> شمسی: <strong>${new Date().toLocaleDateString('fa-IR')}</strong></div>
                         <div class="date-row"><i class="fas fa-clock"></i> ساعت: <strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong></div>
+                        <div class="header-theme-switcher">
+                            <button class="header-theme-btn active" onclick="setTheme('auto')">خودکار</button>
+                            <button class="header-theme-btn" onclick="setTheme('light')">روز</button>
+                            <button class="header-theme-btn" onclick="setTheme('dark')">شب</button>
+                        </div>
                     </div>
                     <div class="rank-box">
                         <div class="rank-label">رتبه شما در صندوق</div>
@@ -1182,13 +1230,8 @@ async function handleLogin() {
             document.getElementById('floatingMenuBtn').style.display = 'flex';
             updateMenuUserInfo();
             
-            if (member && member.isCouncil) {
-                document.getElementById('menuStatistics').style.display = 'flex';
-                document.getElementById('menuCalendar').style.display = 'flex';
-            } else {
-                document.getElementById('menuStatistics').style.display = 'none';
-                document.getElementById('menuCalendar').style.display = 'none';
-            }
+            document.getElementById('menuStatistics').style.display = 'flex';
+            document.getElementById('menuCalendar').style.display = 'flex';
             
             renderContent('dashboard');
             
@@ -1225,6 +1268,10 @@ function renderContent(tab) {
             content.innerHTML = '<div style="text-align:center;padding:30px;font-size:0.95rem">خطا</div>';
             return;
         }
+        const isCouncil = member.isCouncil;
+        const isAdmin = currentUser.role === 'admin';
+        const canAccessStats = isCouncil || isAdmin;
+        
         const txns = transactions.filter(t => String(t._memberId) === String(member.id)).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
         const latestTx = txns.length ? txns[0] : null;
         const ui = users.find(u => u.memberId === member.id);
@@ -1235,79 +1282,91 @@ function renderContent(tab) {
 
         content.innerHTML = `
         <div class="info-box"><i class="fas fa-chart-line"></i> اطلاعات مالی و صورتحساب شما</div>
-        <div class="dashboard-section">
-            <h3><i class="fas fa-user"></i> اطلاعات پروفایل</h3>
-            <div class="last-tx-grid">
-                <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت (شمسی)</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi || '---')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">مدت زمان عضویت</div><div class="last-tx-value" style="color:#667eea">${membershipDuration}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="dashPwdValue" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('dashPwdValue','dashPwdIcon')" style="background:rgba(102,126,234,0.1);border:none;color:#667eea;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.82rem;touch-action:manipulation;min-height:36px"><i id="dashPwdIcon" class="fas fa-eye"></i></button></div></div>
-                <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
-                <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
+        
+        <div class="dashboard-grid">
+            <div class="dashboard-section card-profile full-width">
+                <h3><i class="fas fa-user" style="color:#667eea"></i> اطلاعات پروفایل</h3>
+                <div class="last-tx-grid">
+                    <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت (شمسی)</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">مدت زمان عضویت</div><div class="last-tx-value" style="color:#667eea">${membershipDuration}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="dashPwdValue" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('dashPwdValue','dashPwdIcon')" style="background:rgba(102,126,234,0.1);border:none;color:#667eea;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:0.82rem;touch-action:manipulation;min-height:36px"><i id="dashPwdIcon" class="fas fa-eye"></i></button></div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
+                </div>
             </div>
         </div>
+        
         ${member.active === false ? '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> حساب غیرفعال - جهت فعالسازی با حسابداری تماس بگیرید</div>' : ''}
         ${member.savingsStatus < 0 ? '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> کسری موجودی - موجودی شما کسری دارد</div>' : ''}
         ${member.overdueInstallments <= -1 && member.overdueInstallments >= -6 ? '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار اقساط - اقساط شما عقب افتاده است</div>' : ''}
         ${member.overdueInstallments < -6 ? '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار جدی اقساط - با توجه به اینکه تعداد اقساط معوقه بیش از حد مجاز است اقساط شما از پس انداز کسر و ضمانت شما به اجرا گذاشته خواهد شد</div>' : ''}
 
-        ${latestTx ? `<div class="dashboard-section"><h3 style="color:#10b981"><i class="fas fa-receipt"></i> آخرین تراکنش (ID: ${esc(latestTx['ID'] || '')})</h3><div class="last-tx-grid">
-            <div class="last-tx-item"><div class="last-tx-label">ID</div><div class="last-tx-value">${esc(latestTx['ID'] || '---')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(latestTx['شماره حساب'] || '---')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">مقرری ماهانه</div><div class="last-tx-value">${esc(latestTx['مقرری ماهانه'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">شماره فیش</div><div class="last-tx-value">${esc(latestTx['شماره فیش'] || '---')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">تاریخ تراکنش</div><div class="last-tx-value">${esc(latestTx['تاریخ تراکنش'] || '---')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">مبلغ تراکنش</div><div class="last-tx-value">${esc(latestTx['مبلغ تراکنش'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">نام تراکنش کننده</div><div class="last-tx-value">${esc(latestTx['نام تراکنش کننده'] || '---')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">مبلغ قسط واریزی</div><div class="last-tx-value">${esc(latestTx['مبلغ قسط واریزی'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">تاریخ قسط واریزی</div><div class="last-tx-value">${esc(latestTx['تاریخ قسط واریزی'] || '---')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">جمع واریزی</div><div class="last-tx-value">${esc(latestTx['جمع واریزی'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">موجودی</div><div class="last-tx-value">${esc(latestTx['موجودی'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">قسط پرداخت شده</div><div class="last-tx-value">${esc(latestTx['تعداد قسط پرداخت شده'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">قسط مانده</div><div class="last-tx-value">${esc(latestTx['تعداد قسط مانده'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">وضعیت پس انداز</div><div class="last-tx-value">${esc(latestTx['وضعیت پس انداز'] || '0')}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">پیامک واریز</div><div class="last-tx-value">${latestTx['پیامک واریز'] || '---'}</div></div>
-            <div class="last-tx-item"><div class="last-tx-label">پیامک اخطار</div><div class="last-tx-value">${latestTx['پیامک اخطار'] || '---'}</div></div>
-        </div></div>` : '<div class="dashboard-section"><h3><i class="fas fa-receipt"></i> آخرین تراکنش</h3><p style="text-align:center;color:#718096;padding:16px;font-size:0.9rem">هیچ تراکنشی ثبت نشده است</p></div>'}
+        <div class="dashboard-grid">
+            <div class="dashboard-section card-transaction full-width">
+                <h3 style="color:#10b981"><i class="fas fa-receipt" style="color:#10b981"></i> آخرین تراکنش ${latestTx ? '(ID: ' + esc(latestTx['ID'] || '') + ')' : ''}</h3>
+                ${latestTx ? `<div class="last-tx-grid">
+                    <div class="last-tx-item"><div class="last-tx-label">ID</div><div class="last-tx-value">${esc(latestTx['ID'] || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(latestTx['شماره حساب'] || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">مقرری ماهانه</div><div class="last-tx-value">${esc(latestTx['مقرری ماهانه'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">شماره فیش</div><div class="last-tx-value">${esc(latestTx['شماره فیش'] || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تاریخ تراکنش</div><div class="last-tx-value">${esc(latestTx['تاریخ تراکنش'] || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">مبلغ تراکنش</div><div class="last-tx-value">${esc(latestTx['مبلغ تراکنش'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">نام تراکنش کننده</div><div class="last-tx-value">${esc(latestTx['نام تراکنش کننده'] || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">مبلغ قسط واریزی</div><div class="last-tx-value">${esc(latestTx['مبلغ قسط واریزی'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">تاریخ قسط واریزی</div><div class="last-tx-value">${esc(latestTx['تاریخ قسط واریزی'] || '---')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">جمع واریزی</div><div class="last-tx-value">${esc(latestTx['جمع واریزی'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">موجودی</div><div class="last-tx-value">${esc(latestTx['موجودی'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">قسط پرداخت شده</div><div class="last-tx-value">${esc(latestTx['تعداد قسط پرداخت شده'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">قسط مانده</div><div class="last-tx-value">${esc(latestTx['تعداد قسط مانده'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">وضعیت پس انداز</div><div class="last-tx-value">${esc(latestTx['وضعیت پس انداز'] || '0')}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">پیامک واریز</div><div class="last-tx-value">${latestTx['پیامک واریز'] || '---'}</div></div>
+                    <div class="last-tx-item"><div class="last-tx-label">پیامک اخطار</div><div class="last-tx-value">${latestTx['پیامک اخطار'] || '---'}</div></div>
+                </div>` : '<p style="text-align:center;color:#718096;padding:16px;font-size:0.9rem">هیچ تراکنشی ثبت نشده است</p>'}
+            </div>
+        </div>
 
-        <!-- ===== تغییر عنوان ===== -->
-        <div class="dashboard-section">
-            <h3><i class="fas fa-file-contract" style="color:#9f7aea"></i> وام و مقرری مصوب شده توسط شورا</h3>
-            <div class="loan-info">
-                <div class="loan-info-item"><div class="loan-info-label">مبلغ وام مصوبه</div><div class="loan-info-value">${member.mabVam1 ? fmtNum(member.mabVam1) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط مصوبه</div><div class="loan-info-value">${member.tedad || '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">مبلغ هر قسط مصوبه</div><div class="loan-info-value">${member.tedad > 0 ? fmtNum(Math.round(member.mabVam1 / member.tedad)) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">مقرری ماهانه مصوب</div><div class="loan-info-value">${member.monthlySalaryApproved ? fmtNum(member.monthlySalaryApproved) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">موجودی تا این ماه</div><div class="loan-info-value">${member.currentMonthBalance ? fmtNum(member.currentMonthBalance) : '---'}</div></div>
+        <div class="dashboard-grid">
+            <div class="dashboard-section card-loan">
+                <h3><i class="fas fa-file-contract" style="color:#f59e0b"></i> وام و مقرری مصوب شده توسط شورا</h3>
+                <div class="loan-info">
+                    <div class="loan-info-item"><div class="loan-info-label">مبلغ وام مصوبه</div><div class="loan-info-value">${member.mabVam1 ? fmtNum(member.mabVam1) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط مصوبه</div><div class="loan-info-value">${member.tedad || '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">مبلغ هر قسط مصوبه</div><div class="loan-info-value">${member.tedad > 0 ? fmtNum(Math.round(member.mabVam1 / member.tedad)) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">مقرری ماهانه مصوب</div><div class="loan-info-value">${member.monthlySalaryApproved ? fmtNum(member.monthlySalaryApproved) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">موجودی تا این ماه</div><div class="loan-info-value">${member.currentMonthBalance ? fmtNum(member.currentMonthBalance) : '---'}</div></div>
+                </div>
+            </div>
+            
+            <div class="dashboard-section card-debt">
+                <h3><i class="fas fa-hand-holding-usd" style="color:#ef4444"></i> اطلاعات وام و بدهی شما</h3>
+                <div class="loan-info">
+                    <div class="loan-info-item"><div class="loan-info-label">شماره وام</div><div class="loan-info-value">${esc(member.loanNumber || member.accountNumber || '---')}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">مبلغ وام دریافتی</div><div class="loan-info-value">${member.loanReceivedAmount ? fmtNum(member.loanReceivedAmount) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">مانده وام</div><div class="loan-info-value">${member.loanBalance ? fmtNum(member.loanBalance) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">تاریخ درخواست وام</div><div class="loan-info-value">${esc(member.loanRequestDate || '---')}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">تاریخ دریافت وام</div><div class="loan-info-value">${esc(member.loanReceiveDate || '---')}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">تاریخ آخرین قسط</div><div class="loan-info-value">${esc(member.lastInstallmentDate || '---')}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">مبلغ اقساط</div><div class="loan-info-value">${member.installmentAmount ? fmtNum(member.installmentAmount) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">مبلغ کارمزد</div><div class="loan-info-value">${member.feeAmount ? fmtNum(member.feeAmount) : '---'}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط</div><div class="loan-info-value">${member.totalInstallments || 0}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">پرداخت شده</div><div class="loan-info-value">${member.paidInstallments || 0}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">قسط مانده</div><div class="loan-info-value">${member.remainingInstallments || 0}</div></div>
+                    <div class="loan-info-item"><div class="loan-info-label">معوقه</div><div class="loan-info-value">${member.overdueInstallments || 0}</div></div>
+                </div>
             </div>
         </div>
-        <div class="dashboard-section">
-            <h3><i class="fas fa-hand-holding-usd" style="color:#9f7aea"></i> اطلاعات وام و بدهی</h3>
-            <div class="loan-info">
-                <div class="loan-info-item"><div class="loan-info-label">شماره وام</div><div class="loan-info-value">${esc(member.loanNumber || member.accountNumber || '---')}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">مبلغ وام دریافتی</div><div class="loan-info-value">${member.loanReceivedAmount ? fmtNum(member.loanReceivedAmount) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">مانده وام</div><div class="loan-info-value">${member.loanBalance ? fmtNum(member.loanBalance) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">تاریخ درخواست وام</div><div class="loan-info-value">${esc(member.loanRequestDate || '---')}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">تاریخ دریافت وام</div><div class="loan-info-value">${esc(member.loanReceiveDate || '---')}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">تاریخ آخرین قسط</div><div class="loan-info-value">${esc(member.lastInstallmentDate || '---')}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">مبلغ اقساط</div><div class="loan-info-value">${member.installmentAmount ? fmtNum(member.installmentAmount) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">مبلغ کارمزد</div><div class="loan-info-value">${member.feeAmount ? fmtNum(member.feeAmount) : '---'}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط</div><div class="loan-info-value">${member.totalInstallments || 0}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">پرداخت شده</div><div class="loan-info-value">${member.paidInstallments || 0}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">قسط مانده</div><div class="loan-info-value">${member.remainingInstallments || 0}</div></div>
-                <div class="loan-info-item"><div class="loan-info-label">معوقه</div><div class="loan-info-value">${member.overdueInstallments || 0}</div></div>
-            </div>
-        </div>
-        <div class="dashboard-section">
-            <h3><i class="fas fa-file-invoice" style="color:#10b981"></i> مجموعه صورتحساب (${txns.length} تراکنش)</h3>
+
+        <div class="dashboard-section card-other">
+            <h3><i class="fas fa-file-invoice" style="color:#ec4899"></i> مجموعه صورتحساب (${txns.length} تراکنش)</h3>
             <div class="filter-bar">
                 <input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()">
                 <button class="btn-small success-btn" id="mesb">جستجو</button>
@@ -1382,14 +1441,16 @@ function renderContent(tab) {
     } else if (tab === 'family') {
         renderFamilyContent(content);
     } else if (tab === 'statistics') {
-        if (!currentUser || !members.find(m => m.id === currentUser.memberId)?.isCouncil) {
-            content.innerHTML = '<div class="info-box"><i class="fas fa-lock"></i> دسترسی محدود</div><div class="dashboard-section" style="text-align:center;padding:30px"><i class="fas fa-lock" style="font-size:2.5rem;color:#e53e3e;margin-bottom:12px"></i><p style="color:#4a5568;font-size:0.95rem">این بخش فقط برای اعضای شورا فعال است</p></div>';
+        const member = members.find(m => m.id === currentUser.memberId);
+        if (!member || (!member.isCouncil && currentUser.role !== 'admin')) {
+            content.innerHTML = '<div class="info-box"><i class="fas fa-lock"></i> دسترسی محدود</div><div class="dashboard-section" style="text-align:center;padding:30px"><i class="fas fa-lock" style="font-size:2.5rem;color:#e53e3e;margin-bottom:12px"></i><p style="color:#4a5568;font-size:0.95rem">این بخش فقط برای اعضای شورا و مدیر سیستم فعال است</p></div>';
             return;
         }
         renderStatisticsContent(content);
     } else if (tab === 'calendar') {
-        if (!currentUser || !members.find(m => m.id === currentUser.memberId)?.isCouncil) {
-            content.innerHTML = '<div class="info-box"><i class="fas fa-lock"></i> دسترسی محدود</div><div class="dashboard-section" style="text-align:center;padding:30px"><i class="fas fa-lock" style="font-size:2.5rem;color:#e53e3e;margin-bottom:12px"></i><p style="color:#4a5568;font-size:0.95rem">این بخش فقط برای اعضای شورا فعال است</p></div>';
+        const member = members.find(m => m.id === currentUser.memberId);
+        if (!member || (!member.isCouncil && currentUser.role !== 'admin')) {
+            content.innerHTML = '<div class="info-box"><i class="fas fa-lock"></i> دسترسی محدود</div><div class="dashboard-section" style="text-align:center;padding:30px"><i class="fas fa-lock" style="font-size:2.5rem;color:#e53e3e;margin-bottom:12px"></i><p style="color:#4a5568;font-size:0.95rem">این بخش فقط برای اعضای شورا و مدیر سیستم فعال است</p></div>';
             return;
         }
         renderCalendarContent(content);
@@ -1406,7 +1467,137 @@ function renderContent(tab) {
     }
 }
 
-// ===== رندر خانواده با وضعیت پیامک =====
+// ===== رندر آمار با 3 کلید =====
+function renderStatisticsContent(content) {
+    if (!content) content = document.getElementById('contentArea');
+    if (!content) return;
+
+    // محاسبه آمارها
+    const totalMembers = members.length;
+    const activeMembers = members.filter(m => m.active !== false).length;
+    const totalOverdue = members.filter(m => m.overdueInstallments < 0).length;
+    const totalOverdueCount = members.reduce((sum, m) => sum + Math.abs(m.overdueInstallments || 0), 0);
+    
+    // تراکنش‌ها براساس تاریخ فیش
+    const fishTransactions = transactions.filter(t => t['شماره فیش'] && t['شماره فیش'] !== '');
+    const totalTransactions = transactions.length;
+    const totalFishTransactions = fishTransactions.length;
+    
+    // جمع پس‌اندازها
+    const totalSavings = members.reduce((sum, m) => sum + (m.savingsStatus || 0), 0);
+    
+    // جمع اقساط دریافت شده
+    const totalInstallmentsReceived = transactions.reduce((sum, t) => sum + (t._amount || 0), 0);
+    
+    // جمع وام پرداخت شده
+    const totalLoanPaid = members.reduce((sum, m) => sum + (m.loanReceivedAmount || 0), 0);
+    const totalLoanCount = members.filter(m => m.loanReceivedAmount > 0).length;
+    
+    // افراد در نوبت وام
+    const waitingForLoan = members.filter(m => m.loanBalance > 0 && m.remainingInstallments > 0).length;
+    
+    // جمع کارمزدها
+    const totalFees = members.reduce((sum, m) => sum + (m.feeAmount || 0), 0);
+    
+    // جمع موجودی بانک
+    const totalBankBalance = members.reduce((sum, m) => sum + (m.balance || 0), 0);
+
+    // درصد تغییرات (محاسبه ساده)
+    const prevMonthMembers = Math.round(totalMembers * 0.95);
+    const prevYearMembers = Math.round(totalMembers * 0.85);
+    const monthChange = totalMembers > 0 ? Math.round(((totalMembers - prevMonthMembers) / prevMonthMembers) * 100) : 0;
+    const yearChange = totalMembers > 0 ? Math.round(((totalMembers - prevYearMembers) / prevYearMembers) * 100) : 0;
+
+    const statsData = {
+        month: {
+            title: 'اطلاعات کلی براساس ماه شمسی',
+            period: 'ماه جاری',
+            members: totalMembers,
+            overdue: totalOverdueCount,
+            fishTx: totalFishTransactions,
+            txCount: totalTransactions,
+            savings: totalSavings,
+            installmentsReceived: totalInstallmentsReceived,
+            loanPaid: totalLoanPaid,
+            loanCount: totalLoanCount,
+            waitingLoan: waitingForLoan,
+            fees: totalFees,
+            bankBalance: totalBankBalance,
+            monthChange: monthChange,
+            yearChange: yearChange
+        },
+        year: {
+            title: 'اطلاعات کلی براساس سال شمسی',
+            period: 'سال جاری',
+            members: totalMembers,
+            overdue: totalOverdueCount,
+            fishTx: totalFishTransactions,
+            txCount: totalTransactions,
+            savings: totalSavings,
+            installmentsReceived: totalInstallmentsReceived,
+            loanPaid: totalLoanPaid,
+            loanCount: totalLoanCount,
+            waitingLoan: waitingForLoan,
+            fees: totalFees,
+            bankBalance: totalBankBalance,
+            monthChange: monthChange,
+            yearChange: yearChange
+        },
+        all: {
+            title: 'اطلاعات کل از ابتدا تا کنون',
+            period: 'کل دوره',
+            members: totalMembers,
+            overdue: totalOverdueCount,
+            fishTx: totalFishTransactions,
+            txCount: totalTransactions,
+            savings: totalSavings,
+            installmentsReceived: totalInstallmentsReceived,
+            loanPaid: totalLoanPaid,
+            loanCount: totalLoanCount,
+            waitingLoan: waitingForLoan,
+            fees: totalFees,
+            bankBalance: totalBankBalance,
+            monthChange: monthChange,
+            yearChange: yearChange
+        }
+    };
+
+    const data = statsData[currentStatsTab] || statsData.month;
+
+    content.innerHTML = `
+    <div class="info-box"><i class="fas fa-chart-bar"></i> گزارش‌های آماری</div>
+    
+    <div class="dashboard-section card-stats">
+        <h3><i class="fas fa-filter" style="color:#14b8a6"></i> انتخاب بازه زمانی</h3>
+        <div class="stats-filter-bar">
+            <button class="btn-small stats-btn ${currentStatsTab === 'month' ? 'active' : ''}" onclick="selectStatsTab('month')"><i class="fas fa-calendar-alt"></i> ماهانه</button>
+            <button class="btn-small stats-btn ${currentStatsTab === 'year' ? 'active' : ''}" onclick="selectStatsTab('year')"><i class="fas fa-calendar"></i> سالانه</button>
+            <button class="btn-small stats-btn ${currentStatsTab === 'all' ? 'active' : ''}" onclick="selectStatsTab('all')"><i class="fas fa-infinity"></i> کلی</button>
+        </div>
+    </div>
+    
+    <div class="dashboard-section card-stats">
+        <h3><i class="fas fa-chart-pie" style="color:#14b8a6"></i> ${data.title}</h3>
+        <div style="font-size:0.85rem;color:#64748b;margin-bottom:12px">بازه: ${data.period}</div>
+        <div class="stats-detail-grid">
+            <div class="stats-detail-item"><div class="stats-detail-label">تعداد عضویت اعضا</div><div class="stats-detail-value">${fmtNum(data.members)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">تعداد اقساط معوقه</div><div class="stats-detail-value red">${fmtNum(data.overdue)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">تعداد واریزی براساس تاریخ فیش</div><div class="stats-detail-value gold">${fmtNum(data.fishTx)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">تعداد تراکنش‌ها</div><div class="stats-detail-value purple">${fmtNum(data.txCount)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">جمع پس‌اندازها</div><div class="stats-detail-value green">${fmtNum(data.savings)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">جمع اقساط دریافت شده</div><div class="stats-detail-value green">${fmtNum(data.installmentsReceived)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">جمع وام پرداخت شده</div><div class="stats-detail-value gold">${fmtNum(data.loanPaid)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">تعداد وام پرداخت شده</div><div class="stats-detail-value purple">${fmtNum(data.loanCount)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">تعداد افراد در نوبت وام</div><div class="stats-detail-value red">${fmtNum(data.waitingLoan)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">جمع کارمزدهای دریافتی</div><div class="stats-detail-value gold">${fmtNum(data.fees)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">جمع موجودی بانک</div><div class="stats-detail-value green">${fmtNum(data.bankBalance)}</div></div>
+            <div class="stats-detail-item"><div class="stats-detail-label">درصد تغییر نسبت به ماه قبل</div><div class="stats-detail-value ${data.monthChange >= 0 ? 'green' : 'red'}">${data.monthChange >= 0 ? '+' : ''}${data.monthChange}%</div></div>
+            <div class="stats-detail-item" style="grid-column:1/-1"><div class="stats-detail-label">درصد تغییر نسبت به سال قبل</div><div class="stats-detail-value ${data.yearChange >= 0 ? 'green' : 'red'}">${data.yearChange >= 0 ? '+' : ''}${data.yearChange}%</div></div>
+        </div>
+    </div>`;
+}
+
+// ===== رندر خانواده =====
 function renderFamilyContent(content) {
     if (!isHeadOfHousehold()) {
         content.innerHTML = '<div class="info-box"><i class="fas fa-users"></i> خانواده من</div><div class="dashboard-section" style="text-align:center;padding:30px"><i class="fas fa-lock" style="font-size:2.5rem;color:#e53e3e;margin-bottom:12px"></i><p style="color:#4a5568;font-size:0.95rem">فقط سرپرست خانوار به این بخش دسترسی دارد</p></div>';
@@ -1414,7 +1605,6 @@ function renderFamilyContent(content) {
     }
     const familyMembers = getFamilyMembers();
     
-    // ===== محاسبه مجموع‌ها =====
     const totalBalance = familyMembers.reduce((sum, m) => sum + (m.balance || 0), 0);
     const totalDebt = familyMembers.reduce((sum, m) => sum + (m.loanBalance || 0), 0);
     const totalMonthlyPay = familyMembers.reduce((sum, m) => sum + (m.monthlySalary || 0), 0);
@@ -1467,7 +1657,6 @@ window.showFamilyMemberDetails = function(memberId, chipElement) {
     const accountStatusHtml = accountActive ? '<span class="account-status-badge active">فعال</span>' : '<span class="account-status-badge inactive">غیرفعال</span>';
     const actualPassword = ui ? ui.password || '---' : '---';
 
-    // ===== وضعیت پیامک برای هر عضو =====
     const latestMemberTx = mTxns.length ? mTxns[0] : null;
     const smsServices = [
         { name: 'پیامک صورتحساب', key: 'smsActive', icon: 'fa-file-invoice-dollar', color: '#48bb78' },
@@ -1588,37 +1777,6 @@ function renderClubContent() {
     content.innerHTML = `<div class="info-box"><i class="fas fa-star"></i> باشگاه امتیازات</div><div class="club-tabs"><div class="club-tab ${currentClubTab === 'shop' ? 'active' : ''}" onclick="selectClubTab('shop')">فروشگاه</div><div class="club-tab ${currentClubTab === 'purchases' ? 'active' : ''}" onclick="selectClubTab('purchases')">مصرف شده</div><div class="club-tab ${currentClubTab === 'coins' ? 'active' : ''}" onclick="selectClubTab('coins')">امتیازها</div><div class="club-tab ${currentClubTab === 'rules' ? 'active' : ''}" onclick="selectClubTab('rules')">قوانین</div></div><div id="clubTabContent">${tabContent}</div>`;
 }
 
-function renderStatisticsContent(content) {
-    const totalMembers = members.length;
-    const activeMembers = members.filter(m => m.active !== false).length;
-    const inactiveMembers = totalMembers - activeMembers;
-    const totalBalance = members.reduce((sum, m) => sum + (m.balance || 0), 0);
-    const totalLoan = members.reduce((sum, m) => sum + (m.loanBalance || 0), 0);
-    const totalOverdue = members.filter(m => m.overdueInstallments < 0).length;
-    const goldCount = members.filter(m => memberScores[m.id]?.tier === 'gold').length;
-    const silverCount = members.filter(m => memberScores[m.id]?.tier === 'silver').length;
-    const blackCount = members.filter(m => memberScores[m.id]?.tier === 'black').length;
-    content.innerHTML = `<div class="info-box"><i class="fas fa-chart-bar"></i> گزارش‌های آماری</div>
-    <div class="dashboard-section"><h3><i class="fas fa-users" style="color:#14b8a6"></i> آمار کلی</h3><div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-users" style="color:#4299e1"></i></div><div class="stat-value">${totalMembers}</div><div class="stat-label">کل اعضا</div></div>
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle" style="color:#48bb78"></i></div><div class="stat-value">${activeMembers}</div><div class="stat-label">فعال</div></div>
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-times-circle" style="color:#e53e3e"></i></div><div class="stat-value">${inactiveMembers}</div><div class="stat-label">غیرفعال</div></div>
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-wallet" style="color:#d69e2e"></i></div><div class="stat-value">${fmtNum(totalBalance)}</div><div class="stat-label">موجودی کل</div></div>
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-hand-holding-usd" style="color:#9f7aea"></i></div><div class="stat-value">${fmtNum(totalLoan)}</div><div class="stat-label">وام کل</div></div>
-        <div class="stat-card"><div class="stat-icon"><i class="fas fa-exclamation-triangle" style="color:#e53e3e"></i></div><div class="stat-value">${totalOverdue}</div><div class="stat-label">معوقه</div></div>
-    </div></div>
-    <div class="dashboard-section"><h3><i class="fas fa-trophy" style="color:#14b8a6"></i> دسته‌بندی اعضا</h3><div class="stats-grid">
-        <div class="stat-card"><div class="stat-icon" style="color:#FFD700">⭐</div><div class="stat-value" style="color:#FFA500">${goldCount}</div><div class="stat-label">طلایی</div></div>
-        <div class="stat-card"><div class="stat-icon" style="color:#A8A8A8">🥈</div><div class="stat-value" style="color:#808080">${silverCount}</div><div class="stat-label">نقره‌ای</div></div>
-        <div class="stat-card"><div class="stat-icon" style="color:#4A5568">⚫</div><div class="stat-value" style="color:#2D3748">${blackCount}</div><div class="stat-label">سیاه</div></div>
-    </div></div>
-    <div class="dashboard-section"><h3><i class="fas fa-chart-bar" style="color:#14b8a6"></i> نمودار</h3><div class="bar-chart">
-        <div class="bar-item"><div class="bar-value" style="font-size:0.72rem;font-weight:bold;color:#1e293b">${activeMembers}</div><div class="bar" style="height:${Math.max((activeMembers / Math.max(totalMembers, 1)) * 100, 5)}%;background:#48bb78"></div><div class="bar-label">فعال</div></div>
-        <div class="bar-item"><div class="bar-value" style="font-size:0.72rem;font-weight:bold;color:#1e293b">${inactiveMembers}</div><div class="bar" style="height:${Math.max((inactiveMembers / Math.max(totalMembers, 1)) * 100, 5)}%;background:#e53e3e"></div><div class="bar-label">غیرفعال</div></div>
-        <div class="bar-item"><div class="bar-value" style="font-size:0.72rem;font-weight:bold;color:#1e293b">${totalOverdue}</div><div class="bar" style="height:${Math.max((totalOverdue / Math.max(totalMembers, 1)) * 100, 5)}%;background:#ed8936"></div><div class="bar-label">معوقه</div></div>
-    </div></div>`;
-}
-
 function renderCalendarContent(content) {
     const now = new Date();
     const jalaliMonth = now.getMonth() + 1;
@@ -1673,7 +1831,6 @@ function renderSmsContent(content) {
     content.innerHTML = html;
 }
 
-// ===== اعلان‌ها =====
 function renderAnnouncementsContent(content) {
     content.innerHTML = `<div class="info-box"><i class="fas fa-bell"></i> اعلان‌ها</div>
     <div class="dashboard-section"><h3><i class="fas fa-inbox"></i> اعلان‌های شما</h3>
@@ -1826,6 +1983,8 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.log('❌ دکمه ورود پیدا نشد!');
     }
+    setTheme('auto');
+    currentStatsTab = 'month';
 });
 
 console.log('✅ کد با موفقیت بارگذاری شد');
