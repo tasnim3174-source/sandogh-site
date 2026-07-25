@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>صندوق اتحاد</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://v1.fontapi.ir/css/BTitr" rel="stylesheet" />
 
@@ -3163,6 +3163,40 @@
         // LOAD MAIN DATA
         // ============================================================
         async function loadMainData() {
+           async function loadMainData() {
+    // ===== این کد رو اضافه کن =====
+    if (typeof XLSX === 'undefined') {
+        console.log('⏳ منتظر بارگذاری XLSX...');
+        await new Promise(resolve => {
+            const checkXLSX = setInterval(() => {
+                if (typeof XLSX !== 'undefined') {
+                    clearInterval(checkXLSX);
+                    resolve();
+                }
+            }, 100);
+            setTimeout(() => {
+                clearInterval(checkXLSX);
+                resolve();
+            }, 5000);
+        });
+        
+        if (typeof XLSX === 'undefined') {
+            throw new Error('کتابخانه XLSX بارگذاری نشد. لطفاً صفحه را Refresh کنید.');
+        }
+    }
+    // ===== کد اضافه شده تمام =====
+    
+    const controller = new AbortController();  // ← این خط قبلاً بود، دستش نزن
+    const timeoutId = setTimeout(() => controller.abort(), 15000);  // ← این خط قبلاً بود، دستش نزن
+
+    try {
+        const response = await fetch(DATA_URL, {
+            cache: 'no-cache',
+            signal: controller.signal
+        });
+        // ... بقیه کد
+    }
+}
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
 
@@ -3688,21 +3722,36 @@
         // ============================================================
         // HANDLE LOGIN
         // ============================================================
-        async function handleLogin() {
-            console.log('🟢 دکمه ورود کلیک شد');
+       async function handleLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
 
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
+    if (!username || !password) {
+        alert('⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید');
+        return;
+    }
 
-            if (!username || !password) {
-                alert('⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید');
-                return;
-            }
+    // بررسی XLSX
+    if (typeof XLSX === 'undefined') {
+        alert('⚠️ در حال بارگذاری کتابخانه... لطفاً دوباره تلاش کنید');
+        // تلاش برای بارگذاری مجدد
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+        document.head.appendChild(script);
+        await new Promise(r => setTimeout(r, 2000));
+        if (typeof XLSX === 'undefined') {
+            alert('❌ خطا در بارگذاری کتابخانه. لطفاً صفحه را Refresh کنید.');
+            return;
+        }
+    }
 
-            showUpdateOverlay('در حال ورود', 'لطفاً شکیبا باشید...');
-            updateUpdateOverlay(0, 'آماده‌سازی...', 1);
+    showUpdateOverlay('در حال ورود', 'لطفاً شکیبا باشید...');
+    updateUpdateOverlay(0, 'آماده‌سازی...', 1);
 
-            try {
+    try {
+        // ... بقیه کدهای قبلی
+    }
+}
                 updateUpdateOverlay(10, 'اتصال به سرور...', 1);
                 await new Promise(r => setTimeout(r, 200));
 
