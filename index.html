@@ -3468,56 +3468,54 @@
         // ============================================================
         // بارگذاری داده با کش هوشمند
         // ============================================================
-        async function loadMainDataWithCache(forceRefresh = false) {
-            const CACHE_KEY = 'sandogh_data_v2';
-            const CACHE_TIME_KEY = 'sandogh_data_time_v2';
+       async function loadMainDataWithCache(forceRefresh = false) {
+    const CACHE_KEY = 'sandogh_data_v2';
+    const CACHE_TIME_KEY = 'sandogh_data_time_v2';
 
-            if (forceRefresh) {
-                console.log('🔄 بروزرسانی اجباری - نادیده گرفتن کش');
-                localStorage.removeItem(CACHE_KEY);
-                localStorage.removeItem(CACHE_TIME_KEY);
-            } else {
-                try {
-                    const cached = localStorage.getItem(CACHE_KEY);
-                    const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+    // ===== بررسی XLSX =====
+    let retryCount = 0;
+    while (typeof XLSX === 'undefined' && retryCount < 10) {
+        console.log('⏳ منتظر XLSX در loadMainDataWithCache...');
+        await new Promise(r => setTimeout(r, 300));
+        retryCount++;
+    }
 
-                    if (cached && cachedTime) {
-                        const age = Date.now() - parseInt(cachedTime);
-                        const MAX_CACHE_AGE = 15 * 60 * 1000;
+    if (forceRefresh) {
+        localStorage.removeItem(CACHE_KEY);
+        localStorage.removeItem(CACHE_TIME_KEY);
+    } else {
+        try {
+            const cached = localStorage.getItem(CACHE_KEY);
+            const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
 
-                        if (age < MAX_CACHE_AGE) {
-                            console.log('📦 استفاده از کش (تازه)');
-                            return JSON.parse(cached);
-                        } else {
-                            console.log('⏰ کش منقضی شده، بارگذاری تازه...');
-                        }
-                    }
-                } catch (e) {
-                    console.warn('⚠️ خطا در خواندن کش');
-                    localStorage.removeItem(CACHE_KEY);
-                    localStorage.removeItem(CACHE_TIME_KEY);
+            if (cached && cachedTime) {
+                const age = Date.now() - parseInt(cachedTime);
+                const MAX_CACHE_AGE = 15 * 60 * 1000;
+
+                if (age < MAX_CACHE_AGE) {
+                    return JSON.parse(cached);
                 }
             }
-
-            console.log('🌐 بارگذاری تازه از سرور...');
-            const data = await loadMainData();
-
-            try {
-                const optimizedData = {
-                    members: data.members,
-                    users: data.users,
-                    transactions: data.transactions
-                };
-                localStorage.setItem(CACHE_KEY, JSON.stringify(optimizedData));
-                localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
-                console.log('✅ داده‌ها در کش ذخیره شدند');
-            } catch (e) {
-                console.warn('⚠️ خطا در ذخیره کش');
-            }
-
-            return data;
+        } catch (e) {
+            localStorage.removeItem(CACHE_KEY);
+            localStorage.removeItem(CACHE_TIME_KEY);
         }
+    }
 
+    const data = await loadMainData();
+
+    try {
+        const optimizedData = {
+            members: data.members,
+            users: data.users,
+            transactions: data.transactions
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(optimizedData));
+        localStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
+    } catch (e) {}
+
+    return data;
+}
         // ============================================================
         // تابع بروزرسانی اجباری داده‌ها
         // ============================================================
@@ -3731,192 +3729,160 @@
         return;
     }
 
-    // بررسی XLSX
-    if (typeof XLSX === 'undefined') {
-        alert('⚠️ در حال بارگذاری کتابخانه... لطفاً دوباره تلاش کنید');
-        // تلاش برای بارگذاری مجدد
-        const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-        document.head.appendChild(script);
-        await new Promise(r => setTimeout(r, 2000));
-        if (typeof XLSX === 'undefined') {
-            alert('❌ خطا در بارگذاری کتابخانه. لطفاً صفحه را Refresh کنید.');
-            return;
-        }
+    // ===== بررسی XLSX =====
+    let retryCount = 0;
+    while (typeof XLSX === 'undefined' && retryCount < 10) {
+        console.log('⏳ منتظر بارگذاری XLSX... تلاش ' + (retryCount + 1));
+        await new Promise(r => setTimeout(r, 500));
+        retryCount++;
     }
+    
+    if (typeof XLSX === 'undefined') {
+        alert('❌ خطا: کتابخانه XLSX بارگذاری نشد. لطفاً صفحه را Refresh کنید و دوباره تلاش کنید.');
+        return;
+    }
+    
+    console.log('✅ XLSX بارگذاری شد');
 
     showUpdateOverlay('در حال ورود', 'لطفاً شکیبا باشید...');
     updateUpdateOverlay(0, 'آماده‌سازی...', 1);
 
     try {
-        // ... بقیه کدهای قبلی
+        updateUpdateOverlay(10, 'اتصال به سرور...', 1);
+        await new Promise(r => setTimeout(r, 200));
+
+        const data = await loadMainDataWithCache(true);
+
+        updateUpdateOverlay(40, 'دریافت اطلاعات...', 2);
+        await new Promise(r => setTimeout(r, 150));
+
+        const user = data.users.find(u => u.username === username && u.password === password);
+
+        if (user) {
+            updateUpdateOverlay(60, 'پردازش اطلاعات...', 3);
+            await new Promise(r => setTimeout(r, 150));
+
+            currentUser = user;
+            members = data.members;
+            transactions = data.transactions || [];
+            users = data.users;
+
+            transactionsByMember = new Map();
+            transactions.forEach(t => {
+                const id = String(t._memberId);
+                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                transactionsByMember.get(id).push(t);
+            });
+
+            loadCoins();
+            loadNotifications();
+            members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+
+            const now = Date.now();
+            localStorage.setItem('sandogh_data_time_v2', String(now));
+
+            const greeting = getGreeting();
+            const member = members.find(m => m.id === user.memberId);
+
+            const showSystemMessage = SYSTEM_MESSAGE && SYSTEM_MESSAGE.trim() !== '';
+
+            const visitInfo = getVisitInfo();
+            const updateTime = getUpdateTime();
+
+            updateUpdateOverlay(90, 'بارگذاری صفحه...', 4);
+            await new Promise(r => setTimeout(r, 150));
+
+            document.getElementById('appContainer').innerHTML = `
+                        <div class="app-page">
+                            <div class="header-bar">
+                                <div class="date-combined-box">
+                                    <div class="date-row"><i class="fas fa-calendar-alt"></i> میلادی: <strong>${new Date().toLocaleDateString('en-US')}</strong></div>
+                                    <div class="date-row"><i class="fas fa-calendar"></i> شمسی: <strong>${new Date().toLocaleDateString('fa-IR')}</strong></div>
+                                    <div class="date-row"><i class="fas fa-clock"></i> ساعت: <strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong></div>
+                                    <div class="header-theme-switcher">
+                                        <button class="header-theme-btn active" onclick="setTheme('auto')">خودکار</button>
+                                        <button class="header-theme-btn" onclick="setTheme('light')">روز</button>
+                                        <button class="header-theme-btn" onclick="setTheme('dark')">شب</button>
+                                    </div>
+                                </div>
+                                <div class="rank-box">
+                                    <div class="rank-label">رتبه شما در صندوق</div>
+                                    <div class="rank-value">${member && memberScores[member.id] ? memberScores[member.id].score : 0}</div>
+                                    <div class="rank-tier">${member && memberScores[member.id] ? memberScores[member.id].tierName : ''}</div>
+                                </div>
+                            </div>
+                            
+                            ${showSystemMessage ? `
+                            <div class="system-message-box">
+                                <div class="message-icon"><i class="fas fa-bullhorn"></i></div>
+                                <div class="message-text">${esc(SYSTEM_MESSAGE)}</div>
+                            </div>` : ''}
+                            
+                            <div class="welcome-box">
+                                <div class="welcome-title"><i class="fas fa-star" style="color:var(--gold-color)"></i> خوش آمدید ${member ? member.firstName : 'کاربر'} عزیز <i class="fas fa-star" style="color:var(--gold-color)"></i></div>
+                                <div class="welcome-greeting">${greeting}</div>
+                                <div style="font-size:0.6rem;color:var(--text-muted);margin-top:2px">
+                                    <span id="updateStatus">✅ بروزرسانی کامل (${updateTime}) <button onclick="forceUpdateData()" style="margin-right:6px;padding:2px 8px;border-radius:4px;border:2px solid var(--gradient-start);background:none;color:var(--gradient-start);cursor:pointer;font-size:0.55rem;touch-action:manipulation;font-weight:bold">🔄 بروزرسانی</button></span>
+                                </div>
+                                <div class="visit-info-box">
+                                    <div class="visit-item">
+                                        <i class="fas fa-sign-in-alt"></i>
+                                        <span>تعداد ورود: </span>
+                                        <span class="visit-value" id="visitCount">${visitInfo.count}</span>
+                                    </div>
+                                    <div class="visit-item">
+                                        <i class="fas fa-clock"></i>
+                                        <span>آخرین ورود: </span>
+                                        <span class="visit-value" id="lastVisitTime">${visitInfo.lastVisit}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-area" id="contentArea"></div>
+                        </div>
+                    `;
+
+            document.getElementById('floatingMenuBtn').style.display = 'flex';
+            updateMenuUserInfo();
+            document.getElementById('menuStatistics').style.display = 'flex';
+            document.getElementById('menuCalendar').style.display = 'flex';
+            document.getElementById('menuRequests').style.display = 'flex';
+
+            renderContent('dashboard');
+
+            setInterval(() => {
+                const el = document.getElementById('clockDisplay');
+                if (el) el.textContent = new Date().toLocaleTimeString('fa-IR');
+            }, 1000);
+
+            updateVisitInfo();
+
+            updateUpdateOverlay(100, '✅ ورود موفق!', 4);
+            await new Promise(r => setTimeout(r, 300));
+
+            hideUpdateOverlay();
+
+            if (autoUpdateInterval) {
+                clearInterval(autoUpdateInterval);
+            }
+            autoUpdateInterval = setInterval(async function() {
+                if (!currentUser) return;
+                await forceUpdateData();
+            }, 15 * 60 * 1000);
+
+            setTimeout(() => {
+                if (member) checkAutoNotifications(member);
+            }, 1000);
+
+        } else {
+            hideUpdateOverlay();
+            alert('❌ نام کاربری یا رمز عبور اشتباه است');
+        }
+    } catch (error) {
+        console.error('❌ خطا:', error);
+        hideUpdateOverlay();
+        alert('❌ خطا در ورود: ' + error.message);
     }
 }
-                updateUpdateOverlay(10, 'اتصال به سرور...', 1);
-                await new Promise(r => setTimeout(r, 200));
-
-                console.log('⏳ بارگذاری داده‌ها...');
-                const data = await loadMainDataWithCache(true);
-
-                updateUpdateOverlay(40, 'دریافت اطلاعات...', 2);
-                await new Promise(r => setTimeout(r, 150));
-
-                const user = data.users.find(u => u.username === username && u.password === password);
-
-                if (user) {
-                    updateUpdateOverlay(60, 'پردازش اطلاعات...', 3);
-                    await new Promise(r => setTimeout(r, 150));
-
-                    currentUser = user;
-                    members = data.members;
-                    transactions = data.transactions || [];
-                    users = data.users;
-
-                    loadCoins();
-                    loadNotifications();
-                    members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
-
-                    const now = Date.now();
-                    localStorage.setItem('sandogh_data_time_v2', String(now));
-
-                    const greeting = getGreeting();
-                    const member = members.find(m => m.id === user.memberId);
-
-                    const showSystemMessage = SYSTEM_MESSAGE && SYSTEM_MESSAGE.trim() !== '';
-                    console.log('📢 نمایش پیام سیستم:', showSystemMessage);
-
-                    const visitInfo = getVisitInfo();
-                    const updateTime = getUpdateTime();
-
-                    updateUpdateOverlay(90, 'بارگذاری صفحه...', 4);
-                    await new Promise(r => setTimeout(r, 150));
-
-                    document.getElementById('appContainer').innerHTML = `
-                                <div class="app-page">
-                                    <div class="header-bar">
-                                        <div class="date-combined-box">
-                                            <div class="date-row"><i class="fas fa-calendar-alt"></i> میلادی: <strong>${new Date().toLocaleDateString('en-US')}</strong></div>
-                                            <div class="date-row"><i class="fas fa-calendar"></i> شمسی: <strong>${new Date().toLocaleDateString('fa-IR')}</strong></div>
-                                            <div class="date-row"><i class="fas fa-clock"></i> ساعت: <strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong></div>
-                                            <div class="header-theme-switcher">
-                                                <button class="header-theme-btn active" onclick="setTheme('auto')">خودکار</button>
-                                                <button class="header-theme-btn" onclick="setTheme('light')">روز</button>
-                                                <button class="header-theme-btn" onclick="setTheme('dark')">شب</button>
-                                            </div>
-                                        </div>
-                                        <div class="rank-box">
-                                            <div class="rank-label">رتبه شما در صندوق</div>
-                                            <div class="rank-value">${member && memberScores[member.id] ? memberScores[member.id].score : 0}</div>
-                                            <div class="rank-tier">${member && memberScores[member.id] ? memberScores[member.id].tierName : ''}</div>
-                                        </div>
-                                    </div>
-                                    
-                                    ${showSystemMessage ? `
-                                    <div class="system-message-box">
-                                        <div class="message-icon"><i class="fas fa-bullhorn"></i></div>
-                                        <div class="message-text">${esc(SYSTEM_MESSAGE)}</div>
-                                    </div>` : ''}
-                                    
-                                    <div class="welcome-box">
-                                        <div class="welcome-title"><i class="fas fa-star" style="color:#f59e0b"></i> خوش آمدید ${member ? member.firstName : 'کاربر'} عزیز <i class="fas fa-star" style="color:#f59e0b"></i></div>
-                                        <div class="welcome-greeting">${greeting}</div>
-                                        <div style="font-size:0.8rem;color:#94a3b8;margin-top:6px">
-                                            <span id="updateStatus">✅ بروزرسانی کامل (${updateTime}) <button onclick="forceUpdateData()" style="margin-right:12px;padding:6px 16px;border-radius:8px;border:2px solid #667eea;background:none;color:#667eea;cursor:pointer;font-size:0.8rem;touch-action:manipulation">🔄 بروزرسانی</button></span>
-                                        </div>
-                                        <div class="visit-info-box">
-                                            <div class="visit-item">
-                                                <i class="fas fa-sign-in-alt"></i>
-                                                <span>تعداد ورود: </span>
-                                                <span class="visit-value" id="visitCount">${visitInfo.count}</span>
-                                            </div>
-                                            <div class="visit-item">
-                                                <i class="fas fa-clock"></i>
-                                                <span>آخرین ورود: </span>
-                                                <span class="visit-value" id="lastVisitTime">${visitInfo.lastVisit}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="content-area" id="contentArea"></div>
-                                </div>
-                            `;
-
-                    document.getElementById('floatingMenuBtn').style.display = 'flex';
-                    updateMenuUserInfo();
-                    document.getElementById('menuStatistics').style.display = 'flex';
-                    document.getElementById('menuCalendar').style.display = 'flex';
-
-                    renderContent('dashboard');
-
-                    setInterval(() => {
-                        const el = document.getElementById('clockDisplay');
-                        if (el) el.textContent = new Date().toLocaleTimeString('fa-IR');
-                    }, 1000);
-
-                    updateVisitInfo();
-
-                    updateUpdateOverlay(100, '✅ ورود موفق!', 4);
-                    await new Promise(r => setTimeout(r, 300));
-
-                    hideUpdateOverlay();
-
-                    if (autoUpdateInterval) {
-                        clearInterval(autoUpdateInterval);
-                    }
-                    autoUpdateInterval = setInterval(async function() {
-                        if (!currentUser) return;
-                        console.log('🔄 بروزرسانی خودکار هر ۱۵ دقیقه');
-                        await forceUpdateData();
-                    }, 15 * 60 * 1000);
-
-                    setTimeout(() => {
-                        if (member) checkAutoNotifications(member);
-                    }, 1000);
-
-                } else {
-                    hideUpdateOverlay();
-                    alert('❌ نام کاربری یا رمز عبور اشتباه است');
-                }
-            } catch (error) {
-                console.error('❌ خطا:', error);
-                hideUpdateOverlay();
-
-                let errorMsg = 'خطا در ورود: ';
-                if (error.message.includes('مدت زمان بارگذاری به پایان رسید')) {
-                    errorMsg += 'مدت زمان بارگذاری به پایان رسید. لطفاً اتصال اینترنت خود را بررسی کنید.';
-                } else if (error.message.includes('Failed to fetch')) {
-                    errorMsg += 'مشکل در اتصال به سرور. لطفاً اینترنت خود را بررسی کنید.';
-                } else if (error.message.includes('خطای سرور')) {
-                    errorMsg += 'خطای سرور. لطفاً دوباره تلاش کنید.';
-                } else {
-                    errorMsg += error.message;
-                }
-                alert('❌ ' + errorMsg);
-
-                try {
-                    const cached = localStorage.getItem('sandogh_data_v2');
-                    if (cached) {
-                        const data = JSON.parse(cached);
-                        const user = data.users.find(u => u.username === username && u.password === password);
-                        if (user) {
-                            if (confirm('⚠️ اتصال به سرور برقرار نشد. آیا می‌خواهید با اطلاعات ذخیره شده قبلی وارد شوید؟')) {
-                                currentUser = user;
-                                members = data.members;
-                                transactions = data.transactions || [];
-                                users = data.users;
-                                loadCoins();
-                                loadNotifications();
-                                members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
-                                alert('⚠️ با اطلاعات ذخیره شده قبلی وارد شدید. برای بروزرسانی بعداً کلیک کنید.');
-                                location.reload();
-                            }
-                        }
-                    }
-                } catch (e) {
-                    console.warn('خطا در بازیابی کش:', e);
-                }
-            }
-        }
-
         // ============================================================
         // RENDER CONTENT
         // ============================================================
