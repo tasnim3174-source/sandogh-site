@@ -201,6 +201,33 @@
             padding: 4px;
         }
 
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            max-width: 480px;
+            margin: 6px auto 10px;
+            padding-right: 4px;
+            cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--gradient-start);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .remember-me label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         .btn {
             width: 100%;
             padding: 14px;
@@ -264,7 +291,7 @@
             color: #fff;
         }
 
-        /* ===== منوی شبکه‌ای ===== */
+        /* ===== منوی شبکه‌ای با کادرهای رنگی ===== */
         .grid-menu {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -283,7 +310,7 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.25s;
-            border: 3px solid transparent;
+            border: 3px solid var(--border-color);
             position: relative;
             touch-action: manipulation;
             -webkit-touch-callout: none;
@@ -294,22 +321,148 @@
             transform: scale(0.94);
         }
 
+        .grid-menu-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+
+        /* ===== رنگ‌های کادر هر آیتم ===== */
+        .grid-menu-item[data-tab="profile"] {
+            border-color: #8b5cf6;
+        }
+        .grid-menu-item[data-tab="profile"]:hover {
+            border-color: #6d28d9;
+        }
+
+        .grid-menu-item[data-tab="dashboard"] {
+            border-color: #667eea;
+        }
+        .grid-menu-item[data-tab="dashboard"]:hover {
+            border-color: #764ba2;
+        }
+
+        .grid-menu-item[data-tab="lastSms"] {
+            border-color: #14b8a6;
+        }
+        .grid-menu-item[data-tab="lastSms"]:hover {
+            border-color: #0d9488;
+        }
+
+        .grid-menu-item[data-tab="club"] {
+            border-color: #f59e0b;
+        }
+        .grid-menu-item[data-tab="club"]:hover {
+            border-color: #d97706;
+        }
+
+        .grid-menu-item[data-tab="family"] {
+            border-color: #10b981;
+        }
+        .grid-menu-item[data-tab="family"]:hover {
+            border-color: #059669;
+        }
+
+        .grid-menu-item[data-tab="access"] {
+            border-color: #8b5cf6;
+        }
+        .grid-menu-item[data-tab="access"]:hover {
+            border-color: #7c3aed;
+        }
+
+        .grid-menu-item[data-tab="statistics"] {
+            border-color: #06b6d4;
+        }
+        .grid-menu-item[data-tab="statistics"]:hover {
+            border-color: #0891b2;
+        }
+
+        .grid-menu-item[data-tab="calendar"] {
+            border-color: #ec4899;
+        }
+        .grid-menu-item[data-tab="calendar"]:hover {
+            border-color: #db2777;
+        }
+
+        .grid-menu-item[data-tab="requests"] {
+            border-color: #f97316;
+        }
+        .grid-menu-item[data-tab="requests"]:hover {
+            border-color: #ea580c;
+        }
+
+        .grid-menu-item[data-tab="smsStatus"] {
+            border-color: #14b8a6;
+        }
+        .grid-menu-item[data-tab="smsStatus"]:hover {
+            border-color: #0d9488;
+        }
+
+        .grid-menu-item[data-tab="announcements"] {
+            border-color: #6366f1;
+        }
+        .grid-menu-item[data-tab="announcements"]:hover {
+            border-color: #4f46e5;
+        }
+
+        .grid-menu-item[data-tab="security"] {
+            border-color: #f43f5e;
+        }
+        .grid-menu-item[data-tab="security"]:hover {
+            border-color: #e11d48;
+        }
+
+        .grid-menu-item[data-tab="support"] {
+            border-color: #84cc16;
+        }
+        .grid-menu-item[data-tab="support"]:hover {
+            border-color: #65a30d;
+        }
+
+        .grid-menu-item[data-tab="help"] {
+            border-color: #8b5cf6;
+        }
+        .grid-menu-item[data-tab="help"]:hover {
+            border-color: #6d28d9;
+        }
+
+        .grid-menu-item[data-tab="settings"] {
+            border-color: #64748b;
+        }
+        .grid-menu-item[data-tab="settings"]:hover {
+            border-color: #475569;
+        }
+
+        .grid-menu-item[data-tab="logout"] {
+            border-color: var(--danger-color);
+        }
+        .grid-menu-item[data-tab="logout"]:hover {
+            border-color: #dc2626;
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        /* آیتم فعال */
+        .grid-menu-item.active {
+            border-color: var(--gradient-start);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+        }
+
         .grid-menu-item .menu-icon {
-            width: 90px;
-            height: 90px;
-            border-radius: 22px;
+            width: 120px;
+            height: 120px;
+            border-radius: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 10px;
-            font-size: 3rem;
+            margin: 0 auto 12px;
+            font-size: 4rem;
             color: #fff;
             transition: all 0.3s;
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
         }
 
         .grid-menu-item .menu-label {
-            font-size: 0.95rem;
+            font-size: 1.1rem;
             color: var(--text-primary);
             font-weight: bold;
             line-height: 1.4;
@@ -337,99 +490,63 @@
             display: flex;
         }
 
-        /* ===== رنگ‌های هر آیتم ===== */
+        /* رنگ‌های آیکون‌های منو */
         .grid-menu-item[data-tab="profile"] .menu-icon {
             background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-        }
-        .grid-menu-item[data-tab="profile"]:hover {
-            border-color: #8b5cf6;
         }
         .grid-menu-item[data-tab="dashboard"] .menu-icon {
             background: linear-gradient(135deg, #667eea, #764ba2);
         }
-        .grid-menu-item[data-tab="dashboard"]:hover {
-            border-color: #667eea;
+        .grid-menu-item[data-tab="lastSms"] .menu-icon {
+            background: linear-gradient(135deg, #14b8a6, #0d9488);
         }
         .grid-menu-item[data-tab="club"] .menu-icon {
             background: linear-gradient(135deg, #f59e0b, #d97706);
         }
-        .grid-menu-item[data-tab="club"]:hover {
-            border-color: #f59e0b;
-        }
         .grid-menu-item[data-tab="family"] .menu-icon {
             background: linear-gradient(135deg, #10b981, #059669);
-        }
-        .grid-menu-item[data-tab="family"]:hover {
-            border-color: #10b981;
         }
         .grid-menu-item[data-tab="access"] .menu-icon {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
         }
-        .grid-menu-item[data-tab="access"]:hover {
-            border-color: #8b5cf6;
-        }
         .grid-menu-item[data-tab="statistics"] .menu-icon {
             background: linear-gradient(135deg, #06b6d4, #0891b2);
-        }
-        .grid-menu-item[data-tab="statistics"]:hover {
-            border-color: #06b6d4;
         }
         .grid-menu-item[data-tab="calendar"] .menu-icon {
             background: linear-gradient(135deg, #ec4899, #db2777);
         }
-        .grid-menu-item[data-tab="calendar"]:hover {
-            border-color: #ec4899;
-        }
         .grid-menu-item[data-tab="requests"] .menu-icon {
             background: linear-gradient(135deg, #f97316, #ea580c);
-        }
-        .grid-menu-item[data-tab="requests"]:hover {
-            border-color: #f97316;
         }
         .grid-menu-item[data-tab="smsStatus"] .menu-icon {
             background: linear-gradient(135deg, #14b8a6, #0d9488);
         }
-        .grid-menu-item[data-tab="smsStatus"]:hover {
-            border-color: #14b8a6;
-        }
         .grid-menu-item[data-tab="announcements"] .menu-icon {
             background: linear-gradient(135deg, #6366f1, #4f46e5);
-        }
-        .grid-menu-item[data-tab="announcements"]:hover {
-            border-color: #6366f1;
         }
         .grid-menu-item[data-tab="security"] .menu-icon {
             background: linear-gradient(135deg, #f43f5e, #e11d48);
         }
-        .grid-menu-item[data-tab="security"]:hover {
-            border-color: #f43f5e;
-        }
         .grid-menu-item[data-tab="support"] .menu-icon {
             background: linear-gradient(135deg, #84cc16, #65a30d);
-        }
-        .grid-menu-item[data-tab="support"]:hover {
-            border-color: #84cc16;
         }
         .grid-menu-item[data-tab="help"] .menu-icon {
             background: linear-gradient(135deg, #8b5cf6, #6d28d9);
         }
-        .grid-menu-item[data-tab="help"]:hover {
-            border-color: #8b5cf6;
-        }
         .grid-menu-item[data-tab="settings"] .menu-icon {
             background: linear-gradient(135deg, #64748b, #475569);
         }
-        .grid-menu-item[data-tab="settings"]:hover {
-            border-color: #64748b;
+        .grid-menu-item[data-tab="logout"] .menu-icon {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
         }
 
-        /* ===== هدر ===== */
+        /* ===== هدر جدید با فونت بزرگتر ===== */
         .header-bar {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 12px 20px;
+            text-align: center;
+            padding: 16px 20px;
             margin-bottom: 14px;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
             border-radius: 16px;
@@ -441,110 +558,209 @@
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%);
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            flex: 1;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .header-date {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            color: var(--date-color);
-            font-weight: bold;
-            background: rgba(102, 126, 234, 0.08);
-            padding: 6px 18px;
-            border-radius: 10px;
-            flex-wrap: wrap;
-        }
-
-        .header-date i {
-            color: var(--gradient-start);
-            font-size: 1rem;
-        }
-
-        .header-date strong {
-            color: var(--date-color);
-            font-weight: bold;
-            font-size: 1.05rem;
-        }
-
-        .header-date .sep {
-            color: var(--text-muted);
-            margin: 0 3px;
-        }
-
-        .header-date .greeting-text {
-            font-size: 0.9rem;
-            color: var(--gold-color);
-            background: rgba(245, 158, 11, 0.15);
-            padding: 3px 12px;
-            border-radius: 14px;
-        }
-
-        .header-date .update-text {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            background: rgba(0, 0, 0, 0.05);
-            padding: 2px 10px;
-            border-radius: 8px;
-        }
-
+        /* رتبه */
         .header-rank {
             display: flex;
+            flex-direction: row;
+            justify-content: center;
             align-items: center;
-            gap: 8px;
-            font-size: 1rem;
-            color: var(--text-secondary);
+            gap: 16px;
+            width: 100%;
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(217, 119, 6, 0.15) 100%);
-            padding: 6px 18px;
-            border-radius: 10px;
+            padding: 12px 20px;
+            border-radius: 14px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .header-rank .rank-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 1rem;
+            color: var(--text-muted);
             font-weight: bold;
         }
 
         .header-rank .rank-value {
             color: var(--gold-color);
             font-weight: bold;
-            font-size: 1.3rem;
+            font-size: 2.4rem;
+            line-height: 1.2;
         }
 
         .header-rank .rank-tier {
-            color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 1.2rem;
+            color: #fff;
+            padding: 4px 18px;
+            border-radius: 20px;
+            font-weight: bold;
         }
 
-        .header-logout {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
-            color: #fff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.85rem;
-            transition: transform 0.15s;
-            min-height: 38px;
-            touch-action: manipulation;
+        /* تاریخ و ساعت */
+        .header-date {
             display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: rgba(102, 126, 234, 0.08);
+            padding: 10px 18px;
+            border-radius: 12px;
+            margin-bottom: 4px;
             gap: 6px;
         }
-        .header-logout:active {
-            transform: scale(0.94);
+
+        .header-date .date-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            font-size: 1.2rem;
         }
 
-        /* ===== دکمه بازگشت به منو ===== */
+        .header-date .date-row i {
+            font-size: 1.3rem;
+            color: var(--gradient-start);
+        }
+
+        .header-date .date-row span {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--date-color);
+        }
+
+        .header-date .date-row .sep {
+            color: var(--text-muted);
+            font-size: 1.4rem;
+        }
+
+        .header-date .date-row #clockDisplay {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--date-color);
+        }
+
+        .header-date .date-row .update-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.05);
+            padding: 3px 14px;
+            border-radius: 8px;
+        }
+
+        .header-date .greeting-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .header-date .greeting-row .greeting-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .header-date .greeting-row .greeting-text {
+            font-size: 1rem;
+            color: var(--gold-color);
+            background: rgba(245, 158, 11, 0.15);
+            padding: 3px 18px;
+            border-radius: 14px;
+            font-weight: bold;
+        }
+
+        /* ===== باکس اطلاعات مالی با فونت بزرگتر ===== */
+        .quick-info-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 4px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            width: 100%;
+        }
+
+        .quick-info-box .info-item {
+            text-align: center;
+            padding: 4px 6px;
+        }
+
+        .quick-info-box .info-item .info-label {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+
+        .quick-info-box .info-item .info-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .quick-info-box .info-item .info-value.green {
+            color: var(--success-color);
+        }
+        .quick-info-box .info-item .info-value.red {
+            color: var(--danger-color);
+        }
+        .quick-info-box .info-item .info-value.gold {
+            color: var(--gold-color);
+        }
+        .quick-info-box .info-item .info-value.purple {
+            color: var(--purple-color);
+        }
+
+        /* ===== بقیه استایل‌ها ===== */
+        .system-message-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+            border-right: 4px solid var(--gold-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .system-message-box .message-icon {
+            font-size: 1.1rem;
+            color: #d97706;
+            flex-shrink: 0;
+        }
+        .system-message-box .message-text {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            flex: 1;
+            font-weight: bold;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-right: 5px solid var(--gradient-start);
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            color: var(--text-primary);
+        }
+
+        .content-area {
+            min-height: 200px;
+            padding-bottom: 12px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .back-to-menu-btn {
             background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
             color: #fff;
@@ -567,7 +783,6 @@
             transform: scale(0.94);
         }
 
-        /* ===== مودال تنظیمات با اسکرول ===== */
         .settings-modal {
             position: fixed;
             top: 0;
@@ -598,18 +813,6 @@
             box-shadow: 0 50px 120px var(--shadow-color);
             animation: scaleIn 0.3s ease;
             scroll-behavior: smooth;
-        }
-
-        .settings-modal-content::-webkit-scrollbar {
-            width: 4px;
-        }
-        .settings-modal-content::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
-            border-radius: 4px;
-        }
-        .settings-modal-content::-webkit-scrollbar-thumb {
-            background: var(--gradient-start);
-            border-radius: 4px;
         }
 
         .settings-modal-content .settings-title {
@@ -711,296 +914,7 @@
             }
         }
 
-        /* ===== استایل‌های جدید برای ورود چندگانه ===== */
-        .login-method-selector {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .login-method-btn {
-            padding: 8px 12px;
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            background: var(--card-bg);
-            cursor: pointer;
-            transition: all 0.3s;
-            flex: 1;
-            min-width: 60px;
-            text-align: center;
-            touch-action: manipulation;
-            user-select: none;
-            color: var(--text-secondary);
-        }
-
-        .login-method-btn:active {
-            transform: scale(0.94);
-        }
-
-        .login-method-btn.active {
-            border-color: var(--gradient-start);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.12);
-            color: var(--text-primary);
-        }
-
-        .login-method-btn .method-icon {
-            font-size: 1.4rem;
-            display: block;
-        }
-
-        .login-method-btn .method-label {
-            font-size: 0.6rem;
-            font-weight: bold;
-            margin-top: 2px;
-        }
-
-        .login-method-btn .method-badge {
-            font-size: 0.45rem;
-            display: block;
-            margin-top: 2px;
-            color: var(--success-color);
-        }
-
-        .login-method-btn .method-badge.inactive {
-            color: var(--danger-color);
-        }
-
-        .login-form-container {
-            display: none;
-            animation: fadeInUp 0.3s ease;
-        }
-
-        .login-form-container.active {
-            display: block;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* الگو */
-        .pattern-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            max-width: 200px;
-            margin: 8px auto;
-        }
-
-        .pattern-cell-login {
-            aspect-ratio: 1;
-            background: var(--bg-secondary);
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: var(--text-primary);
-            user-select: none;
-            touch-action: manipulation;
-        }
-
-        .pattern-cell-login:active {
-            transform: scale(0.92);
-        }
-
-        .pattern-cell-login.active {
-            background: var(--gradient-start);
-            border-color: var(--gradient-end);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .pattern-cell-login.wrong {
-            animation: shake 0.3s ease;
-            border-color: var(--danger-color);
-            background: rgba(239, 68, 68, 0.2);
-        }
-
-        .pattern-cell-login.correct {
-            animation: pulse 0.3s ease;
-            border-color: var(--success-color);
-            background: rgba(16, 185, 129, 0.2);
-        }
-
-        @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            25% {
-                transform: translateX(-6px);
-            }
-            75% {
-                transform: translateX(6px);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.08);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .pattern-status {
-            text-align: center;
-            margin-top: 6px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            min-height: 22px;
-            color: var(--text-secondary);
-        }
-
-        .pattern-dots {
-            text-align: center;
-            margin: 4px 0;
-            font-size: 1.1rem;
-            letter-spacing: 4px;
-            color: var(--text-primary);
-            min-height: 24px;
-        }
-
-        /* اثر انگشت */
-        .fingerprint-container {
-            text-align: center;
-            padding: 8px 0;
-        }
-
-        .fingerprint-icon {
-            font-size: 3rem;
-            color: var(--gradient-start);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-block;
-            padding: 14px;
-            border-radius: 50%;
-            background: rgba(102, 126, 234, 0.08);
-            touch-action: manipulation;
-        }
-
-        .fingerprint-icon:active {
-            transform: scale(0.92);
-        }
-
-        .fingerprint-icon.scanning {
-            animation: fingerprintPulse 1s ease-in-out infinite;
-            color: var(--success-color);
-        }
-
-        @keyframes fingerprintPulse {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            50% {
-                transform: scale(1.06);
-                opacity: 0.7;
-            }
-        }
-
-        .fingerprint-status {
-            margin-top: 6px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: var(--text-secondary);
-            min-height: 22px;
-        }
-
-        /* سلول‌های الگو در تنظیمات */
-        .pattern-cell {
-            aspect-ratio: 1;
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            user-select: none;
-            touch-action: manipulation;
-        }
-
-        .pattern-cell:active {
-            transform: scale(0.92);
-        }
-
-        .pattern-cell.selected {
-            background: var(--gradient-start);
-            border-color: var(--gradient-end);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        /* بقیه استایل‌های قبلی */
-        .system-message-box {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
-            padding: 10px 14px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
-            border-right: 4px solid var(--gold-color);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .system-message-box .message-icon {
-            font-size: 1.1rem;
-            color: #d97706;
-            flex-shrink: 0;
-        }
-        .system-message-box .message-text {
-            font-size: 0.9rem;
-            color: var(--text-primary);
-            line-height: 1.6;
-            flex: 1;
-            font-weight: bold;
-        }
-
-        .info-box {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-right: 5px solid var(--gradient-start);
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 15px var(--shadow-color);
-            color: var(--text-primary);
-        }
-
-        .content-area {
-            min-height: 200px;
-            padding-bottom: 12px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
+        /* ===== سایر استایل‌های قبلی ===== */
         .dashboard-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -2005,37 +1919,29 @@
                 padding: 12px;
             }
             .grid-menu-item .menu-icon {
-                width: 65px;
-                height: 65px;
-                font-size: 2rem;
+                width: 85px;
+                height: 85px;
+                font-size: 2.8rem;
+                border-radius: 22px;
             }
             .grid-menu-item .menu-label {
-                font-size: 0.7rem;
+                font-size: 0.85rem;
             }
-            .header-date {
-                font-size: 0.8rem;
-                padding: 4px 12px;
+            .header-date .date-row {
+                font-size: 1rem;
+                gap: 8px;
             }
-            .login-method-btn {
-                padding: 6px 8px;
-                min-width: 50px;
+            .header-date .date-row span {
+                font-size: 1rem;
             }
-            .login-method-btn .method-icon {
-                font-size: 1.2rem;
+            .header-date .date-row #clockDisplay {
+                font-size: 1.1rem;
             }
-            .login-method-btn .method-label {
-                font-size: 0.5rem;
+            .header-rank .rank-value {
+                font-size: 2rem;
             }
-            .pattern-grid {
-                max-width: 160px;
-                gap: 6px;
-            }
-            .pattern-cell-login {
-                font-size: 1.2rem;
-            }
-            .fingerprint-icon {
-                font-size: 2.5rem;
-                padding: 10px;
+            .quick-info-box .info-item .info-value {
+                font-size: 1rem;
             }
             .settings-modal-content {
                 padding: 20px 22px;
@@ -2051,34 +1957,36 @@
                 padding: 10px;
             }
             .grid-menu-item .menu-icon {
-                width: 55px;
-                height: 55px;
-                font-size: 1.6rem;
+                width: 70px;
+                height: 70px;
+                font-size: 2.2rem;
+                border-radius: 18px;
             }
             .grid-menu-item .menu-label {
-                font-size: 0.6rem;
+                font-size: 0.7rem;
             }
-            .login-method-btn {
-                padding: 4px 6px;
-                min-width: 40px;
-            }
-            .login-method-btn .method-icon {
-                font-size: 1rem;
-            }
-            .login-method-btn .method-label {
-                font-size: 0.45rem;
-            }
-            .pattern-grid {
-                max-width: 130px;
+            .header-date .date-row {
+                font-size: 0.85rem;
                 gap: 4px;
             }
-            .pattern-cell-login {
-                font-size: 1rem;
-                border-radius: 6px;
+            .header-date .date-row span {
+                font-size: 0.85rem;
             }
-            .fingerprint-icon {
-                font-size: 2rem;
-                padding: 8px;
+            .header-date .date-row #clockDisplay {
+                font-size: 0.95rem;
+            }
+            .header-date .greeting-row .greeting-name {
+                font-size: 0.9rem;
+            }
+            .header-rank .rank-value {
+                font-size: 1.6rem;
+            }
+            .quick-info-box {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .quick-info-box .info-item .info-value {
+                font-size: 0.9rem;
             }
             .settings-modal-content {
                 padding: 16px 18px;
@@ -2089,7 +1997,6 @@
 </head>
 
 <body>
-
     <!-- ===== UPDATE OVERLAY ===== -->
     <div class="update-overlay" id="updateOverlay">
         <div class="update-box">
@@ -2122,14 +2029,14 @@
         </div>
     </div>
 
-    <!-- ===== MODAL تنظیمات با اسکرول ===== -->
+    <!-- ===== MODAL تنظیمات ===== -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
             <button class="settings-close" onclick="closeSettings()">✕</button>
             <div class="settings-title">⚙️ تنظیمات</div>
 
             <div class="settings-section">
-                <div class="settings-subtitle">
+                <div class="settings-subtitle" style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;font-weight:bold;border-bottom:2px solid var(--border-color);padding-bottom:4px;">
                     <i class="fas fa-palette"></i> انتخاب تم
                 </div>
                 <div class="theme-options">
@@ -2146,73 +2053,7 @@
             </div>
 
             <div class="settings-section">
-                <div class="settings-subtitle">
-                    <i class="fas fa-draw-polygon"></i> تنظیمات الگوی ورود
-                </div>
-                <div style="background:linear-gradient(135deg,rgba(245,158,11,0.1) 0%,rgba(217,119,6,0.1) 100%);padding:8px 10px;border-radius:8px;margin-bottom:8px;font-size:0.6rem;color:var(--text-secondary);font-weight:bold;">
-                    <i class="fas fa-info-circle"></i> یک الگوی ۳x۳ برای ورود سریع تنظیم کنید
-                </div>
-
-                <div style="text-align:center;margin-bottom:8px;">
-                    <div style="font-size:0.65rem;color:var(--text-secondary);font-weight:bold;margin-bottom:2px;">الگوی فعلی:</div>
-                    <div id="currentPatternDisplay" style="font-size:1rem;letter-spacing:6px;padding:6px;background:var(--bg-secondary);border-radius:6px;display:inline-block;min-width:80px;">
-                        <span id="patternStatusText">❌ تعریف نشده</span>
-                    </div>
-                </div>
-
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:150px;margin:0 auto;padding:6px;background:var(--bg-secondary);border-radius:10px;">
-                    <div class="pattern-cell" data-index="0" onclick="togglePatternCell(0)">●</div>
-                    <div class="pattern-cell" data-index="1" onclick="togglePatternCell(1)">●</div>
-                    <div class="pattern-cell" data-index="2" onclick="togglePatternCell(2)">●</div>
-                    <div class="pattern-cell" data-index="3" onclick="togglePatternCell(3)">●</div>
-                    <div class="pattern-cell" data-index="4" onclick="togglePatternCell(4)">●</div>
-                    <div class="pattern-cell" data-index="5" onclick="togglePatternCell(5)">●</div>
-                    <div class="pattern-cell" data-index="6" onclick="togglePatternCell(6)">●</div>
-                    <div class="pattern-cell" data-index="7" onclick="togglePatternCell(7)">●</div>
-                    <div class="pattern-cell" data-index="8" onclick="togglePatternCell(8)">●</div>
-                </div>
-
-                <div style="display:flex;gap:4px;justify-content:center;margin-top:8px;flex-wrap:wrap;">
-                    <button class="btn-small success-btn" onclick="savePattern()" style="font-size:0.55rem;padding:3px 12px;min-height:24px;">
-                        <i class="fas fa-save"></i> ذخیره و فعال‌سازی
-                    </button>
-                    <button class="btn-small danger-btn" onclick="clearPattern()" style="font-size:0.55rem;padding:3px 12px;min-height:24px;">
-                        <i class="fas fa-trash"></i> پاک کردن
-                    </button>
-                    <button class="btn-small info-btn" onclick="resetPatternCells()" style="font-size:0.55rem;padding:3px 12px;min-height:24px;">
-                        <i class="fas fa-undo"></i> بازنشانی
-                    </button>
-                </div>
-
-                <div style="margin-top:6px;text-align:center;">
-                    <label style="display:flex;align-items:center;justify-content:center;gap:4px;font-size:0.6rem;color:var(--text-secondary);font-weight:bold;cursor:pointer;">
-                        <input type="checkbox" id="enablePatternLogin" onchange="togglePatternLogin()">
-                        فعال‌سازی ورود با الگو
-                    </label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <div class="settings-subtitle">
-                    <i class="fas fa-fingerprint"></i> تنظیمات اثر انگشت
-                </div>
-                <div style="background:linear-gradient(135deg,rgba(159,122,234,0.1) 0%,rgba(128,90,213,0.1) 100%);padding:8px 10px;border-radius:8px;margin-bottom:8px;font-size:0.6rem;color:var(--text-secondary);font-weight:bold;">
-                    <i class="fas fa-info-circle"></i> اثر انگشت فقط روی این دستگاه ذخیره می‌شود.
-                </div>
-                <div style="text-align:center;padding:12px;background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(37,99,235,0.1) 100%);margin-bottom:8px;border-radius:8px">
-                    <i class="fas fa-fingerprint" style="font-size:1.8rem;color:#9f7aea"></i>
-                    <h4 style="font-size:0.7rem;margin-top:4px;color:var(--text-primary);font-weight:bold;">اثر انگشت را ثبت کنید</h4>
-                    <button class="btn-small success-btn" onclick="registerFingerprint()" style="font-size:0.55rem;padding:3px 12px;margin-top:4px;font-weight:bold;">
-                        <i class="fas fa-plus"></i> ثبت اثر انگشت
-                    </button>
-                    <div style="font-size:0.55rem;color:var(--text-secondary);margin-top:4px;font-weight:bold;">
-                        وضعیت: <span id="fingerprintSettingsStatus">❌ ثبت نشده</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <div class="settings-subtitle">
+                <div class="settings-subtitle" style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;font-weight:bold;border-bottom:2px solid var(--border-color);padding-bottom:4px;">
                     <i class="fas fa-shield-alt"></i> تنظیمات امنیتی
                 </div>
                 <div style="background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(37,99,235,0.1) 100%);padding:8px;border-radius:8px;margin-bottom:6px;">
@@ -2272,79 +2113,27 @@
 
             <div class="login-combined-hint">
                 <div class="hint-title"><i class="fas fa-exclamation-triangle"></i> نکات مهم قبل از ورود</div>
-                <div class="hint-item">یکی از روش‌های زیر را برای ورود انتخاب کنید</div>
                 <div class="hint-item">کیبورد را روی انگلیسی (EN) قرار دهید</div>
+                <div class="hint-item">اگر اینترنت کند است، صبور باشید</div>
             </div>
 
-            <!-- انتخابگر روش ورود -->
-            <div class="login-method-selector">
-                <div class="login-method-btn active" data-method="password" onclick="selectLoginMethod('password')">
-                    <span class="method-icon">🔑</span>
-                    <span class="method-label">رمز عبور</span>
-                    <span class="method-badge" id="passwordBadge">✔ فعال</span>
-                </div>
-                <div class="login-method-btn" data-method="pattern" onclick="selectLoginMethod('pattern')">
-                    <span class="method-icon">🎯</span>
-                    <span class="method-label">الگو</span>
-                    <span class="method-badge inactive" id="patternBadge">❌ غیرفعال</span>
-                </div>
-                <div class="login-method-btn" data-method="fingerprint" onclick="selectLoginMethod('fingerprint')">
-                    <span class="method-icon">👆</span>
-                    <span class="method-label">اثر انگشت</span>
-                    <span class="method-badge inactive" id="fingerprintBadge">❌ غیرفعال</span>
-                </div>
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> نام کاربری</label>
+                <input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید" autocomplete="username">
             </div>
 
-            <!-- فرم ورود با رمز عبور -->
-            <div class="login-form-container active" id="passwordLoginForm">
-                <div class="input-group">
-                    <label><i class="fas fa-user"></i> نام کاربری</label>
-                    <input type="text" id="loginUsername" placeholder="admin یا نام کاربری" autocomplete="username">
-                </div>
-                <div class="input-group">
-                    <label><i class="fas fa-lock"></i> رمز عبور</label>
-                    <input type="password" id="loginPassword" placeholder="رمز عبور" style="padding-left:40px" autocomplete="current-password">
-                    <button type="button" onclick="togglePassword('loginPassword','loginPwdIcon')"><i id="loginPwdIcon" class="fas fa-eye"></i></button>
-                </div>
-                <button class="btn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
+            <div class="input-group">
+                <label><i class="fas fa-lock"></i> رمز عبور</label>
+                <input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید" style="padding-left:40px" autocomplete="current-password">
+                <button type="button" onclick="togglePassword('loginPassword','loginPwdIcon')"><i id="loginPwdIcon" class="fas fa-eye"></i></button>
             </div>
 
-            <!-- فرم ورود با الگو -->
-            <div class="login-form-container" id="patternLoginForm">
-                <div style="text-align:center;margin-bottom:6px;">
-                    <div style="font-size:0.85rem;font-weight:bold;color:var(--text-primary);">🎯 الگوی خود را رسم کنید</div>
-                    <div class="pattern-dots" id="patternDots">○ ○ ○ ○ ○ ○ ○ ○ ○</div>
-                    <div class="pattern-status" id="patternStatus">برای ورود، الگوی خود را رسم کنید</div>
-                </div>
-                <div class="pattern-grid">
-                    <div class="pattern-cell-login" data-index="0" onclick="handlePatternLogin(0)">⬤</div>
-                    <div class="pattern-cell-login" data-index="1" onclick="handlePatternLogin(1)">⬤</div>
-                    <div class="pattern-cell-login" data-index="2" onclick="handlePatternLogin(2)">⬤</div>
-                    <div class="pattern-cell-login" data-index="3" onclick="handlePatternLogin(3)">⬤</div>
-                    <div class="pattern-cell-login" data-index="4" onclick="handlePatternLogin(4)">⬤</div>
-                    <div class="pattern-cell-login" data-index="5" onclick="handlePatternLogin(5)">⬤</div>
-                    <div class="pattern-cell-login" data-index="6" onclick="handlePatternLogin(6)">⬤</div>
-                    <div class="pattern-cell-login" data-index="7" onclick="handlePatternLogin(7)">⬤</div>
-                    <div class="pattern-cell-login" data-index="8" onclick="handlePatternLogin(8)">⬤</div>
-                </div>
-                <div style="text-align:center;margin-top:6px;">
-                    <button class="btn-small info-btn" onclick="resetPatternLogin()" style="font-size:0.55rem;padding:3px 12px;min-height:24px;">
-                        <i class="fas fa-undo"></i> پاک کردن
-                    </button>
-                </div>
+            <div class="remember-me">
+                <input type="checkbox" id="rememberMe">
+                <label for="rememberMe">🔒 من را به خاطر بسپار</label>
             </div>
 
-            <!-- فرم ورود با اثر انگشت -->
-            <div class="login-form-container" id="fingerprintLoginForm">
-                <div class="fingerprint-container">
-                    <div style="font-size:0.85rem;font-weight:bold;color:var(--text-primary);margin-bottom:4px;">👆 ورود با اثر انگشت</div>
-                    <div class="fingerprint-icon" id="fingerprintIcon" onclick="handleFingerprintLogin()">
-                        <i class="fas fa-fingerprint"></i>
-                    </div>
-                    <div class="fingerprint-status" id="fingerprintStatus">برای ورود، روی اثر انگشت کلیک کنید</div>
-                </div>
-            </div>
-
+            <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
         </div>
     </div>
 
@@ -2369,18 +2158,7 @@
         let userPurchases = {};
         let isAutoLogin = false;
         let transactionsByMember = new Map();
-        let currentLoginMethod = 'password';
 
-        // ===== PATTERN VARIABLES =====
-        let patternCells = Array(9).fill(false);
-        let currentPattern = [];
-        let patternLoginAttempt = [];
-
-        // ===== FINGERPRINT VARIABLES =====
-        let isFingerprintRegistered = false;
-        let isFingerprintScanning = false;
-
-        // ===== SUPPORT INFO =====
         const SUPPORT_INFO = {
             phone: '09138944709',
             accountNumber: '',
@@ -2430,8 +2208,6 @@
                 document.querySelectorAll('.theme-option').forEach(btn => btn.classList.remove('active'));
                 const activeBtn = document.querySelector(`.theme-option[onclick="setTheme('${currentTheme}')"]`);
                 if (activeBtn) activeBtn.classList.add('active');
-                loadPattern();
-                loadFingerprintStatus();
             }
         }
 
@@ -2444,418 +2220,38 @@
         }
 
         // ============================================================
-        // LOGIN METHOD SELECTOR
+        // REMEMBER ME FUNCTIONS
         // ============================================================
-        function selectLoginMethod(method) {
-            currentLoginMethod = method;
-
-            document.querySelectorAll('.login-method-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.login-method-btn[data-method="${method}"]`).classList.add('active');
-
-            document.querySelectorAll('.login-form-container').forEach(form => form.classList.remove('active'));
-
-            const formMap = {
-                'password': 'passwordLoginForm',
-                'pattern': 'patternLoginForm',
-                'fingerprint': 'fingerprintLoginForm'
-            };
-
-            const targetForm = document.getElementById(formMap[method]);
-            if (targetForm) targetForm.classList.add('active');
-
-            if (method === 'pattern') {
-                refreshPatternStatus();
-            }
-
-            if (method === 'fingerprint') {
-                loadFingerprintStatus();
+        function saveRememberMe(username, password) {
+            if (document.getElementById('rememberMe').checked) {
+                try {
+                    localStorage.setItem('sandogh_remember_username', username);
+                    localStorage.setItem('sandogh_remember_password', password);
+                    localStorage.setItem('sandogh_remember_checked', 'true');
+                } catch (e) {}
+            } else {
+                localStorage.removeItem('sandogh_remember_username');
+                localStorage.removeItem('sandogh_remember_password');
+                localStorage.setItem('sandogh_remember_checked', 'false');
             }
         }
 
-        // ============================================================
-        // PATTERN MANAGEMENT (Settings)
-        // ============================================================
-        function loadPattern() {
+        function loadRememberMe() {
             try {
-                const memberId = currentUser ? currentUser.memberId : 'default';
-                const saved = localStorage.getItem('sandogh_pattern_' + memberId);
-                const enabled = localStorage.getItem('sandogh_pattern_enabled_' + memberId) === 'true';
+                const username = localStorage.getItem('sandogh_remember_username') || '';
+                const password = localStorage.getItem('sandogh_remember_password') || '';
+                const checked = localStorage.getItem('sandogh_remember_checked') === 'true';
 
-                if (saved) {
-                    currentPattern = JSON.parse(saved);
-                    const patternStr = currentPattern.map(v => v ? '⬤' : '○').join(' ');
-                    document.getElementById('patternStatusText').textContent = '✅ ' + patternStr;
-                    document.getElementById('patternStatusText').style.color = 'var(--success-color)';
-
-                    currentPattern.forEach((active, index) => {
-                        const cell = document.querySelector(`.pattern-cell[data-index="${index}"]`);
-                        if (cell) {
-                            if (active) {
-                                cell.classList.add('selected');
-                                cell.textContent = '⬤';
-                            } else {
-                                cell.classList.remove('selected');
-                                cell.textContent = '●';
-                            }
-                        }
-                    });
-
-                    document.getElementById('enablePatternLogin').checked = enabled;
-                    patternCells = [...currentPattern];
-                } else {
-                    document.getElementById('patternStatusText').textContent = '❌ تعریف نشده';
-                    document.getElementById('patternStatusText').style.color = 'var(--danger-color)';
+                if (username && password && checked) {
+                    document.getElementById('loginUsername').value = username;
+                    document.getElementById('loginPassword').value = password;
+                    document.getElementById('rememberMe').checked = true;
+                    return true;
                 }
-
-                refreshPatternStatus();
+                return false;
             } catch (e) {
-                currentPattern = Array(9).fill(false);
+                return false;
             }
-        }
-
-        function refreshPatternStatus() {
-            const memberId = currentUser ? currentUser.memberId : 'default';
-            const isEnabled = localStorage.getItem('sandogh_pattern_enabled_' + memberId) === 'true';
-            const hasPattern = localStorage.getItem('sandogh_pattern_' + memberId) !== null;
-
-            const badge = document.getElementById('patternBadge');
-            if (badge) {
-                if (isEnabled && hasPattern) {
-                    badge.textContent = '✔ فعال';
-                    badge.className = 'method-badge';
-                } else {
-                    badge.textContent = '❌ غیرفعال';
-                    badge.className = 'method-badge inactive';
-                }
-            }
-
-            if (currentLoginMethod === 'pattern') {
-                const statusEl = document.getElementById('patternStatus');
-                if (!isEnabled) {
-                    statusEl.textContent = '⚠️ الگو فعال نیست. ابتدا در تنظیمات فعال کنید';
-                    statusEl.style.color = 'var(--danger-color)';
-                } else if (!hasPattern) {
-                    statusEl.textContent = '⚠️ الگویی تعریف نشده است. ابتدا در تنظیمات تعریف کنید';
-                    statusEl.style.color = 'var(--danger-color)';
-                } else {
-                    statusEl.textContent = 'الگوی خود را رسم کنید';
-                    statusEl.style.color = 'var(--text-secondary)';
-                    resetPatternLogin();
-                }
-            }
-        }
-
-        function togglePatternCell(index) {
-            const cell = document.querySelector(`.pattern-cell[data-index="${index}"]`);
-            if (!cell) return;
-
-            patternCells[index] = !patternCells[index];
-
-            if (patternCells[index]) {
-                cell.classList.add('selected');
-                cell.textContent = '⬤';
-            } else {
-                cell.classList.remove('selected');
-                cell.textContent = '●';
-            }
-            updatePatternDisplay();
-        }
-
-        function resetPatternCells() {
-            patternCells = Array(9).fill(false);
-            document.querySelectorAll('.pattern-cell').forEach(cell => {
-                cell.classList.remove('selected');
-                cell.textContent = '●';
-            });
-            updatePatternDisplay();
-        }
-
-        function updatePatternDisplay() {
-            const patternStr = patternCells.map(v => v ? '⬤' : '○').join(' ');
-            document.getElementById('patternStatusText').textContent = patternStr || '○ ○ ○ ○ ○ ○ ○ ○ ○';
-            document.getElementById('patternStatusText').style.color = patternCells.some(v => v) ? 'var(--success-color)' :
-                'var(--text-secondary)';
-        }
-
-        function savePattern() {
-            const hasPattern = patternCells.some(v => v);
-            if (!hasPattern) {
-                alert('⚠️ لطفاً حداقل یک خانه را انتخاب کنید');
-                return;
-            }
-
-            currentPattern = [...patternCells];
-            const memberId = currentUser ? currentUser.memberId : 'default';
-            localStorage.setItem('sandogh_pattern_' + memberId, JSON.stringify(currentPattern));
-
-            document.getElementById('enablePatternLogin').checked = true;
-            localStorage.setItem('sandogh_pattern_enabled_' + memberId, 'true');
-
-            const patternStr = currentPattern.map(v => v ? '⬤' : '○').join(' ');
-            document.getElementById('patternStatusText').textContent = '✅ ' + patternStr;
-            document.getElementById('patternStatusText').style.color = 'var(--success-color)';
-
-            refreshPatternStatus();
-
-            alert('✅ الگو با موفقیت ذخیره و فعال شد!');
-        }
-
-        function clearPattern() {
-            if (!confirm('آیا مطمئن هستید که می‌خواهید الگو را پاک کنید؟')) return;
-
-            const memberId = currentUser ? currentUser.memberId : 'default';
-            localStorage.removeItem('sandogh_pattern_' + memberId);
-            localStorage.removeItem('sandogh_pattern_enabled_' + memberId);
-
-            resetPatternCells();
-            document.getElementById('patternStatusText').textContent = '❌ تعریف نشده';
-            document.getElementById('patternStatusText').style.color = 'var(--danger-color)';
-            document.getElementById('enablePatternLogin').checked = false;
-
-            refreshPatternStatus();
-
-            alert('🗑️ الگو پاک شد');
-        }
-
-        function togglePatternLogin() {
-            const enabled = document.getElementById('enablePatternLogin').checked;
-            const memberId = currentUser ? currentUser.memberId : 'default';
-
-            if (enabled) {
-                const hasPattern = currentPattern.some(v => v);
-                if (!hasPattern) {
-                    alert('⚠️ ابتدا یک الگو تعریف و ذخیره کنید');
-                    document.getElementById('enablePatternLogin').checked = false;
-                    return;
-                }
-                localStorage.setItem('sandogh_pattern_enabled_' + memberId, 'true');
-                alert('✅ ورود با الگو فعال شد');
-            } else {
-                localStorage.setItem('sandogh_pattern_enabled_' + memberId, 'false');
-                alert('❌ ورود با الگو غیرفعال شد');
-            }
-            refreshPatternStatus();
-        }
-
-        // ============================================================
-        // PATTERN LOGIN
-        // ============================================================
-        function resetPatternLogin() {
-            patternLoginAttempt = [];
-            document.getElementById('patternStatus').textContent = 'الگوی خود را رسم کنید';
-            document.getElementById('patternStatus').style.color = 'var(--text-secondary)';
-            document.getElementById('patternDots').textContent = '○ ○ ○ ○ ○ ○ ○ ○ ○';
-
-            document.querySelectorAll('.pattern-cell-login').forEach(cell => {
-                cell.classList.remove('active', 'wrong', 'correct');
-            });
-        }
-
-        function handlePatternLogin(index) {
-            const cell = document.querySelector(`.pattern-cell-login[data-index="${index}"]`);
-            if (!cell) return;
-
-            const memberId = currentUser ? currentUser.memberId : 'default';
-            const isEnabled = localStorage.getItem('sandogh_pattern_enabled_' + memberId) === 'true';
-            if (!isEnabled) {
-                document.getElementById('patternStatus').textContent = '⚠️ الگو فعال نیست. ابتدا در تنظیمات فعال کنید';
-                document.getElementById('patternStatus').style.color = 'var(--danger-color)';
-                return;
-            }
-
-            if (patternLoginAttempt.includes(index)) return;
-
-            patternLoginAttempt.push(index);
-
-            const dots = patternLoginAttempt.map(() => '⬤').join(' ');
-            const remaining = Array(9 - patternLoginAttempt.length).fill('○').join(' ');
-            document.getElementById('patternDots').textContent = dots + ' ' + remaining;
-
-            cell.classList.add('active');
-            setTimeout(() => cell.classList.remove('active'), 300);
-
-            const savedPattern = JSON.parse(localStorage.getItem('sandogh_pattern_' + memberId) || '[]');
-            const totalSelected = savedPattern.filter(v => v).length;
-
-            if (patternLoginAttempt.length === totalSelected) {
-                let isMatch = true;
-                let savedIndex = 0;
-                for (let i = 0; i < savedPattern.length; i++) {
-                    if (savedPattern[i]) {
-                        if (patternLoginAttempt[savedIndex] !== i) {
-                            isMatch = false;
-                            break;
-                        }
-                        savedIndex++;
-                    }
-                }
-
-                if (isMatch) {
-                    document.getElementById('patternStatus').textContent = '✅ الگو صحیح است! در حال ورود...';
-                    document.getElementById('patternStatus').style.color = 'var(--success-color)';
-
-                    document.querySelectorAll('.pattern-cell-login').forEach(el => {
-                        el.classList.add('correct');
-                        setTimeout(() => el.classList.remove('correct'), 500);
-                    });
-
-                    setTimeout(() => {
-                        if (!currentUser) {
-                            const savedUsername = localStorage.getItem('sandogh_last_username_' + memberId) ||
-                            '';
-                            if (savedUsername) {
-                                document.getElementById('loginUsername').value = savedUsername;
-                                handleLogin();
-                            } else {
-                                document.getElementById('patternStatus').textContent =
-                                    '⚠️ لطفاً ابتدا با رمز عبور وارد شوید';
-                                document.getElementById('patternStatus').style.color = 'var(--danger-color)';
-                                setTimeout(() => selectLoginMethod('password'), 1500);
-                            }
-                        }
-                    }, 500);
-
-                } else {
-                    document.getElementById('patternStatus').textContent = '❌ الگو اشتباه است! دوباره تلاش کنید';
-                    document.getElementById('patternStatus').style.color = 'var(--danger-color)';
-
-                    document.querySelectorAll('.pattern-cell-login').forEach(el => {
-                        el.classList.add('wrong');
-                        setTimeout(() => el.classList.remove('wrong'), 300);
-                    });
-
-                    setTimeout(resetPatternLogin, 1200);
-                }
-            }
-        }
-
-        // ============================================================
-        // FINGERPRINT MANAGEMENT
-        // ============================================================
-        function loadFingerprintStatus() {
-            const memberId = currentUser ? currentUser.memberId : 'default';
-            const saved = localStorage.getItem('sandogh_fingerprint_' + memberId);
-            isFingerprintRegistered = saved === 'true';
-
-            const badge = document.getElementById('fingerprintBadge');
-            if (badge) {
-                badge.textContent = isFingerprintRegistered ? '✔ فعال' : '❌ غیرفعال';
-                badge.className = 'method-badge' + (isFingerprintRegistered ? '' : ' inactive');
-            }
-
-            const settingsStatus = document.getElementById('fingerprintSettingsStatus');
-            if (settingsStatus) {
-                settingsStatus.textContent = isFingerprintRegistered ? '✅ ثبت شده' : '❌ ثبت نشده';
-                settingsStatus.style.color = isFingerprintRegistered ? 'var(--success-color)' : 'var(--danger-color)';
-            }
-
-            const status = document.getElementById('fingerprintStatus');
-            if (status) {
-                status.textContent = isFingerprintRegistered ? 'برای ورود، روی اثر انگشت کلیک کنید' :
-                    '⚠️ اثر انگشت ثبت نشده است. ابتدا ثبت کنید';
-                status.style.color = isFingerprintRegistered ? 'var(--text-secondary)' : 'var(--danger-color)';
-            }
-        }
-
-        function registerFingerprint() {
-            if (!currentUser) {
-                alert('⚠️ لطفاً ابتدا وارد شوید تا اثر انگشت ثبت شود');
-                return;
-            }
-
-            const icon = document.getElementById('fingerprintIcon');
-            if (icon) icon.classList.add('scanning');
-
-            document.getElementById('fingerprintStatus').textContent = '🔍 در حال ثبت اثر انگشت...';
-            document.getElementById('fingerprintStatus').style.color = 'var(--gold-color)';
-
-            setTimeout(() => {
-                const memberId = currentUser.memberId;
-                localStorage.setItem('sandogh_fingerprint_' + memberId, 'true');
-                isFingerprintRegistered = true;
-
-                if (icon) icon.classList.remove('scanning');
-
-                document.getElementById('fingerprintStatus').textContent = '✅ اثر انگشت با موفقیت ثبت شد!';
-                document.getElementById('fingerprintStatus').style.color = 'var(--success-color)';
-
-                const badge = document.getElementById('fingerprintBadge');
-                if (badge) {
-                    badge.textContent = '✔ فعال';
-                    badge.className = 'method-badge';
-                }
-
-                const settingsStatus = document.getElementById('fingerprintSettingsStatus');
-                if (settingsStatus) {
-                    settingsStatus.textContent = '✅ ثبت شده';
-                    settingsStatus.style.color = 'var(--success-color)';
-                }
-
-                setTimeout(loadFingerprintStatus, 1500);
-                alert('✅ اثر انگشت شما با موفقیت ثبت شد!');
-            }, 2000);
-        }
-
-        function handleFingerprintLogin() {
-            const memberId = currentUser ? currentUser.memberId : 'default';
-            const isRegistered = localStorage.getItem('sandogh_fingerprint_' + memberId) === 'true';
-
-            if (!isRegistered) {
-                document.getElementById('fingerprintStatus').textContent = '⚠️ اثر انگشت ثبت نشده است. ابتدا ثبت کنید';
-                document.getElementById('fingerprintStatus').style.color = 'var(--danger-color)';
-                return;
-            }
-
-            if (isFingerprintScanning) return;
-
-            isFingerprintScanning = true;
-            const icon = document.getElementById('fingerprintIcon');
-            if (icon) icon.classList.add('scanning');
-
-            document.getElementById('fingerprintStatus').textContent = '🔍 در حال تشخیص اثر انگشت...';
-            document.getElementById('fingerprintStatus').style.color = 'var(--gold-color)';
-
-            setTimeout(() => {
-                if (icon) icon.classList.remove('scanning');
-
-                const success = Math.random() < 0.9;
-
-                if (success) {
-                    document.getElementById('fingerprintStatus').textContent = '✅ اثر انگشت تأیید شد! در حال ورود...';
-                    document.getElementById('fingerprintStatus').style.color = 'var(--success-color)';
-
-                    setTimeout(() => {
-                        if (!currentUser) {
-                            const savedUsername = localStorage.getItem('sandogh_last_username_' + memberId) ||
-                            '';
-                            if (savedUsername) {
-                                document.getElementById('loginUsername').value = savedUsername;
-                                handleLogin();
-                            } else {
-                                document.getElementById('fingerprintStatus').textContent =
-                                    '⚠️ لطفاً ابتدا با رمز عبور وارد شوید';
-                                document.getElementById('fingerprintStatus').style.color = 'var(--danger-color)';
-                                setTimeout(() => selectLoginMethod('password'), 1500);
-                            }
-                        }
-                        isFingerprintScanning = false;
-                    }, 500);
-
-                } else {
-                    document.getElementById('fingerprintStatus').textContent = '❌ اثر انگشت تشخیص داده نشد! دوباره تلاش کنید';
-                    document.getElementById('fingerprintStatus').style.color = 'var(--danger-color)';
-
-                    if (icon) {
-                        icon.style.animation = 'shake 0.3s ease';
-                        setTimeout(() => { icon.style.animation = ''; }, 300);
-                    }
-
-                    setTimeout(() => {
-                        loadFingerprintStatus();
-                        isFingerprintScanning = false;
-                    }, 1500);
-                }
-            }, 2000);
         }
 
         // ============================================================
@@ -3848,24 +3244,6 @@
         }
 
         // ============================================================
-        // AUTO LOGIN
-        // ============================================================
-        function checkAutoLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-
-            if (!username || !password) return;
-
-            if (users && users.length > 0) {
-                const user = users.find(u => u.username === username && u.password === password);
-                if (user && !isAutoLogin) {
-                    isAutoLogin = true;
-                    handleLogin();
-                }
-            }
-        }
-
-        // ============================================================
         // TOGGLE PASSWORD
         // ============================================================
         function togglePassword(targetId, iconId) {
@@ -3904,21 +3282,9 @@
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
 
-            if (currentLoginMethod === 'password') {
-                if (!username || !password) {
-                    alert('⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید');
-                    return;
-                }
-            } else {
-                if (!currentUser) {
-                    if (!username || !password) {
-                        alert('⚠️ لطفاً با روش رمز عبور وارد شوید');
-                        selectLoginMethod('password');
-                        return;
-                    }
-                } else {
-                    return;
-                }
+            if (!username || !password) {
+                alert('⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید');
+                return;
             }
 
             let retryCount = 0;
@@ -3944,17 +3310,7 @@
                 updateUpdateOverlay(40, 'دریافت اطلاعات...', 2);
                 await new Promise(r => setTimeout(r, 150));
 
-                let user = null;
-
-                if (currentLoginMethod === 'password') {
-                    user = data.users.find(u => u.username === username && u.password === password);
-                } else {
-                    if (currentUser) {
-                        user = currentUser;
-                    } else {
-                        user = data.users.find(u => u.username === username && u.password === password);
-                    }
-                }
+                const user = data.users.find(u => u.username === username && u.password === password);
 
                 if (user) {
                     updateUpdateOverlay(60, 'پردازش اطلاعات...', 3);
@@ -3977,7 +3333,8 @@
                     members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
 
                     localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
-                    localStorage.setItem('sandogh_last_username_' + user.memberId, username || user.username);
+
+                    saveRememberMe(username, password);
 
                     updateUpdateOverlay(90, 'بارگذاری صفحه...', 4);
                     await new Promise(r => setTimeout(r, 150));
@@ -4008,9 +3365,6 @@
                     setTimeout(() => {
                         if (member) checkAutoNotifications(member);
                     }, 1000);
-
-                    loadPattern();
-                    loadFingerprintStatus();
 
                 } else {
                     hideUpdateOverlay();
@@ -4050,9 +3404,10 @@
             const updateTime = getUpdateTime();
             const greeting = getGreeting();
 
+            // ===== منو با کادرهای رنگی و خروج در انتها =====
             const gridMenuHtml = `
                 <div class="grid-menu" id="gridMenu">
-                    <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')" style="border-color:#8b5cf6;">
+                    <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')">
                         <div class="menu-icon"><i class="fas fa-user-circle"></i></div>
                         <div class="menu-label">پروفایل</div>
                     </div>
@@ -4061,13 +3416,17 @@
                         <div class="menu-label">صورتحساب</div>
                         <span class="menu-badge" id="notifBadgeGrid">0</span>
                     </div>
+                    <div class="grid-menu-item" data-tab="lastSms" onclick="selectMenuItem('lastSms')">
+                        <div class="menu-icon"><i class="fas fa-sms"></i></div>
+                        <div class="menu-label">آخرین پیامک صورتحساب<br><small style="font-size:0.6rem;color:var(--text-muted)">به‌زودی فعال می‌شود</small></div>
+                    </div>
                     <div class="grid-menu-item" data-tab="club" onclick="selectMenuItem('club')">
                         <div class="menu-icon"><i class="fas fa-star"></i></div>
                         <div class="menu-label">امتیازات</div>
                     </div>
                     <div class="grid-menu-item" data-tab="family" onclick="selectMenuItem('family')">
                         <div class="menu-icon"><i class="fas fa-users"></i></div>
-                        <div class="menu-label">خانواده</div>
+                        <div class="menu-label">خانواده من</div>
                     </div>
                     <div class="grid-menu-item" data-tab="access" onclick="selectMenuItem('access')">
                         <div class="menu-icon"><i class="fas fa-key"></i></div>
@@ -4106,13 +3465,48 @@
                         <div class="menu-icon"><i class="fas fa-sliders-h"></i></div>
                         <div class="menu-label">تنظیمات</div>
                     </div>
+                    <!-- خروج به عنوان آخرین آیتم -->
+                    <div class="grid-menu-item" data-tab="logout" onclick="doLogout()">
+                        <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
+                        <div class="menu-label" style="color:var(--danger-color);">خروج</div>
+                    </div>
+                </div>
+            `;
+
+            // ===== باکس اطلاعات مالی با فونت بزرگتر =====
+            const quickInfoHtml = `
+                <div class="quick-info-box">
+                    <div class="info-item">
+                        <div class="info-label">موجودی شما</div>
+                        <div class="info-value green">${fmtNum(member?.balance || 0)}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">مانده بدهی شما</div>
+                        <div class="info-value red">${fmtNum(member?.loanBalance || 0)}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">وضعیت پس‌انداز</div>
+                        <div class="info-value ${member?.savingsStatus >= 0 ? 'green' : 'red'}">${fmtNum(member?.savingsStatus || 0)}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">تعداد قسط معوقه</div>
+                        <div class="info-value gold">${Math.abs(member?.overdueInstallments || 0)}</div>
+                    </div>
                 </div>
             `;
 
             content.innerHTML = `
                 <div class="header-bar">
-                    <div class="header-left">
-                        <div class="header-date">
+                    <!-- رتبه -->
+                    <div class="header-rank">
+                        <span class="rank-label">🏆 رتبه شما در صندوق</span>
+                        <span class="rank-value">${memberScores[member.id]?.score || 0}</span>
+                        <span class="rank-tier" style="background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'};">${memberScores[member.id]?.tierName || ''}</span>
+                    </div>
+                    
+                    <!-- تاریخ و ساعت -->
+                    <div class="header-date">
+                        <div class="date-row">
                             <i class="fas fa-calendar-alt"></i>
                             <span>${new Date().toLocaleDateString('en-US')}</span>
                             <span class="sep">|</span>
@@ -4121,20 +3515,15 @@
                             <span class="sep">|</span>
                             <i class="fas fa-clock"></i>
                             <strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong>
-                            <span class="greeting-text">${greeting} ${member.firstName} عزیز</span>
                             <span class="update-text">🔄 ${updateTime}</span>
                         </div>
-                        <div class="header-rank">
-                            <span>🏆</span>
-                            <span class="rank-value">${memberScores[member.id]?.score || 0}</span>
-                            <span class="rank-tier">${memberScores[member.id]?.tierName || ''}</span>
+                        <div class="greeting-row">
+                            <span class="greeting-name">${member.firstName} عزیز</span>
+                            <span class="greeting-text">${greeting}</span>
                         </div>
                     </div>
-                    <div class="header-right">
-                        <button class="header-logout" onclick="doLogout()">
-                            <i class="fas fa-sign-out-alt"></i> خروج
-                        </button>
-                    </div>
+                    
+                    ${quickInfoHtml}
                 </div>
                 
                 ${SYSTEM_MESSAGE ? `
@@ -4166,6 +3555,10 @@
                 openSettings();
                 return;
             }
+            if (page === 'logout') {
+                doLogout();
+                return;
+            }
             currentPage = page;
             renderPage(page);
         }
@@ -4178,6 +3571,10 @@
         function selectMenuItem(tab) {
             if (tab === 'settings') {
                 openSettings();
+                return;
+            }
+            if (tab === 'logout') {
+                doLogout();
                 return;
             }
             goToPage(tab);
@@ -4218,16 +3615,14 @@
             let pageContent = '';
 
             const headerHtml = `
-                <div class="header-bar" style="margin-bottom:8px; padding:8px 14px;">
-                    <div class="header-left">
-                        <div class="header-rank" style="font-size:0.8rem; padding:4px 14px;">
-                            <span>🏆</span>
-                            <span class="rank-value" style="font-size:1rem;">${memberScores[currentUser?.memberId]?.score || 0}</span>
-                            <span class="rank-tier">${memberScores[currentUser?.memberId]?.tierName || ''}</span>
-                        </div>
+                <div class="header-bar" style="margin-bottom:8px; padding:8px 14px; flex-direction:row; justify-content:space-between;">
+                    <div class="header-rank" style="font-size:0.8rem; padding:4px 14px; width:auto; flex-direction:row; gap:8px; margin-bottom:0;">
+                        <span class="rank-label" style="font-size:0.5rem;">🏆 رتبه شما</span>
+                        <span class="rank-value" style="font-size:1.2rem;">${memberScores[currentUser?.memberId]?.score || 0}</span>
+                        <span class="rank-tier" style="font-size:0.7rem; background:${memberScores[currentUser?.memberId]?.tier === 'gold' ? '#FFD700' : memberScores[currentUser?.memberId]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; padding:2px 10px; border-radius:12px;">${memberScores[currentUser?.memberId]?.tierName || ''}</span>
                     </div>
                     <div class="header-right">
-                        <button class="header-logout" onclick="doLogout()" style="font-size:0.7rem; padding:6px 14px; min-height:30px;">
+                        <button class="header-logout" onclick="doLogout()" style="font-size:0.7rem; padding:6px 14px; min-height:30px; background:linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
                             <i class="fas fa-sign-out-alt"></i> خروج
                         </button>
                     </div>
@@ -4240,6 +3635,9 @@
                     break;
                 case 'dashboard':
                     pageContent = renderDashboardContent();
+                    break;
+                case 'lastSms':
+                    pageContent = renderLastSmsContent();
                     break;
                 case 'club':
                     pageContent = renderClubContentHtml();
@@ -4279,6 +3677,25 @@
             }
 
             content.innerHTML = headerHtml + backBtnHtml + pageContent;
+        }
+
+        // ============================================================
+        // RENDER LAST SMS
+        // ============================================================
+        function renderLastSmsContent() {
+            return `
+                <div class="info-box"><i class="fas fa-sms"></i> آخرین پیامک صورتحساب</div>
+                <div class="dashboard-section" style="text-align:center;padding:40px 20px;">
+                    <i class="fas fa-envelope" style="font-size:3rem;color:var(--gold-color);margin-bottom:16px;"></i>
+                    <h3 style="color:var(--text-primary);font-size:1.2rem;">📱 آخرین پیامک صورتحساب</h3>
+                    <p style="color:var(--text-secondary);font-size:0.9rem;margin:12px 0;">این بخش به‌زودی فعال می‌شود</p>
+                    <div style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(217,119,6,0.1));border-radius:10px;padding:16px;max-width:300px;margin:0 auto;">
+                        <i class="fas fa-clock" style="color:var(--gold-color);"></i>
+                        <span style="color:var(--text-primary);font-weight:bold;">در حال توسعه...</span>
+                    </div>
+                    <p style="color:var(--text-muted);font-size:0.7rem;margin-top:12px;">به زودی می‌توانید آخرین پیامک صورتحساب ارسال شده را مشاهده کنید</p>
+                </div>
+            `;
         }
 
         // ============================================================
@@ -4346,7 +3763,7 @@
         }
 
         // ============================================================
-        // RENDER DASHBOARD
+        // RENDER DASHBOARD (حذف باکس پیام‌های انگیزشی)
         // ============================================================
         function renderDashboardContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -4357,20 +3774,6 @@
 
             const latestTx = memberTxns.length ? memberTxns[0] : null;
             const balance = latestTx ? latestTx['موجودی'] || '0' : '0';
-
-            const tips = [
-                '💰 پس‌انداز امروز، آرامش فردا!',
-                '📊 هر ماه یک قدم به استقلال مالی نزدیک‌تر شوید.',
-                '🎯 هدف‌گذاری مالی، کلید موفقیت شماست.',
-                '🌟 با برنامه‌ریزی دقیق، آینده مالی خود را بسازید.',
-                '📈 سرمایه‌گذاری در دانش، بهترین سرمایه‌گذاری است.',
-                '💪 هر قسطی که پرداخت می‌کنید، یک قدم به آزادی مالی نزدیک‌تر است.',
-                '🔑 کلید موفقیت مالی، انضباط و پشتکار است.',
-                '🌈 امروز را برای فردای بهتر برنامه‌ریزی کنید.',
-                '🏦 اعتماد به صندوق، سرمایه‌گذاری در آینده است.',
-                '⭐ هر عضو ارزشمند، هر قسط مهم است.'
-            ];
-            const randomTip = tips[Math.floor(Math.random() * tips.length)];
 
             let paymentStatus = '';
             let paymentColor = '';
@@ -4498,13 +3901,6 @@
                 `;
             }
 
-            const tipHtml = `
-                <div class="dashboard-section" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(217,119,6,0.05) 100%); padding:10px 15px; text-align:center;">
-                    <span style="font-size:0.9rem; color:var(--text-secondary);">💡 نکته روز</span>
-                    <div style="font-weight:bold; color:var(--text-primary); font-size:0.9rem; margin-top:2px;">${randomTip}</div>
-                </div>
-            `;
-
             const loanInfoHtml = `
                 <div class="dashboard-section card-debt">
                     <h3><i class="fas fa-hand-holding-usd" style="color:var(--danger-color)"></i> اطلاعات وام و بدهی</h3>
@@ -4585,7 +3981,6 @@
                 <div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب مالی شما</div>
                 ${paymentStatusCard}
                 ${celebrationHtml}
-                ${tipHtml}
                 ${adminHtml}
                 ${warningsHtml}
                 <div class="dashboard-grid-2">
@@ -4769,6 +4164,44 @@
                 '<span class="account-status-badge inactive">غیرفعال</span>';
             const actualPassword = ui ? ui.password || '---' : '---';
 
+            const latestTx = mTxns.length ? mTxns[0] : null;
+
+            const smsServices = [
+                { name: 'صورتحساب', key: 'smsActive', icon: 'fa-file-invoice-dollar' },
+                { name: 'جلسات شورا', key: 'smsKod', icon: 'fa-users-cog' },
+                { name: 'عمومی', key: 'smsOmomi', icon: 'fa-broadcast-tower' },
+                { name: 'سرپرستان', key: 'smsSarparast', icon: 'fa-user-shield' },
+                { name: 'معوقات', key: 'smsMoavaghe', icon: 'fa-exclamation-triangle' },
+                { name: 'مسابقات', key: 'smsMosabegheh', icon: 'fa-trophy' },
+                { name: 'خبرنامه', key: 'smsKhabarnameh', icon: 'fa-newspaper' },
+                { name: 'تولد', key: 'smsTavalod', icon: 'fa-birthday-cake' },
+                { name: 'مناسبت‌ها', key: 'smsMonasebat', icon: 'fa-star-and-crescent' }
+            ];
+
+            let smsHtml = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:4px;">';
+            smsServices.forEach(service => {
+                let isActive = false;
+                if (latestTx) {
+                    if (service.key === 'smsActive') isActive = latestTx.smsActive === true;
+                    else if (service.key === 'smsOmomi') isActive = latestTx.smsOmomi === true;
+                    else if (service.key === 'smsMoavaghe') isActive = latestTx.smsMoavaghe === true;
+                    else if (service.key === 'smsSarparast') isActive = latestTx.smsSarparast === true;
+                    else if (service.key === 'smsMosabegheh') isActive = latestTx.smsMosabegheh === true;
+                    else if (service.key === 'smsKhabarnameh') isActive = latestTx.smsKhabarnameh === true;
+                    else if (service.key === 'smsTavalod') isActive = latestTx.smsTavalod === true;
+                    else if (service.key === 'smsMonasebat') isActive = latestTx.smsMonasebat === true;
+                    else if (service.key === 'smsKod') isActive = latestTx.smsKod === true;
+                }
+                smsHtml += `
+                    <div style="background:${isActive ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.05)'};padding:4px 6px;border-radius:4px;border-right:3px solid ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};text-align:center;">
+                        <i class="fas ${service.icon}" style="color:${isActive ? 'var(--success-color)' : 'var(--danger-color)'};font-size:0.6rem;"></i>
+                        <span style="font-size:0.45rem;color:var(--text-secondary);display:block;">${service.name}</span>
+                        <span style="font-size:0.5rem;font-weight:bold;color:${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">${isActive ? 'فعال' : 'غیرفعال'}</span>
+                    </div>
+                `;
+            });
+            smsHtml += '</div>';
+
             let html = `
                 <div class="family-card">
                     <div class="family-card-header">
@@ -4779,12 +4212,14 @@
                             <div style="margin-top:2px">${tierBadge}</div>
                         </div>
                     </div>
+                    
                     <div class="family-card-stats">
                         <div class="family-card-stat"><div class="family-card-stat-label">موجودی</div><div class="family-card-stat-value">${fmtNum(member.balance || 0)}</div></div>
                         <div class="family-card-stat"><div class="family-card-stat-label">اقساط معوقه</div><div class="family-card-stat-value">${Math.abs(member.overdueInstallments || 0)}</div></div>
                         <div class="family-card-stat"><div class="family-card-stat-label">مانده وام</div><div class="family-card-stat-value">${fmtNum(member.loanBalance || 0)}</div></div>
                         <div class="family-card-stat"><div class="family-card-stat-label">وضعیت</div><div class="family-card-stat-value">${accountStatusHtml}</div></div>
                     </div>
+                    
                     <div class="detail-section" style="margin-top:6px">
                         <h4 style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-user"></i> اطلاعات پروفایل</h4>
                         <div class="last-tx-grid">
@@ -4800,19 +4235,36 @@
                             <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="famPwd_${member.id}" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('famPwd_${member.id}','famPwdIcon_${member.id}')" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:2px 6px;border-radius:4px;cursor:pointer;font-size:0.55rem;touch-action:manipulation;min-height:22px;font-weight:bold;"><i id="famPwdIcon_${member.id}" class="fas fa-eye"></i></button></div></div>
                         </div>
                     </div>
+                    
                     <div class="detail-section">
-                        <h4 style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-hand-holding-usd"></i> اطلاعات وام</h4>
-                        <div class="loan-info">
+                        <h4 style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-hand-holding-usd"></i> اطلاعات کامل وام و بدهی</h4>
+                        <div class="loan-info" style="grid-template-columns:1fr 1fr 1fr;">
                             <div class="loan-info-item"><div class="loan-info-label">شماره وام</div><div class="loan-info-value">${esc(member.loanNumber || member.accountNumber || '---')}</div></div>
                             <div class="loan-info-item"><div class="loan-info-label">مبلغ وام مصوبه</div><div class="loan-info-value">${member.mabVam1 ? fmtNum(member.mabVam1) : '---'}</div></div>
                             <div class="loan-info-item"><div class="loan-info-label">مبلغ وام دریافتی</div><div class="loan-info-value">${member.loanReceivedAmount ? fmtNum(member.loanReceivedAmount) : '---'}</div></div>
-                            <div class="loan-info-item"><div class="loan-info-label">مانده وام</div><div class="loan-info-value">${fmtNum(member.loanBalance || 0)}</div></div>
-                            <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط</div><div class="loan-info-value">${member.totalInstallments || 0}</div></div>
-                            <div class="loan-info-item"><div class="loan-info-label">پرداخت شده</div><div class="loan-info-value">${member.paidInstallments || 0}</div></div>
-                            <div class="loan-info-item"><div class="loan-info-label">قسط مانده</div><div class="loan-info-value">${member.remainingInstallments || 0}</div></div>
-                            <div class="loan-info-item"><div class="loan-info-label">معوقه</div><div class="loan-info-value">${member.overdueInstallments || 0}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">مانده وام</div><div class="loan-info-value" style="color:var(--danger-color);">${fmtNum(member.loanBalance || 0)}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط کل</div><div class="loan-info-value">${member.totalInstallments || 0}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط پرداخت شده</div><div class="loan-info-value" style="color:var(--success-color);">${member.paidInstallments || 0}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط مانده</div><div class="loan-info-value" style="color:var(--gold-color);">${member.remainingInstallments || 0}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط معوقه</div><div class="loan-info-value" style="color:var(--danger-color);">${Math.abs(member.overdueInstallments || 0)}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">مبلغ هر قسط</div><div class="loan-info-value">${member.installmentAmount ? fmtNum(member.installmentAmount) : '---'}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">مبلغ کارمزد</div><div class="loan-info-value">${member.feeAmount ? fmtNum(member.feeAmount) : '---'}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تاریخ درخواست وام</div><div class="loan-info-value">${esc(member.loanRequestDate || '---')}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تاریخ دریافت وام</div><div class="loan-info-value">${esc(member.loanReceiveDate || '---')}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تاریخ آخرین قسط</div><div class="loan-info-value">${esc(member.lastInstallmentDate || '---')}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">مقرری ماهانه</div><div class="loan-info-value">${fmtNum(member.monthlySalary || 0)}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">مقرری مصوب</div><div class="loan-info-value">${member.monthlySalaryApproved ? fmtNum(member.monthlySalaryApproved) : '---'}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">وضعیت پس‌انداز</div><div class="loan-info-value" style="color:${member.savingsStatus >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${fmtNum(member.savingsStatus || 0)}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">موجودی تا این ماه</div><div class="loan-info-value" style="color:var(--gold-color);">${fmtNum(member.currentMonthBalance || '0')}</div></div>
+                            <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط مصوبه</div><div class="loan-info-value">${member.tedad || '---'}</div></div>
                         </div>
                     </div>
+                    
+                    <div class="detail-section">
+                        <h4 style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-sms" style="color:var(--blue-color)"></i> سامانه‌های پیامکی</h4>
+                        ${smsHtml}
+                    </div>
+                    
                     <div class="detail-section">
                         <h4 style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-file-invoice"></i> صورت‌حساب کامل (${mTxns.length} تراکنش)</h4>
                         <div id="familyTxContainer_${member.id}"></div>
@@ -5611,26 +5063,17 @@
                 }, 500);
             }
 
+            loadRememberMe();
+
             const usernameInput = document.getElementById('loginUsername');
             const passwordInput = document.getElementById('loginPassword');
 
             if (usernameInput && passwordInput) {
-                usernameInput.addEventListener('input', function() {
-                    if (this.value.trim() && passwordInput.value.trim()) {
-                        checkAutoLogin();
-                    }
-                });
-                passwordInput.addEventListener('input', function() {
-                    if (usernameInput.value.trim() && this.value.trim()) {
-                        checkAutoLogin();
-                    }
-                });
-
                 usernameInput.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         if (this.value.trim() && passwordInput.value.trim()) {
-                            checkAutoLogin();
+                            handleLogin();
                         } else if (this.value.trim()) {
                             passwordInput.focus();
                         }
@@ -5640,7 +5083,7 @@
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         if (usernameInput.value.trim() && this.value.trim()) {
-                            checkAutoLogin();
+                            handleLogin();
                         }
                     }
                 });
@@ -5657,12 +5100,10 @@
                 });
             }
 
-            selectLoginMethod('password');
-
-            console.log('🟢 All scripts loaded - نسخه نهایی با ورود چندگانه و اسکرول تنظیمات');
+            console.log('🟢 All scripts loaded - نسخه نهایی با اصلاحات');
         });
 
-        console.log('🟢 All scripts loaded - نسخه نهایی با ورود چندگانه و اسکرول تنظیمات');
+        console.log('🟢 All scripts loaded - نسخه نهایی با اصلاحات');
     </script>
 </body>
 </html>
