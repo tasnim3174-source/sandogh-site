@@ -303,7 +303,7 @@
             color: #fff;
         }
 
-        /* ===== منوی شبکه‌ای با کادرهای رنگی ===== */
+        /* ===== منوی اصلی ===== */
         .grid-menu {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -345,105 +345,90 @@
         .grid-menu-item[data-tab="profile"]:hover {
             border-color: #6d28d9;
         }
-
         .grid-menu-item[data-tab="dashboard"] {
             border-color: #667eea;
         }
         .grid-menu-item[data-tab="dashboard"]:hover {
             border-color: #764ba2;
         }
-
         .grid-menu-item[data-tab="lastSms"] {
             border-color: #14b8a6;
         }
         .grid-menu-item[data-tab="lastSms"]:hover {
             border-color: #0d9488;
         }
-
         .grid-menu-item[data-tab="club"] {
             border-color: #f59e0b;
         }
         .grid-menu-item[data-tab="club"]:hover {
             border-color: #d97706;
         }
-
         .grid-menu-item[data-tab="family"] {
             border-color: #10b981;
         }
         .grid-menu-item[data-tab="family"]:hover {
             border-color: #059669;
         }
-
         .grid-menu-item[data-tab="access"] {
             border-color: #8b5cf6;
         }
         .grid-menu-item[data-tab="access"]:hover {
             border-color: #7c3aed;
         }
-
         .grid-menu-item[data-tab="statistics"] {
             border-color: #06b6d4;
         }
         .grid-menu-item[data-tab="statistics"]:hover {
             border-color: #0891b2;
         }
-
         .grid-menu-item[data-tab="calendar"] {
             border-color: #ec4899;
         }
         .grid-menu-item[data-tab="calendar"]:hover {
             border-color: #db2777;
         }
-
         .grid-menu-item[data-tab="requests"] {
             border-color: #f97316;
         }
         .grid-menu-item[data-tab="requests"]:hover {
             border-color: #ea580c;
         }
-
         .grid-menu-item[data-tab="smsStatus"] {
             border-color: #14b8a6;
         }
         .grid-menu-item[data-tab="smsStatus"]:hover {
             border-color: #0d9488;
         }
-
         .grid-menu-item[data-tab="announcements"] {
             border-color: #6366f1;
         }
         .grid-menu-item[data-tab="announcements"]:hover {
             border-color: #4f46e5;
         }
-
         .grid-menu-item[data-tab="security"] {
             border-color: #f43f5e;
         }
         .grid-menu-item[data-tab="security"]:hover {
             border-color: #e11d48;
         }
-
         .grid-menu-item[data-tab="support"] {
             border-color: #84cc16;
         }
         .grid-menu-item[data-tab="support"]:hover {
             border-color: #65a30d;
         }
-
         .grid-menu-item[data-tab="help"] {
             border-color: #8b5cf6;
         }
         .grid-menu-item[data-tab="help"]:hover {
             border-color: #6d28d9;
         }
-
         .grid-menu-item[data-tab="settings"] {
             border-color: #64748b;
         }
         .grid-menu-item[data-tab="settings"]:hover {
             border-color: #475569;
         }
-
         .grid-menu-item[data-tab="logout"] {
             border-color: var(--danger-color);
         }
@@ -452,13 +437,7 @@
             box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
         }
 
-        /* آیتم فعال */
-        .grid-menu-item.active {
-            border-color: var(--gradient-start);
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
-        }
-
+        /* ===== رنگ‌های آیکون‌ها (رنگی) ===== */
         .grid-menu-item .menu-icon {
             width: 120px;
             height: 120px;
@@ -473,36 +452,6 @@
             box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
         }
 
-        .grid-menu-item .menu-label {
-            font-size: 1.1rem;
-            color: var(--text-primary);
-            font-weight: bold;
-            line-height: 1.4;
-        }
-
-        .grid-menu-item .menu-badge {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: var(--danger-color);
-            color: #fff;
-            border-radius: 50%;
-            min-width: 26px;
-            height: 26px;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            font-weight: bold;
-            padding: 0 7px;
-            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.5);
-        }
-
-        .grid-menu-item .menu-badge.show {
-            display: flex;
-        }
-
-        /* رنگ‌های آیکون‌های منو */
         .grid-menu-item[data-tab="profile"] .menu-icon {
             background: linear-gradient(135deg, #8b5cf6, #6d28d9);
         }
@@ -552,7 +501,137 @@
             background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
         }
 
-        /* ===== هدر جدید ===== */
+        /* آیتم فعال */
+        .grid-menu-item.active {
+            border-color: var(--gradient-start);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .grid-menu-item .menu-label {
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            font-weight: bold;
+            line-height: 1.4;
+        }
+
+        .grid-menu-item .menu-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--danger-color);
+            color: #fff;
+            border-radius: 50%;
+            min-width: 26px;
+            height: 26px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: bold;
+            padding: 0 7px;
+            box-shadow: 0 2px 10px rgba(239, 68, 68, 0.5);
+        }
+
+        .grid-menu-item .menu-badge.show {
+            display: flex;
+        }
+
+        /* ===== باکس برنامه‌های کاربردی ===== */
+        .apps-section {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 30px var(--shadow-color);
+            border: 2px solid var(--border-color);
+        }
+
+        .apps-section .apps-title {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .apps-section .apps-title i {
+            color: var(--gradient-start);
+        }
+
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .apps-grid .app-item {
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            padding: 18px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s;
+            border: 3px solid var(--border-color);
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+
+        .apps-grid .app-item:active {
+            transform: scale(0.94);
+        }
+
+        .apps-grid .app-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+
+        .apps-grid .app-item .app-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 2rem;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .apps-grid .app-item .app-label {
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .apps-grid .app-item[data-app="weather"] {
+            border-color: #38b2ac;
+        }
+        .apps-grid .app-item[data-app="weather"]:hover {
+            border-color: #2c9a94;
+        }
+        .apps-grid .app-item[data-app="weather"] .app-icon {
+            background: linear-gradient(135deg, #38b2ac, #2c9a94);
+        }
+
+        .apps-grid .app-item[data-app="prices"] {
+            border-color: #f6ad55;
+        }
+        .apps-grid .app-item[data-app="prices"]:hover {
+            border-color: #ed8936;
+        }
+        .apps-grid .app-item[data-app="prices"] .app-icon {
+            background: linear-gradient(135deg, #f6ad55, #ed8936);
+        }
+
+        /* ===== هدر ===== */
         .header-bar {
             display: flex;
             flex-direction: column;
@@ -728,6 +807,185 @@
         }
         .quick-info-box .info-item .info-value.purple {
             color: var(--purple-color);
+        }
+
+        /* ===== استایل‌های آب و هوا ===== */
+        .weather-search {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .weather-search input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            min-height: 36px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-weight: bold;
+            min-width: 120px;
+        }
+        .weather-search input:focus {
+            border-color: var(--gradient-start);
+            outline: none;
+        }
+
+        .weather-card {
+            background: linear-gradient(135deg, rgba(56, 178, 172, 0.08) 0%, rgba(44, 154, 148, 0.08) 100%);
+            border-radius: 12px;
+            padding: 16px;
+            border-right: 4px solid #38b2ac;
+            margin-bottom: 10px;
+        }
+
+        .weather-current {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .weather-current .temp {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .weather-current .city {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .weather-current .condition {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .weather-current .weather-icon {
+            font-size: 3rem;
+        }
+
+        .weather-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .weather-details .detail-item {
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .weather-details .detail-item .detail-label {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+        }
+
+        .weather-details .detail-item .detail-value {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .weather-forecast {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .weather-forecast .forecast-day {
+            background: var(--card-bg);
+            padding: 8px 4px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .weather-forecast .forecast-day .day {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+        }
+
+        .weather-forecast .forecast-day .forecast-icon {
+            font-size: 1.5rem;
+            margin: 2px 0;
+        }
+
+        .weather-forecast .forecast-day .forecast-temp {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        /* ===== استایل‌های قیمت‌ها ===== */
+        .price-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .price-card {
+            background: var(--card-bg);
+            padding: 10px 8px;
+            border-radius: 10px;
+            text-align: center;
+            border-right: 4px solid var(--gold-color);
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .price-card .price-name {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .price-card .price-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            direction: ltr;
+        }
+
+        .price-card .price-change {
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+
+        .price-card .price-change.up {
+            color: var(--success-color);
+        }
+
+        .price-card .price-change.down {
+            color: var(--danger-color);
+        }
+
+        .price-section-title {
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            font-weight: bold;
+            margin: 10px 0 6px;
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 4px;
+        }
+
+        .price-section-title i {
+            color: var(--gold-color);
+        }
+
+        .price-update-time {
+            font-size: 0.55rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 8px;
         }
 
         /* ===== بقیه استایل‌ها ===== */
@@ -1940,6 +2198,18 @@
             .grid-menu-item .menu-label {
                 font-size: 0.85rem;
             }
+            .apps-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .weather-forecast {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .price-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .weather-details {
+                grid-template-columns: 1fr 1fr;
+            }
             .header-date .date-row {
                 font-size: 1.1rem;
                 gap: 8px;
@@ -1981,6 +2251,30 @@
             }
             .grid-menu-item .menu-label {
                 font-size: 0.7rem;
+            }
+            .apps-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .apps-grid .app-item .app-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.5rem;
+            }
+            .apps-grid .app-item .app-label {
+                font-size: 0.7rem;
+            }
+            .weather-forecast {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .price-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .weather-details {
+                grid-template-columns: 1fr 1fr;
+            }
+            .weather-current .temp {
+                font-size: 1.8rem;
             }
             .header-date .date-row {
                 font-size: 0.9rem;
@@ -2173,6 +2467,9 @@
         let userPurchases = {};
         let isAutoLogin = false;
         let transactionsByMember = new Map();
+
+        // ===== API Keys =====
+        const DEFAULT_CITY = 'Isfahan';
 
         const SUPPORT_INFO = {
             phone: '09138944709',
@@ -3425,7 +3722,7 @@
             const latestTx = memberTxns.length ? memberTxns[0] : null;
             const correctBalance = latestTx ? parseNum(latestTx['موجودی']) : (member?.balance || 0);
 
-            // ===== منو =====
+            // ===== منو (بدون متن زیر کلید آخرین پیامک) =====
             const gridMenuHtml = `
                 <div class="grid-menu" id="gridMenu">
                     <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')">
@@ -3439,7 +3736,7 @@
                     </div>
                     <div class="grid-menu-item" data-tab="lastSms" onclick="selectMenuItem('lastSms')">
                         <div class="menu-icon"><i class="fas fa-sms"></i></div>
-                        <div class="menu-label">آخرین پیامک صورتحساب<br><small style="font-size:0.6rem;color:var(--text-muted)">به‌زودی فعال می‌شود</small></div>
+                        <div class="menu-label">آخرین پیامک صورتحساب</div>
                     </div>
                     <div class="grid-menu-item" data-tab="club" onclick="selectMenuItem('club')">
                         <div class="menu-icon"><i class="fas fa-star"></i></div>
@@ -3489,6 +3786,27 @@
                     <div class="grid-menu-item" data-tab="logout" onclick="doLogout()">
                         <div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div>
                         <div class="menu-label" style="color:var(--danger-color);">خروج</div>
+                    </div>
+                </div>
+            `;
+
+            // ===== باکس برنامه‌های کاربردی =====
+            const appsHtml = `
+                <div class="apps-section">
+                    <div class="apps-title">
+                        <i class="fas fa-th-large"></i>
+                        برنامه‌های کاربردی
+                        <span style="font-size:0.6rem; color:var(--text-muted);">(سرویس‌های ویژه)</span>
+                    </div>
+                    <div class="apps-grid">
+                        <div class="app-item" data-app="weather" onclick="selectMenuItem('weather')">
+                            <div class="app-icon"><i class="fas fa-cloud-sun"></i></div>
+                            <div class="app-label">آب و هوا</div>
+                        </div>
+                        <div class="app-item" data-app="prices" onclick="selectMenuItem('prices')">
+                            <div class="app-icon"><i class="fas fa-coins"></i></div>
+                            <div class="app-label">قیمت‌های روز</div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -3553,6 +3871,7 @@
                 </div>` : ''}
                 
                 ${gridMenuHtml}
+                ${appsHtml}
                 
                 <div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.8rem;">
                     برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید
@@ -3692,6 +4011,12 @@
                 case 'help':
                     pageContent = renderHelpContentHtml();
                     break;
+                case 'weather':
+                    pageContent = renderWeatherContent();
+                    break;
+                case 'prices':
+                    pageContent = renderPricesContent();
+                    break;
                 default:
                     pageContent = '<div class="info-box">بخش مورد نظر یافت نشد</div>';
             }
@@ -3700,7 +4025,327 @@
         }
 
         // ============================================================
-        // SEND SMS REQUEST (ارسال درخواست پیامکی)
+        // RENDER PROFILE (پروفایل - اضافه شده)
+        // ============================================================
+        function renderProfileContent() {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) return '<div style="text-align:center;padding:30px;font-size:1rem">خطا</div>';
+
+            const ui = users.find(u => u.memberId === member.id);
+            const actualPassword = ui ? ui.password || '---' : '---';
+            const accountActive = member.active !== false;
+            const accountStatusHtml = accountActive ?
+                '<span class="account-status-badge active">فعال</span>' :
+                '<span class="account-status-badge inactive">غیرفعال</span>';
+            const membershipDuration = calculateMembershipDuration(member.datMiladi);
+            const visitInfo = getVisitInfo();
+
+            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
+
+            return `
+                <div class="info-box"><i class="fas fa-user-circle"></i> اطلاعات پروفایل شما</div>
+                <div class="dashboard-section" style="border-right-color:var(--gradient-start); background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); padding:15px;">
+                    <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                        <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:2.5rem; flex-shrink:0;">
+                            ${member.firstName ? member.firstName.charAt(0) : '👤'}
+                        </div>
+                        <div style="flex:1; min-width:150px;">
+                            <div style="font-size:1.2rem; font-weight:bold; color:var(--text-primary);">${esc(member.firstName)}</div>
+                            <div style="font-size:0.8rem; color:var(--text-secondary);">${esc(member.accountNumber)}</div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+                                <span style="font-size:0.7rem; background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; color:#fff; padding:2px 10px; border-radius:10px;">${memberScores[member.id]?.tierName || 'عادی'}</span>
+                                <span style="font-size:0.7rem; background:var(--bg-secondary); padding:2px 10px; border-radius:10px; color:var(--text-secondary);">${accountStatusHtml}</span>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap; text-align:center;">
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">تعداد تراکنش</div><div style="font-weight:bold; font-size:1rem; color:var(--text-primary);">${memberTxns.length}</div></div>
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">مدت عضویت</div><div style="font-weight:bold; font-size:0.85rem; color:var(--text-primary);">${membershipDuration}</div></div>
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">تعداد ورود</div><div style="font-weight:bold; font-size:1rem; color:var(--text-primary);">${visitInfo.count}</div></div>
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">آخرین بازدید</div><div style="font-weight:bold; font-size:0.8rem; color:var(--text-primary);">${visitInfo.lastVisit}</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-section card-profile full-width">
+                    <h3><i class="fas fa-user" style="color:var(--gradient-start)"></i> اطلاعات کامل پروفایل</h3>
+                    <div class="last-tx-grid">
+                        <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت (شمسی)</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">مدت زمان عضویت</div><div class="last-tx-value" style="color:var(--gradient-start)">${membershipDuration}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="profilePwdValue" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('profilePwdValue','profilePwdIcon')" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:0.6rem;touch-action:manipulation;min-height:24px;font-weight:bold"><i id="profilePwdIcon" class="fas fa-eye"></i></button></div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ============================================================
+        // RENDER WEATHER (آب و هوا - با API جدید wttr.in)
+        // ============================================================
+        function renderWeatherContent() {
+            const city = localStorage.getItem('weather_city') || DEFAULT_CITY;
+
+            let weatherHtml = `
+                <div class="info-box"><i class="fas fa-cloud-sun"></i> آب و هوا</div>
+                <div class="dashboard-section">
+                    <div class="weather-search">
+                        <input type="text" id="weatherCityInput" placeholder="نام شهر را به انگلیسی وارد کنید..." value="${city}" onkeydown="if(event.key==='Enter') searchWeather()">
+                        <button class="btn-small info-btn" onclick="searchWeather()" style="font-size:0.7rem; padding:4px 16px; min-height:32px;">
+                            <i class="fas fa-search"></i> جستجو
+                        </button>
+                        <button class="btn-small edit-btn" onclick="document.getElementById('weatherCityInput').value='${DEFAULT_CITY}';searchWeather()" style="font-size:0.7rem; padding:4px 12px; min-height:32px;">
+                            <i class="fas fa-home"></i> پیش‌فرض
+                        </button>
+                    </div>
+                    <div id="weatherResult">
+                        <div style="text-align:center; padding:30px; color:var(--text-secondary);">
+                            <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+                            <p style="margin-top:10px;">در حال دریافت اطلاعات آب و هوا...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                fetchWeather(city);
+            }, 100);
+
+            return weatherHtml;
+        }
+
+        // ============================================================
+        // FETCH WEATHER DATA (با API جدید wttr.in)
+        // ============================================================
+        function getWeatherIcon(description) {
+            const desc = description.toLowerCase();
+            if (desc.includes('آفتابی') || desc.includes('صاف') || desc.includes('sunny')) return '☀️';
+            if (desc.includes('ابری') || desc.includes('نیمه ابری') || desc.includes('cloudy')) return '⛅';
+            if (desc.includes('باران') || desc.includes('بارندگی') || desc.includes('rain')) return '🌧️';
+            if (desc.includes('رعد') || desc.includes('طوفان') || desc.includes('thunder')) return '⛈️';
+            if (desc.includes('برف') || desc.includes('snow')) return '❄️';
+            if (desc.includes('مه') || desc.includes('غبار') || desc.includes('fog')) return '🌫️';
+            return '🌤️';
+        }
+
+        async function fetchWeather(city) {
+            const container = document.getElementById('weatherResult');
+            if (!container) return;
+
+            try {
+                // استفاده از API wttr.in (رایگان و بدون نیاز به کلید)
+                const url = `https://wttr.in/${city}?format=j1&lang=fa`;
+
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('شهر مورد نظر یافت نشد');
+
+                const data = await response.json();
+
+                // استخراج اطلاعات
+                const current = data.current_condition[0];
+                const temp = current.temp_C;
+                const feelsLike = current.FeelsLikeC;
+                const humidity = current.humidity;
+                const windSpeed = current.windSpeedKmph;
+                const description = current.weatherDesc[0].value;
+                const cityName = data.nearest_area[0].areaName[0].value;
+
+                // ذخیره شهر
+                localStorage.setItem('weather_city', city);
+
+                // آیکون مناسب
+                const weatherIcon = getWeatherIcon(description);
+
+                // پیش‌بینی ۵ روز آینده
+                const forecast = data.weather || [];
+                const days = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
+
+                let forecastHtml = forecast.slice(0, 5).map(day => {
+                    const date = new Date(day.date);
+                    const dayName = days[date.getDay()];
+                    const maxTemp = day.maxtempC;
+                    const minTemp = day.mintempC;
+                    const desc = day.hourly[0]?.weatherDesc[0]?.value || '---';
+                    const icon = getWeatherIcon(desc);
+                    return `
+                        <div class="forecast-day">
+                            <div class="day">${dayName}</div>
+                            <div class="forecast-icon">${icon}</div>
+                            <div class="forecast-temp">${maxTemp}°/${minTemp}°</div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = `
+                    <div class="weather-card">
+                        <div class="weather-current">
+                            <div>
+                                <div class="city">📍 ${cityName}</div>
+                                <div class="condition">${description}</div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div class="weather-icon">${weatherIcon}</div>
+                                <div class="temp">${temp}°C</div>
+                            </div>
+                        </div>
+                        <div class="weather-details">
+                            <div class="detail-item">
+                                <div class="detail-label">احساس دما</div>
+                                <div class="detail-value">${feelsLike}°C</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">رطوبت</div>
+                                <div class="detail-value">${humidity}%</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">سرعت باد</div>
+                                <div class="detail-value">${windSpeed} km/h</div>
+                            </div>
+                        </div>
+                        ${forecastHtml ? `<div class="weather-forecast">${forecastHtml}</div>` : ''}
+                        <div style="text-align:center; margin-top:8px; font-size:0.55rem; color:var(--text-muted);">
+                            🔄 آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                container.innerHTML = `
+                    <div class="weather-card" style="border-right-color:var(--danger-color); text-align:center; padding:20px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:var(--danger-color);"></i>
+                        <p style="color:var(--danger-color); margin-top:10px; font-weight:bold;">❌ ${error.message}</p>
+                        <p style="color:var(--text-secondary); font-size:0.8rem; margin-top:4px;">لطفاً نام شهر را به انگلیسی وارد کنید</p>
+                        <p style="color:var(--text-muted); font-size:0.7rem; margin-top:4px;">مثال: Isfahan، Tehran، Mashhad</p>
+                        <button class="btn-small info-btn" onclick="document.getElementById('weatherCityInput').value='Isfahan';searchWeather()" style="margin-top:8px; font-size:0.6rem;">پیش‌فرض (اصفهان)</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // SEARCH WEATHER
+        // ============================================================
+        function searchWeather() {
+            const input = document.getElementById('weatherCityInput');
+            if (!input) return;
+            const city = input.value.trim();
+            if (!city) {
+                alert('لطفاً نام شهر را وارد کنید');
+                return;
+            }
+            fetchWeather(city);
+        }
+
+        // ============================================================
+        // RENDER PRICES (قیمت‌های روز)
+        // ============================================================
+        function renderPricesContent() {
+            let pricesHtml = `
+                <div class="info-box"><i class="fas fa-coins"></i> قیمت‌های روز</div>
+                <div class="dashboard-section">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                        <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;">
+                            <i class="fas fa-chart-line" style="color:var(--gold-color);"></i> قیمت ارز، سکه و طلا
+                        </h3>
+                        <button class="btn-small info-btn" onclick="fetchPrices()" style="font-size:0.6rem; padding:4px 12px; min-height:28px;">
+                            <i class="fas fa-sync"></i> بروزرسانی
+                        </button>
+                    </div>
+                    <div id="pricesResult">
+                        <div style="text-align:center; padding:30px; color:var(--text-secondary);">
+                            <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+                            <p style="margin-top:10px;">در حال دریافت قیمت‌ها...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                fetchPrices();
+            }, 100);
+
+            return pricesHtml;
+        }
+
+        // ============================================================
+        // FETCH PRICES DATA
+        // ============================================================
+        async function fetchPrices() {
+            const container = document.getElementById('pricesResult');
+            if (!container) return;
+
+            try {
+                // قیمت ارز
+                const currencyRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const currencyData = await currencyRes.json();
+
+                const usdPrice = currencyData.rates?.IRR ? Math.round(currencyData.rates.IRR / 10) : '---';
+                const eurPrice = currencyData.rates?.EUR ? Math.round(currencyData.rates.EUR * 42000) : '---';
+
+                // قیمت طلا
+                let goldPrice = '---';
+                try {
+                    const goldRes = await fetch('https://api.gold-api.com/price/XAU');
+                    const goldData = await goldRes.json();
+                    goldPrice = goldData.price ? Math.round(goldData.price * 42000) : '---';
+                } catch (e) {
+                    goldPrice = '---';
+                }
+
+                container.innerHTML = `
+                    <div style="background:var(--bg-secondary); border-radius:12px; padding:12px;">
+                        <div class="price-section-title"><i class="fas fa-dollar-sign"></i> قیمت ارزها</div>
+                        <div class="price-grid">
+                            <div class="price-card" style="border-right-color:#48bb78;">
+                                <div class="price-name">🇺🇸 دلار آمریکا</div>
+                                <div class="price-value">${fmtNum(usdPrice)} تومان</div>
+                            </div>
+                            <div class="price-card" style="border-right-color:#4299e1;">
+                                <div class="price-name">🇪🇺 یورو</div>
+                                <div class="price-value">${fmtNum(eurPrice)} تومان</div>
+                            </div>
+                            <div class="price-card" style="border-right-color:#f6ad55;">
+                                <div class="price-name">🥇 اونس طلا</div>
+                                <div class="price-value">${fmtNum(goldPrice)} تومان</div>
+                            </div>
+                        </div>
+
+                        <div class="price-section-title" style="margin-top:14px;"><i class="fas fa-info-circle" style="color:var(--blue-color);"></i> اطلاعات بیشتر</div>
+                        <div style="text-align:center; padding:10px; color:var(--text-secondary); font-size:0.7rem;">
+                            <p>💡 قیمت‌های دقیق‌تر سکه و طلا از طریق سایت <a href="https://www.tgju.org" target="_blank" style="color:var(--gold-color);">tgju.org</a> قابل مشاهده است.</p>
+                            <p style="font-size:0.55rem; margin-top:4px;">⚠️ قیمت‌ها تقریبی بوده و ممکن است با نرخ بازار کمی تفاوت داشته باشد</p>
+                        </div>
+
+                        <div class="price-update-time">
+                            🔄 آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="background:var(--bg-secondary); border-radius:12px; padding:12px; text-align:center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:var(--danger-color);"></i>
+                        <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:8px;">❌ خطا در دریافت قیمت‌ها</p>
+                        <p style="color:var(--text-muted); font-size:0.7rem;">لطفاً اتصال اینترنت را بررسی کنید</p>
+                        <button class="btn-small info-btn" onclick="fetchPrices()" style="margin-top:8px; font-size:0.6rem;">
+                            <i class="fas fa-sync"></i> تلاش مجدد
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // SEND SMS REQUEST
         // ============================================================
         function sendSmsRequest(code, title) {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -3797,7 +4442,7 @@
         }
 
         // ============================================================
-        // RENDER LAST SMS (آخرین پیامک صورتحساب - بدون دکمه ارسال)
+        // RENDER LAST SMS
         // ============================================================
         function renderLastSmsContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -3850,7 +4495,8 @@
             ];
 
             function copySmsText() {
-                const text = `صندوق اتحاد\n${genderTitle} ${member.firstName || ''}\nواریز:${fmtNum(amount)} ریال\nشرح:${description}\nواریزکننده:${transactionName}\nمقرری:${fmtNum(monthlySalary)}\nموجودی:${fmtNum(balance)}\nقسط:${paidInstallments}\nمانده وام:${fmtNum(loanBalance)} (${remainingInstallments})\nمعوقه اقساط:${overdue}\nکسری موجودی:${savingsStatus < 0 ? fmtNum(savingsStatus) : '0'}\n${transactionDate} تاریخ تراکنش:`;
+                const text =
+                    `صندوق اتحاد\n${genderTitle} ${member.firstName || ''}\nواریز:${fmtNum(amount)} ریال\nشرح:${description}\nواریزکننده:${transactionName}\nمقرری:${fmtNum(monthlySalary)}\nموجودی:${fmtNum(balance)}\nقسط:${paidInstallments}\nمانده وام:${fmtNum(loanBalance)} (${remainingInstallments})\nمعوقه اقساط:${overdue}\nکسری موجودی:${savingsStatus < 0 ? fmtNum(savingsStatus) : '0'}\n${transactionDate} تاریخ تراکنش:`;
                 navigator.clipboard.writeText(text).then(() => {
                     alert('✅ متن پیامک کپی شد!');
                 }).catch(() => {
@@ -3961,7 +4607,6 @@
                 return;
             }
 
-            // آماده‌سازی داده‌ها برای اکسل
             const data = memberTxns.map(tx => {
                 const row = {};
                 Object.keys(tx).forEach(key => {
@@ -4005,15 +4650,12 @@
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF('l', 'mm', 'a4');
                 const pageWidth = doc.internal.pageSize.getWidth();
-                const pageHeight = doc.internal.pageSize.getHeight();
 
-                // عنوان
                 doc.setFontSize(16);
                 doc.text(`صورتحساب ${member.firstName}`, pageWidth / 2, 15, { align: 'center' });
                 doc.setFontSize(10);
                 doc.text(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, pageWidth / 2, 22, { align: 'center' });
 
-                // ستون‌ها
                 const columns = [
                     { header: 'ID', dataKey: 'ID' },
                     { header: 'تاریخ تراکنش', dataKey: 'تاریخ تراکنش' },
@@ -4025,7 +4667,6 @@
                     { header: 'قسط مانده', dataKey: 'تعداد قسط مانده' }
                 ];
 
-                // داده‌ها
                 const data = memberTxns.map(tx => ({
                     'ID': tx['ID'] || '',
                     'تاریخ تراکنش': tx['تاریخ تراکنش'] || '',
@@ -4054,7 +4695,7 @@
         }
 
         // ============================================================
-        // RENDER DASHBOARD (با دکمه‌های دانلود)
+        // RENDER DASHBOARD
         // ============================================================
         function renderDashboardContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -4249,7 +4890,6 @@
                 </div>
             `;
 
-            // ===== بخش مجموعه صورتحساب با دکمه‌های دانلود =====
             const allTxnsHtml = `
                 <div class="dashboard-section card-other full-width">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
@@ -5293,6 +5933,34 @@
             console.log('🟢 DOM loaded');
             setTheme('auto');
             currentStatsTab = 'all';
+
+            // اضافه کردن توابع به window برای دسترسی در onclick
+            window.searchWeather = searchWeather;
+            window.fetchPrices = fetchPrices;
+            window.sendSmsRequest = sendSmsRequest;
+            window.downloadExcel = downloadExcel;
+            window.downloadPDF = downloadPDF;
+            window.selectMenuItem = selectMenuItem;
+            window.selectClubTab = selectClubTab;
+            window.selectStatsTab = selectStatsTab;
+            window.doLogout = doLogout;
+            window.goToMenu = goToMenu;
+            window.openSettings = openSettings;
+            window.closeSettings = closeSettings;
+            window.setTheme = setTheme;
+            window.togglePassword = togglePassword;
+            window.buyProduct = buyProduct;
+            window.copyText = copyText;
+            window.filterExcelTransactions = filterExcelTransactions;
+            window.showFamilyMemberDetails = showFamilyMemberDetails;
+            window.showAdminMemberDetail = showAdminMemberDetail;
+            window.showHelpFor = showHelpFor;
+            window.markAllRead = markAllRead;
+            window.closeNotifPanel = closeNotifPanel;
+            window.filterNotif = filterNotif;
+            window.deleteNotification = deleteNotification;
+            window.showNotificationPanel = showNotificationPanel;
+            window.forceUpdateData = forceUpdateData;
 
             if (typeof XLSX !== 'undefined') {
                 console.log('✅ XLSX already loaded');
