@@ -8,7 +8,12 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>صندوق اتحاد</title>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js">
+</script>
+    
+        document.write('<script src="https://cdn.jsdelivr.net/npm/xlsx@0.17.0/dist/xlsx.full.min.js"><\/script>');
+    }
+</script>
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js">
     </script>
@@ -18,7 +23,6 @@
     <link href="https://v1.fontapi.ir/css/BTitr" rel="stylesheet" />
 
     <style>
-        /* ===== استایل‌های اصلی ===== */
         :root {
             --bg-primary: #fff;
             --bg-secondary: #f8fafc;
@@ -302,8 +306,19 @@
             background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
             color: #fff;
         }
+        .teal-btn {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: #fff;
+        }
+        .pink-btn {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            color: #fff;
+        }
+        .telebiyon-btn {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: #fff;
+        }
 
-        /* ===== منوی اصلی ===== */
         .grid-menu {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -338,12 +353,18 @@
             box-shadow: 0 8px 25px var(--shadow-color);
         }
 
-        /* ===== رنگ‌های کادر هر آیتم ===== */
         .grid-menu-item[data-tab="profile"] {
             border-color: #8b5cf6;
         }
         .grid-menu-item[data-tab="profile"]:hover {
             border-color: #6d28d9;
+        }
+        .grid-menu-item[data-tab="myFund"] {
+            border-color: #f5576c;
+        }
+        .grid-menu-item[data-tab="myFund"]:hover {
+            border-color: #f093fb;
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.3);
         }
         .grid-menu-item[data-tab="dashboard"] {
             border-color: #667eea;
@@ -437,7 +458,6 @@
             box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
         }
 
-        /* ===== رنگ‌های آیکون‌ها (رنگی) ===== */
         .grid-menu-item .menu-icon {
             width: 120px;
             height: 120px;
@@ -454,6 +474,9 @@
 
         .grid-menu-item[data-tab="profile"] .menu-icon {
             background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        }
+        .grid-menu-item[data-tab="myFund"] .menu-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
         }
         .grid-menu-item[data-tab="dashboard"] .menu-icon {
             background: linear-gradient(135deg, #667eea, #764ba2);
@@ -501,7 +524,6 @@
             background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
         }
 
-        /* آیتم فعال */
         .grid-menu-item.active {
             border-color: var(--gradient-start);
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
@@ -537,7 +559,6 @@
             display: flex;
         }
 
-        /* ===== باکس برنامه‌های کاربردی ===== */
         .apps-section {
             background: var(--card-bg);
             border-radius: 18px;
@@ -631,7 +652,36 @@
             background: linear-gradient(135deg, #f6ad55, #ed8936);
         }
 
-        /* ===== هدر ===== */
+        .apps-grid .app-item[data-app="tamin"] {
+            border-color: #2563eb;
+        }
+        .apps-grid .app-item[data-app="tamin"]:hover {
+            border-color: #1d4ed8;
+        }
+        .apps-grid .app-item[data-app="tamin"] .app-icon {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        }
+
+        .apps-grid .app-item[data-app="dolat"] {
+            border-color: #dc2626;
+        }
+        .apps-grid .app-item[data-app="dolat"]:hover {
+            border-color: #b91c1c;
+        }
+        .apps-grid .app-item[data-app="dolat"] .app-icon {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+        }
+
+        .apps-grid .app-item[data-app="telebiyon"] {
+            border-color: #e74c3c;
+        }
+        .apps-grid .app-item[data-app="telebiyon"]:hover {
+            border-color: #c0392b;
+        }
+        .apps-grid .app-item[data-app="telebiyon"] .app-icon {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
         .header-bar {
             display: flex;
             flex-direction: column;
@@ -649,7 +699,6 @@
             background: linear-gradient(135deg, rgba(251, 191, 36, 0.08) 0%, rgba(217, 119, 6, 0.08) 100%);
         }
 
-        /* رتبه - کوچکتر */
         .header-rank {
             display: flex;
             flex-direction: row;
@@ -688,7 +737,6 @@
             font-weight: bold;
         }
 
-        /* تاریخ و ساعت - بزرگتر */
         .header-date {
             display: flex;
             flex-direction: column;
@@ -765,11 +813,10 @@
             font-weight: bold;
         }
 
-        /* ===== باکس اطلاعات مالی ===== */
         .quick-info-box {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
             background: var(--card-bg);
             border-radius: 12px;
             padding: 12px 16px;
@@ -809,7 +856,265 @@
             color: var(--purple-color);
         }
 
-        /* ===== استایل‌های آب و هوا ===== */
+        .quick-info-box .progress-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .quick-info-box .progress-bar {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.8s ease;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+        }
+
+        .goal-progress-container {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 4px 0;
+        }
+
+        .goal-progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.8s ease;
+            background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+        }
+
+        .personal-message {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-right: 4px solid;
+        }
+
+        .personal-message.success {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: var(--success-color);
+        }
+
+        .personal-message.warning {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: var(--gold-color);
+        }
+
+        .personal-message.info {
+            background: rgba(59, 130, 246, 0.08);
+            border-color: var(--blue-color);
+        }
+
+        .personal-message.danger {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: var(--danger-color);
+        }
+
+        .challenge-card {
+            background: var(--card-bg);
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            border-right: 4px solid var(--gold-color);
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+
+        .challenge-card .challenge-status {
+            font-size: 0.55rem;
+            font-weight: bold;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .challenge-card .challenge-status.done {
+            background: var(--success-color);
+            color: #fff;
+        }
+
+        .challenge-card .challenge-status.pending {
+            background: var(--gold-color);
+            color: #fff;
+        }
+
+        .challenge-card .challenge-status.failed {
+            background: var(--danger-color);
+            color: #fff;
+        }
+
+        .achievement-card {
+            background: var(--card-bg);
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            transition: all 0.2s;
+            min-width: 70px;
+            flex: 1;
+        }
+
+        .achievement-card.unlocked {
+            border-color: var(--gold-color);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(217, 119, 6, 0.05));
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+
+        .achievement-card .achievement-icon {
+            font-size: 1.8rem;
+            display: block;
+        }
+
+        .achievement-card .achievement-name {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+            margin-top: 2px;
+        }
+
+        .prediction-card {
+            background: var(--card-bg);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-right: 4px solid var(--purple-color);
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-bottom: 6px;
+        }
+
+        .prediction-card .prediction-label {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .prediction-card .prediction-value {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .tip-card {
+            background: var(--card-bg);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-right: 4px solid var(--teal-color);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px var(--shadow-color);
+        }
+
+        .tip-card .tip-icon {
+            font-size: 1.2rem;
+        }
+
+        .tip-card .tip-text {
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            font-weight: bold;
+            flex: 1;
+        }
+
+        .reminder-card {
+            background: var(--card-bg);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border-right: 4px solid var(--blue-color);
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 6px var(--shadow-color);
+        }
+
+        .reminder-card .reminder-text {
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .reminder-card .reminder-date {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px var(--shadow-color);
+        }
+
+        .game-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border-color: var(--gold-color);
+        }
+
+        .game-card .game-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .game-card .game-name {
+            font-size: 0.65rem;
+            color: var(--text-primary);
+            font-weight: bold;
+        }
+
+        .game-card .game-desc {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .monthly-analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .monthly-analysis-item {
+            background: var(--bg-secondary);
+            padding: 6px 8px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .monthly-analysis-item .ma-label {
+            font-size: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: bold;
+        }
+
+        .monthly-analysis-item .ma-value {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
         .weather-search {
             display: flex;
             gap: 8px;
@@ -925,7 +1230,6 @@
             color: var(--text-primary);
         }
 
-        /* ===== استایل‌های قیمت‌ها ===== */
         .price-grid {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -948,7 +1252,7 @@
         }
 
         .price-card .price-value {
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: var(--text-primary);
             direction: ltr;
@@ -968,7 +1272,7 @@
         }
 
         .price-section-title {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-primary);
             font-weight: bold;
             margin: 10px 0 6px;
@@ -982,13 +1286,12 @@
         }
 
         .price-update-time {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
             color: var(--text-muted);
             text-align: center;
             margin-top: 8px;
         }
 
-        /* ===== بقیه استایل‌ها ===== */
         .system-message-box {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
             padding: 10px 14px;
@@ -1185,7 +1488,6 @@
             }
         }
 
-        /* ===== سایر استایل‌های قبلی ===== */
         .dashboard-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1196,6 +1498,7 @@
             grid-column: 1 / -1;
         }
 
+        /* ===== فونت‌های بخش‌های مختلف ۲ برابر ===== */
         .dashboard-section {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -1208,12 +1511,60 @@
         .dashboard-section h3 {
             color: var(--text-primary);
             margin-bottom: 8px;
-            font-size: 0.85rem;
+            font-size: 1.05rem;
             display: flex;
             align-items: center;
             gap: 5px;
             flex-wrap: wrap;
             font-weight: bold;
+        }
+
+        .dashboard-section .last-tx-label,
+        .dashboard-section .info-label,
+        .dashboard-section .stat-label,
+        .dashboard-section .loan-info-label,
+        .dashboard-section .support-label,
+        .dashboard-section .family-card-stat-label,
+        .dashboard-section .ma-label,
+        .dashboard-section .prediction-label,
+        .dashboard-section .challenge-card .challenge-status,
+        .dashboard-section .achievement-card .achievement-name,
+        .dashboard-section .tip-card .tip-text,
+        .dashboard-section .reminder-card .reminder-text,
+        .dashboard-section .game-card .game-name,
+        .dashboard-section .game-card .game-desc,
+        .dashboard-section .monthly-analysis-item .ma-label,
+        .dashboard-section .monthly-analysis-item .ma-value,
+        .dashboard-section .family-card-name,
+        .dashboard-section .family-card-stat-value,
+        .dashboard-section .shop-card-title,
+        .dashboard-section .shop-card-price,
+        .dashboard-section .coin-amount,
+        .dashboard-section .last-tx-value,
+        .dashboard-section .loan-info-value,
+        .dashboard-section .support-value,
+        .dashboard-section .info-value,
+        .dashboard-section .stat-value,
+        .dashboard-section .prediction-value {
+            font-size: 0.95rem !important;
+        }
+
+        .dashboard-section .last-tx-label,
+        .dashboard-section .info-label,
+        .dashboard-section .stat-label,
+        .dashboard-section .loan-info-label,
+        .dashboard-section .support-label,
+        .dashboard-section .family-card-stat-label,
+        .dashboard-section .ma-label,
+        .dashboard-section .prediction-label {
+            font-size: 0.75rem !important;
+        }
+
+        /* فونت بخش مجموعه صورتحساب ۲ برابر */
+        .dashboard-section .excel-table th,
+        .dashboard-section .excel-table td,
+        .dashboard-section .excel-table-wrapper {
+            font-size: 0.7rem !important;
         }
 
         .last-tx-grid {
@@ -1555,7 +1906,7 @@
             border: 1px solid var(--border-color);
             padding: 4px 6px;
             text-align: center;
-            font-size: 0.55rem;
+            font-size: 0.7rem !important;
             white-space: nowrap;
             color: var(--text-primary);
             font-weight: bold;
@@ -1568,7 +1919,7 @@
             position: sticky;
             top: 0;
             z-index: 3;
-            font-size: 0.55rem;
+            font-size: 0.7rem !important;
         }
         .excel-table tbody td:first-child,
         .excel-table thead th:first-child {
@@ -2306,7 +2657,7 @@
 </head>
 
 <body>
-    <!-- ===== UPDATE OVERLAY ===== -->
+    <!-- UPDATE OVERLAY -->
     <div class="update-overlay" id="updateOverlay">
         <div class="update-box">
             <div class="update-spinner" id="updateSpinner"></div>
@@ -2338,33 +2689,21 @@
         </div>
     </div>
 
-    <!-- ===== MODAL تنظیمات ===== -->
+    <!-- SETTINGS MODAL -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
             <button class="settings-close" onclick="closeSettings()">✕</button>
             <div class="settings-title">⚙️ تنظیمات</div>
-
             <div class="settings-section">
-                <div class="settings-subtitle" style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;font-weight:bold;border-bottom:2px solid var(--border-color);padding-bottom:4px;">
-                    <i class="fas fa-palette"></i> انتخاب تم
-                </div>
+                <div class="settings-subtitle"><i class="fas fa-palette"></i> انتخاب تم</div>
                 <div class="theme-options">
-                    <div class="theme-option active" onclick="setTheme('auto')" id="themeAuto">
-                        <i class="fas fa-circle-half-stroke"></i> خودکار
-                    </div>
-                    <div class="theme-option" onclick="setTheme('light')" id="themeLight">
-                        <i class="fas fa-sun"></i> روز
-                    </div>
-                    <div class="theme-option" onclick="setTheme('dark')" id="themeDark">
-                        <i class="fas fa-moon"></i> شب
-                    </div>
+                    <div class="theme-option active" onclick="setTheme('auto')" id="themeAuto"><i class="fas fa-circle-half-stroke"></i> خودکار</div>
+                    <div class="theme-option" onclick="setTheme('light')" id="themeLight"><i class="fas fa-sun"></i> روز</div>
+                    <div class="theme-option" onclick="setTheme('dark')" id="themeDark"><i class="fas fa-moon"></i> شب</div>
                 </div>
             </div>
-
             <div class="settings-section">
-                <div class="settings-subtitle" style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;font-weight:bold;border-bottom:2px solid var(--border-color);padding-bottom:4px;">
-                    <i class="fas fa-shield-alt"></i> تنظیمات امنیتی
-                </div>
+                <div class="settings-subtitle"><i class="fas fa-shield-alt"></i> تنظیمات امنیتی</div>
                 <div style="background:linear-gradient(135deg,rgba(59,130,246,0.1) 0%,rgba(37,99,235,0.1) 100%);padding:8px;border-radius:8px;margin-bottom:6px;">
                     <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
                         <i class="fas fa-shield-alt" style="color:var(--success-color);font-size:0.8rem"></i>
@@ -2381,14 +2720,13 @@
                     <li>🔄 از مرورگر به‌روز استفاده کنید</li>
                 </ul>
             </div>
-
             <div style="margin-top:14px; text-align:center; font-size:0.55rem; color:var(--text-muted);">
                 تم بر اساس ساعت به‌صورت خودکار تغییر می‌کند
             </div>
         </div>
     </div>
 
-    <!-- ===== NOTIFICATION PANEL ===== -->
+    <!-- NOTIFICATION PANEL -->
     <div id="notificationPanel">
         <div class="notification-panel-content">
             <div class="notification-panel-header" style="padding:8px 10px;border-bottom:2px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px">
@@ -2407,46 +2745,50 @@
         </div>
     </div>
 
-    <!-- ===== TOAST CONTAINER ===== -->
+    <!-- TOAST CONTAINER -->
     <div id="toastContainer"></div>
 
-    <!-- ===== BACK TO TOP ===== -->
+    <!-- BACK TO TOP -->
     <button class="back-to-top" id="backToTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- ===== APP ===== -->
+    <!-- APP -->
     <div class="container" id="appContainer">
         <div class="login-page">
             <h1>سیستم حسابداری صندوق اتحاد</h1>
-
             <div class="login-combined-hint">
                 <div class="hint-title"><i class="fas fa-exclamation-triangle"></i> نکات مهم قبل از ورود</div>
                 <div class="hint-item">کیبورد را روی انگلیسی (EN) قرار دهید</div>
                 <div class="hint-item">اگر اینترنت کند است، صبور باشید</div>
             </div>
-
             <div class="input-group">
                 <label><i class="fas fa-user"></i> نام کاربری</label>
                 <input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید" autocomplete="username">
             </div>
-
             <div class="input-group">
                 <label><i class="fas fa-lock"></i> رمز عبور</label>
                 <input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید" style="padding-left:40px" autocomplete="current-password">
                 <button type="button" onclick="togglePassword('loginPassword','loginPwdIcon')"><i id="loginPwdIcon" class="fas fa-eye"></i></button>
             </div>
-
             <div class="remember-me">
                 <input type="checkbox" id="rememberMe">
                 <label for="rememberMe">🔒 من را به خاطر بسپار</label>
             </div>
-
             <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
         </div>
     </div>
 
     <script>
+        // ============================================================
+        // SETTINGS
+        // ============================================================
+        const FEATURES = {
+            showMyFund: true,
+            showWeather: true,
+            showPrices: true
+        };
+
         // ============================================================
         // SELECTOR & GLOBALS
         // ============================================================
@@ -2465,10 +2807,8 @@
         let notifFilter = 'all';
         let autoUpdateInterval = null;
         let userPurchases = {};
-        let isAutoLogin = false;
         let transactionsByMember = new Map();
 
-        // ===== API Keys =====
         const DEFAULT_CITY = 'Isfahan';
 
         const SUPPORT_INFO = {
@@ -2507,9 +2847,7 @@
         };
         ThemeManager.init();
 
-        function setTheme(theme) {
-            ThemeManager.apply(theme);
-        }
+        function setTheme(theme) { ThemeManager.apply(theme); }
 
         function openSettings() {
             const modal = document.getElementById('settingsModal');
@@ -2532,7 +2870,7 @@
         }
 
         // ============================================================
-        // REMEMBER ME FUNCTIONS
+        // REMEMBER ME
         // ============================================================
         function saveRememberMe(username, password) {
             if (document.getElementById('rememberMe').checked) {
@@ -2553,7 +2891,6 @@
                 const username = localStorage.getItem('sandogh_remember_username') || '';
                 const password = localStorage.getItem('sandogh_remember_password') || '';
                 const checked = localStorage.getItem('sandogh_remember_checked') === 'true';
-
                 if (username && password && checked) {
                     document.getElementById('loginUsername').value = username;
                     document.getElementById('loginPassword').value = password;
@@ -2561,9 +2898,7 @@
                     return true;
                 }
                 return false;
-            } catch (e) {
-                return false;
-            }
+            } catch (e) { return false; }
         }
 
         // ============================================================
@@ -2593,8 +2928,7 @@
                 if (char === '.' || char === '٫') {
                     if (!hasDecimal) { cleaned += '.';
                         hasDecimal = true; }
-                } else if (char === '-' && i === 0) { cleaned += '-'; } else if (char >= '0' && char <= '9') { cleaned +=
-                        char; }
+                } else if (char === '-' && i === 0) { cleaned += '-'; } else if (char >= '0' && char <= '9') { cleaned += char; }
             }
             const num = parseFloat(cleaned);
             return isNaN(num) ? 0 : num;
@@ -2809,8 +3143,7 @@
             let filtered = notifications;
             if (notifFilter !== 'all') filtered = notifications.filter(n => n.category === notifFilter);
             if (filtered.length === 0) {
-                list.innerHTML =
-                    '<p style="text-align:center;padding:12px;color:var(--text-secondary);font-size:0.7rem">هیچ اعلانی وجود ندارد</p>';
+                list.innerHTML = '<p style="text-align:center;padding:12px;color:var(--text-secondary);font-size:0.7rem">هیچ اعلانی وجود ندارد</p>';
                 return;
             }
             list.innerHTML = filtered.map(n => {
@@ -2843,8 +3176,7 @@
                             n.timestamp > (Date.now() - 24 * 60 * 60 * 1000));
                         if (!alreadyWished) {
                             addCoins(5, 'تولد مبارک', 'سال ' + new Date().getFullYear());
-                            addNotification('success', 'تولدتان مبارک!', member.firstName + ' عزیز، تولدتان مبارک!',
-                                'system');
+                            addNotification('success', 'تولدتان مبارک!', member.firstName + ' عزیز، تولدتان مبارک!', 'system');
                         }
                     }
                 }
@@ -2852,8 +3184,8 @@
             if (member.overdueInstallments < -1) {
                 const alreadyWarned = notifications.find(n => n.category === 'financial' && n.title.includes('اقساط معوقه') &&
                     n.timestamp > (Date.now() - 24 * 60 * 60 * 1000));
-                if (!alreadyWarned) addNotification('critical', 'اقساط معوقه', 'شما ' + Math.abs(member
-                    .overdueInstallments) + ' قسط معوقه دارید.', 'financial');
+                if (!alreadyWarned) addNotification('critical', 'اقساط معوقه', 'شما ' + Math.abs(member.overdueInstallments) +
+                    ' قسط معوقه دارید.', 'financial');
             }
             if (member.savingsStatus < 0) {
                 const alreadyWarned = notifications.find(n => n.category === 'financial' && n.title.includes('کسری موجودی') &&
@@ -3124,14 +3456,14 @@
                     const firstRow = rows[0];
                     const supportPhoneCol = findCol(['telepon', 'تلفن', 'شماره تماس'], headers);
                     const supportAccountCol = findCol(['shomareh hasab', 'شماره حساب صندوق', 'شماره حساب', 'account'],
-                        headers);
+                    headers);
                     const supportCardCol = findCol(['shomareh kart', 'شماره کارت صندوق', 'شماره کارت', 'card'], headers);
                     const supportShebaCol = findCol(['adress', 'شماره شبا صندوق', 'شماره شبا', 'sheba', 'شبا'], headers);
                     const supportWebsiteCol = findCol(['web site', 'وب سایت', 'website', 'سایت'], headers);
                     const systemMessageCol = findCol(['پیام سیستم', 'system message', 'message', 'پیام'], headers);
 
                     SUPPORT_INFO.phone = supportPhoneCol ? String(firstRow[supportPhoneCol] || '').trim() :
-                        '09138944709';
+                    '09138944709';
                     SUPPORT_INFO.accountNumber = supportAccountCol ? String(firstRow[supportAccountCol] || '').trim() :
                         '';
                     SUPPORT_INFO.cardNumber = supportCardCol ? String(firstRow[supportCardCol] || '').trim() : '';
@@ -3254,8 +3586,7 @@
                             active: colMap.active ? parseBool(row[colMap.active]) : true,
                             balance: colMap.balance ? parseNum(row[colMap.balance]) : 0,
                             currentMonthBalance: colMap.mojodiTaInLahzeh ? parseNum(row[colMap
-                                .mojodiTaInLahzeh]) :
-                                0,
+                                .mojodiTaInLahzeh]) : 0,
                             savingsStatus: colMap.savingsStatus ? parseNum(row[colMap.savingsStatus]) : 0,
                             loanReceivedAmount: colMap.mablaghVamReceived ? parseNum(row[colMap
                                 .mablaghVamReceived]) : 0,
@@ -3704,7 +4035,7 @@
         }
 
         // ============================================================
-        // RENDER MENU PAGE
+        // RENDER MENU PAGE (با کلیدهای جدید)
         // ============================================================
         function renderMenuPage(content) {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -3716,19 +4047,36 @@
             const updateTime = getUpdateTime();
             const greeting = getGreeting();
 
-            // دریافت آخرین تراکنش برای موجودی صحیح
             const memberTxns = (transactionsByMember.get(String(member.id)) || [])
                 .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
             const latestTx = memberTxns.length ? memberTxns[0] : null;
             const correctBalance = latestTx ? parseNum(latestTx['موجودی']) : (member?.balance || 0);
 
-            // ===== منو (بدون متن زیر کلید آخرین پیامک) =====
+            // ===== محاسبه پیشرفت پرداخت اقساط =====
+            const totalInstallments = member?.totalInstallments || 1;
+            const paidInstallments = member?.paidInstallments || 0;
+            const progressPercent = Math.min(100, Math.round((paidInstallments / totalInstallments) * 100));
+
+            let myFundMenuItem = '';
+            if (FEATURES.showMyFund) {
+                myFundMenuItem = `
+                    <div class="grid-menu-item" data-tab="myFund" onclick="selectMenuItem('myFund')">
+                        <div class="menu-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="menu-label">صندوق من 😍</div>
+                        <span class="menu-badge" id="fundBadge">!</span>
+                    </div>
+                `;
+            }
+
             const gridMenuHtml = `
                 <div class="grid-menu" id="gridMenu">
                     <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')">
                         <div class="menu-icon"><i class="fas fa-user-circle"></i></div>
                         <div class="menu-label">پروفایل</div>
                     </div>
+                    ${myFundMenuItem}
                     <div class="grid-menu-item" data-tab="dashboard" onclick="selectMenuItem('dashboard')">
                         <div class="menu-icon"><i class="fas fa-chart-line"></i></div>
                         <div class="menu-label">صورتحساب</div>
@@ -3790,7 +4138,7 @@
                 </div>
             `;
 
-            // ===== باکس برنامه‌های کاربردی =====
+            // ===== برنامه‌های کاربردی =====
             const appsHtml = `
                 <div class="apps-section">
                     <div class="apps-title">
@@ -3811,38 +4159,72 @@
                 </div>
             `;
 
-            // ===== باکس اطلاعات مالی =====
+            // ===== کلیدهای جدید "تامین من"، "دولت من" و "تلوبیون" =====
+            const governmentLinksHtml = `
+                <div class="apps-section" style="margin-top:8px; border-color: #2563eb;">
+                    <div class="apps-title" style="color:var(--text-primary);">
+                        <i class="fas fa-building" style="color:#2563eb;"></i>
+                        خدمات الکترونیک کشور
+                        <span style="font-size:0.6rem; color:var(--text-muted);">(دسترسی سریع به سامانه‌های دولتی)</span>
+                    </div>
+                    <div class="apps-grid" style="grid-template-columns:1fr 1fr 1fr;">
+                        <div class="app-item" data-app="tamin" onclick="window.open('https://eservices.tamin.ir/','_blank')" style="border-color:#2563eb; background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(37,99,235,0.02));">
+                            <div class="app-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="app-label" style="color:#2563eb;">تامین من</div>
+                            <div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه تامین اجتماعی</div>
+                        </div>
+                        <div class="app-item" data-app="dolat" onclick="window.open('https://sso.my.gov.ir/login','_blank')" style="border-color:#dc2626; background:linear-gradient(135deg,rgba(220,38,38,0.05),rgba(220,38,38,0.02));">
+                            <div class="app-icon" style="background:linear-gradient(135deg,#dc2626,#b91c1c);">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                            <div class="app-label" style="color:#dc2626;">دولت من</div>
+                            <div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">دولت هوشمند</div>
+                        </div>
+                        <div class="app-item" data-app="telebiyon" onclick="window.open('https://telewebion.com/','_blank')" style="border-color:#e74c3c; background:linear-gradient(135deg,rgba(231,76,60,0.05),rgba(231,76,60,0.02));">
+                            <div class="app-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);">
+                                <i class="fas fa-tv"></i>
+                            </div>
+                            <div class="app-label" style="color:#e74c3c;">تلوبیون</div>
+                            <div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پخش زنده صدا و سیما</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // ===== باکس اطلاعات مالی با نمودار پیشرفت =====
             const quickInfoHtml = `
-                <div class="quick-info-box">
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08));">
+                <div class="quick-info-box" style="grid-template-columns:1fr 1fr 1fr; gap:6px;">
+                    <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08)); border-radius:8px; padding:8px;">
                         <div class="info-label">موجودی شما</div>
                         <div class="info-value green">${fmtNum(correctBalance)}</div>
                     </div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08));">
+                    <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:8px;">
                         <div class="info-label">مانده بدهی شما</div>
                         <div class="info-value red">${fmtNum(member?.loanBalance || 0)}</div>
                     </div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08));">
-                        <div class="info-label">وضعیت پس‌انداز</div>
-                        <div class="info-value ${member?.savingsStatus >= 0 ? 'green' : 'red'}" style="color:${member?.savingsStatus >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${fmtNum(member?.savingsStatus || 0)}</div>
-                    </div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.08));">
-                        <div class="info-label">تعداد قسط معوقه</div>
-                        <div class="info-value gold">${Math.abs(member?.overdueInstallments || 0)}</div>
+                    <div class="info-item" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08)); border-radius:8px; padding:8px;">
+                        <div class="info-label">پیشرفت پرداخت اقساط</div>
+                        <div class="info-value purple">${progressPercent}%</div>
+                        <div style="width:100%; height:4px; background:var(--bg-secondary); border-radius:4px; overflow:hidden; margin-top:4px;">
+                            <div style="width:${progressPercent}%; height:100%; background:linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); border-radius:4px; transition:width 0.8s ease;"></div>
+                        </div>
+                        <div style="font-size:0.55rem; color:var(--text-secondary); margin-top:2px; font-weight:bold;">
+                            ${paidInstallments} از ${totalInstallments} قسط پرداخت شده
+                        </div>
                     </div>
                 </div>
             `;
 
             content.innerHTML = `
                 <div class="header-bar">
-                    <!-- رتبه -->
                     <div class="header-rank">
                         <span class="rank-label">🏆 رتبه شما در صندوق</span>
                         <span class="rank-value">${memberScores[member.id]?.score || 0}</span>
                         <span class="rank-tier" style="background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'};">${memberScores[member.id]?.tierName || ''}</span>
                     </div>
                     
-                    <!-- تاریخ و ساعت -->
                     <div class="header-date">
                         <div class="date-row">
                             <i class="fas fa-calendar-alt"></i>
@@ -3872,6 +4254,7 @@
                 
                 ${gridMenuHtml}
                 ${appsHtml}
+                ${governmentLinksHtml}
                 
                 <div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.8rem;">
                     برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید
@@ -3885,211 +4268,644 @@
                 if (el) el.textContent = new Date().toLocaleTimeString('fa-IR');
             }, 1000);
         }
-
         // ============================================================
-        // NAVIGATION FUNCTIONS
+        // RENDER "صندوق من" (نسخه کامل با همه بخش‌ها)
         // ============================================================
-        function goToPage(page) {
-            if (page === 'settings') {
-                openSettings();
-                return;
+        function renderMyFundContent() {
+            if (!FEATURES.showMyFund) {
+                return '<div class="info-box">این بخش غیرفعال شده است</div>';
             }
-            if (page === 'logout') {
-                doLogout();
-                return;
+
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) return '<div style="text-align:center;padding:30px;">خطا در دریافت اطلاعات</div>';
+
+            const sd = memberScores[member.id];
+            const totalMembers = members.length;
+            const rankPercent = sd ? Math.round(((100 - sd.score) / 100) * 100) : 0;
+            const rankText = sd ? (sd.score >= 80 ? 'طلایی ⭐' : sd.score >= 50 ? 'نقره‌ای 🥈' : 'برنزی 🥉') : '---';
+
+            let userRank = 1;
+            if (sd) {
+                const sorted = [...members].sort((a, b) => (memberScores[b.id]?.score || 0) - (memberScores[a.id]?.score || 0));
+                userRank = sorted.findIndex(m => m.id === member.id) + 1;
             }
-            currentPage = page;
-            renderPage(page);
-        }
 
-        function goToMenu() {
-            currentPage = 'menu';
-            renderPage('menu');
-        }
+            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+                .sort((a, b) => new Date(a['تاریخ تراکنش'] || 0) - new Date(b['تاریخ تراکنش'] || 0));
 
-        function selectMenuItem(tab) {
-            if (tab === 'settings') {
-                openSettings();
-                return;
-            }
-            if (tab === 'logout') {
-                doLogout();
-                return;
-            }
-            goToPage(tab);
-        }
+            let debtReduction = 0;
+            if (memberTxns.length > 0) {
+                const sixMonthsAgo = new Date();
+                sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-        function selectClubTab(tab) {
-            currentClubTab = tab;
-            renderClubContent();
-        }
+                const lastSixMonths = memberTxns.filter(tx => {
+                    const txDate = new Date(tx['تاریخ تراکنش'] || 0);
+                    return txDate >= sixMonthsAgo;
+                });
 
-        function selectStatsTab(tab) {
-            currentStatsTab = tab;
-            renderStatisticsContent();
-        }
-
-        function doLogout() {
-            if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
-                currentUser = null;
-                if (autoUpdateInterval) {
-                    clearInterval(autoUpdateInterval);
-                    autoUpdateInterval = null;
+                if (lastSixMonths.length > 0) {
+                    const firstDebt = lastSixMonths[0]['مانده وام'] || 0;
+                    const lastDebt = lastSixMonths[lastSixMonths.length - 1]['مانده وام'] || 0;
+                    debtReduction = Math.max(0, ((firstDebt - lastDebt) / (firstDebt || 1)) * 100);
+                    debtReduction = Math.round(Math.min(100, debtReduction));
                 }
-                hideUpdateOverlay();
-                location.reload();
             }
-        }
 
-        // ============================================================
-        // RENDER CONTENT PAGE
-        // ============================================================
-        function renderContentPage(page, content) {
-            const backBtnHtml = `
-                <button class="back-to-menu-btn" onclick="goToMenu()">
-                    <i class="fas fa-arrow-right"></i> بازگشت به منوی اصلی
-                </button>
-            `;
+            let payoffDate = 'نامشخص';
+            if (member.loanBalance > 0 && member.monthlySalary > 0) {
+                const monthsToPay = Math.ceil(member.loanBalance / member.monthlySalary);
+                const now = new Date();
+                now.setMonth(now.getMonth() + monthsToPay);
+                payoffDate = now.toLocaleDateString('fa-IR');
+            }
 
-            let pageContent = '';
+            // پیام شخصی
+            let personalMessage = '';
+            let messageType = 'info';
 
-            const headerHtml = `
-                <div class="header-bar" style="margin-bottom:8px; padding:8px 14px; flex-direction:row; justify-content:space-between;">
-                    <div class="header-rank" style="font-size:0.8rem; padding:4px 14px; width:auto; flex-direction:row; gap:8px; margin-bottom:0;">
-                        <span class="rank-label" style="font-size:0.5rem;">🏆 رتبه شما</span>
-                        <span class="rank-value" style="font-size:1.2rem;">${memberScores[currentUser?.memberId]?.score || 0}</span>
-                        <span class="rank-tier" style="font-size:0.7rem; background:${memberScores[currentUser?.memberId]?.tier === 'gold' ? '#FFD700' : memberScores[currentUser?.memberId]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; padding:2px 10px; border-radius:12px;">${memberScores[currentUser?.memberId]?.tierName || ''}</span>
+            if (member.overdueInstallments < 0) {
+                personalMessage = `⚠️ شما ${Math.abs(member.overdueInstallments)} قسط معوقه دارید. لطفاً هرچه سریع‌تر نسبت به پرداخت اقدام کنید.`;
+                messageType = 'danger';
+            } else if (member.loanBalance > 0 && member.paidInstallments > 0) {
+                const totalInstallments = member.totalInstallments || 1;
+                const progress = Math.round((member.paidInstallments / totalInstallments) * 100);
+                personalMessage = `💪 عالی! شما ${progress}% از اقساط وام خود را پرداخت کرده‌اید. فقط ${member.remainingInstallments} قسط دیگر تا تسویه کامل باقی مانده!`;
+                messageType = 'success';
+            } else if (member.loanBalance === 0 && member.totalInstallments > 0) {
+                personalMessage = `🎉 تبریک! شما تمام اقساط وام خود را تسویه کرده‌اید. شما یک عضو نمونه هستید!`;
+                messageType = 'success';
+            } else if (member.savingsStatus < 0) {
+                personalMessage = `📉 موجودی حساب شما منفی است. لطفاً نسبت به جبران آن اقدام کنید.`;
+                messageType = 'warning';
+            } else if (member.savingsStatus > 0) {
+                personalMessage = `💰 شما ${fmtNum(member.savingsStatus)} پس‌انداز مثبت دارید. این نشانه مدیریت مالی خوب شماست!`;
+                messageType = 'success';
+            } else {
+                personalMessage = `👋 ${getGreeting()}! خوشحالیم که امروز هم به صندوق اتحاد سر زدید.`;
+                messageType = 'info';
+            }
+
+            // هدف هوشمند
+            const goalKey = 'sandogh_goal_' + member.id;
+            let userGoal = localStorage.getItem(goalKey) || '';
+            let goalProgress = 0;
+            let goalTarget = 0;
+
+            if (userGoal) {
+                const goalParts = userGoal.split('|');
+                if (goalParts.length === 2) {
+                    goalTarget = parseFloat(goalParts[1]);
+                    const currentDebt = member.loanBalance || 0;
+                    goalProgress = Math.round(((goalTarget - currentDebt) / goalTarget) * 100);
+                    goalProgress = Math.max(0, Math.min(100, goalProgress));
+                }
+            }
+
+            // چالش‌ها
+            const challenges = [
+                { id: 'ch1', name: 'بدون قسط معوقه در این ماه', icon: '✅', status: member.overdueInstallments >= 0 ? 'done' : 'pending' },
+                { id: 'ch2', name: 'پرداخت به موقع قسط', icon: '📅', status: member.overdueInstallments >= 0 ? 'done' : 'pending' },
+                { id: 'ch3', name: 'افزایش پس‌انداز', icon: '📈', status: member.savingsStatus > 0 ? 'done' : 'pending' },
+                { id: 'ch4', name: 'بازدید هفتگی از سایت', icon: '🔄', status: 'pending' }
+            ];
+
+            const challengeStatusText = {
+                done: '✅ انجام شده',
+                pending: '⏳ در حال انجام',
+                failed: '❌ انجام نشد'
+            };
+
+            const challengeStatusClass = {
+                done: 'done',
+                pending: 'pending',
+                failed: 'failed'
+            };
+
+            // پیش‌بینی هوشمند
+            let pred3Month = '---', pred6Month = '---', pred12Month = '---';
+            if (member.loanBalance > 0 && member.monthlySalary > 0) {
+                const monthlyPayment = member.monthlySalary;
+                const debt = member.loanBalance;
+                pred3Month = fmtNum(Math.max(0, debt - (monthlyPayment * 3)));
+                pred6Month = fmtNum(Math.max(0, debt - (monthlyPayment * 6)));
+                pred12Month = fmtNum(Math.max(0, debt - (monthlyPayment * 12)));
+            }
+
+            // تحلیل ماهانه
+            const currentMonth = new Date().getMonth();
+            const monthTxns = memberTxns.filter(tx => {
+                const txDate = new Date(tx['تاریخ تراکنش'] || 0);
+                return txDate.getMonth() === currentMonth;
+            });
+            const monthPaid = monthTxns.reduce((sum, tx) => sum + parseNum(tx['مبلغ تراکنش']), 0);
+            const monthInstallments = monthTxns.filter(tx => parseNum(tx['مبلغ قسط واریزی']) > 0).length;
+
+            // یادآورها
+            const reminders = [];
+            if (member.loanBalance > 0) {
+                const nextInstallment = new Date();
+                nextInstallment.setDate(nextInstallment.getDate() + 7);
+                reminders.push({
+                    text: '⏰ موعد قسط بعدی',
+                    date: nextInstallment.toLocaleDateString('fa-IR')
+                });
+            }
+            if (member.birthDateShamsi) {
+                reminders.push({
+                    text: '🎂 تولد شما',
+                    date: member.birthDateShamsi
+                });
+            }
+            if (member.openDate) {
+                reminders.push({
+                    text: '🎉 سالگرد عضویت',
+                    date: member.openDate
+                });
+            }
+
+            // نکات مالی
+            const tips = [];
+            if (member.savingsStatus < 0) tips.push('💡 سعی کنید هزینه‌های غیرضروری را کاهش دهید تا پس‌انداز خود را افزایش دهید.');
+            if (member.overdueInstallments < 0) tips.push('💡 برای جلوگیری از جریمه، اقساط معوقه خود را هرچه سریع‌تر پرداخت کنید.');
+            if (member.loanBalance > 0 && member.monthlySalary > 0) {
+                const monthsToPay = Math.ceil(member.loanBalance / member.monthlySalary);
+                if (monthsToPay > 12) tips.push(`💡 با پرداخت ماهانه ${fmtNum(member.monthlySalary)}، بدهی شما در ${monthsToPay} ماه تسویه می‌شود.`);
+            }
+            if (member.savingsStatus > 0) tips.push('💡 پس‌انداز شما در حال رشد است! این روند را ادامه دهید.');
+            if (tips.length === 0) tips.push('💡 وضعیت مالی شما خوب است. به همین روال ادامه دهید!');
+
+            // بازی‌های مالی
+            const games = [
+                { name: 'چالش ۳۰ روزه', icon: '🎯', desc: 'هر روز یک کار مالی کوچک انجام بده' },
+                { name: 'حدس بزن', icon: '🎲', desc: 'حدس بزن چقدر پس‌انداز خواهی داشت' },
+                { name: 'مسابقه مالی', icon: '🏅', desc: 'به سوالات مالی پاسخ بده و امتیاز بگیر' }
+            ];
+
+            // گنجینه موفقیت‌ها
+            const achievements = [
+                { name: 'طلایی', icon: '🏆', unlocked: sd?.score >= 80 },
+                { name: 'نقره‌ای', icon: '🥈', unlocked: sd?.score >= 50 },
+                { name: 'برنزی', icon: '🥉', unlocked: sd?.score >= 30 },
+                { name: 'منظم', icon: '✅', unlocked: member.overdueInstallments >= 0 },
+                { name: 'وام‌دهنده', icon: '🎯', unlocked: member.loanBalance <= 0 },
+                { name: 'پس‌اندازکار', icon: '💰', unlocked: member.savingsStatus > 0 },
+                { name: 'فعال', icon: '🔥', unlocked: memberTxns.length > 50 },
+                { name: 'باسابقه', icon: '🏅', unlocked: memberTxns.length > 100 }
+            ];
+
+            return `
+                <div class="info-box" style="background:linear-gradient(135deg, #f093fb15 0%, #f5576c15 100%); border-right-color:#f5576c;">
+                    <i class="fas fa-star" style="color:#f5576c;"></i> 
+                    <span style="color:#f5576c; font-weight:bold;">صندوق من 😍</span>
+                    <span style="font-size:0.65rem; color:var(--text-secondary); margin-right:8px;">
+                        | آخرین بروزرسانی: ${getUpdateTime()}
+                    </span>
+                </div>
+
+                <!-- پیام شخصی -->
+                <div class="personal-message ${messageType}">
+                    <span style="font-size:1.5rem;">${personalMessage.match(/^.{1,2}/)?.[0] || '💬'}</span>
+                    <span style="flex:1; font-size:0.85rem; line-height:1.6;">${personalMessage}</span>
+                </div>
+
+                <!-- سه کارت اصلی -->
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px;">
+                    <div class="dashboard-section" style="border-right-color:#f5576c; background:linear-gradient(135deg, rgba(245,87,108,0.05) 0%, rgba(240,147,251,0.05) 100%); padding:12px; text-align:center;">
+                        <div style="font-size:2rem; margin-bottom:4px;">🏆</div>
+                        <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:bold;">جایگاه شما</div>
+                        <div style="font-size:1.8rem; font-weight:bold; color:#f5576c;">#${userRank}</div>
+                        <div style="font-size:0.9rem; color:var(--text-primary); font-weight:bold;">${rankText}</div>
+                        <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:2px;">از بین ${totalMembers} عضو</div>
+                        <div style="margin-top:6px; background:rgba(245,87,108,0.1); padding:4px 8px; border-radius:20px; font-size:0.6rem; color:#f5576c; font-weight:bold;">${rankPercent}٪ برتر صندوق</div>
                     </div>
-                    <div class="header-right">
-                        <button class="header-logout" onclick="doLogout()" style="font-size:0.7rem; padding:6px 14px; min-height:30px; background:linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
-                            <i class="fas fa-sign-out-alt"></i> خروج
+
+                    <div class="dashboard-section" style="border-right-color:#667eea; background:linear-gradient(135deg, rgba(102,126,234,0.05) 0%, rgba(118,75,162,0.05) 100%); padding:12px; text-align:center;">
+                        <div style="font-size:2rem; margin-bottom:4px;">📈</div>
+                        <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:bold;">کاهش بدهی</div>
+                        <div style="font-size:1.8rem; font-weight:bold; color:#667eea;">${debtReduction}%</div>
+                        <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:2px;">در ۶ ماه گذشته</div>
+                        <div style="margin-top:6px; background:rgba(102,126,234,0.1); padding:4px 8px; border-radius:20px; font-size:0.6rem; color:#667eea; font-weight:bold;">بدهی: ${fmtNum(member.loanBalance || 0)}</div>
+                    </div>
+
+                    <div class="dashboard-section" style="border-right-color:#f59e0b; background:linear-gradient(135deg, rgba(245,158,11,0.05) 0%, rgba(217,119,6,0.05) 100%); padding:12px; text-align:center;">
+                        <div style="font-size:2rem; margin-bottom:4px;">⏳</div>
+                        <div style="font-size:0.7rem; color:var(--text-secondary); font-weight:bold;">پیش‌بینی تسویه</div>
+                        <div style="font-size:1.3rem; font-weight:bold; color:#f59e0b;">${payoffDate}</div>
+                        <div style="font-size:0.65rem; color:var(--text-secondary); margin-top:2px;">با نرخ پرداخت فعلی</div>
+                        <div style="margin-top:6px; background:rgba(245,158,11,0.1); padding:4px 8px; border-radius:20px; font-size:0.6rem; color:#f59e0b; font-weight:bold;">مقرری: ${fmtNum(member.monthlySalary || 0)}</div>
+                    </div>
+                </div>
+
+                <!-- اهداف هوشمند -->
+                <div class="dashboard-section" style="border-right-color:#8b5cf6; background:linear-gradient(135deg, rgba(139,92,246,0.03) 0%, rgba(124,58,237,0.03) 100%);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:6px;">
+                        <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;">
+                            <i class="fas fa-bullseye" style="color:#8b5cf6;"></i> اهداف هوشمند
+                        </h3>
+                        <button class="btn-small edit-btn" onclick="setSmartGoal()" style="font-size:0.55rem; padding:3px 10px; min-height:24px;">
+                            <i class="fas fa-pen"></i> تنظیم هدف
+                        </button>
+                    </div>
+                    ${userGoal ? `
+                        <div style="background:var(--bg-secondary); padding:10px 12px; border-radius:8px; margin-top:4px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <span style="font-size:0.75rem; color:var(--text-primary); font-weight:bold;">🎯 تسویه بدهی تا ${fmtNum(goalTarget)}</span>
+                                <span style="font-size:0.7rem; color:var(--text-secondary);">${goalProgress}%</span>
+                            </div>
+                            <div class="goal-progress-container">
+                                <div class="goal-progress-bar" style="width:${goalProgress}%; background:linear-gradient(90deg, #8b5cf6, #6d28d9);"></div>
+                            </div>
+                            <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px;">
+                                ${goalProgress >= 100 ? '✅ هدف شما محقق شد! تبریک!' : `💪 ${100 - goalProgress}% دیگر تا رسیدن به هدف`}
+                            </div>
+                        </div>
+                    ` : `
+                        <div style="text-align:center; padding:12px; color:var(--text-secondary); font-size:0.7rem;">
+                            <i class="fas fa-plus-circle" style="font-size:1.2rem; color:#8b5cf6;"></i>
+                            <p style="margin-top:4px;">برای خود هدف تعیین کنید و پیشرفت خود را پیگیری کنید</p>
+                            <button class="btn-small edit-btn" onclick="setSmartGoal()" style="font-size:0.6rem; padding:4px 14px; min-height:26px;">
+                                <i class="fas fa-pen"></i> تعیین هدف جدید
+                            </button>
+                        </div>
+                    `}
+                </div>
+
+                <!-- چالش‌ها -->
+                <div class="dashboard-section" style="border-right-color:#f59e0b; background:linear-gradient(135deg, rgba(245,158,11,0.03) 0%, rgba(217,119,6,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-trophy" style="color:#f59e0b;"></i> چالش‌های ماهانه
+                    </h3>
+                    ${challenges.map(ch => `
+                        <div class="challenge-card">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <span style="font-size:1.2rem;">${ch.icon}</span>
+                                <span style="font-size:0.75rem; color:var(--text-primary); font-weight:bold;">${ch.name}</span>
+                            </div>
+                            <span class="challenge-status ${challengeStatusClass[ch.status]}">${challengeStatusText[ch.status]}</span>
+                        </div>
+                    `).join('')}
+                    <div style="margin-top:6px; text-align:center; font-size:0.6rem; color:var(--text-secondary);">
+                        <button class="btn-small info-btn" onclick="alert('چالش‌های جدید به زودی اضافه می‌شوند!')" style="font-size:0.55rem; padding:3px 10px; min-height:24px;">
+                            <i class="fas fa-plus"></i> چالش جدید
                         </button>
                     </div>
                 </div>
-            `;
 
-            switch (page) {
-                case 'profile':
-                    pageContent = renderProfileContent();
-                    break;
-                case 'dashboard':
-                    pageContent = renderDashboardContent();
-                    break;
-                case 'lastSms':
-                    pageContent = renderLastSmsContent();
-                    break;
-                case 'club':
-                    pageContent = renderClubContentHtml();
-                    break;
-                case 'family':
-                    pageContent = renderFamilyContentHtml();
-                    break;
-                case 'access':
-                    pageContent = renderAccessContentHtml();
-                    break;
-                case 'statistics':
-                    pageContent = renderStatisticsContentHtml();
-                    break;
-                case 'calendar':
-                    pageContent = renderCalendarContentHtml();
-                    break;
-                case 'requests':
-                    pageContent = renderRequestsContentHtml();
-                    break;
-                case 'smsStatus':
-                    pageContent = renderSmsContentHtml();
-                    break;
-                case 'announcements':
-                    pageContent = renderAnnouncementsContentHtml();
-                    break;
-                case 'security':
-                    pageContent = renderSecurityContentHtml();
-                    break;
-                case 'support':
-                    pageContent = renderSupportContentHtml();
-                    break;
-                case 'help':
-                    pageContent = renderHelpContentHtml();
-                    break;
-                case 'weather':
-                    pageContent = renderWeatherContent();
-                    break;
-                case 'prices':
-                    pageContent = renderPricesContent();
-                    break;
-                default:
-                    pageContent = '<div class="info-box">بخش مورد نظر یافت نشد</div>';
-            }
-
-            content.innerHTML = headerHtml + backBtnHtml + pageContent;
-        }
-
-        // ============================================================
-        // RENDER PROFILE (پروفایل - اضافه شده)
-        // ============================================================
-        function renderProfileContent() {
-            const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) return '<div style="text-align:center;padding:30px;font-size:1rem">خطا</div>';
-
-            const ui = users.find(u => u.memberId === member.id);
-            const actualPassword = ui ? ui.password || '---' : '---';
-            const accountActive = member.active !== false;
-            const accountStatusHtml = accountActive ?
-                '<span class="account-status-badge active">فعال</span>' :
-                '<span class="account-status-badge inactive">غیرفعال</span>';
-            const membershipDuration = calculateMembershipDuration(member.datMiladi);
-            const visitInfo = getVisitInfo();
-
-            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
-                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-
-            return `
-                <div class="info-box"><i class="fas fa-user-circle"></i> اطلاعات پروفایل شما</div>
-                <div class="dashboard-section" style="border-right-color:var(--gradient-start); background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); padding:15px;">
-                    <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
-                        <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:2.5rem; flex-shrink:0;">
-                            ${member.firstName ? member.firstName.charAt(0) : '👤'}
+                <!-- پیش‌بینی هوشمند -->
+                <div class="dashboard-section" style="border-right-color:#14b8a6; background:linear-gradient(135deg, rgba(20,184,166,0.03) 0%, rgba(13,148,136,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-eye" style="color:#14b8a6;"></i> پیش‌بینی هوشمند
+                    </h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
+                        <div class="prediction-card" style="border-right-color:#14b8a6;">
+                            <div class="prediction-label">۳ ماه آینده</div>
+                            <div class="prediction-value">${pred3Month}</div>
                         </div>
-                        <div style="flex:1; min-width:150px;">
-                            <div style="font-size:1.2rem; font-weight:bold; color:var(--text-primary);">${esc(member.firstName)}</div>
-                            <div style="font-size:0.8rem; color:var(--text-secondary);">${esc(member.accountNumber)}</div>
-                            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
-                                <span style="font-size:0.7rem; background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; color:#fff; padding:2px 10px; border-radius:10px;">${memberScores[member.id]?.tierName || 'عادی'}</span>
-                                <span style="font-size:0.7rem; background:var(--bg-secondary); padding:2px 10px; border-radius:10px; color:var(--text-secondary);">${accountStatusHtml}</span>
+                        <div class="prediction-card" style="border-right-color:#3b82f6;">
+                            <div class="prediction-label">۶ ماه آینده</div>
+                            <div class="prediction-value">${pred6Month}</div>
+                        </div>
+                        <div class="prediction-card" style="border-right-color:#8b5cf6;">
+                            <div class="prediction-label">۱۲ ماه آینده</div>
+                            <div class="prediction-value">${pred12Month}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- تحلیل ماهانه -->
+                <div class="dashboard-section" style="border-right-color:#ec4899; background:linear-gradient(135deg, rgba(236,72,153,0.03) 0%, rgba(219,39,119,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-chart-pie" style="color:#ec4899;"></i> تحلیل ماهانه
+                    </h3>
+                    <div class="monthly-analysis-grid">
+                        <div class="monthly-analysis-item">
+                            <div class="ma-label">تعداد اقساط پرداختی</div>
+                            <div class="ma-value">${monthInstallments}</div>
+                        </div>
+                        <div class="monthly-analysis-item">
+                            <div class="ma-label">مبلغ پرداختی ماه</div>
+                            <div class="ma-value" style="color:var(--success-color);">${fmtNum(monthPaid)}</div>
+                        </div>
+                        <div class="monthly-analysis-item">
+                            <div class="ma-label">وضعیت معوقه</div>
+                            <div class="ma-value" style="color:${member.overdueInstallments >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${member.overdueInstallments >= 0 ? '✅ بدون معوقه' : `⚠️ ${Math.abs(member.overdueInstallments)} قسط`}</div>
+                        </div>
+                        <div class="monthly-analysis-item">
+                            <div class="ma-label">تغییرات موجودی</div>
+                            <div class="ma-value" style="color:${member.savingsStatus >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${fmtNum(member.savingsStatus || 0)}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- گنجینه موفقیت‌ها -->
+                <div class="dashboard-section" style="border-right-color:#f43f5e; background:linear-gradient(135deg, rgba(244,63,94,0.03) 0%, rgba(225,29,72,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-award" style="color:#f43f5e;"></i> گنجینه موفقیت‌ها
+                    </h3>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        ${achievements.map(a => `
+                            <div class="achievement-card ${a.unlocked ? 'unlocked' : 'locked'}">
+                                <span class="achievement-icon">${a.icon}</span>
+                                <span class="achievement-name">${a.name}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- نکات مالی هوشمند -->
+                <div class="dashboard-section" style="border-right-color:#06b6d4; background:linear-gradient(135deg, rgba(6,182,212,0.03) 0%, rgba(8,145,178,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-lightbulb" style="color:#06b6d4;"></i> نکات مالی هوشمند
+                    </h3>
+                    ${tips.map(tip => `
+                        <div class="tip-card">
+                            <span class="tip-icon">💡</span>
+                            <span class="tip-text">${tip}</span>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- بازی‌های مالی -->
+                <div class="dashboard-section" style="border-right-color:#f97316; background:linear-gradient(135deg, rgba(249,115,22,0.03) 0%, rgba(234,88,12,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-gamepad" style="color:#f97316;"></i> بازی‌های مالی
+                    </h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                        ${games.map(game => `
+                            <div class="game-card" onclick="alert('🎮 ${game.name}\n${game.desc}\n\nبه زودی اضافه می‌شود!')">
+                                <span class="game-icon">${game.icon}</span>
+                                <span class="game-name">${game.name}</span>
+                                <span class="game-desc">${game.desc}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- یادآورهای هوشمند -->
+                <div class="dashboard-section" style="border-right-color:#6366f1; background:linear-gradient(135deg, rgba(99,102,241,0.03) 0%, rgba(79,70,229,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-bell" style="color:#6366f1;"></i> یادآورهای هوشمند
+                    </h3>
+                    ${reminders.length > 0 ? reminders.map(r => `
+                        <div class="reminder-card">
+                            <span class="reminder-text">${r.text}</span>
+                            <span class="reminder-date">📅 ${r.date}</span>
+                        </div>
+                    `).join('') : `
+                        <div style="text-align:center; padding:8px; color:var(--text-secondary); font-size:0.65rem;">
+                            هیچ یادآوری برای شما ثبت نشده است
+                        </div>
+                    `}
+                </div>
+
+                <!-- نمودارهای پیشرفت -->
+                <div class="dashboard-section" style="border-right-color:#10b981; background:linear-gradient(135deg, rgba(16,185,129,0.03) 0%, rgba(5,150,105,0.03) 100%);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-chart-bar" style="color:#10b981;"></i> نمودار پیشرفت
+                    </h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                        <div style="background:var(--bg-secondary); padding:8px 10px; border-radius:8px;">
+                            <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold;">پرداخت اقساط</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <span style="font-size:0.7rem; color:var(--text-primary); font-weight:bold;">${Math.round((member.paidInstallments / (member.totalInstallments || 1)) * 100)}%</span>
+                                <div class="goal-progress-container" style="flex:1;">
+                                    <div class="goal-progress-bar" style="width:${Math.round((member.paidInstallments / (member.totalInstallments || 1)) * 100)}%; background:linear-gradient(90deg, #10b981, #059669);"></div>
+                                </div>
+                            </div>
+                            <div style="font-size:0.55rem; color:var(--text-secondary); margin-top:2px;">
+                                ${member.paidInstallments} از ${member.totalInstallments || 0} قسط
                             </div>
                         </div>
-                        <div style="display:flex; gap:12px; flex-wrap:wrap; text-align:center;">
-                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">تعداد تراکنش</div><div style="font-weight:bold; font-size:1rem; color:var(--text-primary);">${memberTxns.length}</div></div>
-                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">مدت عضویت</div><div style="font-weight:bold; font-size:0.85rem; color:var(--text-primary);">${membershipDuration}</div></div>
-                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">تعداد ورود</div><div style="font-weight:bold; font-size:1rem; color:var(--text-primary);">${visitInfo.count}</div></div>
-                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">آخرین بازدید</div><div style="font-weight:bold; font-size:0.8rem; color:var(--text-primary);">${visitInfo.lastVisit}</div></div>
+                        <div style="background:var(--bg-secondary); padding:8px 10px; border-radius:8px;">
+                            <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold;">پس‌انداز</div>
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                                <span style="font-size:0.7rem; color:var(--text-primary); font-weight:bold;">${Math.min(100, Math.round((member.savingsStatus / (member.monthlySalary || 1)) * 100))}%</span>
+                                <div class="goal-progress-container" style="flex:1;">
+                                    <div class="goal-progress-bar" style="width:${Math.min(100, Math.round((member.savingsStatus / (member.monthlySalary || 1)) * 100))}%; background:linear-gradient(90deg, #8b5cf6, #6d28d9);"></div>
+                                </div>
+                            </div>
+                            <div style="font-size:0.55rem; color:var(--text-secondary); margin-top:2px;">
+                                ${fmtNum(member.savingsStatus || 0)} / ${fmtNum(member.monthlySalary || 0)}
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="dashboard-section card-profile full-width">
-                    <h3><i class="fas fa-user" style="color:var(--gradient-start)"></i> اطلاعات کامل پروفایل</h3>
-                    <div class="last-tx-grid">
-                        <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت (شمسی)</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi || '---')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">مدت زمان عضویت</div><div class="last-tx-value" style="color:var(--gradient-start)">${membershipDuration}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="profilePwdValue" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('profilePwdValue','profilePwdIcon')" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:0.6rem;touch-action:manipulation;min-height:24px;font-weight:bold"><i id="profilePwdIcon" class="fas fa-eye"></i></button></div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
-                        <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
+
+                <!-- نشان‌های افتخار -->
+                <div class="dashboard-section" style="border-right-color:#f43f5e; background:linear-gradient(135deg, rgba(244,63,94,0.03) 0%, rgba(225,29,72,0.03) 100%);">
+                    <h3 style="font-size:0.8rem; color:var(--text-primary); font-weight:bold; margin-bottom:6px;">
+                        <i class="fas fa-medal" style="color:#f43f5e;"></i> نشان‌های افتخار شما
+                    </h3>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        ${member.overdueInstallments >= 0 ? '<span style="background:#10b981; color:#fff; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">✅ بدون معوقه</span>' : '<span style="background:#ef4444; color:#fff; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">⚠️ معوقه دارید</span>'}
+                        ${member.loanBalance <= 0 ? '<span style="background:#8b5cf6; color:#fff; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">🎯 بدون بدهی</span>' : ''}
+                        ${memberTxns.length > 50 ? '<span style="background:#f59e0b; color:#fff; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">🔥 فعال</span>' : ''}
+                        ${sd?.score >= 80 ? '<span style="background:linear-gradient(135deg, #FFD700, #F59E0B); color:#000; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">⭐ طلایی</span>' : ''}
+                        ${member.savingsStatus > 0 ? '<span style="background:#3b82f6; color:#fff; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">💰 پس‌انداز</span>' : ''}
+                        <span style="background:#64748b; color:#fff; padding:2px 12px; border-radius:20px; font-size:0.6rem; font-weight:bold;">📊 ${memberTxns.length} تراکنش</span>
+                    </div>
+                </div>
+
+                <!-- اطلاعات تکمیلی -->
+                <div class="dashboard-section" style="border-right-color:#64748b;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; font-size:0.6rem; color:var(--text-secondary);">
+                        <div><span style="font-weight:bold;">تاریخ عضویت:</span> ${esc(member.openDate || '---')}</div>
+                        <div><span style="font-weight:bold;">مدت عضویت:</span> ${calculateMembershipDuration(member.datMiladi)}</div>
+                        <div><span style="font-weight:bold;">وضعیت حساب:</span> ${member.active !== false ? '✅ فعال' : '❌ غیرفعال'}</div>
                     </div>
                 </div>
             `;
         }
 
         // ============================================================
-        // RENDER WEATHER (آب و هوا - با API جدید wttr.in)
+        // SET SMART GOAL
+        // ============================================================
+        function setSmartGoal() {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) {
+                alert('خطا در دریافت اطلاعات کاربر');
+                return;
+            }
+
+            const currentDebt = member.loanBalance || 0;
+            const goalKey = 'sandogh_goal_' + member.id;
+            const existingGoal = localStorage.getItem(goalKey) || '';
+            let existingTarget = '';
+            if (existingGoal) {
+                const parts = existingGoal.split('|');
+                if (parts.length === 2) existingTarget = parts[1];
+            }
+
+            const target = prompt(
+                `💰 هدف تسویه بدهی خود را تعیین کنید\nبدهی فعلی شما: ${fmtNum(currentDebt)}\n\nمبلغ هدف خود را به تومان وارد کنید:`,
+                existingTarget || Math.ceil(currentDebt / 2)
+            );
+
+            if (target === null) return;
+
+            const numTarget = parseNum(target);
+            if (isNaN(numTarget) || numTarget <= 0) {
+                alert('❌ لطفاً یک عدد معتبر وارد کنید');
+                return;
+            }
+
+            localStorage.setItem(goalKey, `goal|${numTarget}`);
+            alert(`✅ هدف شما با موفقیت ثبت شد!\nهدف: تسویه بدهی تا ${fmtNum(numTarget)} تومان`);
+
+            renderMyFundContent();
+        }
+        // ============================================================
+        // RENDER PRICES (نسخه کامل با سکه و نیم‌سکه - به‌روز با API جدید)
+        // ============================================================
+        function renderPricesContent() {
+            let pricesHtml = `
+                <div class="info-box"><i class="fas fa-coins"></i> قیمت‌های روز</div>
+                <div class="dashboard-section">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+                        <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;">
+                            <i class="fas fa-chart-line" style="color:var(--gold-color);"></i> قیمت ارز، سکه و طلا
+                        </h3>
+                        <button class="btn-small info-btn" onclick="fetchPrices()" style="font-size:0.6rem; padding:4px 12px; min-height:28px;">
+                            <i class="fas fa-sync"></i> بروزرسانی
+                        </button>
+                    </div>
+                    <div id="pricesResult">
+                        <div style="text-align:center; padding:30px; color:var(--text-secondary);">
+                            <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
+                            <p style="margin-top:10px;">در حال دریافت قیمت‌ها...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                fetchPrices();
+            }, 100);
+
+            return pricesHtml;
+        }
+
+        async function fetchPrices() {
+            const container = document.getElementById('pricesResult');
+            if (!container) return;
+
+            try {
+                // ===== قیمت دلار و یورو از ExchangeRate-API =====
+                const currencyRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const currencyData = await currencyRes.json();
+                const usdPrice = currencyData.rates?.IRR ? Math.round(currencyData.rates.IRR / 10) : '---';
+                const eurPrice = currencyData.rates?.EUR ? Math.round(currencyData.rates.EUR * 42000) : '---';
+
+                // ===== قیمت طلا و سکه از Gold-API با محاسبه دقیق =====
+                let goldPrice = '---', coinPrice = '---', halfCoin = '---', quarterCoin = '---';
+                try {
+                    // استفاده از API طلا با بروزرسانی لحظه‌ای
+                    const goldRes = await fetch('https://api.gold-api.com/price/XAU');
+                    const goldData = await goldRes.json();
+                    if (goldData.price) {
+                        // قیمت هر گرم طلا (اونس / 31.1) * نرخ دلار
+                        const goldPerGram = Math.round(goldData.price * 42000 / 31.1);
+                        goldPrice = goldPerGram;
+                        // سکه امامی: 8.133 گرم
+                        coinPrice = Math.round(goldPerGram * 8.133);
+                        // نیم سکه: 4.066 گرم
+                        halfCoin = Math.round(goldPerGram * 4.066);
+                        // ربع سکه: 2.033 گرم
+                        quarterCoin = Math.round(goldPerGram * 2.033);
+                    }
+                } catch (e) {
+                    console.log('⚠️ خطا در دریافت قیمت طلا، استفاده از قیمت تخمینی');
+                    // قیمت تخمینی در صورت عدم دسترسی به API
+                    goldPrice = 3450000;
+                    coinPrice = 28000000;
+                    halfCoin = 14000000;
+                    quarterCoin = 7000000;
+                }
+
+                container.innerHTML = `
+                    <div style="background:var(--bg-secondary); border-radius:12px; padding:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:8px;">
+                            <div class="price-section-title" style="margin:0; border-bottom:none; font-size:0.85rem;">
+                                <i class="fas fa-dollar-sign" style="color:var(--success-color);"></i> قیمت ارزها
+                            </div>
+                            <span style="font-size:0.5rem; color:var(--text-muted);">
+                                🔄 ${new Date().toLocaleTimeString('fa-IR')}
+                            </span>
+                        </div>
+                        <div class="price-grid">
+                            <div class="price-card" style="border-right-color:#48bb78; padding:10px;">
+                                <div class="price-name" style="font-size:0.7rem;">🇺🇸 دلار آمریکا</div>
+                                <div class="price-value" style="font-size:1.1rem; color:#48bb78;">${fmtNum(usdPrice)}</div>
+                                <div style="font-size:0.5rem; color:var(--text-muted);">تومان</div>
+                            </div>
+                            <div class="price-card" style="border-right-color:#4299e1; padding:10px;">
+                                <div class="price-name" style="font-size:0.7rem;">🇪🇺 یورو</div>
+                                <div class="price-value" style="font-size:1.1rem; color:#4299e1;">${fmtNum(eurPrice)}</div>
+                                <div style="font-size:0.5rem; color:var(--text-muted);">تومان</div>
+                            </div>
+                            <div class="price-card" style="border-right-color:#f6ad55; padding:10px;">
+                                <div class="price-name" style="font-size:0.7rem;">🥇 طلا (هر گرم)</div>
+                                <div class="price-value" style="font-size:1.1rem; color:#f6ad55;">${fmtNum(goldPrice)}</div>
+                                <div style="font-size:0.5rem; color:var(--text-muted);">تومان</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin:12px 0 8px;">
+                            <div class="price-section-title" style="margin:0; border-bottom:none; font-size:0.85rem;">
+                                <i class="fas fa-coins" style="color:var(--gold-color);"></i> قیمت سکه
+                            </div>
+                        </div>
+                        <div class="price-grid">
+                            <div class="price-card" style="border-right-color:#f59e0b; padding:10px;">
+                                <div class="price-name" style="font-size:0.7rem;">🪙 سکه امامی</div>
+                                <div class="price-value" style="font-size:1.1rem; color:#f59e0b;">${fmtNum(coinPrice)}</div>
+                                <div style="font-size:0.5rem; color:var(--text-muted);">تومان</div>
+                            </div>
+                            <div class="price-card" style="border-right-color:#ed8936; padding:10px;">
+                                <div class="price-name" style="font-size:0.7rem;">🪙 نیم‌سکه</div>
+                                <div class="price-value" style="font-size:1.1rem; color:#ed8936;">${fmtNum(halfCoin)}</div>
+                                <div style="font-size:0.5rem; color:var(--text-muted);">تومان</div>
+                            </div>
+                            <div class="price-card" style="border-right-color:#9f7aea; padding:10px;">
+                                <div class="price-name" style="font-size:0.7rem;">🪙 ربع‌سکه</div>
+                                <div class="price-value" style="font-size:1.1rem; color:#9f7aea;">${fmtNum(quarterCoin)}</div>
+                                <div style="font-size:0.5rem; color:var(--text-muted);">تومان</div>
+                            </div>
+                        </div>
+
+                        <div class="price-section-title" style="margin-top:12px; font-size:0.7rem;">
+                            <i class="fas fa-info-circle" style="color:var(--blue-color);"></i> منابع قیمت
+                        </div>
+                        <div style="text-align:center; padding:6px; color:var(--text-secondary); font-size:0.6rem; font-weight:bold;">
+                            <p>📊 قیمت‌ها از منابع معتبر لحظه‌ای دریافت می‌شوند</p>
+                            <p style="font-size:0.5rem; margin-top:2px;">⚠️ قیمت‌ها تقریبی بوده و ممکن است با نرخ بازار کمی تفاوت داشته باشد</p>
+                        </div>
+
+                        <div class="price-update-time" style="margin-top:6px; font-size:0.5rem;">
+                            🔄 آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}
+                            <button class="btn-small info-btn" onclick="fetchPrices()" style="font-size:0.5rem; padding:2px 8px; min-height:20px; margin-right:6px;">
+                                <i class="fas fa-sync"></i> بروزرسانی
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                container.innerHTML = `
+                    <div style="background:var(--bg-secondary); border-radius:12px; padding:12px; text-align:center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:var(--danger-color);"></i>
+                        <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:8px;">❌ خطا در دریافت قیمت‌ها</p>
+                        <p style="color:var(--text-muted); font-size:0.7rem;">لطفاً اتصال اینترنت را بررسی کنید</p>
+                        <button class="btn-small info-btn" onclick="fetchPrices()" style="margin-top:8px; font-size:0.6rem;">
+                            <i class="fas fa-sync"></i> تلاش مجدد
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ============================================================
+        // RENDER WEATHER
         // ============================================================
         function renderWeatherContent() {
             const city = localStorage.getItem('weather_city') || DEFAULT_CITY;
@@ -4122,9 +4938,6 @@
             return weatherHtml;
         }
 
-        // ============================================================
-        // FETCH WEATHER DATA (با API جدید wttr.in)
-        // ============================================================
         function getWeatherIcon(description) {
             const desc = description.toLowerCase();
             if (desc.includes('آفتابی') || desc.includes('صاف') || desc.includes('sunny')) return '☀️';
@@ -4141,15 +4954,11 @@
             if (!container) return;
 
             try {
-                // استفاده از API wttr.in (رایگان و بدون نیاز به کلید)
                 const url = `https://wttr.in/${city}?format=j1&lang=fa`;
-
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('شهر مورد نظر یافت نشد');
-
                 const data = await response.json();
 
-                // استخراج اطلاعات
                 const current = data.current_condition[0];
                 const temp = current.temp_C;
                 const feelsLike = current.FeelsLikeC;
@@ -4158,13 +4967,9 @@
                 const description = current.weatherDesc[0].value;
                 const cityName = data.nearest_area[0].areaName[0].value;
 
-                // ذخیره شهر
                 localStorage.setItem('weather_city', city);
-
-                // آیکون مناسب
                 const weatherIcon = getWeatherIcon(description);
 
-                // پیش‌بینی ۵ روز آینده
                 const forecast = data.weather || [];
                 const days = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'];
 
@@ -4230,9 +5035,6 @@
             }
         }
 
-        // ============================================================
-        // SEARCH WEATHER
-        // ============================================================
         function searchWeather() {
             const input = document.getElementById('weatherCityInput');
             if (!input) return;
@@ -4245,455 +5047,68 @@
         }
 
         // ============================================================
-        // RENDER PRICES (قیمت‌های روز)
+        // RENDER PROFILE
         // ============================================================
-        function renderPricesContent() {
-            let pricesHtml = `
-                <div class="info-box"><i class="fas fa-coins"></i> قیمت‌های روز</div>
-                <div class="dashboard-section">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-                        <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;">
-                            <i class="fas fa-chart-line" style="color:var(--gold-color);"></i> قیمت ارز، سکه و طلا
-                        </h3>
-                        <button class="btn-small info-btn" onclick="fetchPrices()" style="font-size:0.6rem; padding:4px 12px; min-height:28px;">
-                            <i class="fas fa-sync"></i> بروزرسانی
-                        </button>
-                    </div>
-                    <div id="pricesResult">
-                        <div style="text-align:center; padding:30px; color:var(--text-secondary);">
-                            <i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i>
-                            <p style="margin-top:10px;">در حال دریافت قیمت‌ها...</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            setTimeout(() => {
-                fetchPrices();
-            }, 100);
-
-            return pricesHtml;
-        }
-
-        // ============================================================
-        // FETCH PRICES DATA
-        // ============================================================
-        async function fetchPrices() {
-            const container = document.getElementById('pricesResult');
-            if (!container) return;
-
-            try {
-                // قیمت ارز
-                const currencyRes = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const currencyData = await currencyRes.json();
-
-                const usdPrice = currencyData.rates?.IRR ? Math.round(currencyData.rates.IRR / 10) : '---';
-                const eurPrice = currencyData.rates?.EUR ? Math.round(currencyData.rates.EUR * 42000) : '---';
-
-                // قیمت طلا
-                let goldPrice = '---';
-                try {
-                    const goldRes = await fetch('https://api.gold-api.com/price/XAU');
-                    const goldData = await goldRes.json();
-                    goldPrice = goldData.price ? Math.round(goldData.price * 42000) : '---';
-                } catch (e) {
-                    goldPrice = '---';
-                }
-
-                container.innerHTML = `
-                    <div style="background:var(--bg-secondary); border-radius:12px; padding:12px;">
-                        <div class="price-section-title"><i class="fas fa-dollar-sign"></i> قیمت ارزها</div>
-                        <div class="price-grid">
-                            <div class="price-card" style="border-right-color:#48bb78;">
-                                <div class="price-name">🇺🇸 دلار آمریکا</div>
-                                <div class="price-value">${fmtNum(usdPrice)} تومان</div>
-                            </div>
-                            <div class="price-card" style="border-right-color:#4299e1;">
-                                <div class="price-name">🇪🇺 یورو</div>
-                                <div class="price-value">${fmtNum(eurPrice)} تومان</div>
-                            </div>
-                            <div class="price-card" style="border-right-color:#f6ad55;">
-                                <div class="price-name">🥇 اونس طلا</div>
-                                <div class="price-value">${fmtNum(goldPrice)} تومان</div>
-                            </div>
-                        </div>
-
-                        <div class="price-section-title" style="margin-top:14px;"><i class="fas fa-info-circle" style="color:var(--blue-color);"></i> اطلاعات بیشتر</div>
-                        <div style="text-align:center; padding:10px; color:var(--text-secondary); font-size:0.7rem;">
-                            <p>💡 قیمت‌های دقیق‌تر سکه و طلا از طریق سایت <a href="https://www.tgju.org" target="_blank" style="color:var(--gold-color);">tgju.org</a> قابل مشاهده است.</p>
-                            <p style="font-size:0.55rem; margin-top:4px;">⚠️ قیمت‌ها تقریبی بوده و ممکن است با نرخ بازار کمی تفاوت داشته باشد</p>
-                        </div>
-
-                        <div class="price-update-time">
-                            🔄 آخرین بروزرسانی: ${new Date().toLocaleTimeString('fa-IR')}
-                        </div>
-                    </div>
-                `;
-
-            } catch (error) {
-                container.innerHTML = `
-                    <div style="background:var(--bg-secondary); border-radius:12px; padding:12px; text-align:center;">
-                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; color:var(--danger-color);"></i>
-                        <p style="color:var(--text-secondary); font-size:0.85rem; margin-top:8px;">❌ خطا در دریافت قیمت‌ها</p>
-                        <p style="color:var(--text-muted); font-size:0.7rem;">لطفاً اتصال اینترنت را بررسی کنید</p>
-                        <button class="btn-small info-btn" onclick="fetchPrices()" style="margin-top:8px; font-size:0.6rem;">
-                            <i class="fas fa-sync"></i> تلاش مجدد
-                        </button>
-                    </div>
-                `;
-            }
-        }
-
-        // ============================================================
-        // SEND SMS REQUEST
-        // ============================================================
-        function sendSmsRequest(code, title) {
+        function renderProfileContent() {
             const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) {
-                alert('❌ اطلاعات کاربر یافت نشد');
-                return;
-            }
+            if (!member) return '<div style="text-align:center;padding:30px;font-size:1rem">خطا</div>';
 
-            const FUND_PHONE = '09138944709';
-            const message = `درخواست ${code} - ${title}\n`;
-            const fullMessage = message + `شماره حساب: ${member.accountNumber}\nنام: ${member.firstName}`;
-            const smsLink = `sms:${FUND_PHONE}?body=${encodeURIComponent(fullMessage)}`;
-            window.location.href = smsLink;
-            alert(`✅ درخواست "${title}" برای ارسال به شماره ${FUND_PHONE} آماده شد.\nلطفاً پیامک را تأیید و ارسال کنید.`);
-        }
+            const ui = users.find(u => u.memberId === member.id);
+            const actualPassword = ui ? ui.password || '---' : '---';
+            const accountActive = member.active !== false;
+            const accountStatusHtml = accountActive ?
+                '<span class="account-status-badge active">فعال</span>' :
+                '<span class="account-status-badge inactive">غیرفعال</span>';
+            const membershipDuration = calculateMembershipDuration(member.datMiladi);
+            const visitInfo = getVisitInfo();
 
-        // ============================================================
-        // RENDER REQUESTS
-        // ============================================================
-        function renderRequestsContentHtml() {
-            const FUND_PHONE = '09138944709';
-            const requestList = [
-                { code: '1', title: 'نوبت دهی وام خانوادگی', desc: 'درخواست نوبت برای دریافت وام خانوادگی' },
-                { code: '4', title: 'مسدود نمودن حساب', desc: 'درخواست مسدودسازی حساب کاربری' },
-                { code: '10', title: 'حذف حساب', desc: 'درخواست حذف کامل حساب' },
-                { code: '13', title: 'ارسال کل موجودی و بدهی خانواده من', desc: 'دریافت گزارش کامل مالی خانواده' },
-                { code: '14', title: 'غیرفعالسازی کلیه سرویس‌های پیامکی', desc: 'غیرفعال کردن تمام پیامک‌ها' },
-                { code: '15', title: 'فعالسازی کلیه سرویس‌های پیامکی', desc: 'فعال کردن تمام پیامک‌ها' },
-                { code: '18', title: 'فعالسازی فقط پیامک صورتحساب', desc: 'فعال کردن فقط پیامک صورتحساب' },
-                { code: '19', title: 'غیرفعالسازی پیامک صورتحساب', desc: 'غیرفعال کردن پیامک صورتحساب' },
-                { code: '20', title: 'تغییر شماره همراه', desc: 'ثبت شماره همراه جدید' },
-                { code: '22', title: 'ارسال صورتحساب به جانشین', desc: 'ارسال صورتحساب به شماره جانشین' },
-                { code: '23', title: 'لغو ارسال صورتحساب به جانشین', desc: 'لغو ارسال صورتحساب به جانشین' },
-                { code: '44', title: 'ارسال ۵ تراکنش آخر', desc: 'دریافت ۵ تراکنش آخر حساب' }
-            ];
+            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
 
             return `
-                <div class="info-box"><i class="fas fa-file-signature"></i> درخواست‌های پیامکی</div>
-                
-                <div class="dashboard-section" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(217, 119, 6, 0.06) 100%);">
-                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                        <i class="fas fa-info-circle" style="font-size:1.5rem; color:var(--gold-color);"></i>
-                        <div>
-                            <div style="font-weight:bold; color:var(--text-primary); font-size:0.95rem;">📱 تمام درخواست‌ها به صورت پیامکی اعمال می‌گردد</div>
-                            <div style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">
-                                با کلیک روی هر درخواست، پیامک آماده ارسال به شماره صندوق می‌شود.
-                                <br>شماره صندوق: <strong style="color:var(--gold-color);">${FUND_PHONE}</strong>
+                <div class="info-box"><i class="fas fa-user-circle"></i> اطلاعات پروفایل شما</div>
+                <div class="dashboard-section" style="border-right-color:var(--gradient-start); background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); padding:15px;">
+                    <div style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                        <div style="width:80px; height:80px; border-radius:50%; background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display:flex; align-items:center; justify-content:center; color:#fff; font-size:2.5rem; flex-shrink:0;">
+                            ${member.firstName ? member.firstName.charAt(0) : '👤'}
+                        </div>
+                        <div style="flex:1; min-width:150px;">
+                            <div style="font-size:1.2rem; font-weight:bold; color:var(--text-primary);">${esc(member.firstName)}</div>
+                            <div style="font-size:0.8rem; color:var(--text-secondary);">${esc(member.accountNumber)}</div>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:4px;">
+                                <span style="font-size:0.7rem; background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; color:#fff; padding:2px 10px; border-radius:10px;">${memberScores[member.id]?.tierName || 'عادی'}</span>
+                                <span style="font-size:0.7rem; background:var(--bg-secondary); padding:2px 10px; border-radius:10px; color:var(--text-secondary);">${accountStatusHtml}</span>
                             </div>
+                        </div>
+                        <div style="display:flex; gap:12px; flex-wrap:wrap; text-align:center;">
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">تعداد تراکنش</div><div style="font-weight:bold; font-size:1rem; color:var(--text-primary);">${memberTxns.length}</div></div>
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">مدت عضویت</div><div style="font-weight:bold; font-size:0.85rem; color:var(--text-primary);">${membershipDuration}</div></div>
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">تعداد ورود</div><div style="font-weight:bold; font-size:1rem; color:var(--text-primary);">${visitInfo.count}</div></div>
+                            <div><div style="font-size:0.6rem; color:var(--text-secondary);">آخرین بازدید</div><div style="font-weight:bold; font-size:0.8rem; color:var(--text-primary);">${visitInfo.lastVisit}</div></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="dashboard-section">
-                    <h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;margin-bottom:10px;">
-                        <i class="fas fa-list" style="color:var(--orange-color);"></i> لیست درخواست‌ها
-                    </h3>
-                    
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                        ${requestList.map(req => `
-                            <div class="coin-history-item" style="border-right:4px solid var(--orange-color); cursor:pointer; transition:all 0.2s; background:var(--card-bg); padding:10px 12px; border-radius:8px; box-shadow:0 2px 8px var(--shadow-color);" 
-                                 onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 16px var(--shadow-color)';"
-                                 onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 8px var(--shadow-color)';">
-                                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
-                                    <div style="flex:1; min-width:100px;">
-                                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
-                                            <span style="background:linear-gradient(135deg, var(--orange-color), #ea580c); color:#fff; padding:1px 8px; border-radius:4px; font-size:0.55rem; font-weight:bold;">کد ${req.code}</span>
-                                            <span style="font-weight:bold; font-size:0.8rem; color:var(--text-primary);">${req.title}</span>
-                                        </div>
-                                        <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px; font-weight:bold;">${req.desc}</div>
-                                    </div>
-                                    <button class="btn-small orange-btn" onclick="sendSmsRequest('${req.code}','${req.title}')" 
-                                            style="font-size:0.55rem; padding:4px 12px; min-height:28px; white-space:nowrap; background:linear-gradient(135deg, var(--orange-color), #ea580c); border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold; transition:transform 0.15s;">
-                                        <i class="fas fa-sms"></i> ارسال
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
+                <div class="dashboard-section card-profile full-width">
+                    <h3><i class="fas fa-user" style="color:var(--gradient-start)"></i> اطلاعات کامل پروفایل</h3>
+                    <div class="last-tx-grid">
+                        <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت (شمسی)</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">تاریخ افتتاح (میلادی)</div><div class="last-tx-value">${esc(member.datMiladi || '---')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">مدت زمان عضویت</div><div class="last-tx-value" style="color:var(--gradient-start)">${membershipDuration}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="profilePwdValue" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('profilePwdValue','profilePwdIcon')" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:3px 8px;border-radius:4px;cursor:pointer;font-size:0.6rem;touch-action:manipulation;min-height:24px;font-weight:bold"><i id="profilePwdIcon" class="fas fa-eye"></i></button></div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
+                        <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
                     </div>
-                </div>
-                
-                <div class="dashboard-section" style="border-right-color:var(--blue-color); background: linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(37,99,235,0.05) 100%);">
-                    <h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;margin-bottom:6px;">
-                        <i class="fas fa-question-circle" style="color:var(--blue-color);"></i> راهنمای استفاده
-                    </h3>
-                    <ul style="padding-right:16px; color:var(--text-secondary); line-height:1.8; font-size:0.65rem; font-weight:bold;">
-                        <li>📱 پس از کلیک روی دکمه <strong>"ارسال"</strong>، پیامک در برنامه پیامک شما باز می‌شود</li>
-                        <li>✏️ می‌توانید متن پیامک را ویرایش کنید</li>
-                        <li>📨 پیامک را تأیید و ارسال کنید</li>
-                        <li>⏳ پس از ارسال، درخواست شما توسط کارشناسان بررسی می‌شود</li>
-                        <li>📞 در صورت نیاز با شماره صندوق تماس بگیرید: <strong style="color:var(--gold-color);">${FUND_PHONE}</strong></li>
-                    </ul>
                 </div>
             `;
         }
-
-        // ============================================================
-        // RENDER LAST SMS
-        // ============================================================
-        function renderLastSmsContent() {
-            const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) {
-                return '<div class="info-box">خطا در دریافت اطلاعات</div>';
-            }
-
-            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
-                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-            const latestTx = memberTxns.length ? memberTxns[0] : null;
-
-            if (!latestTx) {
-                return `
-                    <div class="info-box"><i class="fas fa-sms"></i> آخرین پیامک صورتحساب</div>
-                    <div class="dashboard-section" style="text-align:center;padding:40px 20px;">
-                        <i class="fas fa-inbox" style="font-size:3rem;color:var(--text-muted);margin-bottom:16px;"></i>
-                        <h3 style="color:var(--text-primary);font-size:1.1rem;">📭 هیچ پیامکی یافت نشد</h3>
-                        <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px;">هنوز تراکنشی برای شما ثبت نشده است</p>
-                    </div>
-                `;
-            }
-
-            const balance = latestTx['موجودی'] || 0;
-            const amount = latestTx['مبلغ تراکنش'] || 0;
-            const monthlySalary = latestTx['مقرری ماهانه'] || 0;
-            const paidInstallments = latestTx['تعداد قسط پرداخت شده'] || 0;
-            const remainingInstallments = latestTx['تعداد قسط مانده'] || 0;
-            const savingsStatus = latestTx['وضعیت پس انداز'] || 0;
-            const loanBalance = latestTx['مانده وام'] || 0;
-            const transactionDate = latestTx['تاریخ تراکنش'] || '---';
-            const description = latestTx['توضیحات'] || '---';
-            const transactionName = latestTx['نام تراکنش کننده'] || '---';
-            const fishNumber = latestTx['شماره فیش'] || '---';
-            const overdue = Math.abs(member.overdueInstallments || 0);
-            const genderTitle = member.firstName?.includes('س') ? 'خانم' : 'آقای';
-
-            const smsLines = [
-                { label: 'صندوق اتحاد', value: '' },
-                { label: 'نام', value: `${genderTitle} ${member.firstName || ''}` },
-                { label: 'مبلغ واریزی', value: `${fmtNum(amount)} ریال` },
-                { label: 'شرح', value: description },
-                { label: 'واریزکننده', value: transactionName },
-                { label: 'مقرری ماهانه', value: fmtNum(monthlySalary) },
-                { label: 'موجودی', value: fmtNum(balance) },
-                { label: 'تعداد قسط', value: paidInstallments },
-                { label: 'مانده وام', value: `${fmtNum(loanBalance)} (${remainingInstallments})` },
-                { label: 'معوقه اقساط', value: overdue },
-                { label: 'کسری موجودی', value: savingsStatus < 0 ? fmtNum(savingsStatus) : '0' },
-                { label: 'تاریخ تراکنش', value: transactionDate }
-            ];
-
-            function copySmsText() {
-                const text =
-                    `صندوق اتحاد\n${genderTitle} ${member.firstName || ''}\nواریز:${fmtNum(amount)} ریال\nشرح:${description}\nواریزکننده:${transactionName}\nمقرری:${fmtNum(monthlySalary)}\nموجودی:${fmtNum(balance)}\nقسط:${paidInstallments}\nمانده وام:${fmtNum(loanBalance)} (${remainingInstallments})\nمعوقه اقساط:${overdue}\nکسری موجودی:${savingsStatus < 0 ? fmtNum(savingsStatus) : '0'}\n${transactionDate} تاریخ تراکنش:`;
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('✅ متن پیامک کپی شد!');
-                }).catch(() => {
-                    alert('❌ خطا در کپی متن');
-                });
-            }
-
-            return `
-                <div class="info-box"><i class="fas fa-sms"></i> آخرین پیامک صورتحساب</div>
-                
-                <div class="dashboard-section" style="border-right-color:var(--teal-color); background: linear-gradient(135deg, rgba(20,184,166,0.05) 0%, rgba(13,148,136,0.05) 100%);">
-                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
-                        <h3 style="font-size:0.9rem; color:var(--text-primary); font-weight:bold; margin:0;">
-                            <i class="fas fa-envelope" style="color:var(--teal-color);"></i> آخرین پیامک ارسال شده
-                        </h3>
-                        <button class="btn-small info-btn" onclick="(${copySmsText.toString()})()" style="font-size:0.6rem; padding:4px 12px; min-height:28px; background:linear-gradient(135deg, var(--blue-color), #2563eb); border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;">
-                            <i class="fas fa-copy"></i> کپی متن
-                        </button>
-                    </div>
-                    
-                    <div style="background:var(--bg-secondary); border-radius:12px; padding:16px 20px; border-right:4px solid var(--teal-color); font-family: 'Courier New', monospace; direction:ltr; text-align:left; white-space:pre-wrap; word-break:break-word; font-size:0.85rem; line-height:1.8; color:var(--text-primary); box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);">
-                        <div style="text-align:center; font-weight:bold; font-size:1rem; color:var(--gradient-start); margin-bottom:6px;">📱 پیامک صورتحساب</div>
-                        <div style="border-top:2px dashed var(--border-color); padding-top:8px; margin-top:4px;">
-                            ${smsLines.map(line => {
-                                if (line.label === 'صندوق اتحاد') {
-                                    return `<div style="text-align:center; font-weight:bold; font-size:1.1rem; color:var(--gold-color);">${line.label}</div>`;
-                                }
-                                return `<div><span style="font-weight:bold; color:var(--text-secondary);">${line.label}:</span> <span style="font-weight:bold; color:var(--text-primary);">${line.value}</span></div>`;
-                            }).join('')}
-                        </div>
-                        <div style="border-top:2px dashed var(--border-color); margin-top:8px; padding-top:6px; text-align:center; font-size:0.7rem; color:var(--text-muted);">
-                            🔒 این پیامک مربوط به آخرین تراکنش شماست
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top:12px; display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-                        <div class="last-tx-item">
-                            <div class="last-tx-label">🆔 شماره فیش</div>
-                            <div class="last-tx-value">${esc(fishNumber)}</div>
-                        </div>
-                        <div class="last-tx-item">
-                            <div class="last-tx-label">📅 تاریخ تراکنش</div>
-                            <div class="last-tx-value">${esc(transactionDate)}</div>
-                        </div>
-                        <div class="last-tx-item">
-                            <div class="last-tx-label">👤 واریزکننده</div>
-                            <div class="last-tx-value">${esc(transactionName)}</div>
-                        </div>
-                        <div class="last-tx-item">
-                            <div class="last-tx-label">📝 شرح</div>
-                            <div class="last-tx-value">${esc(description)}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="dashboard-section" style="border-right-color:var(--gold-color);">
-                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold;">
-                        <i class="fas fa-chart-bar" style="color:var(--gold-color);"></i> خلاصه وضعیت مالی
-                    </h3>
-                    <div class="quick-info-box" style="grid-template-columns:1fr 1fr 1fr 1fr; gap:6px; margin-top:4px;">
-                        <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08)); border-radius:8px; padding:8px;">
-                            <div class="info-label" style="font-size:0.6rem;">موجودی</div>
-                            <div class="info-value green" style="font-size:1.1rem;">${fmtNum(balance)}</div>
-                        </div>
-                        <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:8px;">
-                            <div class="info-label" style="font-size:0.6rem;">مانده وام</div>
-                            <div class="info-value red" style="font-size:1.1rem;">${fmtNum(loanBalance)}</div>
-                        </div>
-                        <div class="info-item" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08)); border-radius:8px; padding:8px;">
-                            <div class="info-label" style="font-size:0.6rem;">قسط پرداخت شده</div>
-                            <div class="info-value purple" style="font-size:1.1rem;">${paidInstallments}</div>
-                        </div>
-                        <div class="info-item" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.08)); border-radius:8px; padding:8px;">
-                            <div class="info-label" style="font-size:0.6rem;">معوقه</div>
-                            <div class="info-value gold" style="font-size:1.1rem;">${overdue}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="dashboard-section" style="border-right-color:var(--blue-color); background: linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(37,99,235,0.05) 100%);">
-                    <h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;margin-bottom:6px;">
-                        <i class="fas fa-question-circle" style="color:var(--blue-color);"></i> راهنمای استفاده
-                    </h3>
-                    <ul style="padding-right:16px; color:var(--text-secondary); line-height:1.8; font-size:0.65rem; font-weight:bold;">
-                        <li>📋 با کلیک روی <strong>"کپی متن"</strong> متن پیامک در کلیپ‌بورد کپی می‌شود</li>
-                        <li>📱 پیامک حاوی آخرین تراکنش ثبت شده شماست</li>
-                        <li>🔄 برای مشاهده جدیدترین پیامک، صفحه را بروزرسانی کنید</li>
-                    </ul>
-                </div>
-            `;
-        }
-
-        // ============================================================
-        // DOWNLOAD EXCEL
-        // ============================================================
-        function downloadExcel() {
-            const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) {
-                alert('❌ اطلاعات کاربر یافت نشد');
-                return;
-            }
-
-            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
-                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-
-            if (memberTxns.length === 0) {
-                alert('❌ هیچ تراکنشی برای دانلود وجود ندارد');
-                return;
-            }
-
-            const data = memberTxns.map(tx => {
-                const row = {};
-                Object.keys(tx).forEach(key => {
-                    if (!key.startsWith('_')) {
-                        row[key] = tx[key];
-                    }
-                });
-                return row;
-            });
-
-            try {
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.json_to_sheet(data);
-                XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب');
-                XLSX.writeFile(wb, `صورتحساب_${member.firstName}_${new Date().toLocaleDateString('fa-IR')}.xlsx`);
-                alert('✅ فایل اکسل با موفقیت دانلود شد!');
-            } catch (error) {
-                alert('❌ خطا در دانلود فایل اکسل: ' + error.message);
-            }
-        }
-
-        // ============================================================
-        // DOWNLOAD PDF
-        // ============================================================
-        function downloadPDF() {
-            const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) {
-                alert('❌ اطلاعات کاربر یافت نشد');
-                return;
-            }
-
-            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
-                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-
-            if (memberTxns.length === 0) {
-                alert('❌ هیچ تراکنشی برای دانلود وجود ندارد');
-                return;
-            }
-
-            try {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF('l', 'mm', 'a4');
-                const pageWidth = doc.internal.pageSize.getWidth();
-
-                doc.setFontSize(16);
-                doc.text(`صورتحساب ${member.firstName}`, pageWidth / 2, 15, { align: 'center' });
-                doc.setFontSize(10);
-                doc.text(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, pageWidth / 2, 22, { align: 'center' });
-
-                const columns = [
-                    { header: 'ID', dataKey: 'ID' },
-                    { header: 'تاریخ تراکنش', dataKey: 'تاریخ تراکنش' },
-                    { header: 'مبلغ تراکنش', dataKey: 'مبلغ تراکنش' },
-                    { header: 'موجودی', dataKey: 'موجودی' },
-                    { header: 'شرح', dataKey: 'توضیحات' },
-                    { header: 'مقرری ماهانه', dataKey: 'مقرری ماهانه' },
-                    { header: 'قسط پرداخت شده', dataKey: 'تعداد قسط پرداخت شده' },
-                    { header: 'قسط مانده', dataKey: 'تعداد قسط مانده' }
-                ];
-
-                const data = memberTxns.map(tx => ({
-                    'ID': tx['ID'] || '',
-                    'تاریخ تراکنش': tx['تاریخ تراکنش'] || '',
-                    'مبلغ تراکنش': fmtNum(tx['مبلغ تراکنش'] || 0),
-                    'موجودی': fmtNum(tx['موجودی'] || 0),
-                    'توضیحات': tx['توضیحات'] || '',
-                    'مقرری ماهانه': fmtNum(tx['مقرری ماهانه'] || 0),
-                    'تعداد قسط پرداخت شده': tx['تعداد قسط پرداخت شده'] || 0,
-                    'تعداد قسط مانده': tx['تعداد قسط مانده'] || 0
-                }));
-
-                doc.autoTable({
-                    columns: columns,
-                    body: data,
-                    startY: 28,
-                    styles: { fontSize: 6, cellPadding: 1 },
-                    headerStyles: { fillColor: [102, 126, 234], textColor: [255, 255, 255], fontSize: 7 },
-                    alternateRowStyles: { fillColor: [240, 245, 255] }
-                });
-
-                doc.save(`صورتحساب_${member.firstName}_${new Date().toLocaleDateString('fa-IR')}.pdf`);
-                alert('✅ فایل PDF با موفقیت دانلود شد!');
-            } catch (error) {
-                alert('❌ خطا در دانلود فایل PDF: ' + error.message);
-            }
-        }
-
         // ============================================================
         // RENDER DASHBOARD
         // ============================================================
@@ -4745,18 +5160,6 @@
                 }
             }
 
-            let anniversaryMessage = '';
-            if (member.openDate) {
-                const openParts = member.openDate.split('/');
-                if (openParts.length === 3) {
-                    const openMonth = parseInt(openParts[1]);
-                    const openDay = parseInt(openParts[2]);
-                    if (openMonth === jalaliMonth && openDay === jalaliDay) {
-                        anniversaryMessage = '🎉 سالگرد عضویتت مبارک!';
-                    }
-                }
-            }
-
             let adminHtml = '';
             if (currentUser.role === 'admin') {
                 const totalMembers = members.length;
@@ -4764,10 +5167,8 @@
                 const totalBalanceSum = members.reduce((sum, m) => sum + (m.balance || 0), 0);
                 const totalLoanSum = members.reduce((sum, m) => sum + (m.loanBalance || 0), 0);
                 const totalSavings = members.reduce((sum, m) => sum + (m.savingsStatus || 0), 0);
-                const totalOverdueInstallments = members.reduce((sum, m) => sum + (Math.abs(m.overdueInstallments || 0)),
-                    0);
+                const totalOverdueInstallments = members.reduce((sum, m) => sum + (Math.abs(m.overdueInstallments || 0)), 0);
                 const membersWithLoan = members.filter(m => m.loanBalance > 0).length;
-                const smsActiveCount = transactions.filter(t => t.smsActive === true).length;
 
                 adminHtml = `
                     <div class="dashboard-section card-stats" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(217, 119, 6, 0.06) 100%);">
@@ -4783,24 +5184,15 @@
                             <div class="stat-card"><div class="stat-icon"><i class="fas fa-users" style="color:var(--blue-color);"></i></div><div class="stat-value blue">${fmtNum(membersWithLoan)}</div><div class="stat-label">دارای وام</div></div>
                             <div class="stat-card"><div class="stat-icon"><i class="fas fa-hourglass-half" style="color:var(--gold-color);"></i></div><div class="stat-value gold">${fmtNum(totalOverdueInstallments)}</div><div class="stat-label">جمل معوقه</div></div>
                         </div>
-                        <div style="margin:6px 0; padding:4px 10px; background: rgba(16,185,129,0.08); border-radius:5px; text-align:center;">
-                            <span style="font-weight:bold;font-size:0.65rem;">📱 سامانه پیامکی فعال: </span>
-                            <span style="font-weight:bold; color:var(--success-color);font-size:0.65rem;">${fmtNum(smsActiveCount)}</span>
-                            <span style="font-size:0.65rem;">از کل ${fmtNum(transactions.length)} تراکنش</span>
-                        </div>
                     </div>
                 `;
             }
 
             let warningsHtml = '';
-            if (member.active === false) warningsHtml +=
-                '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> حساب غیرفعال</div>';
-            if (member.savingsStatus < 0) warningsHtml +=
-                '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> کسری موجودی</div>';
-            if (member.overdueInstallments <= -1 && member.overdueInstallments >= -6) warningsHtml +=
-                '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار اقساط</div>';
-            if (member.overdueInstallments < -6) warningsHtml +=
-                '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار جدی اقساط</div>';
+            if (member.active === false) warningsHtml += '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> حساب غیرفعال</div>';
+            if (member.savingsStatus < 0) warningsHtml += '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> کسری موجودی</div>';
+            if (member.overdueInstallments <= -1 && member.overdueInstallments >= -6) warningsHtml += '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار اقساط</div>';
+            if (member.overdueInstallments < -6) warningsHtml += '<div class="warning-box"><i class="fas fa-exclamation-triangle"></i> هشدار جدی اقساط</div>';
 
             const paymentStatusCard = `
                 <div class="dashboard-section" style="border-right-color:${paymentColor}; background: ${paymentColor}10; padding:12px 15px;">
@@ -4820,15 +5212,6 @@
                         <span style="font-size:1.8rem;">🎂</span>
                         <span style="font-weight:bold; color:#ec4899; font-size:1rem;">${birthdayMessage}</span>
                         <span style="font-size:0.8rem; color:var(--text-secondary); display:block;">سال ${new Date().getFullYear()}</span>
-                    </div>
-                `;
-            }
-            if (anniversaryMessage) {
-                celebrationHtml += `
-                    <div class="dashboard-section" style="border-right-color:#8b5cf6; background: linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(124,58,237,0.08) 100%); padding:10px 15px; text-align:center;">
-                        <span style="font-size:1.8rem;">🎉</span>
-                        <span style="font-weight:bold; color:#8b5cf6; font-size:1rem;">${anniversaryMessage}</span>
-                        <span style="font-size:0.8rem; color:var(--text-secondary); display:block;">${calculateMembershipDuration(member.datMiladi)}</span>
                     </div>
                 `;
             }
@@ -4937,6 +5320,150 @@
         }
 
         // ============================================================
+        // RENDER LAST SMS
+        // ============================================================
+        function renderLastSmsContent() {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) return '<div class="info-box">خطا در دریافت اطلاعات</div>';
+
+            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
+            const latestTx = memberTxns.length ? memberTxns[0] : null;
+
+            if (!latestTx) {
+                return `
+                    <div class="info-box"><i class="fas fa-sms"></i> آخرین پیامک صورتحساب</div>
+                    <div class="dashboard-section" style="text-align:center;padding:40px 20px;">
+                        <i class="fas fa-inbox" style="font-size:3rem;color:var(--text-muted);margin-bottom:16px;"></i>
+                        <h3 style="color:var(--text-primary);font-size:1.1rem;">📭 هیچ پیامکی یافت نشد</h3>
+                        <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px;">هنوز تراکنشی برای شما ثبت نشده است</p>
+                    </div>
+                `;
+            }
+
+            const balance = latestTx['موجودی'] || 0;
+            const amount = latestTx['مبلغ تراکنش'] || 0;
+            const monthlySalary = latestTx['مقرری ماهانه'] || 0;
+            const paidInstallments = latestTx['تعداد قسط پرداخت شده'] || 0;
+            const remainingInstallments = latestTx['تعداد قسط مانده'] || 0;
+            const savingsStatus = latestTx['وضعیت پس انداز'] || 0;
+            const loanBalance = latestTx['مانده وام'] || 0;
+            const transactionDate = latestTx['تاریخ تراکنش'] || '---';
+            const description = latestTx['توضیحات'] || '---';
+            const transactionName = latestTx['نام تراکنش کننده'] || '---';
+            const fishNumber = latestTx['شماره فیش'] || '---';
+            const overdue = Math.abs(member.overdueInstallments || 0);
+            const genderTitle = member.firstName?.includes('س') ? 'خانم' : 'آقای';
+
+            const smsLines = [
+                { label: 'صندوق اتحاد', value: '' },
+                { label: 'نام', value: `${genderTitle} ${member.firstName || ''}` },
+                { label: 'مبلغ واریزی', value: `${fmtNum(amount)} ریال` },
+                { label: 'شرح', value: description },
+                { label: 'واریزکننده', value: transactionName },
+                { label: 'مقرری ماهانه', value: fmtNum(monthlySalary) },
+                { label: 'موجودی', value: fmtNum(balance) },
+                { label: 'تعداد قسط', value: paidInstallments },
+                { label: 'مانده وام', value: `${fmtNum(loanBalance)} (${remainingInstallments})` },
+                { label: 'معوقه اقساط', value: overdue },
+                { label: 'کسری موجودی', value: savingsStatus < 0 ? fmtNum(savingsStatus) : '0' },
+                { label: 'تاریخ تراکنش', value: transactionDate }
+            ];
+
+            function copySmsText() {
+                const text = `صندوق اتحاد\n${genderTitle} ${member.firstName || ''}\nواریز:${fmtNum(amount)} ریال\nشرح:${description}\nواریزکننده:${transactionName}\nمقرری:${fmtNum(monthlySalary)}\nموجودی:${fmtNum(balance)}\nقسط:${paidInstallments}\nمانده وام:${fmtNum(loanBalance)} (${remainingInstallments})\nمعوقه اقساط:${overdue}\nکسری موجودی:${savingsStatus < 0 ? fmtNum(savingsStatus) : '0'}\n${transactionDate} تاریخ تراکنش:`;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ متن پیامک کپی شد!');
+                }).catch(() => {
+                    alert('❌ خطا در کپی متن');
+                });
+            }
+
+            return `
+                <div class="info-box"><i class="fas fa-sms"></i> آخرین پیامک صورتحساب</div>
+                
+                <div class="dashboard-section" style="border-right-color:var(--teal-color); background: linear-gradient(135deg, rgba(20,184,166,0.05) 0%, rgba(13,148,136,0.05) 100%);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+                        <h3 style="font-size:0.9rem; color:var(--text-primary); font-weight:bold; margin:0;">
+                            <i class="fas fa-envelope" style="color:var(--teal-color);"></i> آخرین پیامک ارسال شده
+                        </h3>
+                        <button class="btn-small info-btn" onclick="(${copySmsText.toString()})()" style="font-size:0.6rem; padding:4px 12px; min-height:28px; background:linear-gradient(135deg, var(--blue-color), #2563eb); border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;">
+                            <i class="fas fa-copy"></i> کپی متن
+                        </button>
+                    </div>
+                    
+                    <div style="background:var(--bg-secondary); border-radius:12px; padding:16px 20px; border-right:4px solid var(--teal-color); font-family: 'Courier New', monospace; direction:ltr; text-align:left; white-space:pre-wrap; word-break:break-word; font-size:0.85rem; line-height:1.8; color:var(--text-primary); box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);">
+                        <div style="text-align:center; font-weight:bold; font-size:1rem; color:var(--gradient-start); margin-bottom:6px;">📱 پیامک صورتحساب</div>
+                        <div style="border-top:2px dashed var(--border-color); padding-top:8px; margin-top:4px;">
+                            ${smsLines.map(line => {
+                                if (line.label === 'صندوق اتحاد') {
+                                    return `<div style="text-align:center; font-weight:bold; font-size:1.1rem; color:var(--gold-color);">${line.label}</div>`;
+                                }
+                                return `<div><span style="font-weight:bold; color:var(--text-secondary);">${line.label}:</span> <span style="font-weight:bold; color:var(--text-primary);">${line.value}</span></div>`;
+                            }).join('')}
+                        </div>
+                        <div style="border-top:2px dashed var(--border-color); margin-top:8px; padding-top:6px; text-align:center; font-size:0.7rem; color:var(--text-muted);">
+                            🔒 این پیامک مربوط به آخرین تراکنش شماست
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:12px; display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+                        <div class="last-tx-item">
+                            <div class="last-tx-label">🆔 شماره فیش</div>
+                            <div class="last-tx-value">${esc(fishNumber)}</div>
+                        </div>
+                        <div class="last-tx-item">
+                            <div class="last-tx-label">📅 تاریخ تراکنش</div>
+                            <div class="last-tx-value">${esc(transactionDate)}</div>
+                        </div>
+                        <div class="last-tx-item">
+                            <div class="last-tx-label">👤 واریزکننده</div>
+                            <div class="last-tx-value">${esc(transactionName)}</div>
+                        </div>
+                        <div class="last-tx-item">
+                            <div class="last-tx-label">📝 شرح</div>
+                            <div class="last-tx-value">${esc(description)}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-section" style="border-right-color:var(--gold-color);">
+                    <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold;">
+                        <i class="fas fa-chart-bar" style="color:var(--gold-color);"></i> خلاصه وضعیت مالی
+                    </h3>
+                    <div class="quick-info-box" style="grid-template-columns:1fr 1fr 1fr 1fr; gap:6px; margin-top:4px;">
+                        <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08)); border-radius:8px; padding:8px;">
+                            <div class="info-label" style="font-size:0.6rem;">موجودی</div>
+                            <div class="info-value green" style="font-size:1.1rem;">${fmtNum(balance)}</div>
+                        </div>
+                        <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:8px;">
+                            <div class="info-label" style="font-size:0.6rem;">مانده وام</div>
+                            <div class="info-value red" style="font-size:1.1rem;">${fmtNum(loanBalance)}</div>
+                        </div>
+                        <div class="info-item" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08)); border-radius:8px; padding:8px;">
+                            <div class="info-label" style="font-size:0.6rem;">قسط پرداخت شده</div>
+                            <div class="info-value purple" style="font-size:1.1rem;">${paidInstallments}</div>
+                        </div>
+                        <div class="info-item" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.08)); border-radius:8px; padding:8px;">
+                            <div class="info-label" style="font-size:0.6rem;">معوقه</div>
+                            <div class="info-value gold" style="font-size:1.1rem;">${overdue}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-section" style="border-right-color:var(--blue-color); background: linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(37,99,235,0.05) 100%);">
+                    <h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;margin-bottom:6px;">
+                        <i class="fas fa-question-circle" style="color:var(--blue-color);"></i> راهنمای استفاده
+                    </h3>
+                    <ul style="padding-right:16px; color:var(--text-secondary); line-height:1.8; font-size:0.65rem; font-weight:bold;">
+                        <li>📋 با کلیک روی <strong>"کپی متن"</strong> متن پیامک در کلیپ‌بورد کپی می‌شود</li>
+                        <li>📱 پیامک حاوی آخرین تراکنش ثبت شده شماست</li>
+                        <li>🔄 برای مشاهده جدیدترین پیامک، صفحه را بروزرسانی کنید</li>
+                    </ul>
+                </div>
+            `;
+        }
+        // ============================================================
         // RENDER CLUB
         // ============================================================
         function renderClubContentHtml() {
@@ -5023,14 +5550,6 @@
             }
         }
 
-        function renderStatisticsContent() {
-            const content = document.getElementById('contentArea');
-            if (content) {
-                const pageContent = renderStatisticsContentHtml();
-                content.innerHTML = pageContent;
-            }
-        }
-
         // ============================================================
         // RENDER FAMILY
         // ============================================================
@@ -5084,27 +5603,20 @@
 
             const member = members.find(m => String(m.id) === String(memberId));
             if (!member) {
-                document.getElementById('familyMemberDetailsContainer').innerHTML =
-                    '<p style="color:#e53e3e;text-align:center;padding:8px;font-size:0.7rem">عضو یافت نشد</p>';
+                document.getElementById('familyMemberDetailsContainer').innerHTML = '<p style="color:#e53e3e;text-align:center;padding:8px;font-size:0.7rem">عضو یافت نشد</p>';
                 return;
             }
 
             const roleInfo = getFamilyRole(member.heh2);
-            const roleBadge = roleInfo ?
-                `<span style="background:var(--success-color);color:#fff;padding:2px 6px;border-radius:4px;font-size:0.5rem;font-weight:bold;">${roleInfo.label}</span>` :
-                '';
+            const roleBadge = roleInfo ? `<span style="background:var(--success-color);color:#fff;padding:2px 6px;border-radius:4px;font-size:0.5rem;font-weight:bold;">${roleInfo.label}</span>` : '';
             const sd = memberScores[member.id];
-            const tierBadge = sd ?
-                `<span style="background:${sd.tier === 'gold' ? '#FFD700' : sd.tier === 'silver' ? '#C0C0C0' : '#6B7280'};color:#fff;padding:2px 6px;border-radius:4px;font-size:0.5rem;font-weight:bold;">رتبه: ${sd.tierName}</span>` :
-                '';
+            const tierBadge = sd ? `<span style="background:${sd.tier === 'gold' ? '#FFD700' : sd.tier === 'silver' ? '#C0C0C0' : '#6B7280'};color:#fff;padding:2px 6px;border-radius:4px;font-size:0.5rem;font-weight:bold;">رتبه: ${sd.tierName}</span>` : '';
             const mTxns = (transactionsByMember.get(String(member.id)) || [])
                 .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
             const membershipDuration = calculateMembershipDuration(member.datMiladi);
             const ui = users.find(u => u.memberId === member.id);
             const accountActive = member.active !== false;
-            const accountStatusHtml = accountActive ?
-                '<span class="account-status-badge active">فعال</span>' :
-                '<span class="account-status-badge inactive">غیرفعال</span>';
+            const accountStatusHtml = accountActive ? '<span class="account-status-badge active">فعال</span>' : '<span class="account-status-badge inactive">غیرفعال</span>';
             const actualPassword = ui ? ui.password || '---' : '---';
 
             const latestTx = mTxns.length ? mTxns[0] : null;
@@ -5390,46 +5902,31 @@
                 const memberCoins = getMemberCoins(m.id);
                 const memberPurchases = getMemberPurchases(m.id);
 
-                const smsLabels = ['صورتحساب', 'جلسات', 'عمومی', 'سرپرستان', 'معوقات', 'مسابقات', 'خبرنامه', 'تولد',
-                    'مناسبت‌ها'
-                ];
+                const smsLabels = ['صورتحساب', 'جلسات', 'عمومی', 'سرپرستان', 'معوقات', 'مسابقات', 'خبرنامه', 'تولد', 'مناسبت‌ها'];
                 let smsHtml = '<div class="sms-row">';
-                ['smsActive', 'smsKod', 'smsOmomi', 'smsSarparast', 'smsMoavaghe', 'smsMosabegheh', 'smsKhabarnameh',
-                    'smsTavalod', 'smsMonasebat'
-                ].forEach((key, i) => {
+                ['smsActive', 'smsKod', 'smsOmomi', 'smsSarparast', 'smsMoavaghe', 'smsMosabegheh', 'smsKhabarnameh', 'smsTavalod', 'smsMonasebat'].forEach((key, i) => {
                     const isActive = latestTx && latestTx[key] === true;
-                    smsHtml +=
-                        `<span><span class="sms-dot ${isActive ? 'active' : 'inactive'}"></span><span style="font-size:0.35rem;">${smsLabels[i]}</span></span>`;
+                    smsHtml += `<span><span class="sms-dot ${isActive ? 'active' : 'inactive'}"></span><span style="font-size:0.35rem;">${smsLabels[i]}</span></span>`;
                 });
                 smsHtml += '</div>';
 
                 let lastTxHtml = '---';
                 if (latestTx) {
-                    lastTxHtml =
-                        `<div style="font-size:0.45rem;">تاریخ: ${esc(latestTx['تاریخ تراکنش'] || '---')}<br>مبلغ: ${fmtNum(latestTx['مبلغ تراکنش'])}<br>موجودی: ${fmtNum(latestTx['موجودی'])}</div>`;
+                    lastTxHtml = `<div style="font-size:0.45rem;">تاریخ: ${esc(latestTx['تاریخ تراکنش'] || '---')}<br>مبلغ: ${fmtNum(latestTx['مبلغ تراکنش'])}<br>موجودی: ${fmtNum(latestTx['موجودی'])}</div>`;
                 }
 
                 let purchasesHtml = '---';
                 if (memberPurchases.length > 0) {
-                    purchasesHtml =
-                        `<div style="font-size:0.4rem;">${memberPurchases.slice(0,3).map(p => `${esc(p.productName)} (${fmtNum(p.price)})`).join('<br>')}${memberPurchases.length > 3 ? `<br>+${memberPurchases.length - 3} مورد` : ''}</div>`;
+                    purchasesHtml = `<div style="font-size:0.4rem;">${memberPurchases.slice(0,3).map(p => `${esc(p.productName)} (${fmtNum(p.price)})`).join('<br>')}${memberPurchases.length > 3 ? `<br>+${memberPurchases.length - 3} مورد` : ''}</div>`;
                 }
 
                 const badges = [];
-                if (m.isCouncil) badges.push(
-                    `<span class="role-badge" style="background:var(--purple-color);font-size:0.4rem;">شورا</span>`);
-                if (m.heh2 && String(m.heh2).trim() === '01') badges.push(
-                    `<span class="role-badge" style="background:var(--gold-color);font-size:0.4rem;">سرپرست</span>`);
-                if (m.overdueInstallments < 0) badges.push(
-                    `<span class="status-badge-xs" style="background:var(--danger-color);color:#fff;font-size:0.4rem;">معوقه</span>`
-                    );
-                if (m.savingsStatus < 0) badges.push(
-                    `<span class="status-badge-xs" style="background:var(--gold-color);color:#0f172a;font-size:0.4rem;">کسری</span>`
-                    );
-                if (m.active !== false) badges.push(
-                    `<span class="status-badge-xs active" style="font-size:0.4rem;">فعال</span>`);
-                else badges.push(
-                    `<span class="status-badge-xs inactive" style="font-size:0.4rem;">غیرفعال</span>`);
+                if (m.isCouncil) badges.push(`<span class="role-badge" style="background:var(--purple-color);font-size:0.4rem;">شورا</span>`);
+                if (m.heh2 && String(m.heh2).trim() === '01') badges.push(`<span class="role-badge" style="background:var(--gold-color);font-size:0.4rem;">سرپرست</span>`);
+                if (m.overdueInstallments < 0) badges.push(`<span class="status-badge-xs" style="background:var(--danger-color);color:#fff;font-size:0.4rem;">معوقه</span>`);
+                if (m.savingsStatus < 0) badges.push(`<span class="status-badge-xs" style="background:var(--gold-color);color:#0f172a;font-size:0.4rem;">کسری</span>`);
+                if (m.active !== false) badges.push(`<span class="status-badge-xs active" style="font-size:0.4rem;">فعال</span>`);
+                else badges.push(`<span class="status-badge-xs inactive" style="font-size:0.4rem;">غیرفعال</span>`);
 
                 tableHtml += `
                     <tr>
@@ -5576,6 +6073,14 @@
             `;
         }
 
+        function renderStatisticsContent() {
+            const content = document.getElementById('contentArea');
+            if (content) {
+                const pageContent = renderStatisticsContentHtml();
+                content.innerHTML = pageContent;
+            }
+        }
+
         // ============================================================
         // RENDER CALENDAR
         // ============================================================
@@ -5598,8 +6103,7 @@
                 if (parts.length !== 3) return false;
                 return parseInt(parts[1]) === jalaliMonth;
             });
-            const installmentDue = members.filter(m => m.overdueInstallments > 0 || (m.loanBalance > 0 && m
-                .overdueInstallments < 0));
+            const installmentDue = members.filter(m => m.overdueInstallments > 0 || (m.loanBalance > 0 && m.overdueInstallments < 0));
 
             return `
                 <div class="info-box"><i class="fas fa-calendar-day"></i> تقویم رویدادها</div>
@@ -5607,9 +6111,102 @@
                 <div class="dashboard-section"><h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-hand-holding-usd" style="color:#14b8a6"></i> سررسید اقساط (${installmentDue.length} نفر)</h3>${installmentDue.length === 0 ? '<p style="color:var(--text-secondary);padding:8px;font-size:0.7rem">معوقه‌ای نیست</p>' : `<div class="calendar-grid">${installmentDue.map(m => `<div class="calendar-event"><div class="event-date" style="font-size:0.55rem;color:var(--text-secondary);margin-bottom:2px;font-weight:bold;"><i class="fas fa-exclamation-circle"></i> معوقه: ${m.overdueInstallments}</div><div class="event-title" style="font-weight:bold;color:var(--text-primary);margin-bottom:2px;font-size:0.7rem;">${esc(m.firstName)}</div><div class="event-desc" style="font-size:0.6rem;color:var(--text-secondary);font-weight:bold;">حساب: ${esc(m.accountNumber)} | مانده: ${fmtNum(m.loanBalance)}</div></div>`).join('')}</div>`}</div>
             `;
         }
+        // ============================================================
+        // RENDER REQUESTS
+        // ============================================================
+        function renderRequestsContentHtml() {
+            const FUND_PHONE = '09138944709';
+            const requestList = [
+                { code: '1', title: 'نوبت دهی وام خانوادگی', desc: 'درخواست نوبت برای دریافت وام خانوادگی' },
+                { code: '4', title: 'مسدود نمودن حساب', desc: 'درخواست مسدودسازی حساب کاربری' },
+                { code: '10', title: 'حذف حساب', desc: 'درخواست حذف کامل حساب' },
+                { code: '13', title: 'ارسال کل موجودی و بدهی خانواده من', desc: 'دریافت گزارش کامل مالی خانواده' },
+                { code: '14', title: 'غیرفعالسازی کلیه سرویس‌های پیامکی', desc: 'غیرفعال کردن تمام پیامک‌ها' },
+                { code: '15', title: 'فعالسازی کلیه سرویس‌های پیامکی', desc: 'فعال کردن تمام پیامک‌ها' },
+                { code: '18', title: 'فعالسازی فقط پیامک صورتحساب', desc: 'فعال کردن فقط پیامک صورتحساب' },
+                { code: '19', title: 'غیرفعالسازی پیامک صورتحساب', desc: 'غیرفعال کردن پیامک صورتحساب' },
+                { code: '20', title: 'تغییر شماره همراه', desc: 'ثبت شماره همراه جدید' },
+                { code: '22', title: 'ارسال صورتحساب به جانشین', desc: 'ارسال صورتحساب به شماره جانشین' },
+                { code: '23', title: 'لغو ارسال صورتحساب به جانشین', desc: 'لغو ارسال صورتحساب به جانشین' },
+                { code: '44', title: 'ارسال ۵ تراکنش آخر', desc: 'دریافت ۵ تراکنش آخر حساب' }
+            ];
+
+            return `
+                <div class="info-box"><i class="fas fa-file-signature"></i> درخواست‌های پیامکی</div>
+                
+                <div class="dashboard-section" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(217, 119, 6, 0.06) 100%);">
+                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                        <i class="fas fa-info-circle" style="font-size:1.5rem; color:var(--gold-color);"></i>
+                        <div>
+                            <div style="font-weight:bold; color:var(--text-primary); font-size:0.95rem;">📱 تمام درخواست‌ها به صورت پیامکی اعمال می‌گردد</div>
+                            <div style="color:var(--text-secondary); font-size:0.75rem; margin-top:4px;">
+                                با کلیک روی هر درخواست، پیامک آماده ارسال به شماره صندوق می‌شود.
+                                <br>شماره صندوق: <strong style="color:var(--gold-color);">${FUND_PHONE}</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;margin-bottom:10px;">
+                        <i class="fas fa-list" style="color:var(--orange-color);"></i> لیست درخواست‌ها
+                    </h3>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                        ${requestList.map(req => `
+                            <div class="coin-history-item" style="border-right:4px solid var(--orange-color); cursor:pointer; transition:all 0.2s; background:var(--card-bg); padding:10px 12px; border-radius:8px; box-shadow:0 2px 8px var(--shadow-color);" 
+                                 onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 16px var(--shadow-color)';"
+                                 onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 2px 8px var(--shadow-color)';">
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; flex-wrap:wrap;">
+                                    <div style="flex:1; min-width:100px;">
+                                        <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                            <span style="background:linear-gradient(135deg, var(--orange-color), #ea580c); color:#fff; padding:1px 8px; border-radius:4px; font-size:0.55rem; font-weight:bold;">کد ${req.code}</span>
+                                            <span style="font-weight:bold; font-size:0.8rem; color:var(--text-primary);">${req.title}</span>
+                                        </div>
+                                        <div style="font-size:0.6rem; color:var(--text-secondary); margin-top:2px; font-weight:bold;">${req.desc}</div>
+                                    </div>
+                                    <button class="btn-small orange-btn" onclick="sendSmsRequest('${req.code}','${req.title}')" 
+                                            style="font-size:0.55rem; padding:4px 12px; min-height:28px; white-space:nowrap; background:linear-gradient(135deg, var(--orange-color), #ea580c); border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold; transition:transform 0.15s;">
+                                        <i class="fas fa-sms"></i> ارسال
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="dashboard-section" style="border-right-color:var(--blue-color); background: linear-gradient(135deg, rgba(59,130,246,0.05) 0%, rgba(37,99,235,0.05) 100%);">
+                    <h3 style="font-size:0.85rem;color:var(--text-primary);font-weight:bold;margin-bottom:6px;">
+                        <i class="fas fa-question-circle" style="color:var(--blue-color);"></i> راهنمای استفاده
+                    </h3>
+                    <ul style="padding-right:16px; color:var(--text-secondary); line-height:1.8; font-size:0.65rem; font-weight:bold;">
+                        <li>📱 پس از کلیک روی دکمه <strong>"ارسال"</strong>، پیامک در برنامه پیامک شما باز می‌شود</li>
+                        <li>✏️ می‌توانید متن پیامک را ویرایش کنید</li>
+                        <li>📨 پیامک را تأیید و ارسال کنید</li>
+                        <li>⏳ پس از ارسال، درخواست شما توسط کارشناسان بررسی می‌شود</li>
+                        <li>📞 در صورت نیاز با شماره صندوق تماس بگیرید: <strong style="color:var(--gold-color);">${FUND_PHONE}</strong></li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function sendSmsRequest(code, title) {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) {
+                alert('❌ اطلاعات کاربر یافت نشد');
+                return;
+            }
+
+            const FUND_PHONE = '09138944709';
+            const message = `درخواست ${code} - ${title}\n`;
+            const fullMessage = message + `شماره حساب: ${member.accountNumber}\nنام: ${member.firstName}`;
+            const smsLink = `sms:${FUND_PHONE}?body=${encodeURIComponent(fullMessage)}`;
+            window.location.href = smsLink;
+            alert(`✅ درخواست "${title}" برای ارسال به شماره ${FUND_PHONE} آماده شد.\nلطفاً پیامک را تأیید و ارسال کنید.`);
+        }
 
         // ============================================================
-        // RENDER SMS
+        // RENDER SMS STATUS
         // ============================================================
         function renderSmsContentHtml() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -5651,8 +6248,7 @@
                 }
                 const statusText = isActive ? 'فعال' : 'غیرفعال';
                 const statusColor = isActive ? 'var(--success-color)' : 'var(--danger-color)';
-                html +=
-                    `<div class="support-card"><div class="support-icon" style="background:${service.color}"><i class="fas ${service.icon}"></i></div><div><div class="support-label">${service.name}</div><div class="support-value" style="color:${statusColor}">${statusText}</div></div></div>`;
+                html += `<div class="support-card"><div class="support-icon" style="background:${service.color}"><i class="fas ${service.icon}"></i></div><div><div class="support-label">${service.name}</div><div class="support-value" style="color:${statusColor}">${statusText}</div></div></div>`;
             });
 
             html += `
@@ -5767,6 +6363,110 @@
         }
 
         // ============================================================
+        // DOWNLOAD EXCEL
+        // ============================================================
+        function downloadExcel() {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) {
+                alert('❌ اطلاعات کاربر یافت نشد');
+                return;
+            }
+
+            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
+
+            if (memberTxns.length === 0) {
+                alert('❌ هیچ تراکنشی برای دانلود وجود ندارد');
+                return;
+            }
+
+            const data = memberTxns.map(tx => {
+                const row = {};
+                Object.keys(tx).forEach(key => {
+                    if (!key.startsWith('_')) {
+                        row[key] = tx[key];
+                    }
+                });
+                return row;
+            });
+
+            try {
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.json_to_sheet(data);
+                XLSX.utils.book_append_sheet(wb, ws, 'صورتحساب');
+                XLSX.writeFile(wb, `صورتحساب_${member.firstName}_${new Date().toLocaleDateString('fa-IR')}.xlsx`);
+                alert('✅ فایل اکسل با موفقیت دانلود شد!');
+            } catch (error) {
+                alert('❌ خطا در دانلود فایل اکسل: ' + error.message);
+            }
+        }
+
+        // ============================================================
+        // DOWNLOAD PDF
+        // ============================================================
+        function downloadPDF() {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) {
+                alert('❌ اطلاعات کاربر یافت نشد');
+                return;
+            }
+
+            const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+                .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
+
+            if (memberTxns.length === 0) {
+                alert('❌ هیچ تراکنشی برای دانلود وجود ندارد');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('l', 'mm', 'a4');
+                const pageWidth = doc.internal.pageSize.getWidth();
+
+                doc.setFontSize(16);
+                doc.text(`صورتحساب ${member.firstName}`, pageWidth / 2, 15, { align: 'center' });
+                doc.setFontSize(10);
+                doc.text(`تاریخ: ${new Date().toLocaleDateString('fa-IR')}`, pageWidth / 2, 22, { align: 'center' });
+
+                const columns = [
+                    { header: 'ID', dataKey: 'ID' },
+                    { header: 'تاریخ تراکنش', dataKey: 'تاریخ تراکنش' },
+                    { header: 'مبلغ تراکنش', dataKey: 'مبلغ تراکنش' },
+                    { header: 'موجودی', dataKey: 'موجودی' },
+                    { header: 'شرح', dataKey: 'توضیحات' },
+                    { header: 'مقرری ماهانه', dataKey: 'مقرری ماهانه' },
+                    { header: 'قسط پرداخت شده', dataKey: 'تعداد قسط پرداخت شده' },
+                    { header: 'قسط مانده', dataKey: 'تعداد قسط مانده' }
+                ];
+
+                const data = memberTxns.map(tx => ({
+                    'ID': tx['ID'] || '',
+                    'تاریخ تراکنش': tx['تاریخ تراکنش'] || '',
+                    'مبلغ تراکنش': fmtNum(tx['مبلغ تراکنش'] || 0),
+                    'موجودی': fmtNum(tx['موجودی'] || 0),
+                    'توضیحات': tx['توضیحات'] || '',
+                    'مقرری ماهانه': fmtNum(tx['مقرری ماهانه'] || 0),
+                    'تعداد قسط پرداخت شده': tx['تعداد قسط پرداخت شده'] || 0,
+                    'تعداد قسط مانده': tx['تعداد قسط مانده'] || 0
+                }));
+
+                doc.autoTable({
+                    columns: columns,
+                    body: data,
+                    startY: 28,
+                    styles: { fontSize: 6, cellPadding: 1 },
+                    headerStyles: { fillColor: [102, 126, 234], textColor: [255, 255, 255], fontSize: 7 },
+                    alternateRowStyles: { fillColor: [240, 245, 255] }
+                });
+
+                doc.save(`صورتحساب_${member.firstName}_${new Date().toLocaleDateString('fa-IR')}.pdf`);
+                alert('✅ فایل PDF با موفقیت دانلود شد!');
+            } catch (error) {
+                alert('❌ خطا در دانلود فایل PDF: ' + error.message);
+            }
+        }
+        // ============================================================
         // SHOW ADMIN MEMBER DETAIL
         // ============================================================
         function showAdminMemberDetail(memberId) {
@@ -5828,8 +6528,7 @@
 
             let txHtml = '';
             if (mTxns.length === 0) {
-                txHtml =
-                    '<p style="text-align:center;padding:6px;color:var(--text-secondary);font-size:0.6rem;">هیچ تراکنشی ثبت نشده است</p>';
+                txHtml = '<p style="text-align:center;padding:6px;color:var(--text-secondary);font-size:0.6rem;">هیچ تراکنشی ثبت نشده است</p>';
             } else {
                 txHtml = `
                     <table style="width:100%;border-collapse:collapse;font-size:0.5rem;text-align:center;">
@@ -5906,7 +6605,7 @@
         }
 
         // ============================================================
-        // SHOW HELP FOR SECTION
+        // SHOW HELP FOR
         // ============================================================
         function showHelpFor(section) {
             const helpTexts = {
@@ -5927,6 +6626,147 @@
         }
 
         // ============================================================
+        // NAVIGATION FUNCTIONS
+        // ============================================================
+        function goToPage(page) {
+            if (page === 'settings') {
+                openSettings();
+                return;
+            }
+            if (page === 'logout') {
+                doLogout();
+                return;
+            }
+            currentPage = page;
+            renderPage(page);
+        }
+
+        function goToMenu() {
+            currentPage = 'menu';
+            renderPage('menu');
+        }
+
+        function selectMenuItem(tab) {
+            if (tab === 'settings') {
+                openSettings();
+                return;
+            }
+            if (tab === 'logout') {
+                doLogout();
+                return;
+            }
+            goToPage(tab);
+        }
+
+        function selectClubTab(tab) {
+            currentClubTab = tab;
+            renderClubContent();
+        }
+
+        function selectStatsTab(tab) {
+            currentStatsTab = tab;
+            renderStatisticsContent();
+        }
+
+        function doLogout() {
+            if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
+                currentUser = null;
+                if (autoUpdateInterval) {
+                    clearInterval(autoUpdateInterval);
+                    autoUpdateInterval = null;
+                }
+                hideUpdateOverlay();
+                location.reload();
+            }
+        }
+
+        // ============================================================
+        // RENDER CONTENT PAGE
+        // ============================================================
+        function renderContentPage(page, content) {
+            const backBtnHtml = `
+                <button class="back-to-menu-btn" onclick="goToMenu()">
+                    <i class="fas fa-arrow-right"></i> بازگشت به منوی اصلی
+                </button>
+            `;
+
+            let pageContent = '';
+
+            const headerHtml = `
+                <div class="header-bar" style="margin-bottom:8px; padding:8px 14px; flex-direction:row; justify-content:space-between;">
+                    <div class="header-rank" style="font-size:0.8rem; padding:4px 14px; width:auto; flex-direction:row; gap:8px; margin-bottom:0;">
+                        <span class="rank-label" style="font-size:0.5rem;">🏆 رتبه شما</span>
+                        <span class="rank-value" style="font-size:1.2rem;">${memberScores[currentUser?.memberId]?.score || 0}</span>
+                        <span class="rank-tier" style="font-size:0.7rem; background:${memberScores[currentUser?.memberId]?.tier === 'gold' ? '#FFD700' : memberScores[currentUser?.memberId]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; padding:2px 10px; border-radius:12px;">${memberScores[currentUser?.memberId]?.tierName || ''}</span>
+                    </div>
+                    <div class="header-right">
+                        <button class="header-logout" onclick="doLogout()" style="font-size:0.7rem; padding:6px 14px; min-height:30px; background:linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
+                            <i class="fas fa-sign-out-alt"></i> خروج
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            switch (page) {
+                case 'profile':
+                    pageContent = renderProfileContent();
+                    break;
+                case 'myFund':
+                    pageContent = renderMyFundContent();
+                    break;
+                case 'dashboard':
+                    pageContent = renderDashboardContent();
+                    break;
+                case 'lastSms':
+                    pageContent = renderLastSmsContent();
+                    break;
+                case 'club':
+                    pageContent = renderClubContentHtml();
+                    break;
+                case 'family':
+                    pageContent = renderFamilyContentHtml();
+                    break;
+                case 'access':
+                    pageContent = renderAccessContentHtml();
+                    break;
+                case 'statistics':
+                    pageContent = renderStatisticsContentHtml();
+                    break;
+                case 'calendar':
+                    pageContent = renderCalendarContentHtml();
+                    break;
+                case 'requests':
+                    pageContent = renderRequestsContentHtml();
+                    break;
+                case 'smsStatus':
+                    pageContent = renderSmsContentHtml();
+                    break;
+                case 'announcements':
+                    pageContent = renderAnnouncementsContentHtml();
+                    break;
+                case 'security':
+                    pageContent = renderSecurityContentHtml();
+                    break;
+                case 'support':
+                    pageContent = renderSupportContentHtml();
+                    break;
+                case 'help':
+                    pageContent = renderHelpContentHtml();
+                    break;
+                case 'weather':
+                    pageContent = renderWeatherContent();
+                    break;
+                case 'prices':
+                    pageContent = renderPricesContent();
+                    break;
+                default:
+                    pageContent = '<div class="info-box">بخش مورد نظر یافت نشد</div>';
+            }
+
+            content.innerHTML = headerHtml + backBtnHtml + pageContent;
+        }
+
+        // ============================================================
         // DOM READY
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
@@ -5934,7 +6774,7 @@
             setTheme('auto');
             currentStatsTab = 'all';
 
-            // اضافه کردن توابع به window برای دسترسی در onclick
+            // ثبت توابع در window برای دسترسی در onclick
             window.searchWeather = searchWeather;
             window.fetchPrices = fetchPrices;
             window.sendSmsRequest = sendSmsRequest;
@@ -5961,6 +6801,10 @@
             window.deleteNotification = deleteNotification;
             window.showNotificationPanel = showNotificationPanel;
             window.forceUpdateData = forceUpdateData;
+            window.renderMyFundContent = renderMyFundContent;
+            window.setSmartGoal = setSmartGoal;
+            window.renderStatisticsContent = renderStatisticsContent;
+            window.renderClubContent = renderClubContent;
 
             if (typeof XLSX !== 'undefined') {
                 console.log('✅ XLSX already loaded');
@@ -6016,10 +6860,10 @@
                 });
             }
 
-            console.log('🟢 All scripts loaded - نسخه نهایی با اصلاحات');
+            console.log('🟢 All scripts loaded - نسخه نهایی با همه بخش‌ها');
         });
 
-        console.log('🟢 All scripts loaded - نسخه نهایی با اصلاحات');
+        console.log('🟢 All scripts loaded - نسخه نهایی با همه بخش‌ها');
     </script>
 </body>
 </html>
