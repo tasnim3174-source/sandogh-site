@@ -1354,58 +1354,62 @@
         // HANDLE LOGIN
         // ============================================================
         async function handleLogin() {
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            if (!username || !password) { alert('⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید'); return; }
-            let retryCount = 0;
-            while (typeof XLSX === 'undefined' && retryCount < 10) { await new Promise(r => setTimeout(r, 500)); retryCount++; }
-            if (typeof XLSX === 'undefined') { alert('❌ خطا: کتابخانه XLSX بارگذاری نشد. لطفاً صفحه را Refresh کنید.'); return; }
-            showUpdateOverlay('در حال ورود', 'لطفاً شکیبا باشید...');
-            updateUpdateOverlay(0, 'آماده‌سازی...', 1);
-            try {
-                updateUpdateOverlay(10, 'اتصال به سرور...', 1);
-                await new Promise(r => setTimeout(r, 200));
-                const data = await loadMainDataWithCache(true);
-                updateUpdateOverlay(40, 'دریافت اطلاعات...', 2);
-                await new Promise(r => setTimeout(r, 150));
-                const user = data.users.find(u => u.username === username && u.password === password);
-                if (user) {
-                    updateUpdateOverlay(60, 'پردازش اطلاعات...', 3);
-                    await new Promise(r => setTimeout(r, 150));
-                    currentUser = user; members = data.members; transactions = data.transactions || []; users = data.users;
-                    transactionsByMember = new Map();
-                    transactions.forEach(t => {
-                        const id = String(t._memberId);
-                        if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                        transactionsByMember.get(id).push(t);
-                    });
-                    loadCoins(); loadNotifications();
-                    members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
-                    localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
-                    saveRememberMe(username, password);
-                    updateUpdateOverlay(90, 'بارگذاری صفحه...', 4);
-                    await new Promise(r => setTimeout(r, 150));
-                    const appContainer = document.getElementById('appContainer');
-                    appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
-                    renderPage('menu');
-                    updateVisitInfo();
-                    updateUpdateOverlay(100, '✅ ورود موفق!', 4);
-                    await new Promise(r => setTimeout(r, 300));
-                    hideUpdateOverlay();
-                    if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-                    autoUpdateInterval = setInterval(async function() { if (currentUser) await forceUpdateData(); }, 15 * 60 * 1000);
-                    const member = members.find(m => m.id === user.memberId);
-                    setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
-                } else {
-                    hideUpdateOverlay();
-                    alert('❌ نام کاربری یا رمز عبور اشتباه است');
-                }
-            } catch (error) {
-                console.error('❌ خطا:', error);
-                hideUpdateOverlay();
-                alert('❌ خطا در ورود: ' + error.message);
-            }
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    if (!username || !password) { alert('⚠️ لطفاً نام کاربری و رمز عبور را وارد کنید'); return; }
+    let retryCount = 0;
+    while (typeof XLSX === 'undefined' && retryCount < 10) { await new Promise(r => setTimeout(r, 500)); retryCount++; }
+    if (typeof XLSX === 'undefined') { alert('❌ خطا: کتابخانه XLSX بارگذاری نشد. لطفاً صفحه را Refresh کنید.'); return; }
+    showUpdateOverlay('در حال ورود', 'لطفاً شکیبا باشید...');
+    updateUpdateOverlay(0, 'آماده‌سازی...', 1);
+    try {
+        updateUpdateOverlay(10, 'اتصال به سرور...', 1);
+        await new Promise(r => setTimeout(r, 200));
+        const data = await loadMainDataWithCache(true);
+        updateUpdateOverlay(40, 'دریافت اطلاعات...', 2);
+        await new Promise(r => setTimeout(r, 150));
+        const user = data.users.find(u => u.username === username && u.password === password);
+        if (user) {
+            updateUpdateOverlay(60, 'پردازش اطلاعات...', 3);
+            await new Promise(r => setTimeout(r, 150));
+            currentUser = user; members = data.members; transactions = data.transactions || []; users = data.users;
+            transactionsByMember = new Map();
+            transactions.forEach(t => {
+                const id = String(t._memberId);
+                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                transactionsByMember.get(id).push(t);
+            });
+            loadCoins(); loadNotifications();
+            members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+            localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
+            saveRememberMe(username, password);
+            
+            // ⭐ خط جدید: ذخیره نشست کاربر برای بازگشت خودکار
+            localStorage.setItem('sandogh_current_user', JSON.stringify(user));
+            
+            updateUpdateOverlay(90, 'بارگذاری صفحه...', 4);
+            await new Promise(r => setTimeout(r, 150));
+            const appContainer = document.getElementById('appContainer');
+            appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+            renderPage('menu');
+            updateVisitInfo();
+            updateUpdateOverlay(100, '✅ ورود موفق!', 4);
+            await new Promise(r => setTimeout(r, 300));
+            hideUpdateOverlay();
+            if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+            autoUpdateInterval = setInterval(async function() { if (currentUser) await forceUpdateData(); }, 15 * 60 * 1000);
+            const member = members.find(m => m.id === user.memberId);
+            setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
+        } else {
+            hideUpdateOverlay();
+            alert('❌ نام کاربری یا رمز عبور اشتباه است');
         }
+    } catch (error) {
+        console.error('❌ خطا:', error);
+        hideUpdateOverlay();
+        alert('❌ خطا در ورود: ' + error.message);
+    }
+}
 
         // ============================================================
         // RENDER PAGE & MENU
@@ -2468,13 +2472,20 @@
         function selectClubTab(tab) { currentClubTab = tab; renderClubContent(); }
         function selectStatsTab(tab) { currentStatsTab = tab; renderStatisticsContent(); }
         function doLogout() {
-            if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
-                currentUser = null;
-                if (autoUpdateInterval) { clearInterval(autoUpdateInterval); autoUpdateInterval = null; }
-                hideUpdateOverlay();
-                location.reload();
-            }
+    if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
+        currentUser = null;
+        
+        // ⭐ خط جدید: پاک کردن نشست ذخیره شده برای جلوگیری از ورود خودکار
+        localStorage.removeItem('sandogh_current_user');
+        
+        if (autoUpdateInterval) {
+            clearInterval(autoUpdateInterval);
+            autoUpdateInterval = null;
         }
+        hideUpdateOverlay();
+        location.reload();
+    }
+}
 
         // ============================================================
         // RENDER CONTENT PAGE (Router)
@@ -2519,83 +2530,99 @@
         // ============================================================
         // DOM READY & INITIALIZATION
         // ============================================================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🟢 DOM loaded');
-            setTheme('auto');
-            currentStatsTab = 'all';
+        document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🟢 DOM loaded');
+    setTheme('auto');
+    currentStatsTab = 'all';
 
-            // Expose functions to window for HTML onclick attributes
-            window.searchWeather = searchWeather;
-            window.fetchPrices = fetchPrices;
-            window.sendSmsRequest = sendSmsRequest;
-            window.downloadExcel = downloadExcel;
-            window.downloadPDF = downloadPDF;
-            window.selectMenuItem = selectMenuItem;
-            window.selectClubTab = selectClubTab;
-            window.selectStatsTab = selectStatsTab;
-            window.doLogout = doLogout;
-            window.goToMenu = goToMenu;
-            window.openSettings = openSettings;
-            window.closeSettings = closeSettings;
-            window.setTheme = setTheme;
-            window.togglePassword = togglePassword;
-            window.buyProduct = buyProduct;
-            window.copyText = copyText;
-            window.filterExcelTransactions = filterExcelTransactions;
-            window.showFamilyMemberDetails = showFamilyMemberDetails;
-            window.showAdminMemberDetail = showAdminMemberDetail;
-            window.showHelpFor = showHelpFor;
-            window.markAllRead = markAllRead;
-            window.closeNotifPanel = closeNotifPanel;
-            window.filterNotif = filterNotif;
-            window.deleteNotification = deleteNotification;
-            window.showNotificationPanel = showNotificationPanel;
-            window.forceUpdateData = forceUpdateData;
-            window.renderMyFundContent = renderMyFundContent;
-            window.setSmartGoal = setSmartGoal;
-            window.renderStatisticsContent = renderStatisticsContent;
-            window.renderClubContent = renderClubContent;
+    // ==========================================
+    // بررسی خودکار برای بازگشت به منو (Auto Login)
+    // ==========================================
+    const savedUserStr = localStorage.getItem('sandogh_current_user');
+    if (savedUserStr) {
+        try {
+            const savedUser = JSON.parse(savedUserStr);
+            // نمایش لودینگ کوتاه
+            showUpdateOverlay('در حال بازیابی...', 'لطفاً شکیبا باشید');
+            
+            const data = await loadMainDataWithCache(false); // استفاده از کش برای سرعت بالا
+            const validUser = data.users.find(u => u.username === savedUser.username && u.password === savedUser.password);
+            
+            if (validUser) {
+                // بازیابی موفقیت‌آمیز
+                currentUser = validUser;
+                members = data.members;
+                transactions = data.transactions || [];
+                users = data.users;
 
-            if (typeof XLSX !== 'undefined') { console.log('✅ XLSX already loaded'); }
-            else {
-                console.log('⏳ Waiting for XLSX...');
-                let checkCount = 0;
-                const interval = setInterval(() => {
-                    checkCount++;
-                    if (typeof XLSX !== 'undefined') { console.log('✅ XLSX loaded after ' + (checkCount * 500) + 'ms'); clearInterval(interval); }
-                    else if (checkCount > 20) { console.error('❌ XLSX failed to load'); clearInterval(interval); }
-                }, 500);
-            }
-
-            loadRememberMe();
-            const usernameInput = document.getElementById('loginUsername');
-            const passwordInput = document.getElementById('loginPassword');
-            if (usernameInput && passwordInput) {
-                usernameInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (this.value.trim() && passwordInput.value.trim()) handleLogin();
-                        else if (this.value.trim()) passwordInput.focus();
-                    }
+                transactionsByMember = new Map();
+                transactions.forEach(t => {
+                    const id = String(t._memberId);
+                    if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                    transactionsByMember.get(id).push(t);
                 });
-                passwordInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (usernameInput.value.trim() && this.value.trim()) handleLogin();
-                    }
-                });
-            }
 
-            const backBtn = document.getElementById('backToTopBtn');
-            if (backBtn) {
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 300) backBtn.classList.add('show');
-                    else backBtn.classList.remove('show');
-                });
+                members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+                loadCoins();
+                loadNotifications();
+                localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
+
+                // تغییر صفحه به منوی اصلی
+                const appContainer = document.getElementById('appContainer');
+                appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+                renderPage('menu');
+                updateVisitInfo();
+                hideUpdateOverlay();
+
+                // شروع بروزرسانی خودکار
+                if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+                autoUpdateInterval = setInterval(async function() {
+                    if (currentUser) await forceUpdateData();
+                }, 15 * 60 * 1000);
+
+                console.log('✅ بازیابی خودکار موفقیت‌آمیز بود');
+                return; // خروج از تابع، چون لاگین هستیم
             }
-            console.log('🟢 All scripts loaded - نسخه نهایی با همه بخش‌ها');
+        } catch (e) {
+            console.error('❌ خطا در بازیابی خودکار:', e);
+            localStorage.removeItem('sandogh_current_user');
+        }
+    }
+
+    // ==========================================
+    // اگر به اینجا رسید، یعنی کاربر لاگین نیست (حالت عادی)
+    // ==========================================
+    loadRememberMe();
+
+    const usernameInput = document.getElementById('loginUsername');
+    const passwordInput = document.getElementById('loginPassword');
+
+    if (usernameInput && passwordInput) {
+        usernameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (this.value.trim() && passwordInput.value.trim()) handleLogin();
+                else if (this.value.trim()) passwordInput.focus();
+            }
         });
-        console.log('🟢 All scripts loaded - نسخه نهایی با همه بخش‌ها');
+        passwordInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (usernameInput.value.trim() && this.value.trim()) handleLogin();
+            }
+        });
+    }
+
+    const backBtn = document.getElementById('backToTopBtn');
+    if (backBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) backBtn.classList.add('show');
+            else backBtn.classList.remove('show');
+        });
+    }
+
+    console.log('🟢 All scripts loaded - نسخه نهایی با همه بخش‌ها');
+});
     </script>
 </body>
 </html>
