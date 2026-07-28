@@ -2535,21 +2535,70 @@
     setTheme('auto');
     currentStatsTab = 'all';
 
+    // اتصال تمام توابع به window (مهم!)
+    window.searchWeather = searchWeather;
+    window.fetchPrices = fetchPrices;
+    window.sendSmsRequest = sendSmsRequest;
+    window.downloadExcel = downloadExcel;
+    window.downloadPDF = downloadPDF;
+    window.selectMenuItem = selectMenuItem;
+    window.selectClubTab = selectClubTab;
+    window.selectStatsTab = selectStatsTab;
+    window.doLogout = doLogout;
+    window.goToMenu = goToMenu;
+    window.openSettings = openSettings;
+    window.closeSettings = closeSettings;
+    window.setTheme = setTheme;
+    window.togglePassword = togglePassword;
+    window.buyProduct = buyProduct;
+    window.copyText = copyText;
+    window.filterExcelTransactions = filterExcelTransactions;
+    window.showFamilyMemberDetails = showFamilyMemberDetails;
+    window.showAdminMemberDetail = showAdminMemberDetail;
+    window.showHelpFor = showHelpFor;
+    window.markAllRead = markAllRead;
+    window.closeNotifPanel = closeNotifPanel;
+    window.filterNotif = filterNotif;
+    window.deleteNotification = deleteNotification;
+    window.showNotificationPanel = showNotificationPanel;
+    window.forceUpdateData = forceUpdateData;
+    window.renderMyFundContent = renderMyFundContent;
+    window.setSmartGoal = setSmartGoal;
+    window.renderStatisticsContent = renderStatisticsContent;
+    window.renderClubContent = renderClubContent;
+
     // ==========================================
     // بررسی خودکار برای بازگشت به منو (Auto Login)
     // ==========================================
     const savedUserStr = localStorage.getItem('sandogh_current_user');
+    
     if (savedUserStr) {
         try {
             const savedUser = JSON.parse(savedUserStr);
-            // نمایش لودینگ کوتاه
-            showUpdateOverlay('در حال بازیابی...', 'لطفاً شکیبا باشید');
             
-            const data = await loadMainDataWithCache(false); // استفاده از کش برای سرعت بالا
+            // ابتدا از کش استفاده کن (سریع‌ترین حالت)
+            let data;
+            const cached = localStorage.getItem('sandogh_data_v2');
+            const cachedTime = localStorage.getItem('sandogh_data_time_v2');
+            
+            if (cached && cachedTime) {
+                const age = Date.now() - parseInt(cachedTime);
+                if (age < 15 * 60 * 1000) {
+                    // کش معتبر است - استفاده از کش
+                    data = JSON.parse(cached);
+                    console.log('✅ استفاده از کش');
+                }
+            }
+            
+            // اگر کش نبود، داده‌ها را بگیر
+            if (!data) {
+                data = await loadMainData();
+            }
+            
             const validUser = data.users.find(u => u.username === savedUser.username && u.password === savedUser.password);
             
             if (validUser) {
-                // بازیابی موفقیت‌آمیز
+                // بازیابی موفقیت‌آمیز - بدون هیچ لودینگ
                 currentUser = validUser;
                 members = data.members;
                 transactions = data.transactions || [];
@@ -2565,23 +2614,15 @@
                 members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
                 loadCoins();
                 loadNotifications();
-                localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
 
-                // تغییر صفحه به منوی اصلی
+                // تغییر مستقیم به منوی اصلی
                 const appContainer = document.getElementById('appContainer');
                 appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
                 renderPage('menu');
                 updateVisitInfo();
-                hideUpdateOverlay();
 
-                // شروع بروزرسانی خودکار
-                if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-                autoUpdateInterval = setInterval(async function() {
-                    if (currentUser) await forceUpdateData();
-                }, 15 * 60 * 1000);
-
-                console.log('✅ بازیابی خودکار موفقیت‌آمیز بود');
-                return; // خروج از تابع، چون لاگین هستیم
+                console.log('✅ بازیابی خودکار موفقیت‌آمیز - رفتن مستقیم به منو');
+                return;
             }
         } catch (e) {
             console.error('❌ خطا در بازیابی خودکار:', e);
@@ -2621,7 +2662,7 @@
         });
     }
 
-    console.log('🟢 All scripts loaded - نسخه نهایی با همه بخش‌ها');
+    console.log('🟢 All scripts loaded - نسخه نهایی');
 });
     </script>
 </body>
