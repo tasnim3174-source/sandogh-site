@@ -1591,6 +1591,14 @@
                     members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
                     localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
                     saveRememberMe(username, password);
+// ذخیره نشست کاربر برای بازگشت خودکار
+localStorage.setItem('sandogh_user_session', JSON.stringify({
+    username: user.username,
+    password: user.password,
+    memberId: user.memberId,
+    role: user.role,
+    timestamp: Date.now()
+}));
 
                     // ✅ ذخیره نشست کاربر با تاریخ انقضا (امن‌تر)
                     const sessionData = {
@@ -1631,6 +1639,7 @@
             if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
                 currentUser = null;
                 localStorage.removeItem('sandogh_current_user');
+                localStorage.removeItem('sandogh_user_session');
                 if (autoUpdateInterval) {
                     clearInterval(autoUpdateInterval);
                     autoUpdateInterval = null;
@@ -2950,96 +2959,101 @@ function renderAccessWithFilter() {
         // 21. راه‌اندازی اولیه (DOM Ready)
         // ============================================================
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🟢 DOM loaded');
-            setTheme('auto');
-            currentStatsTab = 'all';
+    console.log('🟢 DOM loaded');
+    setTheme('auto');
+    currentStatsTab = 'all';
 
-            // بررسی خودکار برای بازگشت به منو (Auto Login)
-            const savedSessionStr = localStorage.getItem('sandogh_current_user');
-            if (savedSessionStr) {
-                try {
-                    const sessionData = JSON.parse(savedSessionStr);
-                    if (sessionData.expires && Date.now() < sessionData.expires) {
-                        const savedUser = sessionData.user;
-                        showUpdateOverlay('در حال بازیابی...', 'لطفاً شکیبا باشید');
+    // ==========================================
+    // بررسی خودکار برای بازگشت به منو (Auto Login)
+    // ==========================================
+    const savedSessionStr = localStorage.getItem('sandogh_user_session');
+    if (savedSessionStr) {
+        try {
+            const session = JSON.parse(savedSessionStr);
+            // بررسی انقضای نشست (24 ساعت)
+            if (session.timestamp && Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
+                showUpdateOverlay('در حال بازیابی...', 'لطفاً شکیبا باشید');
 
-                        const data = await loadMainDataWithCache(false);
-                        const validUser = data.users.find(u => u.username === savedUser.username && u.password === savedUser
-                            .password);
+                const data = await loadMainDataWithCache(false);
+                const validUser = data.users.find(u => u.username === session.username && u.password === session.password);
 
-                        if (validUser) {
-                            currentUser = validUser;
-                            members = data.members;
-                            transactions = data.transactions || [];
-                            users = data.users;
+                if (validUser) {
+                    currentUser = validUser;
+                    members = data.members;
+                    transactions = data.transactions || [];
+                    users = data.users;
 
-                            transactionsByMember = new Map();
-                            transactions.forEach(t => {
-                                const id = String(t._memberId);
-                                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                                transactionsByMember.get(id).push(t);
-                            });
+                    transactionsByMember = new Map();
+                    transactions.forEach(t => {
+                        const id = String(t._memberId);
+                        if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                        transactionsByMember.get(id).push(t);
+                    });
 
-                            members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
-                            loadCoins();
-                            loadNotifications();
-                            localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
+                    members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+                    loadCoins();
+                    loadNotifications();
+                    localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
 
-                            const appContainer = document.getElementById('appContainer');
-                            appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
-                            renderPage('menu');
-                            updateVisitInfo();
-                            hideUpdateOverlay();
+                    const appContainer = document.getElementById('appContainer');
+                    appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+                    renderPage('menu');
+                    updateVisitInfo();
+                    hideUpdateOverlay();
 
-                            if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-                            autoUpdateInterval = setInterval(async function() {
-                                if (currentUser) await forceUpdateData();
-                            }, 15 * 60 * 1000);
+                    if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+                    autoUpdateInterval = setInterval(async function() {
+                        if (currentUser) await forceUpdateData();
+                    }, 15 * 60 * 1000);
 
-                            console.log('✅ بازیابی خودکار موفقیت‌آمیز بود');
-                            return;
-                        }
-                    } else {
-                        localStorage.removeItem('sandogh_current_user');
-                    }
-                } catch (e) {
-                    console.error('❌ خطا در بازیابی خودکار:', e);
-                    localStorage.removeItem('sandogh_current_user');
+                    console.log('✅ بازیابی خودکار موفقیت‌آمیز بود');
+                    return;
+                } else {
+                    localStorage.removeItem('sandogh_user_session');
                 }
+            } else {
+                localStorage.removeItem('sandogh_user_session');
             }
+        } catch (e) {
+            console.error('❌ خطا در بازیابی خودکار:', e);
+            localStorage.removeItem('sandogh_user_session');
+        }
+    }
 
-            // حالت عادی: نمایش صفحه ورود
-            loadRememberMe();
+    // ==========================================
+    // اگر به اینجا رسید، یعنی کاربر لاگین نیست (حالت عادی)
+    // ==========================================
+    loadRememberMe();
 
-            const usernameInput = document.getElementById('loginUsername');
-            const passwordInput = document.getElementById('loginPassword');
+    const usernameInput = document.getElementById('loginUsername');
+    const passwordInput = document.getElementById('loginPassword');
 
-            if (usernameInput && passwordInput) {
-                usernameInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (this.value.trim() && passwordInput.value.trim()) handleLogin();
-                        else if (this.value.trim()) passwordInput.focus();
-                    }
-                });
-                passwordInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        if (usernameInput.value.trim() && this.value.trim()) handleLogin();
-                    }
-                });
+    if (usernameInput && passwordInput) {
+        usernameInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (this.value.trim() && passwordInput.value.trim()) handleLogin();
+                else if (this.value.trim()) passwordInput.focus();
             }
-
-            const backBtn = document.getElementById('backToTopBtn');
-            if (backBtn) {
-                window.addEventListener('scroll', () => {
-                    if (window.scrollY > 300) backBtn.classList.add('show');
-                    else backBtn.classList.remove('show');
-                });
-            }
-
-            console.log('🟢 All scripts loaded - نسخه نهایی با بهبود امنیت و مدیریت نشست');
         });
+        passwordInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (usernameInput.value.trim() && this.value.trim()) handleLogin();
+            }
+        });
+    }
+
+    const backBtn = document.getElementById('backToTopBtn');
+    if (backBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) backBtn.classList.add('show');
+            else backBtn.classList.remove('show');
+        });
+    }
+
+    console.log('🟢 All scripts loaded - نسخه نهایی با بهبود امنیت و مدیریت نشست');
+});
     </script>
 </body>
 </html>
