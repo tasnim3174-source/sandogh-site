@@ -634,6 +634,7 @@
         let notifications = [];
         let notifFilter = 'all';
         let autoUpdateInterval = null;
+        let isPageReloading = false;
         let userPurchases = {};
         let transactionsByMember = new Map();
         const DEFAULT_CITY = 'Isfahan';
@@ -2964,6 +2965,15 @@ function renderAccessWithFilter() {
     currentStatsTab = 'all';
 
     // ==========================================
+    // جلوگیری از بارگذاری مجدد در موبایل
+    // ==========================================
+    if (isPageReloading) {
+        console.log('🔄 جلوگیری از بارگذاری مجدد');
+        return;
+    }
+    isPageReloading = true;
+
+    // ==========================================
     // بررسی خودکار برای بازگشت به منو (Auto Login)
     // ==========================================
     const savedSessionStr = localStorage.getItem('sandogh_user_session');
@@ -3007,6 +3017,7 @@ function renderAccessWithFilter() {
                     }, 15 * 60 * 1000);
 
                     console.log('✅ بازیابی خودکار موفقیت‌آمیز بود');
+                    isPageReloading = false;
                     return;
                 } else {
                     localStorage.removeItem('sandogh_user_session');
@@ -3017,6 +3028,56 @@ function renderAccessWithFilter() {
         } catch (e) {
             console.error('❌ خطا در بازیابی خودکار:', e);
             localStorage.removeItem('sandogh_user_session');
+        }
+    }
+
+    // ==========================================
+    // بررسی سریع: آیا قبلاً وارد شده بودیم؟
+    // ==========================================
+    const loginPage = document.getElementById('loginPage');
+    if (loginPage && savedSessionStr) {
+        // اگر صفحه ورود نمایش داده شده و نشست وجود دارد، به منو برو
+        try {
+            const session = JSON.parse(savedSessionStr);
+            if (session.timestamp && Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
+                const data = await loadMainDataWithCache(false);
+                const validUser = data.users.find(u => u.username === session.username && u.password === session.password);
+                if (validUser) {
+                    currentUser = validUser;
+                    members = data.members;
+                    transactions = data.transactions || [];
+                    users = data.users;
+
+                    transactionsByMember = new Map();
+                    transactions.forEach(t => {
+                        const id = String(t._memberId);
+                        if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                        transactionsByMember.get(id).push(t);
+                    });
+
+                    members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+                    loadCoins();
+                    loadNotifications();
+                    localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
+
+                    const appContainer = document.getElementById('appContainer');
+                    appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+                    renderPage('menu');
+                    updateVisitInfo();
+                    hideUpdateOverlay();
+
+                    if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+                    autoUpdateInterval = setInterval(async function() {
+                        if (currentUser) await forceUpdateData();
+                    }, 15 * 60 * 1000);
+
+                    console.log('✅ بازیابی سریع موفقیت‌آمیز بود');
+                    isPageReloading = false;
+                    return;
+                }
+            }
+        } catch (e) {
+            console.error('❌ خطا در بازیابی سریع:', e);
         }
     }
 
@@ -3052,29 +3113,33 @@ function renderAccessWithFilter() {
         });
     }
 
+    isPageReloading = false;
     console.log('🟢 All scripts loaded - نسخه نهایی با بهبود امنیت و مدیریت نشست');
 });
 // ==========================================
-// جلوگیری از بازگشت به صفحه ورود در موبایل
+// تابع بررسی سریع نشست برای موبایل
 // ==========================================
-window.addEventListener('pageshow', function(event) {
-    // اگر صفحه از کش مرورگر بازیابی شد (در موبایل)
-    if (event.persisted) {
-        console.log('🔄 صفحه از کش بازیابی شد');
-        // اگر کاربر قبلاً وارد شده بود، به منو برگرد
-        const savedSessionStr = localStorage.getItem('sandogh_user_session');
-        if (savedSessionStr && currentUser) {
-            const appContainer = document.getElementById('appContainer');
-            // اگر صفحه ورود نمایش داده می‌شود، آن را با منو جایگزین کن
-            if (appContainer && appContainer.querySelector('.login-page')) {
-                appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
-                renderPage('menu');
-                updateVisitInfo();
-                console.log('✅ بازگشت به منو پس از بازیابی کش');
+function checkSessionAndRedirect() {
+    const savedSessionStr = localStorage.getItem('sandogh_user_session');
+    if (savedSessionStr && !currentUser) {
+        try {
+            const session = JSON.parse(savedSessionStr);
+            if (session.timestamp && Date.now() - session.timestamp < 24 * 60 * 60 * 1000) {
+                // اگر صفحه ورود نمایش داده شده، به منو برو
+                const appContainer = document.getElementById('appContainer');
+                if (appContainer && appContainer.querySelector('.login-page')) {
+                    console.log('🔄 بازگشت سریع به منو');
+                    location.reload();
+                }
             }
+        } catch (e) {
+            console.error('❌ خطا در بررسی نشست:', e);
         }
     }
-});
+}
+
+// اجرا در فواصل زمانی کوتاه برای موبایل
+setInterval(checkSessionAndRedirect, 1000);
     </script>
 </body>
 </html>
