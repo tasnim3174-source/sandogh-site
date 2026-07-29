@@ -4095,39 +4095,7 @@
             const totalInstallments = member?.totalInstallments || 1;
             const paidInstallments = member?.paidInstallments || 0;
             const progressPercent = Math.min(100, Math.round((paidInstallments / totalInstallments) * 100));
-    // ===== محاسبه فاصله تا رتبه بعدی =====
-    let nextRankDistance = 0;
-    let nextRankName = '';
-    let nextRankEmoji = '';
-    let nextRankColor = '';
 
-    if (memberScores[member.id]) {
-        const currentScore = memberScores[member.id].score;
-        const currentTier = memberScores[member.id].tier;
-        
-        if (currentTier === 'black' && currentScore < 50) {
-            nextRankDistance = 50 - currentScore;
-            nextRankName = 'نقره‌ای';
-            nextRankEmoji = '🥈';
-            nextRankColor = '#C0C0C0';
-        } else if (currentTier === 'silver' && currentScore < 80) {
-            nextRankDistance = 80 - currentScore;
-            nextRankName = 'طلایی';
-            nextRankEmoji = '⭐';
-            nextRankColor = '#FFD700';
-        } else if (currentTier === 'gold') {
-            nextRankDistance = 0;
-            nextRankName = 'طلایی';
-            nextRankEmoji = '⭐';
-            nextRankColor = '#FFD700';
-        } else {
-            nextRankDistance = 0;
-            nextRankName = '';
-            nextRankEmoji = '';
-            nextRankColor = '';
-        }
-    }
-    // ===== پایان محاسبه فاصله تا رتبه بعدی =====
             let myFundMenuItem = '';
             if (FEATURES.showMyFund) {
                 myFundMenuItem = `
@@ -4226,21 +4194,21 @@
                             <div class="app-icon"><i class="fas fa-coins"></i></div>
                             <div class="app-label">قیمت‌های روز</div>
                         </div>
-                        <div class="app-item" data-app="snapp" onclick="window.open('https://app.snapp.taxi/login/','_blank')" style="border-color:#00bfa5; background:linear-gradient(135deg,rgba(0,191,165,0.05),rgba(0,191,165,0.02));">
+                        <div class="app-item" data-app="snapp" onclick="window.open('https://snapp.ir/','_blank')" style="border-color:#00bfa5; background:linear-gradient(135deg,rgba(0,191,165,0.05),rgba(0,191,165,0.02));">
                             <div class="app-icon" style="background:linear-gradient(135deg,#00bfa5,#009688);">
                                 <i class="fas fa-car"></i>
                             </div>
                             <div class="app-label" style="color:#00bfa5;">اسنپ</div>
                             <div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div>
                         </div>
-                        <div class="app-item" data-app="tapsi" onclick="window.open('https://accounts.tapsi.ir/login?client_id=tapsi.cab.passenger&redirect_uri=https%3A%2F%2Fapp.tapsi.cab&response_type=code&scope=PASSENGER&state=401bedf1a8a04365ac8fc0fd5c142d47&code_challenge=Os9-GSBzlCvMjHQAGwad2StBkeO5lkJC10cQFKZ1aBc&code_challenge_method=S256&response_mode=query/','_blank')" style="border-color:#ff6b35; background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(255,107,53,0.02));">
+                        <div class="app-item" data-app="tapsi" onclick="window.open('https://tapsi.ir/','_blank')" style="border-color:#ff6b35; background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(255,107,53,0.02));">
                             <div class="app-icon" style="background:linear-gradient(135deg,#ff6b35,#e55a2b);">
                                 <i class="fas fa-taxi"></i>
                             </div>
                             <div class="app-label" style="color:#ff6b35;">تپسی</div>
                             <div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div>
                         </div>
-                        <div class="app-item" data-app="sadagh" onclick="window.open('https://sama.emdad.ir/Sama/','_blank')" style="border-color:#f59e0b; background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02));">
+                        <div class="app-item" data-app="sadagh" onclick="window.open('https://sadagh.ir/','_blank')" style="border-color:#f59e0b; background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02));">
                             <div class="app-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
                                 <i class="fas fa-hand-holding-heart"></i>
                             </div>
@@ -4287,53 +4255,35 @@
 
             // ===== باکس اطلاعات مالی با نمودار پیشرفت =====
             const quickInfoHtml = `
-    <div class="quick-info-box" style="grid-template-columns:1fr 1fr; gap:6px; padding:12px;">
-        <!-- ستون اول: موجودی و وضعیت پس‌انداز -->
-        <div style="display:flex; flex-direction:column; gap:4px;">
-            <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08)); border-radius:8px; padding:10px;">
-                <div class="info-label" style="font-size:0.65rem;">💰 موجودی شما</div>
-                <div class="info-value green" style="font-size:1.4rem;">${fmtNum(correctBalance)}</div>
-            </div>
-            <div class="info-item" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.08)); border-radius:8px; padding:10px;">
-                <div class="info-label" style="font-size:0.65rem;">📊 وضعیت پس‌انداز</div>
-                <div class="info-value ${member?.savingsStatus >= 0 ? 'green' : 'red'}" style="font-size:1.4rem;">${fmtNum(member?.savingsStatus || 0)}</div>
-            </div>
-        </div>
-        <!-- ستون دوم: بدهی و اقساط معوقه -->
-        <div style="display:flex; flex-direction:column; gap:4px;">
-            <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:10px;">
-                <div class="info-label" style="font-size:0.65rem;">💳 مانده بدهی شما</div>
-                <div class="info-value red" style="font-size:1.4rem;">${fmtNum(member?.loanBalance || 0)}</div>
-            </div>
-            <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:10px;">
-                <div class="info-label" style="font-size:0.65rem;">⚠️ اقساط معوقه</div>
-                <div class="info-value red" style="font-size:1.4rem;">${Math.abs(member?.overdueInstallments || 0)}</div>
-            </div>
-        </div>
-        <!-- ردیف سوم: پیشرفت پرداخت اقساط (تمام عرض) -->
-        <div class="info-item" style="grid-column: 1 / -1; background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08)); border-radius:8px; padding:12px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
-                <div class="info-label" style="font-size:0.65rem;">📈 پیشرفت پرداخت اقساط</div>
-                <div class="info-value purple" style="font-size:1.2rem;">${progressPercent}%</div>
-            </div>
-            <div style="width:100%; height:8px; background:var(--bg-secondary); border-radius:6px; overflow:hidden; margin-top:4px;">
-                <div style="width:${progressPercent}%; height:100%; background:linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); border-radius:6px; transition:width 0.8s ease;"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; font-size:0.55rem; color:var(--text-secondary); margin-top:4px; font-weight:bold;">
-                <span>✅ ${paidInstallments} قسط پرداخت شده</span>
-                <span>⏳ ${totalInstallments - paidInstallments} قسط باقی مانده</span>
-            </div>
-        </div>
-    </div>
-`;
+                <div class="quick-info-box" style="grid-template-columns:1fr 1fr 1fr; gap:6px;">
+                    <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08)); border-radius:8px; padding:8px;">
+                        <div class="info-label">موجودی شما</div>
+                        <div class="info-value green">${fmtNum(correctBalance)}</div>
+                    </div>
+                    <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:8px;">
+                        <div class="info-label">مانده بدهی شما</div>
+                        <div class="info-value red">${fmtNum(member?.loanBalance || 0)}</div>
+                    </div>
+                    <div class="info-item" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08)); border-radius:8px; padding:8px;">
+                        <div class="info-label">پیشرفت پرداخت اقساط</div>
+                        <div class="info-value purple">${progressPercent}%</div>
+                        <div style="width:100%; height:4px; background:var(--bg-secondary); border-radius:4px; overflow:hidden; margin-top:4px;">
+                            <div style="width:${progressPercent}%; height:100%; background:linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); border-radius:4px; transition:width 0.8s ease;"></div>
+                        </div>
+                        <div style="font-size:0.55rem; color:var(--text-secondary); margin-top:2px; font-weight:bold;">
+                            ${paidInstallments} از ${totalInstallments} قسط پرداخت شده
+                        </div>
+                    </div>
+                </div>
+            `;
 
             content.innerHTML = `
-                        <div class="header-rank" style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;width:100%;background:linear-gradient(135deg,rgba(245,158,11,0.12) 0%,rgba(217,119,6,0.12) 100%);padding:8px 16px;border-radius:12px;margin-bottom:4px;">
-            <span class="rank-label" style="display:flex;align-items:center;gap:4px;font-size:0.8rem;color:var(--text-muted);font-weight:bold;">🏆 رتبه شما در صندوق</span>
-            <span class="rank-value" style="color:var(--gold-color);font-weight:bold;font-size:1.8rem;line-height:1.2;">${memberScores[member.id]?.score || 0}</span>
-            <span class="rank-tier" style="font-size:0.9rem;color:#fff;padding:2px 14px;border-radius:16px;font-weight:bold;background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'};">${memberScores[member.id]?.tierName || ''}</span>
-            ${nextRankDistance > 0 ? `<span style="font-size:0.7rem;color:var(--text-secondary);font-weight:bold;background:rgba(255,255,255,0.15);padding:2px 12px;border-radius:12px;">📈 ${nextRankDistance} امتیاز تا رتبه ${nextRankEmoji} ${nextRankName}</span>` : `<span style="font-size:0.7rem;color:var(--success-color);font-weight:bold;background:rgba(16,185,129,0.15);padding:2px 12px;border-radius:12px;">🏅 شما در بالاترین رتبه هستید!</span>`}
-        </div>
+                <div class="header-bar">
+                    <div class="header-rank">
+                        <span class="rank-label">🏆 رتبه شما در صندوق</span>
+                        <span class="rank-value">${memberScores[member.id]?.score || 0}</span>
+                        <span class="rank-tier" style="background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'};">${memberScores[member.id]?.tierName || ''}</span>
+                    </div>
                     
                     <div class="header-date">
                         <div class="date-row">
