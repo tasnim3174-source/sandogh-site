@@ -3054,6 +3054,27 @@ function renderAccessWithFilter() {
 
     console.log('🟢 All scripts loaded - نسخه نهایی با بهبود امنیت و مدیریت نشست');
 });
+// ==========================================
+// جلوگیری از بازگشت به صفحه ورود در موبایل
+// ==========================================
+window.addEventListener('pageshow', function(event) {
+    // اگر صفحه از کش مرورگر بازیابی شد (در موبایل)
+    if (event.persisted) {
+        console.log('🔄 صفحه از کش بازیابی شد');
+        // اگر کاربر قبلاً وارد شده بود، به منو برگرد
+        const savedSessionStr = localStorage.getItem('sandogh_user_session');
+        if (savedSessionStr && currentUser) {
+            const appContainer = document.getElementById('appContainer');
+            // اگر صفحه ورود نمایش داده می‌شود، آن را با منو جایگزین کن
+            if (appContainer && appContainer.querySelector('.login-page')) {
+                appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+                renderPage('menu');
+                updateVisitInfo();
+                console.log('✅ بازگشت به منو پس از بازیابی کش');
+            }
+        }
+    }
+});
     </script>
 </body>
 </html>
