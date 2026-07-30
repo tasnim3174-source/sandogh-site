@@ -640,7 +640,7 @@
         const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
         
         // ============================================================
-        // 2. توابع باز کردن لینک‌های خارجی در مرورگر (اصلاح شده)
+        // 2. تابع باز کردن لینک‌های خارجی در مرورگر
         // ============================================================
         function openExternalLink(url) {
             window.open(url, '_blank');
@@ -722,7 +722,7 @@
         }
 
         // ============================================================
-        // 5. توابع کمکی (Utility)
+        // 5. توابع کمکی (Utility) - مختصر شده
         // ============================================================
         function getGreeting() {
             const hour = new Date().getHours();
@@ -842,7 +842,7 @@
         }
 
         // ============================================================
-        // 6. توابع مربوط به اعلان‌ها (Notifications)
+        // 6. توابع مربوط به اعلان‌ها (Notifications) - مختصر
         // ============================================================
         function loadNotifications() {
             try {
@@ -950,7 +950,7 @@
         }
 
         // ============================================================
-        // 7. مدیریت سکه‌ها (Coins)
+        // 7. مدیریت سکه‌ها (Coins) - مختصر
         // ============================================================
         function loadCoins() {
             try {
@@ -990,7 +990,7 @@
         }
 
         // ============================================================
-        // 8. محاسبه امتیاز اعضا (Score)
+        // 8. محاسبه امتیاز اعضا (Score) - مختصر
         // ============================================================
         function calculateMemberScore(member) {
             let score = 0;
@@ -1029,7 +1029,7 @@
         }
 
         // ============================================================
-        // 9. خرید محصول و کپی
+        // 9. خرید محصول و کپی - مختصر
         // ============================================================
         function buyProduct(shenaseh, name, price) {
             if (userCoins >= price) {
@@ -1053,7 +1053,7 @@
         }
 
         // ============================================================
-        // 10. فیلتر و رندر تراکنش‌های اکسل
+        // 10. فیلتر و رندر تراکنش‌های اکسل - مختصر
         // ============================================================
         function filterExcelTransactions() {
             const search = document.getElementById('searchTx').value.toLowerCase();
@@ -1104,7 +1104,7 @@
         }
 
         // ============================================================
-        // 11. بارگذاری داده‌های اصلی
+        // 11. بارگذاری داده‌های اصلی - مختصر
         // ============================================================
         async function loadMainData() {
             if (typeof XLSX === 'undefined') {
@@ -1275,7 +1275,7 @@
         }
 
         // ============================================================
-        // 12. بروزرسانی داده‌ها (Update)
+        // 12. بروزرسانی داده‌ها (Update) - مختصر
         // ============================================================
         async function forceUpdateData() {
             if (!currentUser) { alert('لطفاً ابتدا وارد شوید.'); return; }
@@ -1437,7 +1437,7 @@
                     localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
                     saveRememberMe(username, password);
                     
-                    // ===== ذخیره نشست کاربر برای بازگشت خودکار =====
+                    // ذخیره نشست کاربر برای بازگشت خودکار
                     localStorage.setItem('sandogh_user_session', JSON.stringify({
                         username: user.username,
                         password: user.password,
@@ -1471,7 +1471,7 @@
         }
 
         // ============================================================
-        // 15. خروج از سیستم (Logout) - با حذف نشست
+        // 15. خروج از سیستم (Logout)
         // ============================================================
         function doLogout() {
             if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
@@ -1658,10 +1658,9 @@
         }
 
         // ============================================================
-        // 18. رندر صفحه محتوا (Router) - سایر بخش‌ها (همانند قبل)
+        // 18. رندر صفحه محتوا (Router) - توابع اصلی
         // ============================================================
-        // توابع رندر دیگر بخش‌ها مانند قبل هستند...
-        // (برای خلاصه شدن، اینجا فقط توابع اصلی آورده شده است)
+        // (بقیه توابع رندر مانند قبل هستند - برای مختصر شدن حذف شدند)
 
         // ============================================================
         // 19. توابع هدایت (Navigation)
@@ -1682,37 +1681,24 @@
         }
 
         // ============================================================
-        // 20. جلوگیری از رفرش شدن صفحه هنگام بازگشت از تب خارجی
+        // 20. جلوگیری از رفرش شدن صفحه - نسخه نهایی و بدون رفرش
         // ============================================================
+        // این رویداد فقط زمانی که صفحه کاملاً بارگذاری می‌شود اجرا می‌شود
+        // و هیچ رفرشی انجام نمی‌دهد
         window.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                const session = localStorage.getItem('sandogh_user_session');
-                if (session && currentUser) {
-                    // اگر صفحه لاگین نیست، هیچ کاری نکن
-                    if (!document.getElementById('loginPage')) {
-                        const contentArea = document.getElementById('contentArea');
-                        // اگر صفحه خالی شده بود، منو را نمایش بده
-                        if (contentArea && contentArea.innerHTML.trim() === '') {
-                            renderPage('menu');
-                        }
+                // فقط اگر کاربر لاگین است و صفحه خالی شده، منو را نمایش بده
+                if (currentUser) {
+                    const contentArea = document.getElementById('contentArea');
+                    if (contentArea && contentArea.innerHTML.trim() === '') {
+                        renderPage('menu');
                     }
                 }
             }
         });
 
-        // هنگام بارگذاری مجدد صفحه (رفرش)، اگر کاربر لاگین است، منو را نمایش بده
-        window.addEventListener('load', function() {
-            const session = localStorage.getItem('sandogh_user_session');
-            if (session && currentUser) {
-                const contentArea = document.getElementById('contentArea');
-                if (contentArea && contentArea.innerHTML.trim() === '') {
-                    renderPage('menu');
-                }
-            }
-        });
-
         // ============================================================
-        // 21. راه‌اندازی اولیه (DOM Ready) + بازگشت خودکار
+        // 21. راه‌اندازی اولیه (DOM Ready)
         // ============================================================
         document.addEventListener('DOMContentLoaded', async function() {
             console.log('🟢 DOM loaded');
@@ -1796,10 +1782,12 @@
                 });
             }
 
-            console.log('🟢 All scripts loaded - نسخه نهایی با باز کردن لینک‌ها در مرورگر');
+            console.log('🟢 All scripts loaded - نسخه نهایی بدون رفرش');
         });
 
-        // بازگشت خودکار به صفحه اصلی بعد از برنامه‌های جانبی
+        // ============================================================
+        // 22. بازگشت خودکار - بدون رفرش
+        // ============================================================
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 const session = localStorage.getItem('sandogh_user_session');
@@ -1807,9 +1795,10 @@
                     try {
                         const data = JSON.parse(session);
                         if (data.timestamp && Date.now() - data.timestamp < 24 * 60 * 60 * 1000) {
+                            console.log('🔄 بازگشت از برنامه جانبی - بدون رفرش');
+                            // فقط اگر صفحه لاگین است، رفرش کن
                             const loginPage = document.getElementById('loginPage');
                             if (loginPage) {
-                                console.log('🔄 بازگشت از برنامه جانبی - رفرش');
                                 location.reload();
                             }
                         }
@@ -1818,7 +1807,7 @@
             }
         });
 
-        console.log('✅ کد کامل با تابع openExternalLink بارگذاری شد');
+        console.log('✅ کد نهایی بدون رفرش بارگذاری شد');
     </script>
 </body>
 </html>
