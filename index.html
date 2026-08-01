@@ -705,6 +705,42 @@
         const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
 
         // ============================================================
+        // تشخیص PWA (برنامه نصب شده)
+        // ============================================================
+        function isInPWA() {
+            return window.matchMedia('(display-mode: standalone)').matches || 
+                   window.navigator.standalone === true ||
+                   document.referrer.includes('android-app://');
+        }
+
+        // ============================================================
+        // تابع باز کردن لینک‌های خارجی در مرورگر اصلی
+        // ============================================================
+        function openExternalLink(url, appName) {
+            // اگر در PWA هستیم، از کاربر تأیید می‌گیریم و در مرورگر باز می‌کنیم
+            if (isInPWA()) {
+                if (confirm(`⚠️ توجه: برای باز کردن ${appName}، از برنامه خارج شده و در مرورگر باز می‌شود.\nآیا مطمئن هستید؟`)) {
+                    // استفاده از window.open با _blank باعث می‌شود در مرورگر خارجی باز شود
+                    window.open(url, '_blank');
+                }
+            } else {
+                // اگر در مرورگر معمولی هستیم، مستقیم باز می‌شود
+                if (confirm(`آیا می‌خواهید ${appName} را باز کنید؟`)) {
+                    window.open(url, '_blank');
+                }
+            }
+        }
+
+        // تابع ساده برای لینک‌هایی که نیاز به تأیید ندارند (فقط باز شدن در مرورگر)
+        function openInBrowser(url) {
+            if (isInPWA()) {
+                window.open(url, '_blank');
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        // ============================================================
         // غیرفعال‌سازی دکمه برگشت گوشی
         // ============================================================
         (function disableBackButton() {
@@ -1616,10 +1652,11 @@
             }
             
             // ===== gridMenuHtml (با کلید خروج در منوی اصلی) =====
+            // تمام لینک‌های خارجی با openExternalLink یا openInBrowser جایگزین شده‌اند
             const gridMenuHtml = `
                 <div class="grid-menu" id="gridMenu">
                     <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')"><div class="menu-icon"><i class="fas fa-user-circle"></i></div><div class="menu-label">پروفایل</div></div>
-                    <div class="grid-menu-item" data-tab="cardtransfer" onclick="window.open('https://pwa.ghabzino.com/cardTransfer','_blank')" style="border-color:#10b981; background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(16,185,129,0.02);"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-exchange-alt"></i></div><div class="menu-label" style="color:#10b981;">کارت به کارت</div><span class="menu-badge" id="cardBadge">!</span></div>
+                    <div class="grid-menu-item" data-tab="cardtransfer" onclick="openExternalLink('https://pwa.ghabzino.com/cardTransfer','کارت به کارت')" style="border-color:#10b981; background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(16,185,129,0.02);"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-exchange-alt"></i></div><div class="menu-label" style="color:#10b981;">کارت به کارت</div><span class="menu-badge" id="cardBadge">!</span></div>
                     ${myFundMenuItem}
                     <div class="grid-menu-item" data-tab="dashboard" onclick="selectMenuItem('dashboard')"><div class="menu-icon"><i class="fas fa-chart-line"></i></div><div class="menu-label">صورتحساب</div><span class="menu-badge" id="notifBadgeGrid">0</span></div>
                     <div class="grid-menu-item" data-tab="lastSms" onclick="selectMenuItem('lastSms')"><div class="menu-icon"><i class="fas fa-sms"></i></div><div class="menu-label">آخرین پیامک صورتحساب</div></div>
@@ -1637,29 +1674,29 @@
                     <div class="grid-menu-item" data-tab="logout" onclick="doLogout()"><div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div><div class="menu-label" style="color:var(--danger-color);">خروج</div></div>
                 </div>`;
             
-            // ===== appsHtml با لینک‌های اصلاح شده (window.open با تأیید کاربر برای اسنپ و تپسی) =====
+            // ===== appsHtml با لینک‌های اصلاح شده (همه در مرورگر خارجی باز می‌شوند) =====
             const appsHtml = `
                 <div class="apps-section">
                     <div class="apps-title"><i class="fas fa-th-large"></i> برنامه‌های کاربردی <span style="font-size:0.6rem; color:var(--text-muted);">(سرویس‌های ویژه)</span></div>
                     <div class="apps-grid">
                         <div class="app-item" data-app="weather" onclick="selectMenuItem('weather')"><div class="app-icon"><i class="fas fa-cloud-sun"></i></div><div class="app-label">آب و هوا</div></div>
                         <div class="app-item" data-app="prices" onclick="selectMenuItem('prices')"><div class="app-icon"><i class="fas fa-coins"></i></div><div class="app-label">قیمت‌های روز</div></div>
-                        <div class="app-item" data-app="snapp" onclick="openExternalApp('https://app.snapp.taxi/login','اسنپ')" style="border-color:#00bfa5; background:linear-gradient(135deg,rgba(0,191,165,0.05),rgba(0,191,165,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#00bfa5,#009688);"><i class="fas fa-car"></i></div><div class="app-label" style="color:#00bfa5;">اسنپ</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
-                        <div class="app-item" data-app="tapsi" onclick="openExternalApp('https://accounts.tapsi.ir/login?client_id=tapsi.cab.passenger&redirect_uri=https%3A%2F%2Fapp.tapsi.cab&response_type=code&scope=PASSENGER&state=0d7fad891c474d778306ca5313bff988&code_challenge=OeOUkbjBvl0Hisyhg91XJvX5pfp0PAsnx_1ZK0gjC3I&code_challenge_method=S256&response_mode=query','تپسی')" style="border-color:#ff6b35; background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(255,107,53,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#ff6b35,#e55a2b);"><i class="fas fa-taxi"></i></div><div class="app-label" style="color:#ff6b35;">تپسی</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
-                        <div class="app-item" data-app="sadagh" onclick="window.open('https://sama.emdad.ir/Sama','_blank')" style="border-color:#f59e0b; background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-hand-holding-heart"></i></div><div class="app-label" style="color:#f59e0b;">صدقه من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه امور خیریه</div></div>
-                        <div class="app-item" data-app="bank" onclick="window.open('https://billing.bsi.ir/#!/userAuth/UserLogin','_blank')" style="border-color:#c0392b; background:linear-gradient(135deg,rgba(192,57,43,0.05),rgba(192,57,43,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#c0392b,#e74c3c);"><i class="fas fa-university"></i></div><div class="app-label" style="color:#c0392b;">صورتحساب بانک صادرات</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پرداخت الکترونیک</div></div>
+                        <div class="app-item" data-app="snapp" onclick="openExternalLink('https://app.snapp.taxi/login','اسنپ')" style="border-color:#00bfa5; background:linear-gradient(135deg,rgba(0,191,165,0.05),rgba(0,191,165,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#00bfa5,#009688);"><i class="fas fa-car"></i></div><div class="app-label" style="color:#00bfa5;">اسنپ</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
+                        <div class="app-item" data-app="tapsi" onclick="openExternalLink('https://accounts.tapsi.ir/login?client_id=tapsi.cab.passenger&redirect_uri=https%3A%2F%2Fapp.tapsi.cab&response_type=code&scope=PASSENGER&state=0d7fad891c474d778306ca5313bff988&code_challenge=OeOUkbjBvl0Hisyhg91XJvX5pfp0PAsnx_1ZK0gjC3I&code_challenge_method=S256&response_mode=query','تپسی')" style="border-color:#ff6b35; background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(255,107,53,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#ff6b35,#e55a2b);"><i class="fas fa-taxi"></i></div><div class="app-label" style="color:#ff6b35;">تپسی</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
+                        <div class="app-item" data-app="sadagh" onclick="openInBrowser('https://sama.emdad.ir/Sama')" style="border-color:#f59e0b; background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-hand-holding-heart"></i></div><div class="app-label" style="color:#f59e0b;">صدقه من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه امور خیریه</div></div>
+                        <div class="app-item" data-app="bank" onclick="openInBrowser('https://billing.bsi.ir/#!/userAuth/UserLogin')" style="border-color:#c0392b; background:linear-gradient(135deg,rgba(192,57,43,0.05),rgba(192,57,43,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#c0392b,#e74c3c);"><i class="fas fa-university"></i></div><div class="app-label" style="color:#c0392b;">صورتحساب بانک صادرات</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پرداخت الکترونیک</div></div>
                     </div>
                 </div>`;
             
-            // ===== governmentLinksHtml با لینک‌های اصلاح شده (window.open در تب جدید) =====
+            // ===== governmentLinksHtml با لینک‌های اصلاح شده (همه در مرورگر خارجی) =====
             const governmentLinksHtml = `
                 <div class="apps-section" style="margin-top:8px; border-color: #2563eb;">
                     <div class="apps-title" style="color:var(--text-primary);"><i class="fas fa-building" style="color:#2563eb;"></i> خدمات الکترونیک کشور <span style="font-size:0.6rem; color:var(--text-muted);">(دسترسی سریع به سامانه‌های دولتی)</span></div>
                     <div class="apps-grid" style="grid-template-columns:1fr 1fr 1fr 1fr;">
-                        <div class="app-item" data-app="tamin" onclick="window.open('https://eservices.tamin.ir/','_blank')" style="border-color:#2563eb; background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(37,99,235,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);"><i class="fas fa-shield-alt"></i></div><div class="app-label" style="color:#2563eb;">تامین من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه تامین اجتماعی</div></div>
-                        <div class="app-item" data-app="dolat" onclick="window.open('https://sso.my.gov.ir/login','_blank')" style="border-color:#dc2626; background:linear-gradient(135deg,rgba(220,38,38,0.05),rgba(220,38,38,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#dc2626,#b91c1c);"><i class="fas fa-flag"></i></div><div class="app-label" style="color:#dc2626;">دولت من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">دولت هوشمند</div></div>
-                        <div class="app-item" data-app="telebiyon" onclick="window.open('https://telewebion.com/','_blank')" style="border-color:#e74c3c; background:linear-gradient(135deg,rgba(231,76,60,0.05),rgba(231,76,60,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);"><i class="fas fa-tv"></i></div><div class="app-label" style="color:#e74c3c;">تلوبیون</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پخش زنده صدا و سیما</div></div>
-                        <div class="app-item" data-app="shamim" onclick="window.open('https://kala.sfara.ir/','_blank')" style="border-color:#8b5cf6; background:linear-gradient(135deg,rgba(139,92,246,0.05),rgba(139,92,246,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); width:50px; height:50px; font-size:1.5rem;"><i class="fas fa-shopping-basket"></i></div><div class="app-label" style="color:#8b5cf6; font-size:0.7rem;">شمیم</div><div style="font-size:0.4rem;color:var(--text-secondary);font-weight:bold;">اطلاعات کالابرگ یارانه</div></div>
+                        <div class="app-item" data-app="tamin" onclick="openInBrowser('https://eservices.tamin.ir/')" style="border-color:#2563eb; background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(37,99,235,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);"><i class="fas fa-shield-alt"></i></div><div class="app-label" style="color:#2563eb;">تامین من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه تامین اجتماعی</div></div>
+                        <div class="app-item" data-app="dolat" onclick="openInBrowser('https://sso.my.gov.ir/login')" style="border-color:#dc2626; background:linear-gradient(135deg,rgba(220,38,38,0.05),rgba(220,38,38,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#dc2626,#b91c1c);"><i class="fas fa-flag"></i></div><div class="app-label" style="color:#dc2626;">دولت من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">دولت هوشمند</div></div>
+                        <div class="app-item" data-app="telebiyon" onclick="openInBrowser('https://telewebion.com/')" style="border-color:#e74c3c; background:linear-gradient(135deg,rgba(231,76,60,0.05),rgba(231,76,60,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);"><i class="fas fa-tv"></i></div><div class="app-label" style="color:#e74c3c;">تلوبیون</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پخش زنده صدا و سیما</div></div>
+                        <div class="app-item" data-app="shamim" onclick="openInBrowser('https://kala.sfara.ir/')" style="border-color:#8b5cf6; background:linear-gradient(135deg,rgba(139,92,246,0.05),rgba(139,92,246,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); width:50px; height:50px; font-size:1.5rem;"><i class="fas fa-shopping-basket"></i></div><div class="app-label" style="color:#8b5cf6; font-size:0.7rem;">شمیم</div><div style="font-size:0.4rem;color:var(--text-secondary);font-weight:bold;">اطلاعات کالابرگ یارانه</div></div>
                     </div>
                 </div>`;
             
@@ -1711,15 +1748,6 @@
                 <div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.8rem;">برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید</div>`;
             updateGridBadges();
             setInterval(() => { const el = document.getElementById('clockDisplay'); if (el) el.textContent = new Date().toLocaleTimeString('fa-IR'); }, 1000);
-        }
-
-        // ============================================================
-        // تابع باز کردن برنامه‌های خارجی با تأیید کاربر
-        // ============================================================
-        function openExternalApp(url, appName) {
-            if (confirm(`آیا می‌خواهید ${appName} را در یک مرورگر جدید باز کنید؟`)) {
-                window.open(url, '_blank');
-            }
         }
 
         // ============================================================
