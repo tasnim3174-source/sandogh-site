@@ -183,21 +183,51 @@
         .header-date .date-row span { font-size: 1.3rem; font-weight: bold; color: var(--date-color); }
         .header-date .date-row .sep { color: var(--text-muted); font-size: 1.5rem; }
         .header-date .date-row #clockDisplay { font-size: 1.6rem; font-weight: bold; color: var(--date-color); }
-        .header-date .date-row .update-text { font-size: 0.85rem; color: var(--text-muted); background: rgba(0, 0, 0, 0.05); padding: 3px 14px; border-radius: 8px; }
         .header-date .greeting-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; justify-content: center; flex-wrap: wrap; }
         .header-date .greeting-row .greeting-name { font-size: 1.1rem; font-weight: bold; color: var(--text-primary); }
         .header-date .greeting-row .greeting-text { font-size: 1rem; color: var(--gold-color); background: rgba(245, 158, 11, 0.15); padding: 3px 18px; border-radius: 14px; font-weight: bold; }
 
-        .quick-info-box { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; background: var(--card-bg); border-radius: 12px; padding: 12px 16px; margin-top: 4px; box-shadow: 0 2px 8px var(--shadow-color); width: 100%; }
-        .quick-info-box .info-item { text-align: center; padding: 6px 8px; border-radius: 8px; }
-        .quick-info-box .info-item .info-label { color: var(--text-secondary); font-size: 0.7rem; font-weight: bold; margin-bottom: 2px; }
-        .quick-info-box .info-item .info-value { font-size: 1.3rem; font-weight: bold; }
+        /* === باکس اطلاعات صفحه اصلی با چیدمان ۴ تایی === */
+        .quick-info-box { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr 1fr; 
+            gap: 8px; 
+            background: var(--card-bg); 
+            border-radius: 14px; 
+            padding: 14px 16px; 
+            margin-top: 6px; 
+            box-shadow: 0 4px 15px var(--shadow-color); 
+            width: 100%; 
+        }
+        .quick-info-box .info-item { 
+            text-align: center; 
+            padding: 10px 8px; 
+            border-radius: 10px; 
+            border: 2px solid var(--border-color);
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+        }
+        .quick-info-box .info-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--shadow-color); }
+        .quick-info-box .info-item .info-label { 
+            color: var(--text-secondary); 
+            font-size: 0.65rem; 
+            font-weight: bold; 
+            margin-bottom: 2px; 
+        }
+        .quick-info-box .info-item .info-value { 
+            font-size: 1.2rem; 
+            font-weight: bold; 
+        }
         .quick-info-box .info-item .info-value.green { color: var(--success-color); }
         .quick-info-box .info-item .info-value.red { color: var(--danger-color); }
         .quick-info-box .info-item .info-value.gold { color: var(--gold-color); }
         .quick-info-box .info-item .info-value.purple { color: var(--purple-color); }
+        .quick-info-box .info-item .info-value.blue { color: var(--blue-color); }
+        .quick-info-box .info-item .info-value.teal { color: var(--teal-color); }
+        .quick-info-box .info-item .info-value.pink { color: var(--pink-color); }
         .quick-info-box .progress-container { width: 100%; height: 6px; background: var(--bg-secondary); border-radius: 6px; overflow: hidden; margin-top: 4px; }
         .quick-info-box .progress-bar { height: 100%; border-radius: 6px; transition: width 0.8s ease; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); }
+
         .goal-progress-container { width: 100%; height: 8px; background: var(--bg-secondary); border-radius: 10px; overflow: hidden; margin: 4px 0; }
         .goal-progress-bar { height: 100%; border-radius: 10px; transition: width 0.8s ease; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); }
 
@@ -270,8 +300,6 @@
         .system-message-box .message-text { font-size: 0.9rem; color: var(--text-primary); line-height: 1.6; flex: 1; font-weight: bold; }
         .info-box { background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%); border-right: 5px solid var(--gradient-start); padding: 10px 14px; margin-bottom: 12px; border-radius: 10px; font-weight: bold; font-size: 0.9rem; box-shadow: 0 4px 15px var(--shadow-color); color: var(--text-primary); }
         .content-area { min-height: 200px; padding-bottom: 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .back-to-menu-btn { background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%); color: #fff; border: none; padding: 10px 24px; border-radius: 12px; cursor: pointer; font-weight: bold; font-size: 0.95rem; transition: transform 0.15s; min-height: 42px; touch-action: manipulation; display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; box-shadow: 0 4px 20px rgba(102, 126, 234, 0.35); }
-        .back-to-menu-btn:active { transform: scale(0.94); }
 
         .settings-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.75); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); overflow-y: auto; }
         .settings-modal.show { display: flex; }
@@ -453,6 +481,36 @@
         .back-to-top:active { transform: scale(0.9); }
         .back-to-top.show { display: flex; }
 
+        /* ===== دکمه شناور بازگشت به منو ===== */
+        .floating-home-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 999;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .floating-home-btn:active {
+            transform: scale(0.9);
+        }
+        [data-theme="dark"] .floating-home-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
         @media (max-width: 768px) {
             .grid-menu { grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px; }
             .grid-menu-item .menu-icon { width: 85px; height: 85px; font-size: 2.8rem; border-radius: 22px; }
@@ -466,8 +524,9 @@
             .header-date .date-row #clockDisplay { font-size: 1.3rem; }
             .header-rank .rank-value { font-size: 1.5rem; }
             .quick-info-box { grid-template-columns: 1fr 1fr; gap: 6px; }
-            .quick-info-box .info-item .info-value { font-size: 1.1rem; }
+            .quick-info-box .info-item .info-value { font-size: 1rem; }
             .settings-modal-content { padding: 20px 22px; margin: 10px; max-height: 85vh; }
+            .floating-home-btn { bottom: 70px; right: 16px; width: 50px; height: 50px; font-size: 1.3rem; }
         }
         @media (max-width: 480px) {
             .grid-menu { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 10px; }
@@ -485,8 +544,9 @@
             .header-date .date-row #clockDisplay { font-size: 1.1rem; }
             .header-rank .rank-value { font-size: 1.3rem; }
             .quick-info-box { grid-template-columns: 1fr 1fr; gap: 4px; padding: 8px 10px; }
-            .quick-info-box .info-item .info-value { font-size: 1rem; }
+            .quick-info-box .info-item .info-value { font-size: 0.9rem; }
             .settings-modal-content { padding: 16px 18px; max-height: 80vh; }
+            .floating-home-btn { bottom: 60px; right: 12px; width: 44px; height: 44px; font-size: 1.1rem; }
         }
     </style>
 </head>
@@ -587,6 +647,11 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- FLOATING HOME BUTTON -->
+    <button class="floating-home-btn" id="floatingHomeBtn" onclick="goToMenu()" aria-label="بازگشت به منو">
+        <i class="fas fa-home"></i>
+    </button>
+
     <!-- APP -->
     <div class="container" id="appContainer">
         <div class="login-page" id="loginPage">
@@ -638,6 +703,23 @@
         const SUPPORT_INFO = { phone: '09138944709', accountNumber: '', cardNumber: '', shebaNumber: '', websiteAddress: '', itaaAddress: '@ethads', fundName: 'صندوق اتحاد' };
         let SYSTEM_MESSAGE = '';
         const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
+
+        // ============================================================
+        // غیرفعال‌سازی دکمه برگشت گوشی
+        // ============================================================
+        (function disableBackButton() {
+            window.history.pushState(null, null, window.location.href);
+            window.addEventListener('popstate', function(event) {
+                window.history.pushState(null, null, window.location.href);
+                // نمایش پیام به کاربر
+                const msg = document.createElement('div');
+                msg.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--card-bg);color:var(--text-primary);padding:12px 24px;border-radius:12px;box-shadow:0 8px 30px var(--shadow-color);z-index:1000;font-weight:bold;font-size:0.85rem;text-align:center;border-right:4px solid var(--gold-color);max-width:90%;';
+                msg.innerHTML = '🔒 برای بازگشت به منوی اصلی از دکمه شناور 🏠 استفاده کنید';
+                document.body.appendChild(msg);
+                setTimeout(() => { msg.remove(); }, 3000);
+            });
+        })();
+
         // ============================================================
         // 2. مدیریت تم (Theme)
         // ============================================================
@@ -1533,11 +1615,11 @@
                 myFundMenuItem = `<div class="grid-menu-item" data-tab="myFund" onclick="selectMenuItem('myFund')"><div class="menu-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"><i class="fas fa-star"></i></div><div class="menu-label">صندوق من 😍</div><span class="menu-badge" id="fundBadge">!</span></div>`;
             }
             
-            // ===== gridMenuHtml با لینک‌های اصلاح شده =====
+            // ===== gridMenuHtml (با کلید خروج در منوی اصلی) =====
             const gridMenuHtml = `
                 <div class="grid-menu" id="gridMenu">
                     <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')"><div class="menu-icon"><i class="fas fa-user-circle"></i></div><div class="menu-label">پروفایل</div></div>
-                    <div class="grid-menu-item" data-tab="cardtransfer" onclick="window.location.href='https://pwa.ghabzino.com/cardTransfer'" style="border-color:#10b981; background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(16,185,129,0.02);"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-exchange-alt"></i></div><div class="menu-label" style="color:#10b981;">کارت به کارت</div><span class="menu-badge" id="cardBadge">!</span></div>
+                    <div class="grid-menu-item" data-tab="cardtransfer" onclick="window.open('https://pwa.ghabzino.com/cardTransfer','_blank')" style="border-color:#10b981; background:linear-gradient(135deg,rgba(16,185,129,0.05),rgba(16,185,129,0.02);"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-exchange-alt"></i></div><div class="menu-label" style="color:#10b981;">کارت به کارت</div><span class="menu-badge" id="cardBadge">!</span></div>
                     ${myFundMenuItem}
                     <div class="grid-menu-item" data-tab="dashboard" onclick="selectMenuItem('dashboard')"><div class="menu-icon"><i class="fas fa-chart-line"></i></div><div class="menu-label">صورتحساب</div><span class="menu-badge" id="notifBadgeGrid">0</span></div>
                     <div class="grid-menu-item" data-tab="lastSms" onclick="selectMenuItem('lastSms')"><div class="menu-icon"><i class="fas fa-sms"></i></div><div class="menu-label">آخرین پیامک صورتحساب</div></div>
@@ -1555,40 +1637,57 @@
                     <div class="grid-menu-item" data-tab="logout" onclick="doLogout()"><div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div><div class="menu-label" style="color:var(--danger-color);">خروج</div></div>
                 </div>`;
             
-            // ===== appsHtml با لینک‌های اصلاح شده (window.location.href) =====
+            // ===== appsHtml با لینک‌های اصلاح شده (window.open با تأیید کاربر برای اسنپ و تپسی) =====
             const appsHtml = `
                 <div class="apps-section">
                     <div class="apps-title"><i class="fas fa-th-large"></i> برنامه‌های کاربردی <span style="font-size:0.6rem; color:var(--text-muted);">(سرویس‌های ویژه)</span></div>
                     <div class="apps-grid">
                         <div class="app-item" data-app="weather" onclick="selectMenuItem('weather')"><div class="app-icon"><i class="fas fa-cloud-sun"></i></div><div class="app-label">آب و هوا</div></div>
                         <div class="app-item" data-app="prices" onclick="selectMenuItem('prices')"><div class="app-icon"><i class="fas fa-coins"></i></div><div class="app-label">قیمت‌های روز</div></div>
-                        <div class="app-item" data-app="snapp" onclick="window.location.href='https://app.snapp.taxi/login'" style="border-color:#00bfa5; background:linear-gradient(135deg,rgba(0,191,165,0.05),rgba(0,191,165,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#00bfa5,#009688);"><i class="fas fa-car"></i></div><div class="app-label" style="color:#00bfa5;">اسنپ</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
-                        <div class="app-item" data-app="tapsi" onclick="window.location.href='https://accounts.tapsi.ir/login?client_id=tapsi.cab.passenger&redirect_uri=https%3A%2F%2Fapp.tapsi.cab&response_type=code&scope=PASSENGER&state=0d7fad891c474d778306ca5313bff988&code_challenge=OeOUkbjBvl0Hisyhg91XJvX5pfp0PAsnx_1ZK0gjC3I&code_challenge_method=S256&response_mode=query'" style="border-color:#ff6b35; background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(255,107,53,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#ff6b35,#e55a2b);"><i class="fas fa-taxi"></i></div><div class="app-label" style="color:#ff6b35;">تپسی</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
-                        <div class="app-item" data-app="sadagh" onclick="window.location.href='https://sama.emdad.ir/Sama'" style="border-color:#f59e0b; background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-hand-holding-heart"></i></div><div class="app-label" style="color:#f59e0b;">صدقه من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه امور خیریه</div></div>
-                        <div class="app-item" data-app="bank" onclick="window.location.href='https://billing.bsi.ir/#!/userAuth/UserLogin'" style="border-color:#c0392b; background:linear-gradient(135deg,rgba(192,57,43,0.05),rgba(192,57,43,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#c0392b,#e74c3c);"><i class="fas fa-university"></i></div><div class="app-label" style="color:#c0392b;">صورتحساب بانک صادرات</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پرداخت الکترونیک</div></div>
+                        <div class="app-item" data-app="snapp" onclick="openExternalApp('https://app.snapp.taxi/login','اسنپ')" style="border-color:#00bfa5; background:linear-gradient(135deg,rgba(0,191,165,0.05),rgba(0,191,165,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#00bfa5,#009688);"><i class="fas fa-car"></i></div><div class="app-label" style="color:#00bfa5;">اسنپ</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
+                        <div class="app-item" data-app="tapsi" onclick="openExternalApp('https://accounts.tapsi.ir/login?client_id=tapsi.cab.passenger&redirect_uri=https%3A%2F%2Fapp.tapsi.cab&response_type=code&scope=PASSENGER&state=0d7fad891c474d778306ca5313bff988&code_challenge=OeOUkbjBvl0Hisyhg91XJvX5pfp0PAsnx_1ZK0gjC3I&code_challenge_method=S256&response_mode=query','تپسی')" style="border-color:#ff6b35; background:linear-gradient(135deg,rgba(255,107,53,0.05),rgba(255,107,53,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#ff6b35,#e55a2b);"><i class="fas fa-taxi"></i></div><div class="app-label" style="color:#ff6b35;">تپسی</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه حمل و نقل</div></div>
+                        <div class="app-item" data-app="sadagh" onclick="window.open('https://sama.emdad.ir/Sama','_blank')" style="border-color:#f59e0b; background:linear-gradient(135deg,rgba(245,158,11,0.05),rgba(245,158,11,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-hand-holding-heart"></i></div><div class="app-label" style="color:#f59e0b;">صدقه من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه امور خیریه</div></div>
+                        <div class="app-item" data-app="bank" onclick="window.open('https://billing.bsi.ir/#!/userAuth/UserLogin','_blank')" style="border-color:#c0392b; background:linear-gradient(135deg,rgba(192,57,43,0.05),rgba(192,57,43,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#c0392b,#e74c3c);"><i class="fas fa-university"></i></div><div class="app-label" style="color:#c0392b;">صورتحساب بانک صادرات</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پرداخت الکترونیک</div></div>
                     </div>
                 </div>`;
             
-            // ===== governmentLinksHtml با لینک‌های اصلاح شده =====
+            // ===== governmentLinksHtml با لینک‌های اصلاح شده (window.open در تب جدید) =====
             const governmentLinksHtml = `
                 <div class="apps-section" style="margin-top:8px; border-color: #2563eb;">
                     <div class="apps-title" style="color:var(--text-primary);"><i class="fas fa-building" style="color:#2563eb;"></i> خدمات الکترونیک کشور <span style="font-size:0.6rem; color:var(--text-muted);">(دسترسی سریع به سامانه‌های دولتی)</span></div>
                     <div class="apps-grid" style="grid-template-columns:1fr 1fr 1fr 1fr;">
-                        <div class="app-item" data-app="tamin" onclick="window.location.href='https://eservices.tamin.ir/'" style="border-color:#2563eb; background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(37,99,235,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);"><i class="fas fa-shield-alt"></i></div><div class="app-label" style="color:#2563eb;">تامین من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه تامین اجتماعی</div></div>
-                        <div class="app-item" data-app="dolat" onclick="window.location.href='https://sso.my.gov.ir/login'" style="border-color:#dc2626; background:linear-gradient(135deg,rgba(220,38,38,0.05),rgba(220,38,38,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#dc2626,#b91c1c);"><i class="fas fa-flag"></i></div><div class="app-label" style="color:#dc2626;">دولت من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">دولت هوشمند</div></div>
-                        <div class="app-item" data-app="telebiyon" onclick="window.location.href='https://telewebion.com/'" style="border-color:#e74c3c; background:linear-gradient(135deg,rgba(231,76,60,0.05),rgba(231,76,60,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);"><i class="fas fa-tv"></i></div><div class="app-label" style="color:#e74c3c;">تلوبیون</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پخش زنده صدا و سیما</div></div>
-                        <div class="app-item" data-app="shamim" onclick="window.location.href='https://kala.sfara.ir/'" style="border-color:#8b5cf6; background:linear-gradient(135deg,rgba(139,92,246,0.05),rgba(139,92,246,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); width:50px; height:50px; font-size:1.5rem;"><i class="fas fa-shopping-basket"></i></div><div class="app-label" style="color:#8b5cf6; font-size:0.7rem;">شمیم</div><div style="font-size:0.4rem;color:var(--text-secondary);font-weight:bold;">اطلاعات کالابرگ یارانه</div></div>
+                        <div class="app-item" data-app="tamin" onclick="window.open('https://eservices.tamin.ir/','_blank')" style="border-color:#2563eb; background:linear-gradient(135deg,rgba(37,99,235,0.05),rgba(37,99,235,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);"><i class="fas fa-shield-alt"></i></div><div class="app-label" style="color:#2563eb;">تامین من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه تامین اجتماعی</div></div>
+                        <div class="app-item" data-app="dolat" onclick="window.open('https://sso.my.gov.ir/login','_blank')" style="border-color:#dc2626; background:linear-gradient(135deg,rgba(220,38,38,0.05),rgba(220,38,38,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#dc2626,#b91c1c);"><i class="fas fa-flag"></i></div><div class="app-label" style="color:#dc2626;">دولت من</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">دولت هوشمند</div></div>
+                        <div class="app-item" data-app="telebiyon" onclick="window.open('https://telewebion.com/','_blank')" style="border-color:#e74c3c; background:linear-gradient(135deg,rgba(231,76,60,0.05),rgba(231,76,60,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b);"><i class="fas fa-tv"></i></div><div class="app-label" style="color:#e74c3c;">تلوبیون</div><div style="font-size:0.5rem;color:var(--text-secondary);font-weight:bold;">سامانه پخش زنده صدا و سیما</div></div>
+                        <div class="app-item" data-app="shamim" onclick="window.open('https://kala.sfara.ir/','_blank')" style="border-color:#8b5cf6; background:linear-gradient(135deg,rgba(139,92,246,0.05),rgba(139,92,246,0.02);"><div class="app-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); width:50px; height:50px; font-size:1.5rem;"><i class="fas fa-shopping-basket"></i></div><div class="app-label" style="color:#8b5cf6; font-size:0.7rem;">شمیم</div><div style="font-size:0.4rem;color:var(--text-secondary);font-weight:bold;">اطلاعات کالابرگ یارانه</div></div>
                     </div>
                 </div>`;
             
-            // ===== quickInfoHtml با ۵ آیتم =====
+            // ===== quickInfoHtml با ۴ آیتم در هر ردیف =====
             const quickInfoHtml = `
-                <div class="quick-info-box" style="grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:6px;">
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08)); border-radius:8px; padding:8px;"><div class="info-label">موجودی شما</div><div class="info-value green">${fmtNum(correctBalance)}</div></div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:8px;"><div class="info-label">مانده بدهی شما</div><div class="info-value red">${fmtNum(member?.loanBalance || 0)}</div></div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.08)); border-radius:8px; padding:8px;"><div class="info-label">وضعیت پس‌انداز</div><div class="info-value ${member?.savingsStatus >= 0 ? 'green' : 'red'}">${fmtNum(member?.savingsStatus || 0)}</div></div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08)); border-radius:8px; padding:8px;"><div class="info-label">اقساط معوقه</div><div class="info-value red">${Math.abs(member?.overdueInstallments || 0)}</div></div>
-                    <div class="info-item" style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08)); border-radius:8px; padding:8px;"><div class="info-label">پیشرفت پرداخت اقساط</div><div class="info-value purple">${progressPercent}%</div><div style="width:100%; height:4px; background:var(--bg-secondary); border-radius:4px; overflow:hidden; margin-top:4px;"><div style="width:${progressPercent}%; height:100%; background:linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); border-radius:4px; transition:width 0.8s ease;"></div></div><div style="font-size:0.55rem; color:var(--text-secondary); margin-top:2px; font-weight:bold;">${paidInstallments} از ${totalInstallments} قسط پرداخت شده</div></div>
+                <div class="quick-info-box">
+                    <div class="info-item" style="border-color:var(--success-color); background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08));">
+                        <div class="info-label"><i class="fas fa-wallet"></i> موجودی فعلی شما</div>
+                        <div class="info-value green">${fmtNum(correctBalance)}</div>
+                    </div>
+                    <div class="info-item" style="border-color:var(--danger-color); background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.08));">
+                        <div class="info-label"><i class="fas fa-hand-holding-usd"></i> مانده وام و بدهی شما</div>
+                        <div class="info-value red">${fmtNum(member?.loanBalance || 0)}</div>
+                    </div>
+                    <div class="info-item" style="border-color:var(--gold-color); background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(217,119,6,0.08));">
+                        <div class="info-label"><i class="fas fa-piggy-bank"></i> وضعیت پس‌انداز شما</div>
+                        <div class="info-value ${member?.savingsStatus >= 0 ? 'green' : 'red'}">${fmtNum(member?.savingsStatus || 0)}</div>
+                    </div>
+                    <div class="info-item" style="border-color:var(--purple-color); background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.08));">
+                        <div class="info-label"><i class="fas fa-exclamation-triangle"></i> اقساط معوقه شما</div>
+                        <div class="info-value red">${Math.abs(member?.overdueInstallments || 0)}</div>
+                    </div>
+                    <div class="info-item" style="border-color:var(--teal-color); background:linear-gradient(135deg,rgba(20,184,166,0.08),rgba(13,148,136,0.08)); grid-column: span 2; border-right:4px solid var(--teal-color);">
+                        <div class="info-label"><i class="fas fa-chart-line"></i> پیشرفت پرداخت اقساط</div>
+                        <div class="info-value teal">${progressPercent}%</div>
+                        <div class="progress-container"><div class="progress-bar" style="width:${progressPercent}%;"></div></div>
+                        <div style="font-size:0.55rem; color:var(--text-secondary); margin-top:2px; font-weight:bold;">${paidInstallments} از ${totalInstallments} قسط پرداخت شده</div>
+                    </div>
                 </div>`;
 
             content.innerHTML = `
@@ -1600,7 +1699,7 @@
                         ${nextRankDistance > 0 ? `<span style="font-size:0.7rem;color:var(--text-secondary);font-weight:bold;background:rgba(255,255,255,0.15);padding:2px 12px;border-radius:12px;">📈 تا رتبه ${nextRankEmoji} ${nextRankName}: ${nextRankDistance} امتیاز</span>` : `<span style="font-size:0.7rem;color:var(--success-color);font-weight:bold;background:rgba(16,185,129,0.15);padding:2px 12px;border-radius:12px;">🏅 شما در بالاترین رتبه هستید!</span>`}
                     </div>
                     <div class="header-date">
-                        <div class="date-row"><i class="fas fa-calendar-alt"></i><span>${new Date().toLocaleDateString('en-US')}</span><span class="sep">|</span><i class="fas fa-calendar"></i><span>${new Date().toLocaleDateString('fa-IR')}</span><span class="sep">|</span><i class="fas fa-clock"></i><strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong><span class="update-text">🔄 ${updateTime}</span></div>
+                        <div class="date-row"><i class="fas fa-calendar-alt"></i><span>${new Date().toLocaleDateString('en-US')}</span><span class="sep">|</span><i class="fas fa-calendar"></i><span>${new Date().toLocaleDateString('fa-IR')}</span><span class="sep">|</span><i class="fas fa-clock"></i><strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong></div>
                         <div class="greeting-row"><span class="greeting-name">${member.firstName} عزیز</span><span class="greeting-text" style="color: ${greeting === 'ظهر بخیر' ? 'red' : 'var(--gold-color)'};">${greeting}</span></div>
                     </div>
                     ${quickInfoHtml}
@@ -1615,7 +1714,16 @@
         }
 
         // ============================================================
-        // 17.1 رندر پروفایل (Profile)
+        // تابع باز کردن برنامه‌های خارجی با تأیید کاربر
+        // ============================================================
+        function openExternalApp(url, appName) {
+            if (confirm(`آیا می‌خواهید ${appName} را در یک مرورگر جدید باز کنید؟`)) {
+                window.open(url, '_blank');
+            }
+        }
+
+        // ============================================================
+        // 17.1 رندر پروفایل (Profile) - بدون دکمه خروج
         // ============================================================
         function renderProfileContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -1658,7 +1766,7 @@
         }
 
         // ============================================================
-        // 17.2 رندر صندوق من (My Fund)
+        // 17.2 رندر صندوق من (My Fund) - بدون دکمه خروج
         // ============================================================
         function renderMyFundContent() {
             if (!FEATURES.showMyFund) return '<div class="info-box">این بخش غیرفعال شده است</div>';
@@ -1854,7 +1962,7 @@
         }
 
         // ============================================================
-        // 17.3 رندر صورتحساب (Dashboard)
+        // 17.3 رندر صورتحساب (Dashboard) - بدون دکمه خروج
         // ============================================================
         function renderDashboardContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -1917,8 +2025,8 @@
             return `<div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب مالی شما</div>${paymentStatusCard}${celebrationHtml}${adminHtml}${warningsHtml}<div class="dashboard-grid-2">${loanInfoHtml}${loanApprovedHtml}</div>${lastTxHtml}${allTxnsHtml}`;
         }
 
-               // ============================================================
-        // 17.4 رندر آخرین پیامک (Last SMS)
+        // ============================================================
+        // 17.4 رندر آخرین پیامک (Last SMS) - بدون دکمه خروج
         // ============================================================
         function renderLastSmsContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -1993,7 +2101,7 @@
         }
 
         // ============================================================
-        // 17.5 رندر باشگاه امتیازات (Club)
+        // 17.5 رندر باشگاه امتیازات (Club) - بدون دکمه خروج
         // ============================================================
         function renderClubContentHtml() {
             const products = window.SHOP_PRODUCTS || [];
@@ -2014,7 +2122,7 @@
         function selectClubTab(tab) { currentClubTab = tab; renderClubContent(); }
 
         // ============================================================
-        // 17.6 رندر خانواده (Family)
+        // 17.6 رندر خانواده (Family) - بدون دکمه خروج
         // ============================================================
         function renderFamilyContentHtml() {
             if (!isHeadOfHousehold()) {
@@ -2139,7 +2247,7 @@
         }
 
         // ============================================================
-        // 17.7 رندر دسترسی‌ها (Access) - کامل
+        // 17.7 رندر دسترسی‌ها (Access) - بدون دکمه خروج
         // ============================================================
         function renderAccessContentHtml() {
             if (!hasCouncilOrAdminAccess()) {
@@ -2265,8 +2373,9 @@
                 members = originalMembers;
             }
         }
+
         // ============================================================
-        // 17.8 رندر آب و هوا (Weather)
+        // 17.8 رندر آب و هوا (Weather) - بدون دکمه خروج
         // ============================================================
         function renderWeatherContent() {
             const city = localStorage.getItem('weather_city') || DEFAULT_CITY;
@@ -2329,7 +2438,7 @@
         }
 
         // ============================================================
-        // 17.9 رندر قیمت‌ها (Prices)
+        // 17.9 رندر قیمت‌ها (Prices) - بدون دکمه خروج
         // ============================================================
         function renderPricesContent() {
             let pricesHtml = `<div class="info-box"><i class="fas fa-coins"></i> قیمت‌های روز</div><div class="dashboard-section"><div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;"><h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;"><i class="fas fa-chart-line" style="color:var(--gold-color);"></i> قیمت ارز، سکه و طلا</h3><button class="btn-small info-btn" onclick="fetchPrices()" style="font-size:0.6rem; padding:4px 12px; min-height:28px;"><i class="fas fa-sync"></i> بروزرسانی</button></div><div id="pricesResult"><div style="text-align:center; padding:30px; color:var(--text-secondary);"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i><p style="margin-top:10px;">در حال دریافت قیمت‌ها...</p></div></div></div>`;
@@ -2364,7 +2473,7 @@
         }
 
         // ============================================================
-        // 17.10 رندر سایر بخش‌ها
+        // 17.10 رندر سایر بخش‌ها (بدون دکمه خروج)
         // ============================================================
         function renderStatisticsContentHtml() {
             if (!hasCouncilOrAdminAccess()) {
@@ -2591,11 +2700,9 @@
         }
 
         // ============================================================
-        // 19. رندر صفحه محتوا (Router)
+        // 19. رندر صفحه محتوا (Router) - بدون دکمه خروج
         // ============================================================
         function renderContentPage(page, content) {
-            const backBtnHtml = `<button class="back-to-menu-btn" onclick="goToMenu()"><i class="fas fa-arrow-right"></i> بازگشت به منوی اصلی</button>`;
-            let pageContent = '';
             const headerHtml = `<div class="header-bar" style="margin-bottom:8px; padding:8px 14px; flex-direction:row; justify-content:space-between;">
                     <div class="header-rank" style="font-size:0.8rem; padding:4px 14px; width:auto; flex-direction:row; gap:8px; margin-bottom:0;">
                         <span class="rank-label" style="font-size:0.5rem;">🏆 رتبه شما</span>
@@ -2603,10 +2710,11 @@
                         <span class="rank-tier" style="font-size:0.7rem; background:${memberScores[currentUser?.memberId]?.tier === 'gold' ? '#FFD700' : memberScores[currentUser?.memberId]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'}; padding:2px 10px; border-radius:12px;">${memberScores[currentUser?.memberId]?.tierName || ''}</span>
                     </div>
                     <div class="header-right">
-                        <button class="header-logout" onclick="doLogout()" style="font-size:0.7rem; padding:6px 14px; min-height:30px; background:linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:bold;"><i class="fas fa-sign-out-alt"></i> خروج</button>
+                        <span style="font-size:0.6rem; color:var(--text-muted); font-weight:bold;">${currentUser?.username || ''}</span>
                     </div>
                 </div>`;
 
+            let pageContent = '';
             switch (page) {
                 case 'profile': pageContent = renderProfileContent(); break;
                 case 'myFund': pageContent = renderMyFundContent(); break;
@@ -2627,7 +2735,8 @@
                 case 'prices': pageContent = renderPricesContent(); break;
                 default: pageContent = '<div class="info-box">بخش مورد نظر یافت نشد</div>';
             }
-            content.innerHTML = headerHtml + backBtnHtml + pageContent;
+            // دکمه خروج حذف شد - فقط در منوی اصلی وجود دارد
+            content.innerHTML = headerHtml + pageContent;
         }
 
         // ============================================================
@@ -2640,7 +2749,10 @@
             renderPage(page);
         }
 
-        function goToMenu() { currentPage = 'menu'; renderPage('menu'); }
+        function goToMenu() { 
+            currentPage = 'menu'; 
+            renderPage('menu'); 
+        }
 
         function selectMenuItem(tab) {
             if (tab === 'settings') { openSettings(); return; }
@@ -2743,15 +2855,6 @@
         // ==========================================
         // بازگشت خودکار به صفحه اصلی بعد از برنامه‌های جانبی
         // ==========================================
-        
-
-        // ==========================================
-        // تابع بررسی سریع نشست برای موبایل
-        // ==========================================
-                // ==========================================
-        // بازگشت خودکار به صفحه اصلی (نسخه نهایی و امن)
-        // ==========================================
-        // فقط زمانی که صفحه از کش مرورگر بازیابی میشه (موبایل)
         window.addEventListener('pageshow', function(event) {
             if (event.persisted) {
                 const session = localStorage.getItem('sandogh_user_session');
