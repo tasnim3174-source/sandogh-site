@@ -677,7 +677,6 @@
             <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
         </div>
     </div>
-
     <script>
         // ============================================================
         // 1. تنظیمات و متغیرهای سراسری
@@ -714,20 +713,17 @@
         }
 
         // ============================================================
-        // تابع باز کردن لینک‌های خارجی در مرورگر اصلی
+        // تابع باز کردن لینک‌های خارجی در مرورگر اصلی (اصلاح شده نهایی)
         // ============================================================
         function openExternalLink(url, appName) {
-            // اگر در PWA هستیم، از کاربر تأیید می‌گیریم و در مرورگر باز می‌کنیم
+            // اگر در برنامه نصب شده روی گوشی (PWA) هستیم
             if (isInPWA()) {
-                if (confirm(`⚠️ توجه: برای باز کردن ${appName}، از برنامه خارج شده و در مرورگر باز می‌شود.\nآیا مطمئن هستید؟`)) {
-                    // استفاده از window.open با _blank باعث می‌شود در مرورگر خارجی باز شود
-                    window.open(url, '_blank');
-                }
+                // دستور _system به WebView می‌گوید: این لینک را به مرورگر اصلی گوشی (کروم) بفرست
+                // وقتی کاربر دکمه برگشت را بزند، برنامه در پس‌زمینه است و بدون لود مجدد برمی‌گردد
+                window.open(url, '_system'); 
             } else {
-                // اگر در مرورگر معمولی هستیم، مستقیم باز می‌شود
-                if (confirm(`آیا می‌خواهید ${appName} را باز کنید؟`)) {
-                    window.open(url, '_blank');
-                }
+                // اگر در مرورگر معمولی وب هستیم، در یک تب جدید باز شود
+                window.open(url, '_blank');
             }
         }
 
@@ -1161,7 +1157,8 @@
                 setTimeout(() => { btn.innerHTML = 'کپی'; }, 2000);
             });
         }
-
+    </script>
+    <script>
         // ============================================================
         // 9. فیلتر و رندر تراکنش‌های اکسل
         // ============================================================
@@ -1607,7 +1604,7 @@
         }
 
         // ============================================================
-        // 16. رندر منوی اصلی (Menu) - با همه اصلاحات
+        // 16. رندر منوی اصلی (Menu)
         // ============================================================
         function renderMenuPage(content) {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -1651,8 +1648,7 @@
                 myFundMenuItem = `<div class="grid-menu-item" data-tab="myFund" onclick="selectMenuItem('myFund')"><div class="menu-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"><i class="fas fa-star"></i></div><div class="menu-label">صندوق من 😍</div><span class="menu-badge" id="fundBadge">!</span></div>`;
             }
             
-            // ===== gridMenuHtml (با کلید خروج در منوی اصلی) =====
-            // تمام لینک‌های خارجی با openExternalLink یا openInBrowser جایگزین شده‌اند
+            // ===== gridMenuHtml =====
             const gridMenuHtml = `
                 <div class="grid-menu" id="gridMenu">
                     <div class="grid-menu-item active" data-tab="profile" onclick="selectMenuItem('profile')"><div class="menu-icon"><i class="fas fa-user-circle"></i></div><div class="menu-label">پروفایل</div></div>
@@ -1674,7 +1670,7 @@
                     <div class="grid-menu-item" data-tab="logout" onclick="doLogout()"><div class="menu-icon"><i class="fas fa-sign-out-alt"></i></div><div class="menu-label" style="color:var(--danger-color);">خروج</div></div>
                 </div>`;
             
-            // ===== appsHtml با لینک‌های اصلاح شده (همه در مرورگر خارجی باز می‌شوند) =====
+            // ===== appsHtml =====
             const appsHtml = `
                 <div class="apps-section">
                     <div class="apps-title"><i class="fas fa-th-large"></i> برنامه‌های کاربردی <span style="font-size:0.6rem; color:var(--text-muted);">(سرویس‌های ویژه)</span></div>
@@ -1688,7 +1684,7 @@
                     </div>
                 </div>`;
             
-            // ===== governmentLinksHtml با لینک‌های اصلاح شده (همه در مرورگر خارجی) =====
+            // ===== governmentLinksHtml =====
             const governmentLinksHtml = `
                 <div class="apps-section" style="margin-top:8px; border-color: #2563eb;">
                     <div class="apps-title" style="color:var(--text-primary);"><i class="fas fa-building" style="color:#2563eb;"></i> خدمات الکترونیک کشور <span style="font-size:0.6rem; color:var(--text-muted);">(دسترسی سریع به سامانه‌های دولتی)</span></div>
@@ -1700,7 +1696,7 @@
                     </div>
                 </div>`;
             
-            // ===== quickInfoHtml با ۴ آیتم در هر ردیف =====
+            // ===== quickInfoHtml =====
             const quickInfoHtml = `
                 <div class="quick-info-box">
                     <div class="info-item" style="border-color:var(--success-color); background:linear-gradient(135deg,rgba(16,185,129,0.08),rgba(5,150,105,0.08));">
@@ -1751,7 +1747,7 @@
         }
 
         // ============================================================
-        // 17.1 رندر پروفایل (Profile) - بدون دکمه خروج
+        // 17.1 رندر پروفایل (Profile)
         // ============================================================
         function renderProfileContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -1794,7 +1790,7 @@
         }
 
         // ============================================================
-        // 17.2 رندر صندوق من (My Fund) - بدون دکمه خروج
+        // 17.2 رندر صندوق من (My Fund)
         // ============================================================
         function renderMyFundContent() {
             if (!FEATURES.showMyFund) return '<div class="info-box">این بخش غیرفعال شده است</div>';
@@ -1990,7 +1986,7 @@
         }
 
         // ============================================================
-        // 17.3 رندر صورتحساب (Dashboard) - بدون دکمه خروج
+        // 17.3 رندر صورتحساب (Dashboard)
         // ============================================================
         function renderDashboardContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -2054,7 +2050,7 @@
         }
 
         // ============================================================
-        // 17.4 رندر آخرین پیامک (Last SMS) - بدون دکمه خروج
+        // 17.4 رندر آخرین پیامک (Last SMS)
         // ============================================================
         function renderLastSmsContent() {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -2129,7 +2125,7 @@
         }
 
         // ============================================================
-        // 17.5 رندر باشگاه امتیازات (Club) - بدون دکمه خروج
+        // 17.5 رندر باشگاه امتیازات (Club)
         // ============================================================
         function renderClubContentHtml() {
             const products = window.SHOP_PRODUCTS || [];
@@ -2150,7 +2146,7 @@
         function selectClubTab(tab) { currentClubTab = tab; renderClubContent(); }
 
         // ============================================================
-        // 17.6 رندر خانواده (Family) - بدون دکمه خروج
+        // 17.6 رندر خانواده (Family)
         // ============================================================
         function renderFamilyContentHtml() {
             if (!isHeadOfHousehold()) {
@@ -2275,7 +2271,7 @@
         }
 
         // ============================================================
-        // 17.7 رندر دسترسی‌ها (Access) - بدون دکمه خروج
+        // 17.7 رندر دسترسی‌ها (Access)
         // ============================================================
         function renderAccessContentHtml() {
             if (!hasCouncilOrAdminAccess()) {
@@ -2403,7 +2399,7 @@
         }
 
         // ============================================================
-        // 17.8 رندر آب و هوا (Weather) - بدون دکمه خروج
+        // 17.8 رندر آب و هوا (Weather)
         // ============================================================
         function renderWeatherContent() {
             const city = localStorage.getItem('weather_city') || DEFAULT_CITY;
@@ -2466,7 +2462,7 @@
         }
 
         // ============================================================
-        // 17.9 رندر قیمت‌ها (Prices) - بدون دکمه خروج
+        // 17.9 رندر قیمت‌ها (Prices)
         // ============================================================
         function renderPricesContent() {
             let pricesHtml = `<div class="info-box"><i class="fas fa-coins"></i> قیمت‌های روز</div><div class="dashboard-section"><div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;"><h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;"><i class="fas fa-chart-line" style="color:var(--gold-color);"></i> قیمت ارز، سکه و طلا</h3><button class="btn-small info-btn" onclick="fetchPrices()" style="font-size:0.6rem; padding:4px 12px; min-height:28px;"><i class="fas fa-sync"></i> بروزرسانی</button></div><div id="pricesResult"><div style="text-align:center; padding:30px; color:var(--text-secondary);"><i class="fas fa-spinner fa-spin" style="font-size:2rem;"></i><p style="margin-top:10px;">در حال دریافت قیمت‌ها...</p></div></div></div>`;
@@ -2501,7 +2497,7 @@
         }
 
         // ============================================================
-        // 17.10 رندر سایر بخش‌ها (بدون دکمه خروج)
+        // 17.10 رندر سایر بخش‌ها
         // ============================================================
         function renderStatisticsContentHtml() {
             if (!hasCouncilOrAdminAccess()) {
@@ -2639,7 +2635,7 @@
 
         function renderSupportContentHtml() {
             return `<div class="info-box"><i class="fas fa-headset"></i> پشتیبانی</div>
-                <div class="dashboard-section"><h3 style="font-size:0.85rem;margin-bottom:6px;display:flex;align-items:center;gap:5px;color:var(--text-primary);font-weight:bold;"><i class="fas fa-info-circle"></i> اطلاعات تماس</h3><div class="support-grid">${SUPPORT_INFO.phone ? `<div class="support-card"><div class="support-icon" style="background:var(--success-color)"><i class="fas fa-phone"></i></div><div><div class="support-label">تلفن حسابداری</div><div class="support-value">${esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.phone)}',this)">کپی</button><a href="tel:${esc(SUPPORT_INFO.phone)}" class="btn-small success-btn" style="margin-top:2px;text-decoration:none;font-size:0.5rem;padding:3px 10px;min-height:22px;font-weight:bold;">تماس</a></div></div>` : ''}</div></div>
+                <div class="dashboard-section"><h3 style="font-size:0.85rem;margin-bottom:6px;display:flex;align-items:center;gap:5px;color:var(--text-primary);font-weight:bold;"><i class="fas fa-info-circle"></i> اطلاعات تماس</h3><div class="support-grid">${SUPPORT_INFO.phone ? `<div class="support-card"><div class="support-icon" style="background:var(--success-color)"><i class="fas fa-phone"></i></div><div><div class="support-label">تلفن حسابداری</div><div class="support-value">${esc(SUPPORT_INFO.phone)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.phone)}',this)">کپی</button><a href="tel:${esc(SUPPORT_INFO.phone)}" onclick="event.preventDefault(); openExternalLink('tel:${esc(SUPPORT_INFO.phone)}', 'تماس تلفنی')" class="btn-small success-btn" style="margin-top:2px;text-decoration:none;font-size:0.5rem;padding:3px 10px;min-height:22px;font-weight:bold;display:inline-block;">تماس</a></div></div>` : ''}</div></div>
                 <div class="dashboard-section" style="border-right-color:var(--success-color)"><h3 style="font-size:0.85rem;margin-bottom:6px;display:flex;align-items:center;gap:5px;color:var(--text-primary);font-weight:bold;"><i class="fas fa-university" style="color:var(--success-color)"></i> اطلاعات حساب صندوق</h3><div class="support-grid">
                     ${SUPPORT_INFO.accountNumber ? `<div class="support-card" style="border-right:4px solid var(--success-color)"><div class="support-icon" style="background:#4299e1"><i class="fas fa-university"></i></div><div><div class="support-label">شماره حساب صندوق</div><div class="support-value" style="font-size:0.7rem;color:var(--text-primary);direction:ltr;text-align:left">${esc(SUPPORT_INFO.accountNumber)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.accountNumber)}',this)">کپی</button></div></div>` : ''}
                     ${SUPPORT_INFO.cardNumber ? `<div class="support-card" style="border-right:4px solid var(--success-color)"><div class="support-icon" style="background:#9f7aea"><i class="fas fa-credit-card"></i></div><div><div class="support-label">شماره کارت صندوق</div><div class="support-value" style="font-size:0.7rem;color:var(--text-primary);direction:ltr;text-align:left">${esc(SUPPORT_INFO.cardNumber)}</div><button class="copy-btn" onclick="copyText('${esc(SUPPORT_INFO.cardNumber)}',this)">کپی</button></div></div>` : ''}
@@ -2728,7 +2724,7 @@
         }
 
         // ============================================================
-        // 19. رندر صفحه محتوا (Router) - بدون دکمه خروج
+        // 19. رندر صفحه محتوا (Router)
         // ============================================================
         function renderContentPage(page, content) {
             const headerHtml = `<div class="header-bar" style="margin-bottom:8px; padding:8px 14px; flex-direction:row; justify-content:space-between;">
@@ -2763,7 +2759,6 @@
                 case 'prices': pageContent = renderPricesContent(); break;
                 default: pageContent = '<div class="info-box">بخش مورد نظر یافت نشد</div>';
             }
-            // دکمه خروج حذف شد - فقط در منوی اصلی وجود دارد
             content.innerHTML = headerHtml + pageContent;
         }
 
@@ -2778,6 +2773,7 @@
         }
 
         function goToMenu() { 
+            window.scrollTo(0, 0);
             currentPage = 'menu'; 
             renderPage('menu'); 
         }
