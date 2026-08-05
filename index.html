@@ -736,6 +736,56 @@
             font-weight: bold;
             color: var(--text-secondary);
         }
+
+        /* استایل جدول اقساط */
+        .installment-table-wrapper {
+            overflow-x: auto;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 6px;
+            margin-top: 6px;
+        }
+        .installment-table-wrapper table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.55rem;
+        }
+        .installment-table-wrapper th,
+        .installment-table-wrapper td {
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            text-align: center;
+            white-space: nowrap;
+            color: var(--text-primary);
+            font-weight: bold;
+            background: var(--card-bg);
+        }
+        .installment-table-wrapper th {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: #fff;
+            font-size: 0.5rem;
+        }
+        .installment-table-wrapper .paid {
+            background: rgba(16, 185, 129, 0.15);
+            border-right: 3px solid var(--success-color);
+        }
+        .installment-table-wrapper .overdue {
+            background: rgba(239, 68, 68, 0.15);
+            border-right: 3px solid var(--danger-color);
+        }
+        .installment-table-wrapper .pending {
+            background: rgba(245, 158, 11, 0.08);
+            border-right: 3px solid var(--gold-color);
+        }
+        .installment-status-badge {
+            padding: 1px 8px;
+            border-radius: 10px;
+            font-size: 0.45rem;
+            font-weight: bold;
+        }
+        .installment-status-badge.paid { background: var(--success-color); color: #fff; }
+        .installment-status-badge.overdue { background: var(--danger-color); color: #fff; }
+        .installment-status-badge.pending { background: var(--gold-color); color: #fff; }
     </style>
 </head>
 <body>
@@ -1017,9 +1067,7 @@
         let keepAliveInterval = null;
         function startKeepAlive() {
             if (keepAliveInterval) clearInterval(keepAliveInterval);
-            // هر 30 ثانیه یکبار تیک بزن تا session فعال بماند
             keepAliveInterval = setInterval(() => {
-                // فقط یک درخواست خیلی سبک برای نگهداری session
                 fetch(DATA_URL, { method: 'HEAD', cache: 'no-cache' }).catch(() => {});
             }, 30000);
         }
@@ -1253,6 +1301,50 @@
             if (currentUser.role === 'admin') return true;
             const member = members.find(m => m.id === currentUser?.memberId);
             return member && member.isCouncil === true;
+        }
+
+        // ============================================================
+        // 4.5 توابع تبدیل تاریخ شمسی و محاسبه اقساط
+        // ============================================================
+        function addMonthsToJalali(jy, jm, jd, months) {
+            let totalMonths = (jy * 12) + jm - 1 + months;
+            let newYear = Math.floor(totalMonths / 12);
+            let newMonth = (totalMonths % 12) + 1;
+            if (newMonth > 12) { newYear++; newMonth -= 12; }
+            let monthDays = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30];
+            let newDay = Math.min(jd, monthDays[newMonth - 1]);
+            return { year: newYear, month: newMonth, day: newDay };
+        }
+
+        function jalaliDateToString(jy, jm, jd) {
+            let y = String(jy).padStart(4, '0');
+            let m = String(jm).padStart(2, '0');
+            let d = String(jd).padStart(2, '0');
+            return y + '/' + m + '/' + d;
+        }
+
+        function generateInstallmentDates(loanDateShamsi, totalInstallments) {
+            if (!loanDateShamsi) return [];
+            const parts = loanDateShamsi.split('/');
+            if (parts.length !== 3) return [];
+            let jy = parseInt(parts[0]);
+            let jm = parseInt(parts[1]);
+            let jd = parseInt(parts[2]);
+            if (isNaN(jy) || isNaN(jm) || isNaN(jd)) return [];
+            
+            const dates = [];
+            // قسط اول یک ماه بعد از تاریخ دریافت (با اصلاح سال)
+            for (let i = 1; i <= totalInstallments; i++) {
+                const result = addMonthsToJalali(jy, jm, jd, i);
+                dates.push({
+                    index: i,
+                    year: result.year,
+                    month: result.month,
+                    day: result.day,
+                    date: jalaliDateToString(result.year, result.month, result.day)
+                });
+            }
+            return dates;
         }
 
         // ============================================================
@@ -1858,7 +1950,7 @@
                     renderPage('menu');
                     updateVisitInfo();
                     updateFloatingButtons();
-                    startKeepAlive(); // شروع Keep-Alive
+                    startKeepAlive();
                     updateUpdateOverlay(100, '✅ ورود موفق!', 4);
                     await new Promise(r => setTimeout(r, 300));
                     hideUpdateOverlay();
@@ -2060,7 +2152,6 @@
                 <div style="text-align:center; padding:12px; color:var(--text-muted); font-size:0.8rem;">برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید</div>`;
             updateGridBadges();
             
-            // آپدیت ساعت و روز
             setInterval(() => { 
                 const clockEl = document.getElementById('clockDisplay'); 
                 const dayEl = document.getElementById('dayDisplay');
@@ -2086,6 +2177,8 @@
             const membershipDuration = calculateMembershipDuration(member.datMiladi);
             const visitInfo = getVisitInfo();
             const memberTxns = (transactionsByMember.get(String(member.id)) || []).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
+            
+            // حذف جدول اقساط از پروفایل - فقط در صورتحساب نمایش داده می‌شود
             return `
                 <div class="info-box"><i class="fas fa-user-circle"></i> اطلاعات شخصی شما</div>
                 <div class="dashboard-section" style="border-right-color:var(--gradient-start); background: linear-gradient(135deg, rgba(102,126,234,0.08) 0%, rgba(118,75,162,0.08) 100%); padding:15px;">
@@ -2113,10 +2206,14 @@
                         <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
                         <div class="last-tx-item"><div class="last-tx-label">وضعیت حساب</div><div class="last-tx-value">${accountStatusHtml}</div></div>
                     </div>
-                </div>`;
+                </div>
+                <div style="text-align:center; margin-top:10px;">
+                    <button class="btn-small" onclick="goToMenu()" style="background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color:#fff; padding:6px 18px; font-size:0.75rem; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🏠 بازگشت به منو</button>
+                </div>
+            `;
         }
 
-        // ===== صندوق من =====
+        // ===== صندوق من (با جدول اقساط) =====
         function renderMyFundContent() {
             if (!FEATURES.showMyFund) return '<div class="info-box">این بخش غیرفعال شده است</div>';
             const member = members.find(m => m.id === currentUser.memberId);
@@ -2225,6 +2322,60 @@
             
             const totalReceived = memberTxns.reduce((sum, tx) => sum + parseNum(tx['مبلغ تراکنش'] || 0), 0);
             const avgTransaction = memberTxns.length > 0 ? totalReceived / memberTxns.length : 0;
+            
+            // جدول اقساط
+            const installmentDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            let installmentTableHtml = '';
+            if (installmentDates.length > 0) {
+                const paidCount = member.paidInstallments || 0;
+                const overdueCount = Math.abs(member.overdueInstallments || 0);
+                installmentTableHtml = `
+                    <div class="dashboard-section" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245, 158, 11, 0.04) 0%, rgba(217, 119, 6, 0.04) 100%); margin-top:10px;">
+                        <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-calendar-check" style="color:var(--gold-color);"></i> برنامه اقساط وام شما</h3>
+                        <div style="font-size:0.6rem; color:var(--text-secondary); margin-bottom:4px;">
+                            تاریخ دریافت وام: <strong>${esc(member.loanReceiveDate || '---')}</strong> | 
+                            تعداد اقساط: <strong>${member.totalInstallments || 0}</strong> | 
+                            پرداخت شده: <strong style="color:var(--success-color);">${paidCount}</strong> | 
+                            معوقه: <strong style="color:var(--danger-color);">${overdueCount}</strong>
+                        </div>
+                        <div class="installment-table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>شماره قسط</th>
+                                        <th>تاریخ سررسید</th>
+                                        <th>وضعیت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${installmentDates.map((inst, idx) => {
+                                        const index = idx + 1;
+                                        let statusClass = 'pending';
+                                        let statusText = 'در انتظار';
+                                        if (index <= paidCount) {
+                                            statusClass = 'paid';
+                                            statusText = '✅ پرداخت شده';
+                                        } else if (index <= paidCount + overdueCount) {
+                                            statusClass = 'overdue';
+                                            statusText = '⚠️ معوقه';
+                                        }
+                                        return `<tr class="${statusClass}">
+                                            <td>${index}</td>
+                                            <td>${inst.date}</td>
+                                            <td><span class="installment-status-badge ${statusClass}">${statusText}</span></td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="font-size:0.5rem; color:var(--text-muted); margin-top:4px; text-align:left;">
+                            <span style="display:inline-block; margin-left:8px;"><span style="background:var(--success-color); color:#fff; padding:1px 6px; border-radius:3px; font-size:0.4rem;">پرداخت شده</span></span>
+                            <span style="display:inline-block; margin-left:8px;"><span style="background:var(--danger-color); color:#fff; padding:1px 6px; border-radius:3px; font-size:0.4rem;">معوقه</span></span>
+                            <span style="display:inline-block;"><span style="background:var(--gold-color); color:#fff; padding:1px 6px; border-radius:3px; font-size:0.4rem;">در انتظار</span></span>
+                        </div>
+                    </div>
+                `;
+            }
             
             return `
                 <div class="info-box" style="background:linear-gradient(135deg, #f093fb15 0%, #f5576c15 100%); border-right-color:#f5576c;"><i class="fas fa-star" style="color:#f5576c;"></i> <span style="color:#f5576c; font-weight:bold;">صندوق من 😍</span><span style="font-size:0.65rem; color:var(--text-secondary); margin-right:8px;">| آخرین بروزرسانی: ${getUpdateTime()}</span></div>
@@ -2344,7 +2495,12 @@
                         <div><span style="font-weight:bold;">مدت عضویت:</span> ${calculateMembershipDuration(member.datMiladi)}</div>
                         <div><span style="font-weight:bold;">وضعیت حساب:</span> ${member.active !== false ? '✅ فعال' : '❌ غیرفعال'}</div>
                     </div>
-                </div>`;
+                </div>
+                ${installmentTableHtml}
+                <div style="text-align:center; margin-top:10px;">
+                    <button class="btn-small" onclick="goToMenu()" style="background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color:#fff; padding:6px 18px; font-size:0.75rem; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🏠 بازگشت به منو</button>
+                </div>
+            `;
         }
 
         function setSmartGoal() {
@@ -2364,7 +2520,7 @@
             renderMyFundContent();
         }
 
-        // ===== صورتحساب =====
+        // ===== صورتحساب (با بخش اقساط وام شما) =====
         function renderDashboardContent() {
             const member = members.find(m => m.id === currentUser.memberId);
             if (!member) return '<div style="text-align:center;padding:30px;font-size:1rem">خطا</div>';
@@ -2452,13 +2608,67 @@
             
             const loanApprovedHtml = `<div class="dashboard-section card-loan"><h3><i class="fas fa-file-contract" style="color:var(--gold-color)"></i> وام و مقرری مصوب</h3><div class="loan-info"><div class="loan-info-item"><div class="loan-info-label">مبلغ وام مصوبه</div><div class="loan-info-value">${member.mabVam1 ? fmtNum(member.mabVam1) : '---'}</div></div><div class="loan-info-item"><div class="loan-info-label">تعداد اقساط مصوبه</div><div class="loan-info-value">${member.tedad || '---'}</div></div><div class="loan-info-item"><div class="loan-info-label">مبلغ هر قسط مصوبه</div><div class="loan-info-value">${member.tedad > 0 ? fmtNum(Math.round(member.mabVam1 / member.tedad)) : '---'}</div></div><div class="loan-info-item"><div class="loan-info-label">مقرری ماهانه مصوب</div><div class="loan-info-value">${member.monthlySalaryApproved ? fmtNum(member.monthlySalaryApproved) : '---'}</div></div><div class="loan-info-item"><div class="loan-info-label">موجودی تا این ماه</div><div class="loan-info-value" style="color:var(--gold-color)">${fmtNum(member.currentMonthBalance || '0')}</div></div></div></div>`;
             
+            // ===== بخش اقساط وام شما (زیر اطلاعات وام و بدهی) =====
+            const installmentDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            let installmentTableHtml = '';
+            if (installmentDates.length > 0) {
+                const paidCount = member.paidInstallments || 0;
+                const overdueCount = Math.abs(member.overdueInstallments || 0);
+                installmentTableHtml = `
+                    <div class="dashboard-section" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245, 158, 11, 0.04) 0%, rgba(217, 119, 6, 0.04) 100%); margin-top:10px;">
+                        <h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-calendar-check" style="color:var(--gold-color);"></i> اقساط وام شما</h3>
+                        <div style="font-size:0.6rem; color:var(--text-secondary); margin-bottom:4px;">
+                            تاریخ دریافت وام: <strong>${esc(member.loanReceiveDate || '---')}</strong> | 
+                            تعداد اقساط: <strong>${member.totalInstallments || 0}</strong> | 
+                            پرداخت شده: <strong style="color:var(--success-color);">${paidCount}</strong> | 
+                            معوقه: <strong style="color:var(--danger-color);">${overdueCount}</strong>
+                        </div>
+                        <div class="installment-table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>شماره قسط</th>
+                                        <th>تاریخ سررسید</th>
+                                        <th>وضعیت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${installmentDates.map((inst, idx) => {
+                                        const index = idx + 1;
+                                        let statusClass = 'pending';
+                                        let statusText = 'در انتظار';
+                                        if (index <= paidCount) {
+                                            statusClass = 'paid';
+                                            statusText = '✅ پرداخت شده';
+                                        } else if (index <= paidCount + overdueCount) {
+                                            statusClass = 'overdue';
+                                            statusText = '⚠️ معوقه';
+                                        }
+                                        return `<tr class="${statusClass}">
+                                            <td>${index}</td>
+                                            <td>${inst.date}</td>
+                                            <td><span class="installment-status-badge ${statusClass}">${statusText}</span></td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="font-size:0.5rem; color:var(--text-muted); margin-top:4px; text-align:left;">
+                            <span style="display:inline-block; margin-left:8px;"><span style="background:var(--success-color); color:#fff; padding:1px 6px; border-radius:3px; font-size:0.4rem;">پرداخت شده</span></span>
+                            <span style="display:inline-block; margin-left:8px;"><span style="background:var(--danger-color); color:#fff; padding:1px 6px; border-radius:3px; font-size:0.4rem;">معوقه</span></span>
+                            <span style="display:inline-block;"><span style="background:var(--gold-color); color:#fff; padding:1px 6px; border-radius:3px; font-size:0.4rem;">در انتظار</span></span>
+                        </div>
+                    </div>
+                `;
+            }
+            
             const lastTxHtml = `<div class="dashboard-section card-transaction full-width"><h3 style="color:var(--success-color)"><i class="fas fa-receipt" style="color:var(--success-color)"></i> آخرین تراکنش ${latestTx ? '(ID: ' + esc(latestTx['ID'] || '') + ')' : ''}</h3>${latestTx ? `<div class="last-tx-grid"><div class="last-tx-item"><div class="last-tx-label">ID</div><div class="last-tx-value">${esc(latestTx['ID'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(latestTx['شماره حساب'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">مقرری ماهانه</div><div class="last-tx-value">${fmtNum(latestTx['مقرری ماهانه'])}</div></div><div class="last-tx-item"><div class="last-tx-label">شماره فیش</div><div class="last-tx-value">${esc(latestTx['شماره فیش'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">تاریخ تراکنش</div><div class="last-tx-value">${esc(latestTx['تاریخ تراکنش'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">مبلغ تراکنش</div><div class="last-tx-value">${fmtNum(latestTx['مبلغ تراکنش'])}</div></div><div class="last-tx-item"><div class="last-tx-label">نام تراکنش کننده</div><div class="last-tx-value">${esc(latestTx['نام تراکنش کننده'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">مبلغ قسط واریزی</div><div class="last-tx-value">${fmtNum(latestTx['مبلغ قسط واریزی'])}</div></div><div class="last-tx-item"><div class="last-tx-label">تاریخ قسط واریزی</div><div class="last-tx-value">${esc(latestTx['تاریخ قسط واریزی'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">جمع واریزی</div><div class="last-tx-value">${fmtNum(latestTx['جمع واریزی'])}</div></div><div class="last-tx-item"><div class="last-tx-label">موجودی</div><div class="last-tx-value" style="color:var(--success-color)">${fmtNum(balance)}</div></div><div class="last-tx-item"><div class="last-tx-label">قسط پرداخت شده</div><div class="last-tx-value">${fmtNum(latestTx['تعداد قسط پرداخت شده'])}</div></div><div class="last-tx-item"><div class="last-tx-label">قسط مانده</div><div class="last-tx-value">${fmtNum(latestTx['تعداد قسط مانده'])}</div></div><div class="last-tx-item"><div class="last-tx-label">وضعیت پس انداز</div><div class="last-tx-value">${fmtNum(latestTx['وضعیت پس انداز'])}</div></div><div class="last-tx-item"><div class="last-tx-label">پیامک واریز</div><div class="last-tx-value">${latestTx['پیامک واریز'] || '---'}</div></div><div class="last-tx-item"><div class="last-tx-label">پیامک اخطار</div><div class="last-tx-value">${latestTx['پیامک اخطار'] || '---'}</div></div></div>` : '<p style="text-align:center;color:var(--text-secondary);padding:12px;font-size:0.7rem">هیچ تراکنشی ثبت نشده است</p>'}</div>`;
             
             // ===== مینی آخرین پیامک در پایین صورتحساب =====
             let miniSmsHtml = '';
             if (latestTx) {
                 const amount = latestTx['مبلغ تراکنش'] || 0;
-                const loanBalance = latestTx['مانده وام'] || 0;
+                const loanBalance2 = latestTx['مانده وام'] || 0;
                 const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
                 const remainingInst = latestTx['تعداد قسط مانده'] || 0;
                 const transactionDate = latestTx['تاریخ تراکنش'] || '---';
@@ -2470,7 +2680,7 @@
                             <div><span class="sms-label">واریزی:</span> ${fmtNum(amount)} ریال</div>
                             <div><span class="sms-label">موجودی:</span> ${fmtNum(balance)}</div>
                             <div><span class="sms-label">قسط پرداخت شده:</span> ${paidInst}</div>
-                            <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance)} (${remainingInst})</div>
+                            <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance2)} (${remainingInst})</div>
                             <div><span class="sms-label">تاریخ:</span> ${transactionDate}</div>
                         </div>
                         <div style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
@@ -2480,7 +2690,7 @@
                     </div>
                 `;
                 function copyMiniSms() {
-                    const text = `${member.firstName}\nواریز:${fmtNum(amount)} ریال\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance)} (${remainingInst})\n${transactionDate}`;
+                    const text = `${member.firstName}\nواریز:${fmtNum(amount)} ریال\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance2)} (${remainingInst})\n${transactionDate}`;
                     navigator.clipboard.writeText(text).then(() => { alert('✅ متن پیامک کپی شد!'); }).catch(() => { alert('❌ خطا در کپی متن'); });
                 }
                 window.copyMiniSms = copyMiniSms;
@@ -2489,7 +2699,7 @@
             const allTxnsHtml = `<div class="dashboard-section card-other full-width"><div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;"><h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;"><i class="fas fa-file-invoice" style="color:#ec4899;"></i> مجموعه صورتحساب (${memberTxns.length} تراکنش)</h3><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn-small excel-btn" onclick="downloadExcel()" style="font-size:0.6rem; padding:4px 12px; min-height:28px; border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;"><i class="fas fa-file-excel"></i> دانلود Excel</button><button class="btn-small pdf-btn" onclick="downloadPDF()" style="font-size:0.6rem; padding:4px 12px; min-height:28px; border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;"><i class="fas fa-file-pdf"></i> دانلود PDF</button></div></div><div class="filter-bar"><input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()" style="font-size:0.6rem; padding:4px 8px; min-height:26px;"><button class="btn-small success-btn" onclick="filterExcelTransactions()" style="min-height:26px; padding:4px 8px; font-size:0.55rem;">جستجو</button><button class="btn-small edit-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()" style="min-height:26px; padding:4px 8px; font-size:0.55rem;">پاک کردن</button></div><div id="txExcelContainer"></div></div>`;
             
             setTimeout(() => { const container = document.getElementById('txExcelContainer'); if (container) renderExcelTransactions(memberTxns, 'txExcelContainer'); }, 100);
-            return `<div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب مالی شما</div>${summaryBox}${paymentStatusCard}${celebrationHtml}${adminHtml}${warningsHtml}<div class="dashboard-grid-2">${loanInfoHtml}${loanApprovedHtml}</div>${lastTxHtml}${allTxnsHtml}${miniSmsHtml}`;
+            return `<div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب مالی شما</div>${summaryBox}${paymentStatusCard}${celebrationHtml}${adminHtml}${warningsHtml}<div class="dashboard-grid-2">${loanInfoHtml}${loanApprovedHtml}</div>${installmentTableHtml}${lastTxHtml}${allTxnsHtml}${miniSmsHtml}`;
         }
 
         function downloadExcel() {
@@ -2558,7 +2768,6 @@
             const memberTxns = (transactionsByMember.get(String(member.id)) || []).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
             const latestTx = memberTxns.length ? memberTxns[0] : null;
             
-            // وضعیت پیامک‌ها
             const smsServices = [
                 { name: 'پیامک صورتحساب', key: 'smsActive', icon: 'fa-file-invoice-dollar', color: '#48bb78' },
                 { name: 'پیامک جلسات شورا', key: 'smsKod', icon: 'fa-users-cog', color: '#9f7aea' },
@@ -2698,6 +2907,56 @@
                 smsHtml += `<div style="background:${isActive ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.05)'};padding:4px 6px;border-radius:4px;border-right:3px solid ${isActive ? 'var(--success-color)' : 'var(--danger-color)'};text-align:center;"><i class="fas ${service.icon}" style="color:${isActive ? 'var(--success-color)' : 'var(--danger-color)'};font-size:0.6rem;"></i><span style="font-size:0.45rem;color:var(--text-secondary);display:block;">${service.name}</span><span style="font-size:0.5rem;font-weight:bold;color:${isActive ? 'var(--success-color)' : 'var(--danger-color)'};">${isActive ? 'فعال' : 'غیرفعال'}</span></div>`;
             });
             smsHtml += '</div>';
+            
+            // جدول اقساط برای عضو خانواده
+            const installmentDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            let installmentTableHtml = '';
+            if (installmentDates.length > 0) {
+                const paidCount = member.paidInstallments || 0;
+                const overdueCount = Math.abs(member.overdueInstallments || 0);
+                installmentTableHtml = `
+                    <div class="detail-section" style="margin-top:8px;">
+                        <h4 style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-calendar-check" style="color:var(--gold-color);"></i> برنامه اقساط</h4>
+                        <div style="font-size:0.5rem; color:var(--text-secondary); margin-bottom:3px;">
+                            تاریخ دریافت: <strong>${esc(member.loanReceiveDate || '---')}</strong> | 
+                            تعداد: <strong>${member.totalInstallments || 0}</strong> | 
+                            پرداخت شده: <strong style="color:var(--success-color);">${paidCount}</strong> | 
+                            معوقه: <strong style="color:var(--danger-color);">${overdueCount}</strong>
+                        </div>
+                        <div class="installment-table-wrapper" style="max-height:150px; overflow-y:auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>شماره</th>
+                                        <th>تاریخ سررسید</th>
+                                        <th>وضعیت</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${installmentDates.map((inst, idx) => {
+                                        const index = idx + 1;
+                                        let statusClass = 'pending';
+                                        let statusText = 'در انتظار';
+                                        if (index <= paidCount) {
+                                            statusClass = 'paid';
+                                            statusText = '✅ پرداخت شده';
+                                        } else if (index <= paidCount + overdueCount) {
+                                            statusClass = 'overdue';
+                                            statusText = '⚠️ معوقه';
+                                        }
+                                        return `<tr class="${statusClass}">
+                                            <td>${index}</td>
+                                            <td>${inst.date}</td>
+                                            <td><span class="installment-status-badge ${statusClass}">${statusText}</span></td>
+                                        </tr>`;
+                                    }).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
             let html = `
                 <div class="family-card">
                     <div class="family-card-header">
@@ -2748,6 +3007,7 @@
                             <div class="loan-info-item"><div class="loan-info-label">تعداد اقساط مصوبه</div><div class="loan-info-value">${member.tedad || '---'}</div></div>
                         </div>
                     </div>
+                    ${installmentTableHtml}
                     <div class="detail-section">
                         <h4 style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;"><i class="fas fa-sms" style="color:var(--blue-color)"></i> سامانه‌های پیامکی</h4>
                         ${smsHtml}
@@ -2995,7 +3255,7 @@
                 </div>`;
         }
 
-        // ===== راهنما (حذف شده از منو اما برای لینک‌های داخلی نگهداری می‌شود) =====
+        // ===== راهنما =====
         function renderHelpContentHtml() {
             return `<div class="info-box"><i class="fas fa-question-circle"></i> راهنما</div>
                 <div class="dashboard-section" style="text-align:center;padding:30px">
@@ -3004,10 +3264,10 @@
                     <p style="color:var(--text-secondary);font-size:0.8rem;margin-top:4px">برای راهنمایی بیشتر با پشتیبانی تماس بگیرید</p>
                     <div style="margin-top:12px;text-align:right;padding:12px;background:var(--bg-secondary);border-radius:8px;">
                         <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 اطلاعات شخصی شما: اطلاعات کاربری</p>
-                        <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صورتحساب: تراکنش‌های مالی</p>
-                        <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صندوق من: تحلیل مالی شخصی</p>
+                        <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صورتحساب: تراکنش‌های مالی + جدول اقساط</p>
+                        <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صندوق من: تحلیل مالی شخصی + جدول اقساط</p>
                         <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 وضعیت سامانه پیامکی: وضعیت سرویس‌های پیامکی</p>
-                        <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 خانواده من: مدیریت اعضای خانواده</p>
+                        <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 خانواده من: مدیریت اعضای خانواده + جدول اقساط</p>
                         <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 امتیازات: فروشگاه و سکه‌ها</p>
                     </div>
                 </div>`;
@@ -3080,7 +3340,7 @@
             let miniSmsHtml = '';
             if (latestTx) {
                 const amount = latestTx['مبلغ تراکنش'] || 0;
-                const loanBalance = latestTx['مانده وام'] || 0;
+                const loanBalance2 = latestTx['مانده وام'] || 0;
                 const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
                 const remainingInst = latestTx['تعداد قسط مانده'] || 0;
                 const transactionDate = latestTx['تاریخ تراکنش'] || '---';
@@ -3092,7 +3352,7 @@
                             <div><span class="sms-label">واریزی:</span> ${fmtNum(amount)} ریال</div>
                             <div><span class="sms-label">موجودی:</span> ${fmtNum(balance)}</div>
                             <div><span class="sms-label">قسط پرداخت شده:</span> ${paidInst}</div>
-                            <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance)} (${remainingInst})</div>
+                            <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance2)} (${remainingInst})</div>
                             <div><span class="sms-label">تاریخ:</span> ${transactionDate}</div>
                         </div>
                         <div style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
@@ -3102,19 +3362,23 @@
                     </div>
                 `;
                 function copyQuickSms() {
-                    const text = `${member.firstName}\nواریز:${fmtNum(amount)} ریال\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance)} (${remainingInst})\n${transactionDate}`;
+                    const text = `${member.firstName}\nواریز:${fmtNum(amount)} ریال\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance2)} (${remainingInst})\n${transactionDate}`;
                     navigator.clipboard.writeText(text).then(() => { alert('✅ متن پیامک کپی شد!'); }).catch(() => { alert('❌ خطا در کپی متن'); });
                 }
                 window.copyQuickSms = copyQuickSms;
             }
             
-            // وضعیت سامانه پیامکی (خلاصه)
+            // وضعیت سامانه پیامکی (کامل تر)
             const smsServices = [
                 { name: 'صورتحساب', key: 'smsActive', icon: 'fa-file-invoice-dollar', color: '#48bb78' },
                 { name: 'جلسات شورا', key: 'smsKod', icon: 'fa-users-cog', color: '#9f7aea' },
                 { name: 'عمومی', key: 'smsOmomi', icon: 'fa-broadcast-tower', color: '#4299e1' },
+                { name: 'سرپرستان', key: 'smsSarparast', icon: 'fa-user-shield', color: '#ed8936' },
                 { name: 'معوقات', key: 'smsMoavaghe', icon: 'fa-exclamation-triangle', color: '#e53e3e' },
-                { name: 'تولد', key: 'smsTavalod', icon: 'fa-birthday-cake', color: '#ed64a6' }
+                { name: 'مسابقات', key: 'smsMosabegheh', icon: 'fa-trophy', color: '#ecc94b' },
+                { name: 'خبرنامه', key: 'smsKhabarnameh', icon: 'fa-newspaper', color: '#38b2ac' },
+                { name: 'تولد', key: 'smsTavalod', icon: 'fa-birthday-cake', color: '#ed64a6' },
+                { name: 'مناسبت‌ها', key: 'smsMonasebat', icon: 'fa-star-and-crescent', color: 'var(--gradient-start)' }
             ];
             let smsStatusHtml = `
                 <div class="dashboard-section" style="border-right-color:var(--blue-color); background: linear-gradient(135deg, rgba(59,130,246,0.04) 0%, rgba(37,99,235,0.04) 100%); padding:8px 10px;">
@@ -3124,6 +3388,9 @@
                             const isActive = latestTx && latestTx[s.key] === true;
                             return `<div class="support-card" style="padding:4px 6px;"><div class="support-icon" style="width:20px;height:20px;font-size:0.5rem;background:${s.color}"><i class="fas ${s.icon}"></i></div><div><div class="support-label" style="font-size:0.4rem;">${s.name}</div><div class="support-value" style="font-size:0.5rem;color:${isActive ? 'var(--success-color)' : 'var(--danger-color)'}">${isActive ? 'فعال' : 'غیرفعال'}</div></div></div>`;
                         }).join('')}
+                    </div>
+                    <div style="margin-top:4px; background:rgba(245,158,11,0.08); padding:4px 8px; border-radius:4px;">
+                        <p style="font-size:0.45rem; color:var(--text-secondary); font-weight:bold;">💡 برای تغییر وضعیت با حسابداری تماس بگیرید</p>
                     </div>
                     <div style="margin-top:4px;">
                         <button class="btn-small info-btn" onclick="goToPage('sms')" style="font-size:0.45rem; padding:2px 10px; min-height:20px;">🔍 مشاهده کامل</button>
@@ -3195,6 +3462,52 @@
                         <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">پرداخت شده</div><div class="loan-info-value" style="font-size:0.55rem;color:var(--success-color);">${member.paidInstallments || 0}</div></div>
                         <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">معوقه</div><div class="loan-info-value" style="font-size:0.55rem;color:var(--danger-color);">${Math.abs(member.overdueInstallments || 0)}</div></div>
                     </div>
+                    ${(() => {
+                        const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+                        if (instDates.length > 0) {
+                            const paidCount = member.paidInstallments || 0;
+                            const overdueCount = Math.abs(member.overdueInstallments || 0);
+                            return `
+                                <div style="margin-top:6px;">
+                                    <div style="font-size:0.5rem; color:var(--text-secondary); margin-bottom:3px;">
+                                        تاریخ دریافت: <strong>${esc(member.loanReceiveDate || '---')}</strong>
+                                    </div>
+                                    <div class="installment-table-wrapper" style="max-height:100px; overflow-y:auto;">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-size:0.4rem;">شماره</th>
+                                                    <th style="font-size:0.4rem;">تاریخ سررسید</th>
+                                                    <th style="font-size:0.4rem;">وضعیت</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${instDates.slice(0, 12).map((inst, idx) => {
+                                                    const index = idx + 1;
+                                                    let statusClass = 'pending';
+                                                    let statusText = 'در انتظار';
+                                                    if (index <= paidCount) {
+                                                        statusClass = 'paid';
+                                                        statusText = '✅';
+                                                    } else if (index <= paidCount + overdueCount) {
+                                                        statusClass = 'overdue';
+                                                        statusText = '⚠️';
+                                                    }
+                                                    return `<tr class="${statusClass}">
+                                                        <td style="font-size:0.4rem;padding:2px 4px;">${index}</td>
+                                                        <td style="font-size:0.4rem;padding:2px 4px;">${inst.date}</td>
+                                                        <td style="font-size:0.4rem;padding:2px 4px;"><span class="installment-status-badge ${statusClass}" style="font-size:0.35rem;">${statusText}</span></td>
+                                                    </tr>`;
+                                                }).join('')}
+                                            </tbody>
+                                        </table>
+                                        ${instDates.length > 12 ? `<div style="font-size:0.4rem; color:var(--text-muted); text-align:left; margin-top:2px;">+ ${instDates.length - 12} قسط دیگر</div>` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        return '';
+                    })()}
                 </div>
 
                 ${miniExcelHtml}
@@ -3394,7 +3707,7 @@
                 });
             }
 
-            console.log('🟢 All scripts loaded - نسخه نهایی با اصلاحات درخواستی');
+            console.log('🟢 All scripts loaded - نسخه نهایی با جدول اقساط در صورتحساب');
         });
 
         window.addEventListener('pageshow', function(event) {
@@ -3408,7 +3721,7 @@
         window.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
                 if (currentUser) {
-                    // فقط رفرش نمی‌کنیم، بلکه Keep-Alive را چک می‌کنیم
+                    // Keep-Alive فعال است
                 }
             }
         });
