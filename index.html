@@ -377,6 +377,12 @@
         .grid-menu-item[data-tab="family"]:hover {
             border-color: #059669;
         }
+        .grid-menu-item[data-tab="familyInfo"] {
+            border-color: #10b981;
+        }
+        .grid-menu-item[data-tab="familyInfo"]:hover {
+            border-color: #059669;
+        }
         .grid-menu-item[data-tab="access"] {
             border-color: #8b5cf6;
         }
@@ -401,14 +407,6 @@
         .grid-menu-item[data-tab="support"]:hover {
             border-color: #65a30d;
         }
-        .grid-menu-item[data-tab="quickAccount"] {
-            border-color: #ec4899;
-        }
-        .grid-menu-item[data-tab="quickAccount"]:hover {
-            border-color: #db2777;
-            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
-        }
-        /* کلیدهای شورا */
         .grid-menu-item[data-tab="manageCoins"] {
             border-color: #f59e0b;
         }
@@ -459,6 +457,9 @@
         .grid-menu-item[data-tab="family"] .menu-icon {
             background: linear-gradient(135deg, #10b981, #059669);
         }
+        .grid-menu-item[data-tab="familyInfo"] .menu-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
         .grid-menu-item[data-tab="access"] .menu-icon {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
         }
@@ -470,9 +471,6 @@
         }
         .grid-menu-item[data-tab="support"] .menu-icon {
             background: linear-gradient(135deg, #84cc16, #65a30d);
-        }
-        .grid-menu-item[data-tab="quickAccount"] .menu-icon {
-            background: linear-gradient(135deg, #ec4899, #db2777);
         }
         .grid-menu-item[data-tab="manageCoins"] .menu-icon {
             background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -526,6 +524,22 @@
             margin-left: 8px;
         }
 
+        .family-divider {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--success-color);
+            padding: 8px 0;
+            margin: 4px 0 8px;
+            border-top: 3px dashed var(--success-color);
+            border-bottom: 3px dashed var(--success-color);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-radius: 8px;
+        }
+        .family-divider i {
+            margin-left: 8px;
+        }
+
         /* کلیدهای شورا برای همه نمایش داده می‌شوند اما غیرفعال هستند */
         .grid-menu-item.council-item.disabled {
             opacity: 0.6;
@@ -555,6 +569,40 @@
             right: 8px;
             font-size: 0.7rem;
             color: var(--gold-color);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* کلیدهای خانواده برای همه نمایش داده می‌شوند اما فقط سرپرستان دسترسی دارند */
+        .grid-menu-item.family-item.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            border-color: var(--border-color) !important;
+            background: var(--bg-secondary) !important;
+        }
+        .grid-menu-item.family-item.disabled .menu-icon {
+            background: var(--bg-secondary) !important;
+            color: var(--text-muted) !important;
+            box-shadow: none !important;
+            border: 2px solid var(--border-color);
+        }
+        .grid-menu-item.family-item.disabled .menu-icon i {
+            color: var(--text-muted);
+        }
+        .grid-menu-item.family-item.disabled .menu-label {
+            color: var(--text-muted);
+        }
+        .grid-menu-item.family-item.disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        .grid-menu-item.family-item .lock-icon {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            font-size: 0.7rem;
+            color: var(--success-color);
             background: rgba(0, 0, 0, 0.5);
             padding: 2px 6px;
             border-radius: 10px;
@@ -2400,6 +2448,31 @@
             margin-top: 6px;
         }
 
+        /* استایل جداکننده با خط */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 16px 0 12px;
+            width: 100%;
+        }
+        .section-divider .line {
+            flex: 1;
+            height: 2px;
+            background: var(--border-color);
+        }
+        .section-divider .title {
+            padding: 0 14px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-primary);
+            white-space: nowrap;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 4px 16px;
+            border: 2px solid var(--border-color);
+        }
+
         @media (max-width: 768px) {
             .grid-menu {
                 grid-template-columns: repeat(3, 1fr);
@@ -2472,6 +2545,10 @@
             }
             .service-item .service-label {
                 font-size: 0.45rem;
+            }
+            .section-divider .title {
+                font-size: 0.7rem;
+                padding: 2px 12px;
             }
         }
         @media (max-width: 480px) {
@@ -2546,6 +2623,10 @@
             }
             .service-item .service-label {
                 font-size: 0.4rem;
+            }
+            .section-divider .title {
+                font-size: 0.6rem;
+                padding: 2px 10px;
             }
         }
 
@@ -2648,7 +2729,7 @@
             color: var(--danger-color);
         }
 
-        /* استایل مینی اکسل در quickAccount */
+        /* استایل مینی اکسل */
         .mini-excel-wrapper {
             overflow-x: auto;
             background: var(--bg-secondary);
@@ -2681,6 +2762,7 @@
             color: var(--excel-first-col-text);
             font-weight: bold;
         }
+
         .mini-sms-box {
             background: var(--bg-secondary);
             border-radius: 8px;
@@ -2849,6 +2931,44 @@
             font-weight: bold;
         }
         .approved-section .approved-item .value.gold {
+            color: var(--gold-color);
+        }
+
+        /* استایل جدول خانواده */
+        .family-info-table-wrapper {
+            overflow-x: auto;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 6px;
+            margin-top: 6px;
+        }
+        .family-info-table-wrapper table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.6rem;
+        }
+        .family-info-table-wrapper th,
+        .family-info-table-wrapper td {
+            border: 1px solid var(--border-color);
+            padding: 4px 8px;
+            text-align: center;
+            white-space: nowrap;
+            color: var(--text-primary);
+            font-weight: bold;
+            background: var(--card-bg);
+        }
+        .family-info-table-wrapper th {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: #fff;
+            font-size: 0.55rem;
+        }
+        .family-info-table-wrapper .positive {
+            color: var(--success-color);
+        }
+        .family-info-table-wrapper .negative {
+            color: var(--danger-color);
+        }
+        .family-info-table-wrapper .gold {
             color: var(--gold-color);
         }
     </style>
@@ -3114,7 +3234,6 @@
         // توابع پنل خدمات و PWA (نسخه قدیمی برای حفظ سازگاری)
         // ============================================================
         function toggleServicesPanel() {
-            // این تابع برای سازگاری نگهداری شده
             toggleServicesPanelV2();
         }
 
@@ -3132,7 +3251,6 @@
                 document.referrer.includes('android-app://');
         }
 
-        // تابع باز کردن لینک برای سرویس‌های قدیمی (بدون سوال)
         function openExternalLink(url, appName) {
             window.open(url, '_blank');
         }
@@ -4274,7 +4392,7 @@
         }
 
         // ============================================================
-        // 16. رندر منوی اصلی (Menu) - با حذف کلیدهای اضافی
+        // 16. رندر منوی اصلی (Menu)
         // ============================================================
         function renderMenuPage(content) {
             const member = members.find(m => m.id === currentUser.memberId);
@@ -4313,6 +4431,7 @@
             }
 
             const isCouncil = hasCouncilOrAdminAccess();
+            const isHead = isHeadOfHousehold();
 
             // ===== لیست کلیدهای نهایی =====
             const publicItems = [
@@ -4321,10 +4440,8 @@
                 { tab: 'myFund', label: 'صندوق من 😍', icon: 'fa-star', color: '#f5576c' },
                 { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
                 { tab: 'sms', label: 'وضعیت سامانه پیامکی شما', icon: 'fa-sms', color: '#14b8a6' },
-                { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
                 { tab: 'club', label: 'امتیازات', icon: 'fa-star', color: '#f59e0b' },
-                { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
-                { tab: 'quickAccount', label: 'حساب شما در یک نگاه', icon: 'fa-eye', color: '#ec4899' }
+                { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' }
             ];
 
             // ===== لیست کلیدهای ویژه شورا و مدیر =====
@@ -4332,6 +4449,12 @@
                 { tab: 'access', label: 'دسترسی‌ها', icon: 'fa-key', color: '#f59e0b' },
                 { tab: 'infoStats', label: 'اطلاعات و آمار', icon: 'fa-chart-pie', color: '#f59e0b' },
                 { tab: 'manageCoins', label: 'مدیریت امتیازها', icon: 'fa-coins', color: '#f59e0b' }
+            ];
+
+            // ===== لیست کلیدهای خانواده (فقط سرپرستان) =====
+            const familyItems = [
+                { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
+                { tab: 'familyInfo', label: 'اطلاعات کلی خانواده', icon: 'fa-users-cog', color: '#10b981' }
             ];
 
             // ساخت منوی عمومی
@@ -4347,6 +4470,27 @@
                             <div class="menu-icon" style="background: linear-gradient(135deg, ${item.color}, ${item.color}dd);"><i class="fas ${item.icon}"></i></div>
                             <div class="menu-label">${item.label}</div>
                             ${badgeHtml}
+                        </div>
+                    `;
+            });
+
+            // کلیدهای خانواده (برای همه نمایش داده می‌شوند ولی فقط سرپرستان دسترسی دارند)
+            gridMenuHtml += `
+                    <div class="family-divider" style="grid-column: 1 / -1;">
+                        <i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان خانوار)
+                    </div>
+                `;
+            familyItems.forEach(item => {
+                const disabledClass = isHead ? '' : 'disabled';
+                const lockIcon = isHead ? '' :
+                    `<span class="lock-icon"><i class="fas fa-lock"></i></span>`;
+                const clickHandler = isHead ? `selectMenuItem('${item.tab}')` :
+                    `alert('🔒 این بخش فقط برای سرپرستان خانوار قابل دسترسی است')`;
+                gridMenuHtml += `
+                        <div class="grid-menu-item family-item ${disabledClass}" data-tab="${item.tab}" onclick="${clickHandler}">
+                            <div class="menu-icon" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas ${item.icon}"></i></div>
+                            <div class="menu-label">${item.label}</div>
+                            ${lockIcon}
                         </div>
                     `;
             });
@@ -4939,26 +5083,26 @@
                         </div>
                     </div>`;
 
-            // ===== بخش وام و مقرری مصوب =====
-            const approvedSection = `
-                    <div class="approved-section">
-                        <h3><i class="fas fa-file-contract" style="color:var(--gold-color);"></i> مصوبات مالی صندوق</h3>
-                        <div class="approved-item"><span class="label">مبلغ وام مصوبه</span><span class="value gold">${member.mabVam1 ? fmtNum(member.mabVam1) : '---'}</span></div>
-                        <div class="approved-item"><span class="label">تعداد اقساط مصوبه</span><span class="value">${member.tedad || '---'}</span></div>
-                        <div class="approved-item"><span class="label">مبلغ هر قسط مصوبه</span><span class="value">${member.tedad > 0 ? fmtNum(Math.round(member.mabVam1 / member.tedad)) : '---'}</span></div>
-                        <div class="approved-item"><span class="label">مقرری ماهانه مصوب</span><span class="value gold">${member.monthlySalaryApproved ? fmtNum(member.monthlySalaryApproved) : '---'}</span></div>
-                        <div class="approved-item"><span class="label">موجودی تا این ماه</span><span class="value gold">${fmtNum(member.currentMonthBalance || '0')}</span></div>
-                    </div>`;
-
-            // ===== بخش مقرری و پس‌انداز شما =====
-            const allowanceSection = `
-                    <div class="allowance-section">
-                        <h3><i class="fas fa-piggy-bank" style="color:var(--teal-color);"></i> مقرری و پس‌انداز شما</h3>
-                        <div class="allowance-item"><span class="label">تاریخ فیش / تراکنش</span><span class="value">${esc(latestTx ? latestTx['تاریخ تراکنش'] : '---')}</span></div>
-                        <div class="allowance-item"><span class="label">مبلغ مقرری / مقرری ماهانه</span><span class="value green">${fmtNum(latestTx ? latestTx['مقرری ماهانه'] : 0)}</span></div>
-                        <div class="allowance-item"><span class="label">واریز کننده</span><span class="value">${esc(latestTx ? latestTx['نام تراکنش کننده'] : '---')}</span></div>
-                        <div class="allowance-item"><span class="label">موجودی</span><span class="value ${balance >= 0 ? 'green' : 'red'}">${fmtNum(balance)}</span></div>
-                    </div>`;
+            // ===== بخش مقرری و پس‌انداز (کنار مصوبات) =====
+            const allowanceAndApprovedSection = `
+                    <div class="dashboard-grid-2">
+                        <div class="allowance-section">
+                            <h3><i class="fas fa-piggy-bank" style="color:var(--teal-color);"></i> مقرری و پس‌انداز شما</h3>
+                            <div class="allowance-item"><span class="label">تاریخ فیش / تراکنش</span><span class="value">${esc(latestTx ? latestTx['تاریخ تراکنش'] : '---')}</span></div>
+                            <div class="allowance-item"><span class="label">مبلغ مقرری / مقرری ماهانه</span><span class="value green">${fmtNum(latestTx ? latestTx['مقرری ماهانه'] : 0)}</span></div>
+                            <div class="allowance-item"><span class="label">واریز کننده</span><span class="value">${esc(latestTx ? latestTx['نام تراکنش کننده'] : '---')}</span></div>
+                            <div class="allowance-item"><span class="label">موجودی</span><span class="value ${balance >= 0 ? 'green' : 'red'}">${fmtNum(balance)}</span></div>
+                        </div>
+                        <div class="approved-section">
+                            <h3><i class="fas fa-file-contract" style="color:var(--gold-color);"></i> مصوبات مالی صندوق</h3>
+                            <div class="approved-item"><span class="label">مبلغ وام مصوبه</span><span class="value gold">${member.mabVam1 ? fmtNum(member.mabVam1) : '---'}</span></div>
+                            <div class="approved-item"><span class="label">تعداد اقساط مصوبه</span><span class="value">${member.tedad || '---'}</span></div>
+                            <div class="approved-item"><span class="label">مبلغ هر قسط مصوبه</span><span class="value">${member.tedad > 0 ? fmtNum(Math.round(member.mabVam1 / member.tedad)) : '---'}</span></div>
+                            <div class="approved-item"><span class="label">مقرری ماهانه مصوب</span><span class="value gold">${member.monthlySalaryApproved ? fmtNum(member.monthlySalaryApproved) : '---'}</span></div>
+                            <div class="approved-item"><span class="label">موجودی تا این ماه</span><span class="value gold">${fmtNum(member.currentMonthBalance || '0')}</span></div>
+                        </div>
+                    </div>
+                `;
 
             // ===== بخش اطلاعات وام و بدهی با جدول اقساط =====
             const loanAndDebtSection = `
@@ -5034,10 +5178,43 @@
                         return '';
                     })()}`;
 
-            const lastTxHtml =
-                `<div class="dashboard-section card-transaction full-width"><h3 style="color:var(--success-color)"><i class="fas fa-receipt" style="color:var(--success-color)"></i> آخرین تراکنش ${latestTx ? '(ID: ' + esc(latestTx['ID'] || '') + ')' : ''}</h3>${latestTx ? `<div class="last-tx-grid"><div class="last-tx-item"><div class="last-tx-label">ID</div><div class="last-tx-value">${esc(latestTx['ID'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(latestTx['شماره حساب'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">مقرری ماهانه</div><div class="last-tx-value">${fmtNum(latestTx['مقرری ماهانه'])}</div></div><div class="last-tx-item"><div class="last-tx-label">شماره فیش</div><div class="last-tx-value">${esc(latestTx['شماره فیش'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">تاریخ تراکنش</div><div class="last-tx-value">${esc(latestTx['تاریخ تراکنش'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">مبلغ تراکنش</div><div class="last-tx-value">${fmtNum(latestTx['مبلغ تراکنش'])}</div></div><div class="last-tx-item"><div class="last-tx-label">نام تراکنش کننده</div><div class="last-tx-value">${esc(latestTx['نام تراکنش کننده'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">مبلغ قسط واریزی</div><div class="last-tx-value">${fmtNum(latestTx['مبلغ قسط واریزی'])}</div></div><div class="last-tx-item"><div class="last-tx-label">تاریخ قسط واریزی</div><div class="last-tx-value">${esc(latestTx['تاریخ قسط واریزی'] || '---')}</div></div><div class="last-tx-item"><div class="last-tx-label">جمع واریزی</div><div class="last-tx-value">${fmtNum(latestTx['جمع واریزی'])}</div></div><div class="last-tx-item"><div class="last-tx-label">موجودی</div><div class="last-tx-value" style="color:var(--success-color)">${fmtNum(balance)}</div></div><div class="last-tx-item"><div class="last-tx-label">قسط پرداخت شده</div><div class="last-tx-value">${fmtNum(latestTx['تعداد قسط پرداخت شده'])}</div></div><div class="last-tx-item"><div class="last-tx-label">قسط مانده</div><div class="last-tx-value">${fmtNum(latestTx['تعداد قسط مانده'])}</div></div><div class="last-tx-item"><div class="last-tx-label">وضعیت پس انداز</div><div class="last-tx-value">${fmtNum(latestTx['وضعیت پس انداز'])}</div></div><div class="last-tx-item"><div class="last-tx-label">پیامک واریز</div><div class="last-tx-value">${latestTx['پیامک واریز'] || '---'}</div></div><div class="last-tx-item"><div class="last-tx-label">پیامک اخطار</div><div class="last-tx-value">${latestTx['پیامک اخطار'] || '---'}</div></div></div>` : '<p style="text-align:center;color:var(--text-secondary);padding:12px;font-size:0.7rem">هیچ تراکنشی ثبت نشده است</p>'}</div>`;
+            // ===== ۵ تراکنش آخر =====
+            const topFiveTxns = memberTxns.slice(0, 5);
+            let lastTxHtml = '';
+            if (topFiveTxns.length > 0) {
+                lastTxHtml = `
+                        <div class="dashboard-section card-transaction full-width" style="border-right-color:var(--orange-color);">
+                            <h3 style="color:var(--orange-color); font-size:0.9rem;"><i class="fas fa-receipt" style="color:var(--orange-color);"></i> ۵ تراکنش آخر</h3>
+                            <div class="mini-excel-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>شناسه</th>
+                                            <th>تاریخ</th>
+                                            <th>مبلغ</th>
+                                            <th>موجودی</th>
+                                            <th>شرح</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${topFiveTxns.map(tx => `
+                                            <tr>
+                                                <td>${esc(tx['ID'] || '---')}</td>
+                                                <td>${esc(tx['تاریخ تراکنش'] || '---')}</td>
+                                                <td>${fmtNum(tx['مبلغ تراکنش'] || 0)}</td>
+                                                <td>${fmtNum(tx['موجودی'] || 0)}</td>
+                                                <td>${esc(tx['توضیحات'] || '---')}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                            ${memberTxns.length > 5 ? `<div style="font-size:0.55rem; color:var(--text-secondary); margin-top:4px; text-align:left;">+ ${memberTxns.length - 5} تراکنش دیگر در مجموعه صورتحساب</div>` : ''}
+                        </div>
+                    `;
+            }
 
-            // ===== مینی آخرین پیامک در پایین صورتحساب =====
+            // ===== مینی آخرین پیامک در پایین صورتحساب (کامل) =====
             let miniSmsHtml = '';
             if (latestTx) {
                 const amount = latestTx['مبلغ تراکنش'] || 0;
@@ -5045,16 +5222,26 @@
                 const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
                 const remainingInst = latestTx['تعداد قسط مانده'] || 0;
                 const transactionDate = latestTx['تاریخ تراکنش'] || '---';
+                const txName = latestTx['نام تراکنش کننده'] || '---';
+                const monthlySalary = latestTx['مقرری ماهانه'] || 0;
+                const savings = latestTx['وضعیت پس انداز'] || 0;
+                const total = latestTx['جمع واریزی'] || 0;
                 miniSmsHtml = `
                         <div class="dashboard-section" style="border-right-color:var(--teal-color); background: linear-gradient(135deg, rgba(20,184,166,0.04) 0%, rgba(13,148,136,0.04) 100%); padding:8px 12px; margin-top:6px;">
                             <h3 style="font-size:0.75rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
                             <div class="mini-sms-box" style="font-size:0.5rem; padding:6px 10px;">
                                 <div><span class="sms-label">نام:</span> ${member.firstName}</div>
-                                <div><span class="sms-label">واریزی:</span> ${fmtNum(amount)} ریال</div>
+                                <div><span class="sms-label">شماره حساب:</span> ${member.accountNumber}</div>
+                                <div><span class="sms-label">تاریخ تراکنش:</span> ${transactionDate}</div>
+                                <div><span class="sms-label">نام تراکنش کننده:</span> ${txName}</div>
+                                <div><span class="sms-label">مبلغ تراکنش:</span> ${fmtNum(amount)} ریال</div>
+                                <div><span class="sms-label">مقرری ماهانه:</span> ${fmtNum(monthlySalary)}</div>
+                                <div><span class="sms-label">وضعیت پس‌انداز:</span> ${fmtNum(savings)}</div>
+                                <div><span class="sms-label">جمع واریزی:</span> ${fmtNum(total)}</div>
                                 <div><span class="sms-label">موجودی:</span> ${fmtNum(balance)}</div>
                                 <div><span class="sms-label">قسط پرداخت شده:</span> ${paidInst}</div>
-                                <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance2)} (${remainingInst})</div>
-                                <div><span class="sms-label">تاریخ:</span> ${transactionDate}</div>
+                                <div><span class="sms-label">قسط مانده:</span> ${remainingInst}</div>
+                                <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance2)}</div>
                             </div>
                             <div style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
                                 <button class="btn-small info-btn" onclick="copyMiniSms()" style="font-size:0.45rem; padding:2px 8px; min-height:20px;">📋 کپی</button>
@@ -5065,13 +5252,14 @@
 
                 function copyMiniSms() {
                     const text =
-                        `${member.firstName}\nواریز:${fmtNum(amount)} ریال\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance2)} (${remainingInst})\n${transactionDate}`;
+                        `${member.firstName}\n${member.accountNumber}\n${transactionDate}\nواریز:${fmtNum(amount)} ریال\nمقرری:${fmtNum(monthlySalary)}\nپس‌انداز:${fmtNum(savings)}\nجمع واریزی:${fmtNum(total)}\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance2)} (${remainingInst})`;
                     navigator.clipboard.writeText(text).then(() => { alert('✅ متن پیامک کپی شد!'); }).catch(() => { alert(
                             '❌ خطا در کپی متن'); });
                 }
                 window.copyMiniSms = copyMiniSms;
             }
 
+            // ===== مجموعه صورتحساب کامل =====
             const allTxnsHtml =
                 `<div class="dashboard-section card-other full-width"><div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;"><h3 style="font-size:0.85rem; color:var(--text-primary); font-weight:bold; margin:0;"><i class="fas fa-file-invoice" style="color:#ec4899;"></i> مجموعه صورتحساب (${memberTxns.length} تراکنش)</h3><div style="display:flex; gap:6px; flex-wrap:wrap;"><button class="btn-small excel-btn" onclick="downloadExcel()" style="font-size:0.6rem; padding:4px 12px; min-height:28px; border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;"><i class="fas fa-file-excel"></i> دانلود Excel</button><button class="btn-small pdf-btn" onclick="downloadPDF()" style="font-size:0.6rem; padding:4px 12px; min-height:28px; border:none; color:#fff; border-radius:6px; cursor:pointer; font-weight:bold;"><i class="fas fa-file-pdf"></i> دانلود PDF</button></div></div><div class="filter-bar"><input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()" style="font-size:0.6rem; padding:4px 8px; min-height:26px;"><button class="btn-small success-btn" onclick="filterExcelTransactions()" style="min-height:26px; padding:4px 8px; font-size:0.55rem;">جستجو</button><button class="btn-small edit-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()" style="min-height:26px; padding:4px 8px; font-size:0.55rem;">پاک کردن</button></div><div id="txExcelContainer"></div></div>`;
 
@@ -5084,10 +5272,7 @@
                     ${celebrationHtml}
                     ${adminHtml}
                     ${warningsHtml}
-                    <div class="dashboard-grid-2">
-                        ${approvedSection}
-                    </div>
-                    ${allowanceSection}
+                    ${allowanceAndApprovedSection}
                     ${loanAndDebtSection}
                     ${lastTxHtml}
                     ${allTxnsHtml}
@@ -5254,7 +5439,7 @@
         function selectClubTab(tab) { currentClubTab = tab;
             renderClubContent(); }
 
-        // ===== خانواده =====
+        // ===== خانواده من (مدیریت اعضا) =====
         function renderFamilyContentHtml() {
             if (!isHeadOfHousehold()) {
                 return `<div class="info-box"><i class="fas fa-users"></i> خانواده من</div><div class="dashboard-section" style="text-align:center;padding:24px"><i class="fas fa-lock" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><p style="color:var(--text-secondary);font-size:0.85rem">فقط سرپرست خانوار به این بخش دسترسی دارد</p></div>`;
@@ -5435,6 +5620,93 @@
                     </div>`;
             document.getElementById('familyMemberDetailsContainer').innerHTML = html;
             setTimeout(() => { renderExcelTransactions(mTxns, `familyTxContainer_${member.id}`); }, 50);
+        }
+
+        // ===== اطلاعات کلی خانواده =====
+        function renderFamilyInfoContent() {
+            if (!isHeadOfHousehold()) {
+                return `<div class="info-box"><i class="fas fa-users-cog"></i> اطلاعات کلی خانواده</div><div class="dashboard-section" style="text-align:center;padding:24px"><i class="fas fa-lock" style="font-size:2rem;color:#e53e3e;margin-bottom:10px"></i><p style="color:var(--text-secondary);font-size:0.85rem">فقط سرپرست خانوار به این بخش دسترسی دارد</p></div>`;
+            }
+            const familyMembers = getFamilyMembers();
+            const currentMember = members.find(m => m.id === currentUser.memberId);
+            const allFamily = [currentMember, ...familyMembers].filter(m => m !== undefined);
+
+            const totalBalance = allFamily.reduce((sum, m) => sum + (m.balance || 0), 0);
+            const totalDebt = allFamily.reduce((sum, m) => sum + (m.loanBalance || 0), 0);
+            const totalMonthlyPay = allFamily.reduce((sum, m) => sum + (m.monthlySalary || 0), 0);
+            const totalSavings = allFamily.reduce((sum, m) => sum + (m.savingsStatus || 0), 0);
+            const totalLoanReceived = allFamily.reduce((sum, m) => sum + (m.loanReceivedAmount || 0), 0);
+            const totalOverdue = allFamily.reduce((sum, m) => sum + Math.abs(m.overdueInstallments || 0), 0);
+            const totalPaidInstallments = allFamily.reduce((sum, m) => sum + (m.paidInstallments || 0), 0);
+
+            // جدول اعضا
+            let tableHtml = `
+                    <div class="family-info-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ردیف</th>
+                                    <th>نام عضو</th>
+                                    <th>شماره حساب</th>
+                                    <th>موجودی</th>
+                                    <th>بدهی</th>
+                                    <th>تعداد قسط پرداختی</th>
+                                    <th>معوقه</th>
+                                    <th>وضعیت پس‌انداز</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        `;
+            allFamily.forEach((m, idx) => {
+                const savingsClass = m.savingsStatus >= 0 ? 'positive' : 'negative';
+                const overdueClass = m.overdueInstallments >= 0 ? 'positive' : 'negative';
+                tableHtml += `
+                            <tr>
+                                <td>${idx + 1}</td>
+                                <td>${esc(m.firstName)}${m.id === currentMember.id ? ' ★' : ''}</td>
+                                <td>${esc(m.accountNumber)}</td>
+                                <td class="positive">${fmtNum(m.balance || 0)}</td>
+                                <td class="negative">${fmtNum(m.loanBalance || 0)}</td>
+                                <td>${m.paidInstallments || 0}</td>
+                                <td class="${overdueClass}">${Math.abs(m.overdueInstallments || 0)}</td>
+                                <td class="${savingsClass}">${fmtNum(m.savingsStatus || 0)}</td>
+                            </tr>
+                        `;
+            });
+            tableHtml += `
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+            return `
+                    <div class="info-box"><i class="fas fa-users-cog"></i> اطلاعات کلی خانواده</div>
+                    <div class="dashboard-section" style="border-right-color:var(--success-color); background: linear-gradient(135deg, rgba(16,185,129,0.05) 0%, rgba(5,150,105,0.05) 100%);">
+                        <h3><i class="fas fa-chart-pie" style="color:var(--success-color);"></i> خلاصه مالی خانواده</h3>
+                        <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-wallet" style="color:var(--success-color);"></i></div><div class="stat-value green">${fmtNum(totalBalance)}</div><div class="stat-label">جمع موجودی خانواده</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-hand-holding-usd" style="color:var(--danger-color);"></i></div><div class="stat-value red">${fmtNum(totalDebt)}</div><div class="stat-label">جمع بدهی خانواده</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-coins" style="color:var(--gold-color);"></i></div><div class="stat-value gold">${fmtNum(totalMonthlyPay)}</div><div class="stat-label">جمع واریزی خانواده</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-piggy-bank" style="color:var(--purple-color);"></i></div><div class="stat-value purple">${fmtNum(totalSavings)}</div><div class="stat-label">جمع پس‌انداز</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-exclamation-triangle" style="color:var(--gold-color);"></i></div><div class="stat-value gold">${fmtNum(totalOverdue)}</div><div class="stat-label">جمع اقساط معوقه</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle" style="color:var(--success-color);"></i></div><div class="stat-value green">${fmtNum(totalPaidInstallments)}</div><div class="stat-label">جمع اقساط پرداختی</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-users" style="color:var(--blue-color);"></i></div><div class="stat-value blue">${allFamily.length}</div><div class="stat-label">تعداد اعضای خانواده</div></div>
+                            <div class="stat-card"><div class="stat-icon"><i class="fas fa-coins" style="color:var(--teal-color);"></i></div><div class="stat-value teal">${fmtNum(totalLoanReceived)}</div><div class="stat-label">جمع وام دریافتی</div></div>
+                        </div>
+                    </div>
+                    <div class="dashboard-section" style="border-right-color:var(--gradient-start);">
+                        <h3><i class="fas fa-table" style="color:var(--gradient-start);"></i> اطلاعات کامل اعضای خانواده</h3>
+                        ${tableHtml}
+                        <div style="margin-top:8px; font-size:0.55rem; color:var(--text-secondary);">
+                            <span class="positive">★ شما</span> | 
+                            <span class="positive">✅ مثبت</span> | 
+                            <span class="negative">❌ منفی</span>
+                        </div>
+                    </div>
+                    <div style="text-align:center; margin-top:10px;">
+                        <button class="btn-small" onclick="goToMenu()" style="background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color:#fff; padding:6px 18px; font-size:0.75rem; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🏠 بازگشت به منو</button>
+                    </div>
+                `;
         }
 
         // ===== دسترسی‌ها =====
@@ -5704,271 +5976,14 @@
                         <p style="color:var(--text-secondary);font-size:0.8rem;margin-top:4px">برای راهنمایی بیشتر با پشتیبانی تماس بگیرید</p>
                         <div style="margin-top:12px;text-align:right;padding:12px;background:var(--bg-secondary);border-radius:8px;">
                             <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 اطلاعات شخصی شما: اطلاعات کاربری</p>
-                            <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صورتحساب: تراکنش‌های مالی + جدول اقساط</p>
+                            <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صورتحساب: تراکنش‌های مالی + جدول اقساط + ۵ تراکنش آخر</p>
                             <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 صندوق من: تحلیل مالی شخصی + جدول اقساط</p>
                             <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 وضعیت سامانه پیامکی: وضعیت سرویس‌های پیامکی</p>
                             <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 خانواده من: مدیریت اعضای خانواده + جدول اقساط</p>
+                            <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 اطلاعات کلی خانواده: خلاصه مالی خانواده + جدول اعضا</p>
                             <p style="font-size:0.7rem;color:var(--text-primary);font-weight:bold;">🔹 امتیازات: فروشگاه و سکه‌ها</p>
                         </div>
                     </div>`;
-        }
-
-        // ============================================================
-        // ===== صفحه: حساب شما در یک نگاه (quickAccount) =====
-        // ============================================================
-        function renderQuickAccountContent() {
-            const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) return '<div style="text-align:center;padding:30px;font-size:1rem">خطا</div>';
-
-            const memberTxns = (transactionsByMember.get(String(member.id)) || []).sort((a, b) => (parseInt(b
-                ._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-            const latestTx = memberTxns.length ? memberTxns[0] : null;
-            const balance = latestTx ? latestTx['موجودی'] || '0' : '0';
-            const totalInstallments = member?.totalInstallments || 1;
-            const paidInstallments = member?.paidInstallments || 0;
-            const progressPercent = Math.min(100, Math.round((paidInstallments / totalInstallments) * 100));
-
-            let paymentStatus = '',
-                paymentColor = '';
-            if (member.overdueInstallments < 0 && Math.abs(member.overdueInstallments) > 0) { paymentStatus =
-                    `⚠️ ${Math.abs(member.overdueInstallments)} قسط معوقه`;
-                paymentColor = '#ef4444'; } else if (member.overdueInstallments < 0 && Math.abs(member
-                .overdueInstallments) === 0) { paymentStatus = '✅ همه اقساط پرداخت شده';
-                paymentColor = '#10b981'; } else if (member.loanBalance > 0) { paymentStatus = '🟡 در حال پرداخت اقساط';
-                paymentColor = '#f59e0b'; } else { paymentStatus = '✅ بدون بدهی';
-                paymentColor = '#10b981'; }
-
-            const ui = users.find(u => u.memberId === member.id);
-            const actualPassword = ui ? ui.password || '---' : '---';
-            const accountActive = member.active !== false;
-            const accountStatusHtml = accountActive ?
-                '<span class="account-status-badge active">فعال</span>' :
-                '<span class="account-status-badge inactive">غیرفعال</span>';
-            const membershipDuration = calculateMembershipDuration(member.datMiladi);
-
-            // مینی اکسل (۵ تراکنش آخر)
-            const topTxns = memberTxns.slice(0, 5);
-            let miniExcelHtml = '';
-            if (topTxns.length > 0) {
-                miniExcelHtml = `
-                        <div class="dashboard-section" style="border-right-color:var(--orange-color); padding:8px 10px;">
-                            <h3 style="font-size:0.75rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-table" style="color:var(--orange-color);"></i> آخرین تراکنش‌ها (${topTxns.length} مورد)</h3>
-                            <div class="mini-excel-wrapper">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>شناسه</th>
-                                            <th>تاریخ</th>
-                                            <th>مبلغ</th>
-                                            <th>موجودی</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${topTxns.map(tx => `
-                                            <tr>
-                                                <td>${esc(tx['ID'] || '---')}</td>
-                                                <td>${esc(tx['تاریخ تراکنش'] || '---')}</td>
-                                                <td>${fmtNum(tx['مبلغ تراکنش'] || 0)}</td>
-                                                <td>${fmtNum(tx['موجودی'] || 0)}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                            ${memberTxns.length > 5 ? `<div style="font-size:0.4rem; color:var(--text-secondary); margin-top:2px; text-align:left;">+ ${memberTxns.length - 5} تراکنش دیگر</div>` : ''}
-                            <div style="margin-top:4px;">
-                                <button class="btn-small info-btn" onclick="goToPage('dashboard')" style="font-size:0.45rem; padding:2px 10px; min-height:20px;">🔍 مشاهده کامل صورتحساب</button>
-                            </div>
-                        </div>
-                    `;
-            }
-
-            // مینی آخرین پیامک
-            let miniSmsHtml = '';
-            if (latestTx) {
-                const amount = latestTx['مبلغ تراکنش'] || 0;
-                const loanBalance2 = latestTx['مانده وام'] || 0;
-                const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
-                const remainingInst = latestTx['تعداد قسط مانده'] || 0;
-                const transactionDate = latestTx['تاریخ تراکنش'] || '---';
-                miniSmsHtml = `
-                        <div class="dashboard-section" style="border-right-color:var(--teal-color); background: linear-gradient(135deg, rgba(20,184,166,0.04) 0%, rgba(13,148,136,0.04) 100%); padding:8px 10px;">
-                            <h3 style="font-size:0.75rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب</h3>
-                            <div class="mini-sms-box" style="font-size:0.5rem; padding:6px 10px;">
-                                <div><span class="sms-label">نام:</span> ${member.firstName}</div>
-                                <div><span class="sms-label">واریزی:</span> ${fmtNum(amount)} ریال</div>
-                                <div><span class="sms-label">موجودی:</span> ${fmtNum(balance)}</div>
-                                <div><span class="sms-label">قسط پرداخت شده:</span> ${paidInst}</div>
-                                <div><span class="sms-label">مانده وام:</span> ${fmtNum(loanBalance2)} (${remainingInst})</div>
-                                <div><span class="sms-label">تاریخ:</span> ${transactionDate}</div>
-                            </div>
-                            <div style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;">
-                                <button class="btn-small info-btn" onclick="copyQuickSms()" style="font-size:0.45rem; padding:2px 8px; min-height:20px;">📋 کپی</button>
-                                <button class="btn-small info-btn" onclick="goToPage('sms')" style="font-size:0.45rem; padding:2px 8px; min-height:20px;">🔍 مشاهده کامل</button>
-                            </div>
-                        </div>
-                    `;
-
-                function copyQuickSms() {
-                    const text =
-                        `${member.firstName}\nواریز:${fmtNum(amount)} ریال\nموجودی:${fmtNum(balance)}\nقسط:${paidInst}\nمانده وام:${fmtNum(loanBalance2)} (${remainingInst})\n${transactionDate}`;
-                    navigator.clipboard.writeText(text).then(() => { alert('✅ متن پیامک کپی شد!'); }).catch(() => { alert(
-                            '❌ خطا در کپی متن'); });
-                }
-                window.copyQuickSms = copyQuickSms;
-            }
-
-            // وضعیت سامانه پیامکی (کامل تر)
-            const smsServices = [
-                { name: 'صورتحساب', key: 'smsActive', icon: 'fa-file-invoice-dollar', color: '#48bb78' },
-                { name: 'جلسات شورا', key: 'smsKod', icon: 'fa-users-cog', color: '#9f7aea' },
-                { name: 'عمومی', key: 'smsOmomi', icon: 'fa-broadcast-tower', color: '#4299e1' },
-                { name: 'سرپرستان', key: 'smsSarparast', icon: 'fa-user-shield', color: '#ed8936' },
-                { name: 'معوقات', key: 'smsMoavaghe', icon: 'fa-exclamation-triangle', color: '#e53e3e' },
-                { name: 'مسابقات', key: 'smsMosabegheh', icon: 'fa-trophy', color: '#ecc94b' },
-                { name: 'خبرنامه', key: 'smsKhabarnameh', icon: 'fa-newspaper', color: '#38b2ac' },
-                { name: 'تولد', key: 'smsTavalod', icon: 'fa-birthday-cake', color: '#ed64a6' },
-                { name: 'مناسبت‌ها', key: 'smsMonasebat', icon: 'fa-star-and-crescent',
-                color: 'var(--gradient-start)' }
-            ];
-            let smsStatusHtml = `
-                    <div class="dashboard-section" style="border-right-color:var(--blue-color); background: linear-gradient(135deg, rgba(59,130,246,0.04) 0%, rgba(37,99,235,0.04) 100%); padding:8px 10px;">
-                        <h3 style="font-size:0.75rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-list-check" style="color:var(--blue-color);"></i> وضعیت سامانه‌های پیامکی</h3>
-                        <div class="support-grid" style="grid-template-columns:1fr 1fr 1fr; gap:3px;">
-                            ${smsServices.map(s => {
-                                const isActive = latestTx && latestTx[s.key] === true;
-                                return `<div class="support-card" style="padding:4px 6px;"><div class="support-icon" style="width:20px;height:20px;font-size:0.5rem;background:${s.color}"><i class="fas ${s.icon}"></i></div><div><div class="support-label" style="font-size:0.4rem;">${s.name}</div><div class="support-value" style="font-size:0.5rem;color:${isActive ? 'var(--success-color)' : 'var(--danger-color)'}">${isActive ? 'فعال' : 'غیرفعال'}</div></div></div>`;
-                            }).join('')}
-                        </div>
-                        <div style="margin-top:4px; background:rgba(245,158,11,0.08); padding:4px 8px; border-radius:4px;">
-                            <p style="font-size:0.45rem; color:var(--text-secondary); font-weight:bold;">💡 برای تغییر وضعیت با حسابداری تماس بگیرید</p>
-                        </div>
-                        <div style="margin-top:4px;">
-                            <button class="btn-small info-btn" onclick="goToPage('sms')" style="font-size:0.45rem; padding:2px 10px; min-height:20px;">🔍 مشاهده کامل</button>
-                        </div>
-                    </div>
-                `;
-
-            return `
-                    <div class="info-box" style="background:linear-gradient(135deg, #ec489915 0%, #db277715 100%); border-right-color:#ec4899;">
-                        <i class="fas fa-eye" style="color:#ec4899;"></i> 
-                        <span style="color:#ec4899; font-weight:bold;">حساب شما در یک نگاه</span>
-                        <span style="font-size:0.65rem; color:var(--text-secondary); margin-right:8px;">| آخرین بروزرسانی: ${getUpdateTime()}</span>
-                    </div>
-
-                    <!-- ===== خلاصه حساب ===== -->
-                    <div class="dashboard-section" style="border-right-color:var(--gold-color); background: linear-gradient(135deg, rgba(245, 158, 11, 0.06) 0%, rgba(217, 119, 6, 0.06) 100%); padding:10px 12px;">
-                        <h3 style="font-size:0.85rem; margin-bottom:6px;"><i class="fas fa-file-invoice" style="color:var(--gold-color);"></i> خلاصه حساب شما</h3>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:6px;">
-                            <div style="background:var(--bg-secondary); padding:6px; border-radius:6px; text-align:center; border-right:3px solid var(--success-color);">
-                                <div style="font-size:0.5rem; color:var(--text-secondary); font-weight:bold;">موجودی شما</div>
-                                <div style="font-size:0.9rem; font-weight:bold; color:var(--success-color);">${fmtNum(balance)}</div>
-                            </div>
-                            <div style="background:var(--bg-secondary); padding:6px; border-radius:6px; text-align:center; border-right:3px solid var(--danger-color);">
-                                <div style="font-size:0.5rem; color:var(--text-secondary); font-weight:bold;">مانده بدهی</div>
-                                <div style="font-size:0.9rem; font-weight:bold; color:var(--danger-color);">${fmtNum(member?.loanBalance || 0)}</div>
-                            </div>
-                            <div style="background:var(--bg-secondary); padding:6px; border-radius:6px; text-align:center; border-right:3px solid var(--gold-color);">
-                                <div style="font-size:0.5rem; color:var(--text-secondary); font-weight:bold;">پیشرفت اقساط</div>
-                                <div style="font-size:0.9rem; font-weight:bold; color:var(--gold-color);">${progressPercent}%</div>
-                                <div style="width:100%; height:3px; background:var(--bg-secondary); border-radius:3px; overflow:hidden; margin-top:2px;">
-                                    <div style="width:${progressPercent}%; height:100%; background:linear-gradient(90deg, var(--gold-color), #d97706); border-radius:3px;"></div>
-                                </div>
-                            </div>
-                            <div style="background:var(--bg-secondary); padding:6px; border-radius:6px; text-align:center; border-right:3px solid var(--purple-color);">
-                                <div style="font-size:0.5rem; color:var(--text-secondary); font-weight:bold;">وضعیت پس‌انداز</div>
-                                <div style="font-size:0.9rem; font-weight:bold; color:${member?.savingsStatus >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};">${fmtNum(member?.savingsStatus || 0)}</div>
-                            </div>
-                        </div>
-                        <div style="margin-top:4px; display:grid; grid-template-columns:1fr 1fr; gap:3px; font-size:0.5rem; color:var(--text-secondary);">
-                            <div><span style="font-weight:bold;">وضعیت پرداخت:</span> <span style="color:${paymentColor};">${paymentStatus}</span></div>
-                            <div><span style="font-weight:bold;">تعداد اقساط:</span> ${member?.totalInstallments || 0} (پرداخت شده: ${member?.paidInstallments || 0})</div>
-                        </div>
-                    </div>
-
-                    <!-- ===== پروفایل کامل ===== -->
-                    <div class="dashboard-section" style="border-right-color:#8b5cf6; background: linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(124,58,237,0.05) 100%); padding:10px 12px;">
-                        <h3 style="font-size:0.8rem; color:var(--text-primary); font-weight:bold; margin-bottom:4px;"><i class="fas fa-user-circle" style="color:#8b5cf6;"></i> اطلاعات شخصی</h3>
-                        <div class="last-tx-grid" style="grid-template-columns:1fr 1fr 1fr; gap:3px;">
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">نام</div><div class="last-tx-value" style="font-size:0.6rem;">${esc(member.firstName)}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">شماره حساب</div><div class="last-tx-value" style="font-size:0.6rem;">${esc(member.accountNumber)}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">تلفن</div><div class="last-tx-value" style="font-size:0.6rem;">${esc(member.phone1 || '---')}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">تاریخ عضویت</div><div class="last-tx-value" style="font-size:0.6rem;">${esc(member.openDate || '---')}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">مدت عضویت</div><div class="last-tx-value" style="font-size:0.6rem;color:var(--gradient-start)">${membershipDuration}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">وضعیت</div><div class="last-tx-value" style="font-size:0.6rem;">${accountStatusHtml}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">نام کاربری</div><div class="last-tx-value" style="font-size:0.6rem;">${esc(currentUser.username)}</div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">رمز عبور</div><div class="last-tx-value" style="font-size:0.6rem;"><span class="value" id="quickPwdValue" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button class="toggle-btn" onclick="togglePassword('quickPwdValue','quickPwdIcon')" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:1px 6px;border-radius:3px;cursor:pointer;font-size:0.45rem;touch-action:manipulation;min-height:18px;font-weight:bold;"><i id="quickPwdIcon" class="fas fa-eye" style="font-size:0.5rem;"></i></button></div></div>
-                            <div class="last-tx-item" style="padding:3px 6px;"><div class="last-tx-label" style="font-size:0.45rem;">نقش</div><div class="last-tx-value" style="font-size:0.6rem;">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
-                        </div>
-                    </div>
-
-                    <!-- ===== اطلاعات وام و بدهی ===== -->
-                    <div class="dashboard-section card-debt" style="padding:10px 12px;">
-                        <h3 style="font-size:0.8rem;"><i class="fas fa-hand-holding-usd" style="color:var(--danger-color)"></i> اطلاعات وام و بدهی</h3>
-                        <div class="loan-info" style="grid-template-columns:1fr 1fr 1fr; gap:3px;">
-                            <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">شماره وام</div><div class="loan-info-value" style="font-size:0.55rem;">${esc(member.loanNumber || member.accountNumber || '---')}</div></div>
-                            <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">مبلغ دریافتی</div><div class="loan-info-value" style="font-size:0.55rem;">${member.loanReceivedAmount ? fmtNum(member.loanReceivedAmount) : '---'}</div></div>
-                            <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">مانده وام</div><div class="loan-info-value" style="font-size:0.55rem;color:var(--danger-color);">${fmtNum(member.loanBalance || 0)}</div></div>
-                            <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">تعداد اقساط</div><div class="loan-info-value" style="font-size:0.55rem;">${member.totalInstallments || 0}</div></div>
-                            <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">پرداخت شده</div><div class="loan-info-value" style="font-size:0.55rem;color:var(--success-color);">${member.paidInstallments || 0}</div></div>
-                            <div class="loan-info-item" style="padding:3px 6px;"><div class="loan-info-label" style="font-size:0.4rem;">معوقه</div><div class="loan-info-value" style="font-size:0.55rem;color:var(--danger-color);">${Math.abs(member.overdueInstallments || 0)}</div></div>
-                        </div>
-                        ${(() => {
-                            const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
-                            if (instDates.length > 0) {
-                                const paidCount = member.paidInstallments || 0;
-                                const overdueCount = Math.abs(member.overdueInstallments || 0);
-                                return `
-                                    <div style="margin-top:6px;">
-                                        <div style="font-size:0.5rem; color:var(--text-secondary); margin-bottom:3px;">
-                                            تاریخ دریافت: <strong>${esc(member.loanReceiveDate || '---')}</strong>
-                                        </div>
-                                        <div class="installment-table-wrapper" style="max-height:100px; overflow-y:auto;">
-                                            <table>
-                                                <thead>
-                                                    <tr>
-                                                        <th style="font-size:0.4rem;">شماره</th>
-                                                        <th style="font-size:0.4rem;">تاریخ سررسید</th>
-                                                        <th style="font-size:0.4rem;">وضعیت</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    ${instDates.slice(0, 12).map((inst, idx) => {
-                                                        const index = idx + 1;
-                                                        let statusClass = 'pending';
-                                                        let statusText = 'در انتظار';
-                                                        if (index <= paidCount) {
-                                                            statusClass = 'paid';
-                                                            statusText = '✅';
-                                                        } else if (index <= paidCount + overdueCount) {
-                                                            statusClass = 'overdue';
-                                                            statusText = '⚠️';
-                                                        }
-                                                        return `<tr class="${statusClass}">
-                                                            <td style="font-size:0.4rem;padding:2px 4px;">${index}</td>
-                                                            <td style="font-size:0.4rem;padding:2px 4px;">${inst.date}</td>
-                                                            <td style="font-size:0.4rem;padding:2px 4px;"><span class="installment-status-badge ${statusClass}" style="font-size:0.35rem;">${statusText}</span></td>
-                                                        </tr>`;
-                                                    }).join('')}
-                                                </tbody>
-                                            </table>
-                                            ${instDates.length > 12 ? `<div style="font-size:0.4rem; color:var(--text-muted); text-align:left; margin-top:2px;">+ ${instDates.length - 12} قسط دیگر</div>` : ''}
-                                        </div>
-                                    </div>
-                                `;
-                            }
-                            return '';
-                        })()}
-                    </div>
-
-                    ${miniExcelHtml}
-                    ${miniSmsHtml}
-                    ${smsStatusHtml}
-
-                    <div style="text-align:center; margin-top:8px;">
-                        <button class="btn-small" onclick="goToMenu()" style="background:linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color:#fff; padding:6px 18px; font-size:0.75rem; border:none; border-radius:6px; cursor:pointer; font-weight:bold;">🏠 بازگشت به منو</button>
-                    </div>
-                `;
         }
 
         // ============================================================
@@ -6120,6 +6135,9 @@
                 case 'family':
                     pageContent = renderFamilyContentHtml();
                     break;
+                case 'familyInfo':
+                    pageContent = renderFamilyInfoContent();
+                    break;
                 case 'access':
                     pageContent = renderAccessContentHtml();
                     break;
@@ -6134,9 +6152,6 @@
                     break;
                 case 'help':
                     pageContent = renderHelpContentHtml();
-                    break;
-                case 'quickAccount':
-                    pageContent = renderQuickAccountContent();
                     break;
                 case 'manageCoins':
                     pageContent = renderManageCoinsContent();
@@ -6185,7 +6200,7 @@
                 });
             }
 
-            console.log('🟢 All scripts loaded - نسخه نهایی با سرویس‌های دسته‌بندی شده');
+            console.log('🟢 All scripts loaded - نسخه نهایی با تغییرات درخواستی');
         });
 
         window.addEventListener('pageshow', function(event) {
