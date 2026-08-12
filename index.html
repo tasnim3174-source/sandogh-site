@@ -13,6 +13,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://v1.fontapi.ir/css/BTitr" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800;900&display=swap" rel="stylesheet">
 
@@ -107,10 +108,7 @@
 
         .login-bg-animated {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             z-index: -1;
             overflow: hidden;
         }
@@ -123,31 +121,25 @@
         }
 
         .login-bg-animated .orb:nth-child(1) {
-            width: 400px;
-            height: 400px;
+            width: 400px; height: 400px;
             background: #f093fb;
-            top: -100px;
-            right: -100px;
+            top: -100px; right: -100px;
             opacity: 0.3;
             animation-delay: 0s;
         }
 
         .login-bg-animated .orb:nth-child(2) {
-            width: 350px;
-            height: 350px;
+            width: 350px; height: 350px;
             background: #4facfe;
-            bottom: -80px;
-            left: -80px;
+            bottom: -80px; left: -80px;
             opacity: 0.25;
             animation-delay: -5s;
         }
 
         .login-bg-animated .orb:nth-child(3) {
-            width: 250px;
-            height: 250px;
+            width: 250px; height: 250px;
             background: #f5576c;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             opacity: 0.15;
             animation-delay: -10s;
@@ -250,7 +242,7 @@
         .okc p { color: #cdd8ec; font-size: 13px; margin-top: 6px; }
 
         /* ============================================
-                   بقیهٔ CSS اصلی (بدون تغییر)
+                   CSS اصلی برنامه
                    ============================================ */
         .container {
             max-width: 1400px;
@@ -314,10 +306,8 @@
         .btn::after {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
             background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: rotate(45deg) translateX(-100%);
             transition: transform 0.6s ease;
@@ -420,8 +410,7 @@
         }
 
         .remember-me input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 20px; height: 20px;
             accent-color: var(--gradient-start);
             cursor: pointer;
             flex-shrink: 0;
@@ -458,10 +447,8 @@
         .download-app-btn::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
             background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent 60%);
             animation: rotateGlow 3s linear infinite;
         }
@@ -534,8 +521,7 @@
         .grid-menu-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 30px var(--shadow-color); border-color: var(--gradient-start); }
 
         .grid-menu-item .menu-icon {
-            width: 120px;
-            height: 120px;
+            width: 120px; height: 120px;
             border-radius: 28px;
             display: flex;
             align-items: center;
@@ -553,13 +539,11 @@
 
         .grid-menu-item .menu-badge {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 8px; right: 8px;
             background: linear-gradient(135deg, var(--danger-color), #dc2626);
             color: #fff;
             border-radius: 50%;
-            min-width: 26px;
-            height: 26px;
+            min-width: 26px; height: 26px;
             display: none;
             align-items: center;
             justify-content: center;
@@ -626,8 +610,7 @@
 
         .grid-menu-item .lock-icon {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 8px; right: 8px;
             font-size: 0.7rem;
             color: var(--gold-color);
             background: rgba(0, 0, 0, 0.5);
@@ -709,8 +692,7 @@
         .rank-help-tooltip {
             display: none;
             position: absolute;
-            top: 100%;
-            left: 50%;
+            top: 100%; left: 50%;
             transform: translateX(-50%);
             background: var(--card-bg);
             border-radius: 12px;
@@ -847,15 +829,13 @@
 
         .floating-home-btn {
             position: fixed;
-            bottom: 80px;
-            right: 20px;
+            bottom: 80px; right: 20px;
             z-index: 999;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 56px;
-            height: 56px;
+            width: 56px; height: 56px;
             font-size: 1.5rem;
             box-shadow: 0 4px 20px rgba(102, 126, 234, 0.5);
             cursor: pointer;
@@ -872,15 +852,13 @@
 
         .floating-settings-btn {
             position: fixed;
-            bottom: 80px;
-            left: 20px;
+            bottom: 80px; left: 20px;
             z-index: 999;
             background: linear-gradient(135deg, #64748b 0%, #475569 100%);
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 50px; height: 50px;
             font-size: 1.3rem;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             cursor: pointer;
@@ -897,15 +875,13 @@
 
         .floating-logout-btn {
             position: fixed;
-            bottom: 140px;
-            left: 20px;
+            bottom: 140px; left: 20px;
             z-index: 999;
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: #fff;
             border: none;
             border-radius: 50%;
-            width: 44px;
-            height: 44px;
+            width: 44px; height: 44px;
             font-size: 1.1rem;
             box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
             cursor: pointer;
@@ -921,10 +897,8 @@
 
         .back-to-top {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 44px;
-            height: 44px;
+            bottom: 20px; right: 20px;
+            width: 44px; height: 44px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
             color: #fff;
@@ -1295,7 +1269,6 @@
         .access-table .overdue-badge { color: var(--danger-color); font-weight: bold; }
         .access-table .overdue-badge.zero { color: var(--success-color); }
 
-        /* 🆕 استایل خلاصهٔ گزارش و نمودارها */
         .report-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
         .summary-card { background: var(--card-bg); padding: 12px 8px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); border-right: 4px solid var(--gradient-start); box-shadow: 0 2px 10px var(--shadow-color); }
         .summary-value { font-size: 1.2rem; font-weight: bold; }
@@ -1306,6 +1279,95 @@
         .system-message-box { background: linear-gradient(135deg, rgba(245, 158, 11, 0.06), rgba(217, 119, 6, 0.06)); padding: 10px 14px; border-radius: 12px; margin-bottom: 12px; border-right: 4px solid var(--gold-color); display: flex; align-items: center; gap: 10px; border: 1px solid rgba(245, 158, 11, 0.1); }
         .system-message-box .message-icon { font-size: 1.3rem; color: var(--gold-color); }
         .system-message-box .message-text { font-size: 0.8rem; color: var(--text-primary); flex: 1; }
+
+        /* ============================================
+                   🎨 زیباسازی صفحه اصلی (منو)
+                   ============================================ */
+        .header-bar {
+            background: linear-gradient(135deg, rgba(102,126,234,0.14), rgba(118,75,162,0.12), rgba(79,172,254,0.08));
+            position: relative;
+            overflow: hidden;
+        }
+        [data-theme="dark"] .header-bar {
+            background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(217,119,6,0.10), rgba(255,201,77,0.06));
+        }
+        .header-bar::before {
+            content: '';
+            position: absolute;
+            top: -60px; right: -60px;
+            width: 220px; height: 220px;
+            background: radial-gradient(circle, rgba(102,126,234,0.18), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatOrb 6s ease-in-out infinite;
+        }
+        .header-bar::after {
+            content: '';
+            position: absolute;
+            bottom: -60px; left: -60px;
+            width: 180px; height: 180px;
+            background: radial-gradient(circle, rgba(79,172,254,0.14), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: floatOrb 7s ease-in-out infinite reverse;
+        }
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(-15px, 12px) scale(1.08); }
+        }
+        .header-rank, .header-date, .quick-info-box {
+            position: relative;
+            z-index: 1;
+        }
+        .greeting-name {
+            background: linear-gradient(90deg, var(--text-primary), var(--gradient-start));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .greeting-text {
+            animation: pulseGlow 2s ease-in-out infinite, breathe 3s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+        .grid-menu {
+            background: linear-gradient(160deg, var(--card-bg), rgba(102,126,234,0.05));
+        }
+        .grid-menu-item {
+            transition: all 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .grid-menu-item::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -80%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+            transform: skewX(-20deg);
+            transition: left 0.6s ease;
+            pointer-events: none;
+        }
+        .grid-menu-item:hover::after {
+            left: 130%;
+        }
+        .grid-menu-item:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 14px 38px var(--shadow-color);
+        }
+        .grid-menu-item:hover .menu-icon {
+            transform: scale(1.08) rotate(-4deg);
+        }
+        .rank-value {
+            animation: rankPulse 2.5s ease-in-out infinite;
+            display: inline-block;
+        }
+        @keyframes rankPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.07); }
+        }
 
         @media (max-width: 992px) {
             .grid-menu { grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 14px; }
@@ -1362,8 +1424,7 @@
 
     <!-- 🆕 صفحهٔ بارگذاری جدید (مخفی تا بعد از لاگین) -->
     <div id="newLoader">
-        <div class="loaderTop">
-            <div class="brand"><span class="bic">🏛️</span> صندوق اتحاد</div>
+                <div class="loaderTop" style="justify-content:center;">
             <div class="badge"><span class="dot"></span> رمزنگاری AES-256</div>
         </div>
         <div class="loaderCenter">
@@ -1514,45 +1575,43 @@
 
             <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
 
+            <!-- ✨ آیکون جدید fa-magic -->
             <button class="services-toggle-btn" onclick="toggleServicesPanelV2()">
-                <i class="fas fa-globe"></i>
+                <i class="fas fa-magic"></i>
                 خدمات بدون نیاز به ورود
                 <span class="badge">۲۰ سرویس</span>
                 <i class="fas fa-chevron-down" id="servicesArrowV2" style="margin-right:8px; transition: transform 0.4s ease;"></i>
             </button>
 
-            <div class="services-panel-container" id="servicesPanelV2">
+                        <div class="services-panel-container" id="servicesPanelV2">
                 <div class="services-panel-wrapper">
                     <div class="services-category">
                         <div class="category-title"><i class="fas fa-car"></i> حمل و نقل</div>
                         <div class="services-grid">
-                            <div class="service-item" data-service="snapp" onclick="openDirectLink('https://app.snapp.taxi/login')">
-                                <div class="service-icon"><i class="fas fa-car"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://app.snapp.taxi/login')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas fa-car"></i></div>
                                 <div class="service-label">اسنپ</div>
                             </div>
-                            <div class="service-item" data-service="tapsi" onclick="openDirectLink('https://app.tapsi.cab/')">
-                                <div class="service-icon"><i class="fas fa-taxi"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://app.tapsi.cab/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-taxi"></i></div>
                                 <div class="service-label">تپسی</div>
                             </div>
-                            <div class="service-item" data-service="maxim" onclick="openDirectLink('https://maxim.ir/')">
-                                <div class="service-icon"><i class="fas fa-car-side"></i></div>
-                                <div class="service-label">ماکسیم</div>
-                            </div>
+                            
                         </div>
                     </div>
                     <div class="services-category">
                         <div class="category-title"><i class="fas fa-phone"></i> اپراتورهای تلفن همراه</div>
                         <div class="services-grid">
-                            <div class="service-item" data-service="hamrahme" onclick="openDirectLink('https://my.mci.ir/panel')">
-                                <div class="service-icon"><i class="fas fa-sim-card"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://my.mci.ir/panel')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);"><i class="fas fa-sim-card"></i></div>
                                 <div class="service-label">همراه من</div>
                             </div>
-                            <div class="service-item" data-service="irancell" onclick="openDirectLink('https://my.irancell.ir/')">
-                                <div class="service-icon"><i class="fas fa-sim-card"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://my.irancell.ir/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#eab308,#ca8a04);"><i class="fas fa-sim-card"></i></div>
                                 <div class="service-label">ایرانسل من</div>
                             </div>
-                            <div class="service-item" data-service="rightel" onclick="openDirectLink('https://my.rightel.ir/')">
-                                <div class="service-icon"><i class="fas fa-sim-card"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://my.rightel.ir/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);"><i class="fas fa-sim-card"></i></div>
                                 <div class="service-label">رایتل من</div>
                             </div>
                         </div>
@@ -1560,20 +1619,20 @@
                     <div class="services-category">
                         <div class="category-title"><i class="fas fa-share-alt"></i> شبکه‌های اجتماعی</div>
                         <div class="services-grid">
-                            <div class="service-item" data-service="ita" onclick="openDirectLink('https://eitaa.com/')">
-                                <div class="service-icon"><i class="fas fa-comment-dots"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://eitaa.com/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#f97316,#ea580c);"><i class="fas fa-comment-dots"></i></div>
                                 <div class="service-label">ایتا</div>
                             </div>
-                            <div class="service-item" data-service="bale" onclick="openDirectLink('https://bale.ai/')">
-                                <div class="service-icon"><i class="fas fa-comment"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://bale.ai/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#ec4899,#db2777);"><i class="fas fa-comment"></i></div>
                                 <div class="service-label">بله</div>
                             </div>
-                            <div class="service-item" data-service="robika" onclick="openDirectLink('https://robika.ir/')">
-                                <div class="service-icon"><i class="fas fa-rocket"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://robika.ir/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#ef4444,#dc2626);"><i class="fas fa-rocket"></i></div>
                                 <div class="service-label">روبیکا</div>
                             </div>
-                            <div class="service-item" data-service="soroush" onclick="openDirectLink('https://soroush.ir/')">
-                                <div class="service-icon"><i class="fas fa-comment-alt"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://soroush.ir/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#14b8a6,#0d9488);"><i class="fas fa-comment-alt"></i></div>
                                 <div class="service-label">سروش</div>
                             </div>
                         </div>
@@ -1581,22 +1640,33 @@
                     <div class="services-category">
                         <div class="category-title"><i class="fas fa-building"></i> خدمات کاربردی</div>
                         <div class="services-grid">
-                            <div class="service-item" data-service="tamin" onclick="openDirectLink('https://eservices.tamin.ir/')">
-                                <div class="service-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://eservices.tamin.ir/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#059669,#047857);"><i class="fas fa-shield-alt"></i></div>
                                 <div class="service-label">تامین من</div>
                             </div>
-                            <div class="service-item" data-service="dolat" onclick="openDirectLink('https://sso.my.gov.ir/login')">
-                                <div class="service-icon"><i class="fas fa-flag"></i></div>
+                                                        <div class="service-item" onclick="openDirectLink('https://kala.sfara.ir/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#22c55e,#16a34a);"><i class="fas fa-bus"></i></div>
+                                <div class="service-label">شمیم</div>
+                            </div>
+                            <div class="service-item" onclick="openDirectLink('https://sso.my.gov.ir/login')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#1d4ed8,#1e40af);"><i class="fas fa-flag"></i></div>
                                 <div class="service-label">دولت من</div>
                             </div>
-                            <div class="service-item" data-service="weather" onclick="openDirectLink('https://wttr.in/Isfahan?lang=fa')">
-                                <div class="service-icon"><i class="fas fa-cloud-sun"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://wttr.in/Isfahan?lang=fa')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);"><i class="fas fa-cloud-sun"></i></div>
                                 <div class="service-label">آب و هوا</div>
                             </div>
-                            <div class="service-item" data-service="prices" onclick="openDirectLink('https://www.tgju.org/')">
-                                <div class="service-icon"><i class="fas fa-coins"></i></div>
+                            <div class="service-item" onclick="openDirectLink('https://www.tgju.org/')">
+                                <div class="service-icon" style="background:linear-gradient(135deg,#f59e0b,#b45309);"><i class="fas fa-coins"></i></div>
                                 <div class="service-label">نرخ ارز و طلا</div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="services-category">
+                        <div class="category-title"><i class="fas fa-plus-circle"></i> به‌زودی</div>
+                        <div style="border:2px dashed var(--border-color);border-radius:12px;padding:16px;text-align:center;color:var(--text-muted);font-size:0.7rem;background:rgba(102,126,234,0.04);">
+                            <i class="fas fa-hourglass-half" style="color:var(--gold-color);margin-left:6px;"></i>
+                            به‌زودی کلیدهای دیگر اضافه خواهد شد...
                         </div>
                     </div>
                     <div class="panel-footer">
@@ -1604,8 +1674,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
     <script>
         // ============================================================
         // 🆕 منطق صفحهٔ بارگذاری جدید (بلافاصله بعد از کلیک ورود)
@@ -1625,7 +1693,7 @@
             '💡 صندوق اتحاد: شفافیت مالی، اعتماد جمعی 🤝',
             '💡 پس‌انداز منظم در بلندمدت شگفتی‌ساز است'
         ];
-        var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0;
+        var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
         var C = 414.7;
         var loginDataReady = false;
         var loginResult = null;
@@ -1690,20 +1758,33 @@
             }
         }
 
-        function ldrTick() {
+               function ldrTick() {
             if (ldrDone) return;
-            if (ldrP >= 100) {
-                if (loginDataReady) {
-                    if (loginResult && loginResult.success) { ldrFinish(); }
-                    else { ldrAbortWithError(loginResult ? loginResult.error : 'خطای نامشخص'); }
+
+            // 🆕 محدود کردن درصد تا آماده شدن نتیجهٔ لاگین
+            var maxProgress = 75; // حداکثر درصد تا وقتی که نتیجهٔ لاگین آماده نیست
+            if (loginDataReady) {
+                if (loginResult && loginResult.success) {
+                    maxProgress = 100; // اگر موفق بود، تا ۱۰۰٪ می‌رود
                 } else {
+                    // 🆕 اگر شکست خورد، فوراً خطا می‌دهد (بدون تیک خوردن مراحل بعدی)
+                    ldrAbortWithError(loginResult ? loginResult.error : 'خطای نامشخص');
+                    return;
+                }
+            }
+
+            if (ldrP >= maxProgress) {
+                if (loginDataReady && loginResult && loginResult.success) {
+                    ldrFinish();
+                } else if (!loginDataReady) {
                     document.getElementById('ldrStx').textContent = 'در حال دریافت اطلاعات...';
                     setTimeout(ldrTick, 300);
                 }
                 return;
             }
+
             var hic = Math.random() < 0.06;
-            if (!hic) ldrP = Math.min(100, ldrP + (Math.random() * 2 + 0.9));
+            if (!hic) ldrP = Math.min(maxProgress, ldrP + (Math.random() * 2 + 0.9));
             ldrRender();
             ldrTimer = setTimeout(ldrTick, hic ? (300 + Math.random() * 300) : (50 + Math.random() * 80));
         }
@@ -1793,14 +1874,13 @@
             ldrP = 0; ldrDone = false; ldrSecs = 0; ldrFi = 0;
             document.getElementById('ldrRing').classList.remove('okc');
             ldrRender();
-            document.getElementById('ldrTm').textContent = ldrFa(0);
-            ldrSecT = setInterval(function() { ldrSecs++; document.getElementById('ldrTm').textContent = ldrFa(ldrSecs); }, 1000);
+            
             var factInterval = setInterval(function() {
                 if (ldrDone) { clearInterval(factInterval); return; }
                 var f = document.getElementById('ldrFact');
                 f.classList.add('fd');
                 setTimeout(function() { ldrFi = (ldrFi + 1) % ldrFacts.length; f.textContent = ldrFacts[ldrFi]; f.classList.remove('fd'); }, 300);
-            }, 4000);
+            }, 3000);
             setTimeout(ldrTick, 500);
         }
 
@@ -1935,13 +2015,55 @@
             return years + ' سال، ' + months + ' ماه و ' + days + ' روز';
         }
 
-        function getFamilyRole(heh2) {
+                function getFamilyRole(heh2) {
             if (!heh2) return null;
             const code = String(heh2).trim();
             if (code === '01') return { role: 'head', label: 'سرپرست خانوار', icon: 'fa-crown' };
             if (code === '02') return { role: 'spouse', label: 'همسر', icon: 'fa-ring' };
             if (parseInt(code) >= 3) return { role: 'child', label: 'فرزند', icon: 'fa-child' };
             return null;
+        }
+
+        // 🆕 محاسبه سن از تاریخ تولد شمسی
+        function calculateAgeShamsi(birthDateShamsi) {
+            if (!birthDateShamsi) return 0;
+            const parts = birthDateShamsi.split('/');
+            if (parts.length !== 3) return 0;
+            const birthYear = parseInt(parts[0]);
+            const birthMonth = parseInt(parts[1]);
+            const birthDay = parseInt(parts[2]);
+            if (isNaN(birthYear) || isNaN(birthMonth) || isNaN(birthDay)) return 0;
+            
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {
+                year: 'numeric', month: 'long', day: 'numeric'
+            });
+            const faParts = formatter.formatToParts(now);
+            const currentYear = parseInt(faParts.find(p => p.type === 'year').value);
+            const currentMonth = parseInt(faParts.find(p => p.type === 'month').value) || (now.getMonth() + 1);
+            const currentDay = now.getDate();
+            
+            let age = currentYear - birthYear;
+            if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
+                age--;
+            }
+            return age;
+        }
+
+        // 🆕 بررسی نوجوان بودن (۱۰ تا ۱۸ سال)
+        function isTeenager(member) {
+            const age = calculateAgeShamsi(member.birthDateShamsi);
+            return age >= 10 && age <= 18;
+        }
+
+        // 🆕 بررسی زن بودن (همسر یا دختر)
+        function isFemale(member) {
+            if (member.heh2 === '02') return true;
+            if (member.heh2 >= 3 && member.heh2 <= 10) {
+                const femaleNames = ['فاطمه','زهرا','مریم','زینب','حدیث','هانیه','ریحانه','نرگس','سارا','یاسمن','یاسمین','مهسا','مهناز','ناهید','مینا','لیلا','نگار','نازنین','الهام','شیدا','شیما','پریسا','پریا','ترانه','نگین','آیدا','آرزو','آتنا','آیسان','آیسا','ستایش','درسا','درنا','غزل','رها','روژان','رویا','سارینا','سلین','سوگند','شایلا','شکیلا','شقایق','شهرزاد','طراحی','عسل','کیانا','کیمیا','گیسو','ملیکا','مانلی','مهتاب','مهشید','ملورین'];
+                return femaleNames.some(name => member.firstName.includes(name));
+            }
+            return false;
         }
 
         function findCol(names, headers) {
@@ -2062,7 +2184,7 @@
         }
 
         // 🆕 ورود: بلافاصله صفحهٔ بارگذاری ظاهر می‌شود (بدون چرخش دکمه)
-        async function handleLogin() {
+                async function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
             if (!username || !password) {
@@ -2072,6 +2194,43 @@
 
             loginDataReady = false;
             loginResult = null;
+
+                    function showLoaderAnimation() {
+            var ldr = document.getElementById('newLoader');
+            ldr.style.display = 'flex';
+            ldr.classList.add('active');
+            document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.add('active'); });
+            ldrFx = document.getElementById('loaderFx');
+            if (ldrFx) { ldrFx.classList.add('active'); ldrCx = ldrFx.getContext('2d'); }
+            ldrResize();
+            requestAnimationFrame(ldrDrawFx);
+            var core = document.getElementById('ldrCore');
+            if (core) { core.onclick = function(e) { ldrBurst(e.clientX, e.clientY, 20); }; }
+
+            // 🆕 زمان‌سنج از لحظهٔ نمایش لودر (= شروع اتصال به سرور) با مهر زمانی واقعی
+            ldrStartTime = Date.now();
+            ldrSecs = 0;
+            if (ldrSecT) clearInterval(ldrSecT);
+            var tmEl = document.getElementById('ldrTm');
+            if (tmEl) tmEl.textContent = ldrFa(0);
+            ldrSecT = setInterval(function() {
+                ldrSecs = Math.floor((Date.now() - ldrStartTime) / 1000);
+                var el = document.getElementById('ldrTm');
+                if (el) el.textContent = ldrFa(ldrSecs);
+            }, 250);
+
+            ldrP = 0; ldrDone = false; ldrFi = 0;
+            document.getElementById('ldrRing').classList.remove('okc');
+            ldrRender();
+            var factInterval = setInterval(function() {
+                if (ldrDone) { clearInterval(factInterval); return; }
+                var f = document.getElementById('ldrFact');
+                f.classList.add('fd');
+                setTimeout(function() { ldrFi = (ldrFi + 1) % ldrFacts.length; f.textContent = ldrFacts[ldrFi]; f.classList.remove('fd'); }, 300);
+            }, 4000);
+            // 🆕 درصد کمی بعد از زمان‌سنج شروع می‌شود تا تفاوت واضح باشد
+            setTimeout(ldrTick, 900);
+        }
 
             document.getElementById('loginPage').style.display = 'none';
             showLoaderAnimation();
@@ -2497,7 +2656,6 @@
                 if (coins > 0) addCoins(coins, 'بازی ' + gameName, 'پس‌انداز ' + fmtNum(saved));
             }
         }
-
         // ============================================================
         // بخش ۸: بارگذاری داده‌ها از اکسل
         // ============================================================
@@ -2801,7 +2959,11 @@
                     delete chartInstances[key];
                 }
             });
+            if (page === 'reports') {
+                setTimeout(() => { if (typeof Chart !== 'undefined') renderCharts(); }, 500);
+            }
         }
+
         // ============================================================
         // بخش ۱۱: رندر منوی اصلی
         // ============================================================
@@ -2906,6 +3068,13 @@
                 { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
                 { tab: 'club', label: 'امتیازات', icon: 'fa-star', color: '#f59e0b' },
                 { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' }
+            ];  
+
+                                     // 🆕 آیتم‌های ویژه اعضا (خردسالان، نوجوانان، بانوان) - نمایش به همه
+            const specialItems = [
+                { tab: 'toddlerGrowth', label: 'رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
+                { tab: 'teenPiggy', label: 'قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
+                { tab: 'ladySpecial', label: 'بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' }
             ];
 
             const councilItems = [
@@ -2931,6 +3100,22 @@
                             </div>
                         `;
             });
+            // 🆕 نمایش دکمه‌های ویژه اعضا (قلک نوجوانان و بانو بانوان)
+                        // 🆕 نمایش دکمه‌های ویژه اعضا
+            if (specialItems.length > 0) {
+                gridHtml += `
+                            <div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));">
+                                <i class="fas fa-gem"></i> ویژه اعضا
+                            </div>
+                        `;
+                specialItems.forEach(function(item) {
+                    gridHtml += '<div class="grid-menu-item" data-tab="' + item.tab + '" onclick="showComingSoon(\'' + item.label + '\')">';
+                    gridHtml += '<div class="menu-icon" style="background: linear-gradient(135deg, ' + item.color + ', ' + item.color + 'dd);"><i class="fas ' + item.icon + '"></i></div>';
+                    gridHtml += '<div class="menu-label">' + item.label + '</div>';
+                    gridHtml += '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;box-shadow:0 2px 8px rgba(245,158,11,0.3);">بزودی 🚧</span>';
+                    gridHtml += '</div>';
+                });
+            }
 
             gridHtml += `
                         <div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>
@@ -4038,7 +4223,7 @@
 
         // ============================================================
         // بخش ۱۹: رندر دسترسی‌ها (شورا)
-        // 🆕 جدول اعضای شورا + جدول افراد دارای قسط معوقه اضافه شد
+        // 🆕 جدول اعضای شورا + جدول معوقه‌ها (بدون ستون ردیف)
         // ============================================================
         function renderAccessContent() {
             if (!hasCouncilOrAdminAccess()) {
@@ -4059,9 +4244,9 @@
                 total: members.length
             };
 
-            // 🆕 اعضای شورا
+            // 🆕 اعضای شورا (بدون ستون ردیف)
             const councilMembers = members.filter(m => m.isCouncil === true);
-            // 🆕 افراد دارای قسط معوقه
+            // 🆕 افراد دارای قسط معوقه (بدون ستون ردیف)
             const overdueMembersList = members.filter(m => Math.abs(m.overdueInstallments || 0) > 0);
 
             const councilHtml = `
@@ -4071,12 +4256,11 @@
                             <div class="excel-table-wrapper" style="max-height:none;">
                                 <table class="excel-table" style="min-width:300px;">
                                     <thead>
-                                        <tr><th>ردیف</th><th>نام</th><th>شماره حساب</th><th>تلفن</th></tr>
+                                        <tr><th>نام</th><th>شماره حساب</th><th>تلفن</th></tr>
                                     </thead>
                                     <tbody>
-                                        ${councilMembers.map((m, idx) => `
+                                        ${councilMembers.map((m) => `
                                             <tr>
-                                                <td>${idx + 1}</td>
                                                 <td style="font-weight:bold;">${esc(m.firstName)}</td>
                                                 <td>${esc(m.accountNumber)}</td>
                                                 <td>${esc(m.phone1 || '---')}</td>
@@ -4095,12 +4279,11 @@
                             <div class="excel-table-wrapper" style="max-height:none;">
                                 <table class="excel-table" style="min-width:300px;">
                                     <thead>
-                                        <tr><th>ردیف</th><th>نام</th><th>شماره حساب</th><th style="color:#fff;">تعداد معوقه</th></tr>
+                                        <tr><th>نام</th><th>شماره حساب</th><th style="color:#fff;">تعداد معوقه</th></tr>
                                     </thead>
                                     <tbody>
-                                        ${overdueMembersList.map((m, idx) => `
+                                        ${overdueMembersList.map((m) => `
                                             <tr>
-                                                <td>${idx + 1}</td>
                                                 <td style="font-weight:bold;">${esc(m.firstName)}</td>
                                                 <td>${esc(m.accountNumber)}</td>
                                                 <td style="color:var(--danger-color);font-weight:bold;">${Math.abs(m.overdueInstallments || 0)}</td>
@@ -4289,7 +4472,6 @@
         }
         // ============================================================
         // بخش ۲۲: گزارش‌گیری پیشرفته
-        // 🆕 کارت‌های خلاصه + نمودارها (بازگردانی شد)
         // ============================================================
         function renderReportsContent() {
             if (!hasCouncilOrAdminAccess()) {
@@ -4635,6 +4817,63 @@
             currentPage = tab;
             renderPage(tab);
         }
+                // 🆕 نمایش بخش‌های ویژه (قلک نوجوانان و بانو بانوان)
+                // 🆕 نمایش پیام «در حال طراحی» برای بخش‌های ویژه (خردسالان، نوجوانان، بانوان)
+                        // 🆕 نمایش پیام در حال طراحی
+        function showComingSoon(featureName) {
+            var modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);';
+            
+            var box = document.createElement('div');
+            box.style.cssText = 'background:var(--card-bg);border-radius:20px;padding:30px;text-align:center;max-width:340px;margin:20px;box-shadow:0 20px 60px var(--shadow-color);border:1px solid var(--glass-border);';
+            
+            var emoji = document.createElement('div');
+            emoji.style.cssText = 'font-size:4rem;margin-bottom:12px;';
+            emoji.textContent = '🚧';
+            
+            var title = document.createElement('h3');
+            title.style.cssText = 'color:var(--text-primary);margin-bottom:10px;font-size:1.1rem;';
+            title.textContent = 'در حال طراحی';
+            
+            var desc = document.createElement('p');
+            desc.style.cssText = 'color:var(--text-secondary);font-size:0.85rem;margin-bottom:16px;line-height:1.8;';
+            desc.innerHTML = 'بخش <strong style="color:var(--gold-color);">' + featureName + '</strong> در حال طراحی و توسعه است.<br>به‌زودی در دسترس شما عزیزان قرار خواهد گرفت. 🌟';
+            
+            var btn = document.createElement('button');
+            btn.style.cssText = 'background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;border:none;padding:10px 28px;border-radius:12px;cursor:pointer;font-size:0.9rem;touch-action:manipulation;box-shadow:0 4px 15px var(--shadow-color);font-family:inherit;';
+            btn.textContent = 'متوجه شدم 👍';
+            btn.onclick = function() { modal.remove(); };
+            
+            box.appendChild(emoji);
+            box.appendChild(title);
+            box.appendChild(desc);
+            box.appendChild(btn);
+            modal.appendChild(box);
+            document.body.appendChild(modal);
+        }
+
+        // 🆕 پنجرهٔ مشترک برای پیام‌های بخش ویژه
+        function openSpecialModal(emoji, title, messageHtml) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position:fixed;top:0;left:0;right:0;bottom:0;
+                background:rgba(0,0,0,0.7);z-index:2000;
+                display:flex;align-items:center;justify-content:center;
+                backdrop-filter:blur(8px);
+            `;
+            modal.innerHTML = `
+                <div style="background:var(--card-bg);border-radius:20px;padding:30px;text-align:center;max-width:340px;margin:20px;box-shadow:0 20px 60px var(--shadow-color);border:1px solid var(--glass-border);">
+                    <div style="font-size:4rem;margin-bottom:12px;">${emoji}</div>
+                    <h3 style="color:var(--text-primary);margin-bottom:10px;font-size:1.1rem;">${title}</h3>
+                    <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:16px;line-height:1.8;">${messageHtml}</p>
+                    <button onclick="this.closest('div').parentElement.remove()" 
+                            style="background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;border:none;padding:10px 28px;border-radius:12px;cursor:pointer;font-size:0.9rem;touch-action:manipulation;box-shadow:0 4px 15px var(--shadow-color);font-family:inherit;">
+                        متوجه شدم 👍
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
 
         function copyText(text, btn) {
             navigator.clipboard.writeText(text).then(() => {
@@ -4681,7 +4920,7 @@
         }
 
         // ============================================================
-        // بخش ۲۸: رندر نمودارها (بازگردانی شد)
+        // بخش ۲۸: رندر نمودارها
         // ============================================================
         function renderCharts() {
             const rankCtx = document.getElementById('rankDistributionChart');
@@ -4764,6 +5003,21 @@
         // ============================================================
         // بخش ۲۹: راه‌اندازی نهایی
         // ============================================================
+
+        // 🆕 دانلود اپلیکیشن اندروید (فعال شد)
+        const APK_DOWNLOAD_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/app.apk'; 
+
+        function downloadApp() {
+            showToast({ type: 'success', title: 'شروع دانلود', message: 'دانلود اپلیکیشن اندروید آغاز شد...' });
+            const link = document.createElement('a');
+            link.href = APK_DOWNLOAD_URL;
+            link.download = 'sandogh-union.apk';
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         setTheme('auto');
         loadRememberMe();
 
@@ -4818,22 +5072,6 @@
             console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
             console.log('📌 تمام کلیدها فعال هستند');
         });
-
-        // 🆕 رندر نمودارها بعد از ورود به داشبورد
-        const originalRenderPage = renderPage;
-        renderPage = function(page) {
-            originalRenderPage(page);
-            if (page === 'reports') {
-                setTimeout(() => {
-                    if (typeof Chart !== 'undefined') renderCharts();
-                }, 500);
-            }
-        };
-
-        // 🆕 دانلود اپلیکیشن اندروید
-        function downloadApp() {
-            alert('📥 به زودی لینک دانلود اپلیکیشن اندروید فعال می‌شود');
-        }
 
         console.log('✅ تمام اسکریپت‌ها بارگذاری شدند - نسخه نهایی با صفحهٔ بارگذاری جدید');
     </script>
