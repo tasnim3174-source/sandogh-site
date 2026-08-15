@@ -1413,7 +1413,131 @@
             h1 { font-size: 1.2rem; }
             .report-summary { grid-template-columns: 1fr 1fr; }
         }
-    </style>
+        /* ===== صفحه اصلی جدید ===== */
+        .hdr{background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;box-shadow:0 14px 40px var(--shadow-color);padding:16px;margin-bottom:14px}
+        .hdr .lbl{font-size:0.78rem;color:var(--text-secondary);font-weight:700}
+        .rankrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .rankrow .big{font-size:2.1rem;font-weight:900;color:var(--gold-color)}
+        .tierpill{background:linear-gradient(135deg,var(--gold-color),#d97706);color:#fff;padding:4px 14px;border-radius:99px;font-size:0.75rem;font-weight:800}
+        .famrank{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:16px;padding:10px 12px;margin-top:10px}
+        .famrank .t{font-size:0.83rem;font-weight:800;color:var(--text-primary)}
+        .famrank .bar{height:7px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:99px;overflow:hidden;margin:7px 0 5px}
+        .famrank .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gradient-start),var(--gradient-end))}
+        .famrank .s{font-size:0.68rem;color:var(--text-secondary)}
+        .daterow{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.78rem;color:var(--text-secondary);font-weight:700;flex-wrap:nowrap;overflow-x:auto}
+        .clock{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:99px;padding:3px 11px;font-size:0.72rem;color:var(--text-primary);white-space:nowrap}
+        .bdayrow{margin-top:8px}
+        .bday{display:inline-block;background:linear-gradient(135deg,#ed64a6,#db2777);color:#fff;border-radius:14px;padding:6px 14px;font-size:0.72rem;font-weight:800;animation:blink 1.6s infinite}
+        @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
+        .greet{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+        .greet b{font-size:1.05rem;color:var(--text-primary)}
+        .hello{background:rgba(245,158,11,.15);color:var(--gold-color);border-radius:99px;padding:4px 16px;font-size:0.8rem;font-weight:800}
+        .achrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+        .ach{flex:1;min-width:76px;text-align:center;border-radius:14px;padding:8px 4px;border:1px solid var(--border-color)}
+        .ach .n{font-size:0.68rem;font-weight:800}
+        .ach .d{font-size:0.52rem;margin-top:3px;opacity:0.85;line-height:1.4}
+        .ach.on{background:rgba(16,185,129,.10);color:var(--success-color);border-color:rgba(16,185,129,.4)}
+        .ach.off{background:var(--bg-secondary);color:var(--text-secondary);border-color:var(--border-color)}
+        .fin{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:14px}
+        .fcell{border-radius:12px;padding:8px 4px;text-align:center;border:1px solid var(--border-color);font-size:0.6rem;color:var(--text-secondary);background:var(--bg-secondary)}
+        .fcell b{display:block;font-size:0.8rem;margin-top:2px}
+        .fcell.cd{border-style:dashed}
+        .plabel{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--text-secondary);margin-top:10px;font-weight:700}
+        .pbar{height:9px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:99px;overflow:hidden;margin-top:4px}
+        .pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--success-color),#34d399)}
+          /* ===== صندوق من ===== */
+        .mf-header{background:var(--card-bg);border:1px solid var(--border-color);border-radius:20px;padding:14px;margin-bottom:12px;box-shadow:0 8px 24px var(--shadow-color)}
+        .mf-title{font-size:1.05rem;font-weight:900;color:var(--text-primary);margin-bottom:10px}
+        .mf-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+        .mf-tab{padding:7px 13px;border-radius:99px;border:1px solid var(--border-color);background:var(--bg-secondary);color:var(--text-secondary);cursor:pointer;white-space:nowrap;font-weight:700;font-size:0.72rem;font-family:inherit;transition:all .3s}
+        .mf-tab.active{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;border-color:transparent}
+        .mf-card{background:var(--card-bg);border:1px solid var(--border-color);border-radius:18px;padding:16px;box-shadow:0 8px 24px var(--shadow-color);margin-bottom:12px}
+        .mf-card-title{font-size:0.95rem;font-weight:900;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+        .mf-note{font-size:0.72rem;color:var(--text-muted);line-height:1.8}
+        .mf-btn{padding:9px 20px;border-radius:12px;border:none;cursor:pointer;font-weight:800;font-size:0.82rem;font-family:inherit;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;text-decoration:none;display:inline-block;transition:all .3s}
+        .mf-btn-success{background:var(--success-color)}
+        .mf-btn:hover{opacity:.9;transform:translateY(-2px)}
+        .mf-tree-wrap{text-align:center;padding:10px}
+        .mf-tree-svg{max-width:280px;margin:0 auto;display:block}
+        .mf-tree-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+        .mf-tree-stat{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;padding:10px;text-align:center}
+        .mf-tree-stat .n{font-size:1.4rem;font-weight:900;color:var(--success-color)}
+        .mf-tree-stat .l{font-size:0.62rem;color:var(--text-secondary);margin-top:2px;line-height:1.5}
+        .mf-tree-rules{margin-top:12px;background:var(--bg-secondary);border-radius:12px;padding:10px;font-size:0.7rem;color:var(--text-secondary);line-height:2;border:1px dashed var(--border-color);text-align:right}
+        .mf-pc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:10px}
+        .mf-postcard{border-radius:14px;padding:20px 10px;text-align:center;cursor:pointer;color:#fff;transition:all .3s}
+        .mf-postcard:hover{transform:scale(1.03)}
+        .mf-pc-emoji{font-size:2.4rem;margin-bottom:6px}
+        .mf-pc-title{font-weight:900;font-size:0.85rem}
+        .mf-pc-birthday{background:linear-gradient(135deg,#ec4899,#db2777)}
+        .mf-pc-nowruz{background:linear-gradient(135deg,#10b981,#059669)}
+        .mf-pc-yalda{background:linear-gradient(135deg,#ef4444,#dc2626)}
+        .mf-pc-success{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+        .mf-pc-detail{margin-top:14px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:14px;padding:16px}
+        .mf-timeline{position:relative;padding-right:22px;margin-top:10px}
+        .mf-timeline::before{content:'';position:absolute;right:6px;top:0;bottom:0;width:3px;background:linear-gradient(180deg,var(--gradient-start),var(--gold-color));border-radius:3px}
+        .mf-tl-item{position:relative;margin-bottom:12px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;padding:12px}
+        .mf-tl-item::before{content:'';position:absolute;right:-21px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--gold-color);border:2px solid var(--card-bg)}
+        .mf-tl-date{font-size:0.62rem;color:var(--text-muted)}
+        .mf-tl-item h4{font-size:0.85rem;color:var(--text-primary);margin:3px 0}
+        .mf-tl-item p{font-size:0.72rem;color:var(--text-secondary)}
+        .mf-goal{background:rgba(245,158,11,.08);border:1px dashed var(--gold-color);border-radius:12px;padding:12px;margin-top:12px;font-size:0.78rem;color:var(--text-primary)}
+        .mf-progress{height:8px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:8px;overflow:hidden;margin:8px 0 4px}
+        .mf-progress i{display:block;height:100%;background:linear-gradient(90deg,var(--gold-color),#fbbf24)}
+        .mf-chat{height:300px;overflow-y:auto;background:var(--bg-secondary);border-radius:12px;padding:12px;margin-bottom:10px}
+        .mf-msg{margin-bottom:10px;display:flex}
+        .mf-msg div{max-width:80%;padding:9px 13px;border-radius:14px;font-size:0.8rem;line-height:1.7}
+        .mf-bot{justify-content:flex-start}
+        .mf-bot div{background:var(--card-bg);border:1px solid var(--border-color);border-bottom-right-radius:4px;color:var(--text-primary)}
+        .mf-user{justify-content:flex-end}
+        .mf-user div{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;border-bottom-left-radius:4px}
+        .mf-chat-row{display:flex;gap:8px}
+        .mf-chat-input{flex:1;padding:10px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);font-family:inherit;font-size:0.82rem}
+        .mf-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+        .mf-quick button{padding:5px 12px;border-radius:99px;border:1px solid var(--gold-color);background:rgba(245,158,11,.1);color:var(--gold-color);font-size:0.68rem;font-weight:700;cursor:pointer;font-family:inherit}
+        .mf-alert{display:flex;gap:10px;align-items:center;padding:12px;border-radius:12px;margin-bottom:8px}
+        .mf-alert .ic{font-size:1.3rem}
+        .mf-alert .tx{flex:1;font-size:0.78rem;color:var(--text-secondary)}
+        .mf-alert .tx b{display:block;color:var(--text-primary);margin-bottom:2px}
+        .mf-alert-warn{background:rgba(245,158,11,.08);border-right:3px solid var(--gold-color)}
+        .mf-alert-danger{background:rgba(239,68,68,.08);border-right:3px solid var(--danger-color)}
+        .mf-alert-ok{background:rgba(16,185,129,.08);border-right:3px solid var(--success-color)}
+        .mf-lesson{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:12px;padding:12px;margin-bottom:10px}
+        .mf-lesson-head{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+        .mf-lesson-head h4{font-size:0.85rem;color:var(--text-primary)}
+        .mf-lesson-head .meta{font-size:0.65rem;color:var(--text-muted);margin-top:3px}
+        .mf-lesson-body{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-color);font-size:0.78rem;color:var(--text-secondary);line-height:2;white-space:pre-line}
+        .mf-mini-btn{padding:6px 14px;border-radius:10px;border:none;background:var(--success-color);color:#fff;font-size:0.7rem;font-weight:800;cursor:pointer;font-family:inherit}
+        .mf-quiz-info{background:rgba(245,158,11,.08);border:1px dashed var(--gold-color);border-radius:12px;padding:10px;text-align:center;font-size:0.75rem;color:var(--text-primary);margin-bottom:12px}
+        .mf-quiz-opt{display:block;width:100%;padding:12px;margin-bottom:8px;border-radius:12px;border:2px solid var(--border-color);background:var(--bg-secondary);cursor:pointer;font-weight:700;text-align:right;font-family:inherit;color:var(--text-primary);font-size:0.82rem;transition:all .3s}
+        .mf-quiz-opt:hover:not(:disabled){border-color:var(--gradient-start);transform:translateX(-3px)}
+        .mf-quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--success-color)}
+        .mf-quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--danger-color)}
+        .mf-reward-on{margin-top:12px;padding:10px;background:rgba(16,185,129,.1);border-radius:10px;color:var(--success-color);font-weight:900;font-size:0.82rem;text-align:center}
+        .mf-reward-off{margin-top:12px;padding:10px;background:var(--bg-secondary);border-radius:10px;color:var(--text-muted);font-size:0.78rem;text-align:center}
+        .mf-news{padding:12px;background:var(--bg-secondary);border-radius:12px;margin-bottom:8px;border-right:3px solid var(--gradient-start)}
+        .mf-news h4{font-size:0.85rem;color:var(--text-primary);margin-bottom:4px}
+        .mf-news p{font-size:0.75rem;color:var(--text-secondary);line-height:1.7}
+        .mf-news .d{font-size:0.6rem;color:var(--text-muted);margin-top:4px}
+        .mf-form label{display:block;font-size:0.78rem;font-weight:800;color:var(--text-primary);margin:10px 0 5px}
+        .mf-form input{width:100%;padding:11px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text-primary);font-family:inherit;font-size:0.9rem}
+        .mf-loan-result{background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;padding:16px;border-radius:14px;margin-top:14px;text-align:center}
+        .mf-lr-label{font-size:0.78rem;opacity:.9}
+        .mf-lr-amount{font-size:1.7rem;font-weight:900;margin-top:4px}
+        .mf-lr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px;font-size:0.72rem}
+        .mf-badge-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:10px}
+        .mf-badge{padding:16px 8px;border-radius:14px;text-align:center;background:var(--bg-secondary);border:2px solid var(--border-color)}
+        .mf-badge.on{border-color:var(--gold-color);background:rgba(245,158,11,.06)}
+        .mf-badge.off{opacity:.5;filter:grayscale(1)}
+        .mf-badge .ic{font-size:2rem;margin-bottom:6px}
+        .mf-badge .nm{font-weight:900;font-size:0.78rem;color:var(--text-primary)}
+        .mf-badge .ds{font-size:0.6rem;color:var(--text-secondary);margin-top:3px}
+        .mf-badge .rr{display:inline-block;padding:2px 10px;border-radius:99px;font-size:0.56rem;font-weight:800;margin-top:5px;color:#fff}
+        .mf-r-common{background:#64748b}
+        .mf-r-rare{background:var(--purple-color)}
+        .mf-r-epic{background:#ec4899}
+        .mf-r-legendary{background:var(--gold-color)} 
+ </style>
 </head>
 <body>
 
@@ -2963,283 +3087,633 @@
                 setTimeout(() => { if (typeof Chart !== 'undefined') renderCharts(); }, 500);
             }
         }
+        // ============================================================
+        // توابع کمکی برای صفحه اصلی جدید
+        // ============================================================
+        
+        function shamsiDayNum(year, month, day) {
+            // محاسبه شماره روز از ابتدای سال شمسی
+            const daysInMonth = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+            let dayNum = 0;
+            for (let m = 1; m < month; m++) {
+                dayNum += daysInMonth[m];
+            }
+            dayNum += day;
+            return dayNum;
+        }
+
+        function getTodayShamsi() {
+            // تبدیل تاریخ میلادی امروز به شمسی
+            const today = new Date();
+            const formatter = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {
+                year: 'numeric',
+                month: '2-digit', 
+                day: '2-digit'
+            });
+            const parts = formatter.formatToParts(today);
+            let y = 0, m = 0, d = 0;
+            parts.forEach(part => {
+                if (part.type === 'year') y = parseInt(part.value);
+                if (part.type === 'month') m = parseInt(part.value);
+                if (part.type === 'day') d = parseInt(part.value);
+            });
+            return { y, m, d };
+        }
+
+        function computeFamilyScores() {
+            // محاسبه امتیاز همه خانواده‌ها
+            if (!members || members.length === 0) return [];
+            
+            // گروه‌بندی اعضا بر اساس کد خانواده (heh1)
+            const families = {};
+            members.forEach(m => {
+                if (!m.heh1) return;
+                if (!families[m.heh1]) {
+                    families[m.heh1] = [];
+                }
+                families[m.heh1].push(m);
+            });
+
+            const familyScores = [];
+            Object.keys(families).forEach(famCode => {
+                const famMembers = families[famCode];
+                let totalScore = 0;
+                let count = 0;
+                
+                famMembers.forEach(m => {
+                    const sd = memberScores ? memberScores[m.id] : null;
+                    if (sd && typeof sd.score === 'number') {
+                        totalScore += sd.score;
+                        count++;
+                    }
+                });
+
+                if (count > 0) {
+                    const avgScore = Math.round(totalScore / count);
+                    familyScores.push({
+                        code: famCode,
+                        score: avgScore,
+                        memberCount: count
+                    });
+                }
+            });
+
+            // مرتب‌سازی بر اساس امتیاز (نزولی)
+            familyScores.sort((a, b) => b.score - a.score);
+            return familyScores;
+        }
 
         // ============================================================
         // بخش ۱۱: رندر منوی اصلی
         // ============================================================
-        function renderMenuPage(content) {
+                function renderMenuPage(content) {
             const member = members.find(m => m.id === currentUser.memberId);
-            if (!member) {
-                content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>';
-                return;
-            }
-
-            const greeting = getGreeting();
-            const memberTxns = (transactionsByMember.get(String(member.id)) || []).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-            const latestTx = memberTxns.length ? memberTxns[0] : null;
-            const balance = latestTx ? parseNum(latestTx['موجودی']) : (member?.balance || 0);
-            const totalInstallments = member?.totalInstallments || 1;
-            const paidInstallments = member?.paidInstallments || 0;
-            const progressPercent = Math.min(100, Math.round((paidInstallments / totalInstallments) * 100));
-            const overdueInstallments = Math.abs(member?.overdueInstallments || 0);
-
-            const isCouncil = hasCouncilOrAdminAccess();
-            const isHead = isHeadOfHousehold();
+            if (!member) { content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>'; return; }
 
             const sd = memberScores[member.id];
-            let nextTier = '';
-            let nextTierName = '';
-            let remainingToNext = 0;
-            if (sd) {
-                if (sd.score < 50) {
-                    nextTier = 'silver';
-                    nextTierName = 'نقره‌ای 🥈';
-                    remainingToNext = 50 - sd.score;
-                } else if (sd.score < 80) {
-                    nextTier = 'gold';
-                    nextTierName = 'طلایی ⭐';
-                    remainingToNext = 80 - sd.score;
-                } else {
-                    nextTier = 'max';
-                    nextTierName = '🎉 رتبه برتر';
-                    remainingToNext = 0;
-                }
+            const greeting = getGreeting();
+
+            // 🏆 رتبه خانواده
+            const famScores = computeFamilyScores();
+            const myRank = famScores.findIndex(f => f.code === member.heh1) + 1;
+            const totalFam = famScores.length;
+            const betterThan = totalFam > 1 ? Math.round((totalFam - myRank) / (totalFam - 1) * 100) : 100;
+            const posPct = Math.round((totalFam - myRank + 1) / totalFam * 100);
+
+            // 🎂 نزدیک‌ترین تولد
+            const t = getTodayShamsi();
+            const tn = shamsiDayNum(t.y, t.m, t.d);
+            const familyAll = [member, ...getFamilyMembers()];
+            const up = [];
+            familyAll.forEach(fm => {
+                if (!fm.birthDateShamsi) return;
+                const bp = fm.birthDateShamsi.split('/');
+                if (bp.length !== 3) return;
+                let bn = shamsiDayNum(t.y, +bp[1], +bp[2]);
+                if (bn < tn) bn = shamsiDayNum(t.y + 1, +bp[1], +bp[2]);
+                up.push({ name: fm.firstName, days: bn - tn });
+            });
+            up.sort((a, b) => a.days - b.days);
+            let bdayHtml = '';
+            if (up.length) {
+                bdayHtml = '<div class="bdayrow"><span class="bday">' + ((up[0].days === 0) ? ('🎂 امروز تولد ' + up[0].name + ' است 🎉') : ('🎂 نزدیک‌ترین تولد: ' + up[0].name + ' · ' + up[0].days + ' روز دیگر')) + '</span></div>';
             }
 
-            const upgradeTips = [];
-            if (sd?.score < 80) {
-                if (member.overdueInstallments < 0) {
-                    upgradeTips.push({ text: 'پرداخت اقساط معوقه', badge: '+۵ امتیاز' });
-                }
-                if (member.paidInstallments > 0) {
-                    upgradeTips.push({ text: 'پرداخت به موقع اقساط', badge: '+۲ امتیاز' });
-                }
-                if (member.savingsStatus > 0) {
-                    upgradeTips.push({ text: 'افزایش پس‌انداز', badge: '+۱ امتیاز' });
-                }
-                if (upgradeTips.length === 0) {
-                    upgradeTips.push({ text: 'کسب امتیاز از طریق فعالیت', badge: '💪' });
-                    upgradeTips.push({ text: 'بازی‌های مالی', badge: '🎮' });
-                }
-            } else {
-                upgradeTips.push({ text: '🎉 تبریک! شما در بالاترین رتبه هستید', badge: '⭐' });
-                upgradeTips.push({ text: 'حفظ رتبه طلایی', badge: '+۵ امتیاز' });
-            }
+            // 🏅 ۱۰ نشان (بر اساس شخص)
+            let years = 0;
+            if (member.datMiladi) { const dd = new Date(member.datMiladi); if (!isNaN(dd.getTime())) years = Math.max(0, new Date().getFullYear() - dd.getFullYear()); }
+            const txs = transactionsByMember.get(String(member.id)) || [];
+            let active = false;
+            txs.forEach(tx => { const tp = (tx['تاریخ تراکنش'] || '').split('/'); if (tp.length === 3 && +tp[1] === t.m && +tp[0] === t.y) active = true; });
+            let birthMonth = false;
+            if (member.birthDateShamsi) { const bb = member.birthDateShamsi.split('/'); if (bb.length === 3 && +bb[1] === t.m) birthMonth = true; }
+            const badges = [
+                { i: '🕰️', n: 'باسابقه', e: years >= 5, d: years + ' سال عضویت' },
+                { i: '✅', n: 'منظم', e: (member.paidInstallments || 0) > 0 && (member.overdueInstallments || 0) === 0, d: 'پرداخت منظم اقساط' },
+                { i: '💚', n: 'پس‌اندازگر', e: (member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= (member.monthlySalary || 0), d: 'پس‌انداز ≥ یک مقرری' },
+                { i: '⭐', n: 'طلایی', e: (sd ? sd.score : 0) >= 80, d: 'امتیاز ≥ ۸۰' },
+                { i: '🕊️', n: 'بدون بدهی', e: (member.loanBalance || 0) === 0, d: 'مانده بدهی صفر' },
+                { i: '🎓', n: 'فارغ‌التحصیل وام', e: (member.totalInstallments || 0) > 0 && (member.paidInstallments || 0) >= (member.totalInstallments || 0), d: 'پایان کامل اقساط' },
+                { i: '💎', n: 'پس‌انداز بزرگ', e: (member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= 3 * (member.monthlySalary || 0), d: 'پس‌انداز ≥ ۳ مقرری' },
+                { i: '⚡', n: 'فعال', e: active, d: 'تراکنش در ماه جاری' },
+                { i: '👑', n: 'سرپرست خانوار', e: member.heh2 === '01', d: 'سرپرست خانواده' },
+                { i: '🎂', n: 'تولد این ماه', e: birthMonth, d: 'تولد در این ماه' }
+            ];
+            let achHtml = '<div class="achrow">';
+            badges.forEach(b => { achHtml += '<div class="ach ' + (b.e ? 'on' : 'off') + '"><div class="n">' + (b.e ? '' : '🔒 ') + b.i + ' ' + b.n + '</div><div class="d">' + b.d + '</div></div>'; });
+            achHtml += '</div>';
 
-            const helpHtml = `
-                        <div class="rank-help-tooltip" id="rankHelpTooltip">
-                            <div class="help-title"><i class="fas fa-info-circle"></i> راه‌های ارتقا به ${nextTierName}</div>
-                            ${upgradeTips.map(tip => `
-                                <div class="help-item">
-                                    <span>${tip.text}</span>
-                                    <span class="help-badge">${tip.badge}</span>
-                                </div>
-                            `).join('')}
-                            ${remainingToNext > 0 ? `
-                                <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border-color);font-size:0.55rem;color:var(--text-secondary);text-align:center;">
-                                    ${remainingToNext} امتیاز تا ${nextTierName} فاصله دارید
-                                </div>
-                            ` : `
-                                <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border-color);font-size:0.55rem;color:var(--success-color);text-align:center;">
-                                    ✅ شما در بالاترین سطح هستید
-                                </div>
-                            `}
-                        </div>
-                    `;
+            // ⏳ شمارش‌ها + پیشرفت
+            let nextInst = null;
+            const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            for (let i = 0; i < instDates.length; i++) { const num = shamsiDayNum(instDates[i].year, instDates[i].month, instDates[i].day); if (num >= tn) { nextInst = num; break; } }
+            const inst = (nextInst !== null) ? (nextInst - tn) : null;
+            let nm2 = t.m + 1, ny2 = t.y; if (nm2 > 12) { nm2 = 1; ny2++; }
+            const sal = shamsiDayNum(ny2, nm2, 1) - tn;
+            const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidInstallments || 0) / member.totalInstallments * 100) : 0;
 
-            const rankNextHtml = `
-                        <div class="rank-next-info" onclick="toggleRankHelp()">
-                            ${remainingToNext > 0 ? `
-                                <span>تا ${nextTierName}</span>
-                                <span class="next-value">${remainingToNext}</span>
-                                <span>امتیاز</span>
-                            ` : `
-                                <span>🏆 رتبه برتر</span>
-                            `}
-                            <span class="help-icon"><i class="fas fa-question-circle"></i></span>
-                            ${helpHtml}
-                        </div>
-                    `;
-
+            // 🗂️ منوی اصلی
+            const isCouncil = hasCouncilOrAdminAccess();
+            const isHead = isHeadOfHousehold();
             const publicItems = [
                 { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
                 { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
                 { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
                 { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
                 { tab: 'club', label: 'امتیازات', icon: 'fa-star', color: '#f59e0b' },
-                { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' }
-            ];  
-
-                                     // 🆕 آیتم‌های ویژه اعضا (خردسالان، نوجوانان، بانوان) - نمایش به همه
+                { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
+                { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4' }
+            ];
             const specialItems = [
                 { tab: 'toddlerGrowth', label: 'رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
                 { tab: 'teenPiggy', label: 'قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
                 { tab: 'ladySpecial', label: 'بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' }
             ];
-
+            const familyItems = [
+                { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
+                { tab: 'familyInfo', label: 'اطلاعات کلی خانواده', icon: 'fa-users-cog', color: '#10b981' }
+            ];
             const councilItems = [
                 { tab: 'access', label: 'دسترسی‌ها', icon: 'fa-key', color: '#f59e0b' },
                 { tab: 'infoStats', label: 'اطلاعات و آمار', icon: 'fa-chart-pie', color: '#f59e0b' },
                 { tab: 'manageCoins', label: 'مدیریت امتیازها', icon: 'fa-coins', color: '#f59e0b' },
                 { tab: 'reports', label: 'گزارش‌گیری پیشرفته', icon: 'fa-file-alt', color: '#8b5cf6' }
             ];
-
-            const familyItems = [
-                { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
-                { tab: 'familyInfo', label: 'اطلاعات کلی خانواده', icon: 'fa-users-cog', color: '#10b981' }
-            ];
-
             let gridHtml = '<div class="grid-menu">';
-
-            publicItems.forEach(item => {
-                gridHtml += `
-                            <div class="grid-menu-item" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')">
-                                <div class="menu-icon" style="background: linear-gradient(135deg, ${item.color}, ${item.color}dd);"><i class="fas ${item.icon}"></i></div>
-                                <div class="menu-label">${item.label}</div>
-                                <span class="menu-badge">0</span>
-                            </div>
-                        `;
-            });
-            // 🆕 نمایش دکمه‌های ویژه اعضا (قلک نوجوانان و بانو بانوان)
-                        // 🆕 نمایش دکمه‌های ویژه اعضا
-            if (specialItems.length > 0) {
-                gridHtml += `
-                            <div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));">
-                                <i class="fas fa-gem"></i> ویژه اعضا
-                            </div>
-                        `;
-                specialItems.forEach(function(item) {
-                    gridHtml += '<div class="grid-menu-item" data-tab="' + item.tab + '" onclick="showComingSoon(\'' + item.label + '\')">';
-                    gridHtml += '<div class="menu-icon" style="background: linear-gradient(135deg, ' + item.color + ', ' + item.color + 'dd);"><i class="fas ' + item.icon + '"></i></div>';
-                    gridHtml += '<div class="menu-label">' + item.label + '</div>';
-                    gridHtml += '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;box-shadow:0 2px 8px rgba(245,158,11,0.3);">بزودی 🚧</span>';
-                    gridHtml += '</div>';
-                });
-            }
-
-            gridHtml += `
-                        <div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>
-                    `;
-            familyItems.forEach(item => {
-                const disabled = isHead ? '' : 'disabled';
-                const lock = isHead ? '' : `<span class="lock-icon"><i class="fas fa-lock"></i></span>`;
-                const click = isHead ? `selectMenuItem('${item.tab}')` :
-                    `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`;
-                gridHtml += `
-                            <div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}">
-                                <div class="menu-icon" style="background: linear-gradient(135deg, #10b981, #059669);"><i class="fas ${item.icon}"></i></div>
-                                <div class="menu-label">${item.label}</div>
-                                ${lock}
-                            </div>
-                        `;
-            });
-
-            gridHtml += `
-                        <div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>
-                    `;
-            councilItems.forEach(item => {
-                const disabled = isCouncil ? '' : 'disabled';
-                const lock = isCouncil ? '' : `<span class="lock-icon"><i class="fas fa-lock"></i></span>`;
-                const click = isCouncil ? `selectMenuItem('${item.tab}')` :
-                    `alert('🔒 فقط اعضای شورا و مدیر دسترسی دارند')`;
-                gridHtml += `
-                            <div class="grid-menu-item council-item ${disabled}" data-tab="${item.tab}" onclick="${click}">
-                                <div class="menu-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);"><i class="fas ${item.icon}"></i></div>
-                                <div class="menu-label">${item.label}</div>
-                                ${lock}
-                            </div>
-                        `;
-            });
-
+            publicItems.forEach(item => { gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; });
+            gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));"><i class="fas fa-gem"></i> ویژه اعضا</div>';
+            specialItems.forEach(item => { gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="showComingSoon('${item.label}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span></div>`; });
+            gridHtml += '<div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
+            familyItems.forEach(item => { const disabled = isHead ? '' : 'disabled'; const lock = isHead ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isHead ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`; gridHtml += `<div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
+            gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
+            councilItems.forEach(item => { const disabled = isCouncil ? '' : 'disabled'; const lock = isCouncil ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isCouncil ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط اعضای شورا و مدیر دسترسی دارند')`; gridHtml += `<div class="grid-menu-item council-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
             gridHtml += '</div>';
 
-            const quickInfoHtml = `
-                        <div class="quick-info-box">
-                            <div class="info-item" style="border-color:var(--success-color);background:linear-gradient(135deg,rgba(16,185,129,0.06),rgba(5,150,105,0.06));">
-                                <div class="info-label"><i class="fas fa-wallet"></i> موجودی</div>
-                                <div class="info-value green">${fmtNum(balance)}</div>
-                            </div>
-                            <div class="info-item" style="border-color:var(--danger-color);background:linear-gradient(135deg,rgba(239,68,68,0.06),rgba(220,38,38,0.06));">
-                                <div class="info-label"><i class="fas fa-hand-holding-usd"></i> بدهی</div>
-                                <div class="info-value red">${fmtNum(member?.loanBalance || 0)}</div>
-                            </div>
-                            <div class="info-item" style="border-color:var(--gold-color);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(217,119,6,0.06));">
-                                <div class="info-label"><i class="fas fa-piggy-bank"></i> پس‌انداز</div>
-                                <div class="info-value ${member?.savingsStatus >= 0 ? 'green' : 'red'}">${fmtNum(member?.savingsStatus || 0)}</div>
-                            </div>
-                            <div class="info-item" style="border-color:var(--purple-color);background:linear-gradient(135deg,rgba(139,92,246,0.06),rgba(124,58,237,0.06));">
-                                <div class="info-label"><i class="fas fa-exclamation-triangle"></i> اقساط معوقه</div>
-                                <div class="info-value purple">${overdueInstallments}</div>
-                            </div>
-                            <div class="info-item" style="border-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.06),rgba(13,148,136,0.06));grid-column:span 2;border-right:4px solid var(--teal-color);">
-                                <div class="info-label"><i class="fas fa-chart-line"></i> پیشرفت اقساط</div>
-                                <div class="info-value teal">${progressPercent}%</div>
-                                <div class="progress-container"><div class="progress-bar" style="width:${progressPercent}%;"></div></div>
-                                <div style="font-size:0.55rem;color:var(--text-secondary);margin-top:2px;">${paidInstallments} از ${totalInstallments}</div>
-                            </div>
-                        </div>
-                    `;
-
             content.innerHTML = `
-                        <div class="header-bar">
-                            <div class="header-rank">
-                                <span style="font-size:0.8rem;color:var(--text-muted);">🏆 رتبه شما</span>
-                                <span class="rank-value">${memberScores[member.id]?.score || 0}</span>
-                                <span class="rank-tier" style="background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'};">${memberScores[member.id]?.tierName || ''}</span>
-                                ${rankNextHtml}
+                        <div class="hdr">
+                            <div class="rankrow"><span class="lbl">🏆 رتبه شما</span><span class="big">${sd ? sd.score : 0}</span><span class="tierpill">${sd ? sd.tierEmoji + ' ' + sd.tierName : ''}</span></div>
+                            <div class="famrank"><div class="t">خانواده ${esc(member.firstName)} · رتبه ${myRank} از ${totalFam} خانوار</div><div class="bar"><i style="width:${posPct}%"></i></div><div class="s">شما از ${betterThan}٪ خانوارها جلوترید 🚀</div></div>
+                            <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span></div>
+                            ${bdayHtml}
+                            <div class="greet"><b>${esc(member.firstName)} عزیز</b><span class="hello">${greeting}</span></div>
+                            ${achHtml}
+                            <div class="fin">
+                                <div class="fcell">موجودی<b style="color:var(--success-color)">${fmtNum(member.balance)}</b></div>
+                                <div class="fcell">وضعیت پس‌انداز<b style="color:var(--gold-color)">${fmtNum(member.savingsStatus)}</b></div>
+                                <div class="fcell cd">تا مقرری بعدی<b style="color:var(--gold-color)">${sal} روز مانده</b></div>
+                                <div class="fcell">مانده بدهی<b style="color:var(--danger-color)">${fmtNum(member.loanBalance)}</b></div>
+                                <div class="fcell">قسط معوقه<b style="color:var(--danger-color)">${Math.abs(member.overdueInstallments || 0)}</b></div>
+                                <div class="fcell cd">تا قسط بعدی<b style="color:${inst !== null ? 'var(--danger-color)' : 'var(--success-color)'}">${inst !== null ? inst + ' روز دیگه' : '—'}</b></div>
                             </div>
-                            <div class="header-date">
-                                <div class="date-row">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span>${new Date().toLocaleDateString('fa-IR')}</span>
-                                    <span class="sep">|</span>
-                                    <i class="fas fa-clock"></i>
-                                    <strong id="clockDisplay">${new Date().toLocaleTimeString('fa-IR')}</strong>
-                                    <span class="sep">|</span>
-                                    <span id="dayDisplay">${getPersianDayName()}</span>
-                                </div>
-                                <div class="greeting-row">
-                                    <span class="greeting-name">${member.firstName} عزیز</span>
-                                    <span class="greeting-text">${greeting}</span>
-                                </div>
-                            </div>
-                            ${quickInfoHtml}
+                            <div class="plabel"><span>پیشرفت اقساط</span><span>${progPct}٪</span></div>
+                            <div class="pbar"><i style="width:${progPct}%"></i></div>
                         </div>
                         ${SYSTEM_MESSAGE ? `<div class="system-message-box"><div class="message-icon"><i class="fas fa-bullhorn"></i></div><div class="message-text">${esc(SYSTEM_MESSAGE)}</div></div>` : ''}
                         ${gridHtml}
                         <div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.8rem;">برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید</div>
                     `;
 
-            window.toggleRankHelp = function() {
-                const tooltip = document.getElementById('rankHelpTooltip');
-                if (tooltip) {
-                    tooltip.classList.toggle('show');
-                }
-            };
-
-            document.addEventListener('click', function(e) {
-                const tooltip = document.getElementById('rankHelpTooltip');
-                const rankInfo = document.querySelector('.rank-next-info');
-                if (tooltip && rankInfo && !rankInfo.contains(e.target) && !tooltip.contains(e.target)) {
-                    tooltip.classList.remove('show');
-                }
-            });
-
-            setInterval(() => {
-                const clock = document.getElementById('clockDisplay');
-                const day = document.getElementById('dayDisplay');
-                if (clock) clock.textContent = new Date().toLocaleTimeString('fa-IR');
-                if (day) day.textContent = getPersianDayName();
+            // 🕐 ساعت زنده با ثانیه
+            setInterval(function() {
+                const clk = document.getElementById('liveClock');
+                if (clk) clk.textContent = '🕐 ' + new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             }, 1000);
 
             updateNotifBadge();
             updateFloatingButtons();
         }
+                 // ============================================================
+        // 🆕 صندوق من - صفحه تعاملی اعضا
+        // ============================================================
 
+        const MF_TABS = [
+            { id: 'tree', label: '🌳 درخت رشد' },
+            { id: 'postcards', label: '💌 کارت پستال' },
+            { id: 'success', label: '🏆 موفقیت‌های من' },
+            { id: 'advisor', label: '🤖 مشاور مالی' },
+            { id: 'alerts', label: '🔔 هشدارها' },
+            { id: 'lessons', label: '🎓 سواد مالی' },
+            { id: 'quiz', label: '🧠 کوئیز' },
+            { id: 'news', label: '📰 خبرنامه' },
+            { id: 'loan', label: '🧮 شبیه‌ساز وام' },
+            { id: 'badges', label: '🏅 نشان‌ها' }
+        ];
+
+        function renderMyFundPage(content) {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) { content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>'; return; }
+            let tabsHtml = '<div class="mf-tabs">';
+            MF_TABS.forEach(function (t, i) {
+                tabsHtml += '<button class="mf-tab' + (i === 0 ? ' active' : '') + '" data-mf="' + t.id + '" onclick="switchMfTab(\'' + t.id + '\')">' + t.label + '</button>';
+            });
+            tabsHtml += '</div>';
+            content.innerHTML = '<div class="mf-header"><div class="mf-title"><i class="fas fa-gem" style="color:var(--gold-color)"></i> صندوق من</div>' + tabsHtml + '</div><div id="mfContent"></div>';
+            switchMfTab('tree');
+        }
+
+        function switchMfTab(id) {
+            document.querySelectorAll('.mf-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-mf') === id); });
+            const c = document.getElementById('mfContent');
+            if (!c) return;
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) return;
+            if (id === 'tree') mfRenderTree(c, member);
+            else if (id === 'postcards') mfRenderPostcards(c);
+            else if (id === 'success') mfRenderSuccess(c, member);
+            else if (id === 'advisor') mfRenderAdvisor(c);
+            else if (id === 'alerts') mfRenderAlerts(c, member);
+            else if (id === 'lessons') mfRenderLessons(c, member);
+            else if (id === 'quiz') mfRenderQuiz(c, member);
+            else if (id === 'news') mfRenderNews(c);
+            else if (id === 'loan') mfRenderLoan(c);
+            else if (id === 'badges') mfRenderBadges(c, member);
+        }
+
+        // ---- امتیاز (اتصال به سیستم امتیازات اصلی برنامه) ----
+        function mfAddPoints(n) {
+            try {
+                const key = 'sandogh_coins_' + currentUser.memberId;
+                const cur = parseInt(localStorage.getItem(key)) || 0;
+                localStorage.setItem(key, cur + n);
+            } catch (e) { }
+        }
+
+        // ---- 🌳 درخت رشد (کاملاً خودکار با داده‌های واقعی عضو) ----
+        function mfTreeData(member) {
+            const leaves = member.paidInstallments || 0;                                        // هر قسط به‌موقع = ۱ برگ
+            const salary = member.monthlySalary || 1;
+            const fruitsSavings = Math.max(0, Math.floor((member.savingsStatus || 0) / salary)); // هر مقرری پس‌انداز = ۱ میوه
+            const fruitsInst = Math.floor((member.paidInstallments || 0) / 3);                   // هر ۳ قسط = ۱ میوه اضافی
+            const fruits = fruitsSavings + fruitsInst;
+            const total = leaves + fruits;
+            const level = total >= 80 ? 5 : total >= 50 ? 4 : total >= 30 ? 3 : total >= 12 ? 2 : 1;
+            return { leaves: leaves, fruits: fruits, level: level };
+        }
+
+        function mfRenderTree(c, member) {
+            const d = mfTreeData(member);
+            const fruitPos = [[65, 80], [135, 85], [100, 50], [80, 110], [125, 105], [55, 100], [145, 100], [100, 95], [70, 60], [130, 65], [90, 128], [115, 122]];
+            const fruitColors = ['#f59e0b', '#ef4444', '#ec4899'];
+            let fruitsSvg = '';
+            const showF = Math.min(d.fruits, fruitPos.length);
+            for (let i = 0; i < showF; i++) {
+                fruitsSvg += '<circle cx="' + fruitPos[i][0] + '" cy="' + fruitPos[i][1] + '" r="6" fill="' + fruitColors[i % 3] + '"/>';
+            }
+            c.innerHTML =
+                '<div class="mf-card">' +
+                '<div class="mf-card-title">🌳 درخت رشد مالی شما <span class="mf-note">به صورت خودکار با فعالیت شما رشد می‌کند</span></div>' +
+                '<div class="mf-tree-wrap">' +
+                '<svg class="mf-tree-svg" viewBox="0 0 200 220">' +
+                '<rect x="90" y="140" width="20" height="70" fill="#8b5cf6" rx="3"/>' +
+                '<circle cx="100" cy="100" r="55" fill="#10b981" opacity="0.85"/>' +
+                '<circle cx="70" cy="115" r="35" fill="#059669" opacity="0.9"/>' +
+                '<circle cx="130" cy="115" r="35" fill="#059669" opacity="0.9"/>' +
+                '<circle cx="100" cy="70" r="30" fill="#34d399" opacity="0.95"/>' +
+                '<g>' + fruitsSvg + '</g>' +
+                '</svg>' +
+                '<div class="mf-tree-stats">' +
+                '<div class="mf-tree-stat"><div class="n">' + d.leaves + '</div><div class="l">🍃 برگ<br>پرداخت به‌موقع اقساط</div></div>' +
+                '<div class="mf-tree-stat"><div class="n">' + d.fruits + '</div><div class="l">🍎 میوه<br>پس‌انداز و اقساط</div></div>' +
+                '<div class="mf-tree-stat"><div class="n">سطح ' + d.level + '</div><div class="l">🌳 رشد درخت</div></div>' +
+                '</div>' +
+                '<div class="mf-tree-rules">🍃 هر پرداخت به‌موقع قسط = ۱ برگ سبز<br>🍎 هر ۱ مقرری پس‌انداز = ۱ میوه<br>🍎 هر ۳ قسط پرداخت‌شده = ۱ میوه اضافی<br>✨ با افزایش پس‌انداز و پرداخت اقساط، درخت شما خودبه‌خود رشد می‌کند</div>' +
+                '</div>' +
+                '</div>';
+        }
+
+        // ---- 💌 کارت پستال دیجیتال با ارسال پیامکی ----
+        const MF_POSTCARDS = [
+            { title: 'تبریک تولد', emoji: '🎂', text: 'تولدت مبارک! برایت سلامتی، شادی و موفقیت آرزومندم. 🌟', cls: 'mf-pc-birthday' },
+            { title: 'تبریک نوروز', emoji: '🌸', text: 'نوروزتان پیروز! سالی سرشار از برکت و سلامتی برایتان آرزومندم. 🌷', cls: 'mf-pc-nowruz' },
+            { title: 'تبریک یلدا', emoji: '🍉', text: 'شب یلدا مبارک! شبی گرم و پرمهر در کنار عزیزان داشته باشید. ❤️', cls: 'mf-pc-yalda' },
+            { title: 'تبریک موفقیت', emoji: '🏆', text: 'تبریک بابت موفقیت ارزشمند شما! به داشتن دوستی مثل تو افتخار می‌کنم. 👏', cls: 'mf-pc-success' }
+        ];
+
+        function mfRenderPostcards(c) {
+            let html = '<div class="mf-card"><div class="mf-card-title">💌 کارت پستال دیجیتال</div>' +
+                '<p class="mf-note">کارت مورد نظر را انتخاب کنید و متن آماده را از طریق پیامک برای عزیزان ارسال کنید</p>' +
+                '<div class="mf-pc-grid">';
+            MF_POSTCARDS.forEach(function (p, i) {
+                html += '<div class="mf-postcard ' + p.cls + '" onclick="mfShowPostcard(' + i + ')"><div class="mf-pc-emoji">' + p.emoji + '</div><div class="mf-pc-title">' + p.title + '</div></div>';
+            });
+            html += '</div><div id="mfPcDetail"></div></div>';
+            c.innerHTML = html;
+        }
+
+        function mfShowPostcard(i) {
+            const p = MF_POSTCARDS[i];
+            if (!p) return;
+            const smsText = p.emoji + ' ' + p.title + '\n' + p.text + '\n\n🌟 صندوق اتحاد';
+            const smsLink = 'sms:?body=' + encodeURIComponent(smsText);
+            const detail = document.getElementById('mfPcDetail');
+            if (!detail) return;
+            detail.innerHTML = '<div class="mf-pc-detail">' +
+                '<div style="font-size:3rem;text-align:center">' + p.emoji + '</div>' +
+                '<p style="text-align:center;line-height:2;margin:10px 0">' + p.text + '</p>' +
+                '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">' +
+                '<a href="' + smsLink + '" class="mf-btn mf-btn-success">📱 ارسال با پیامک</a>' +
+                '</div>' +
+                '<p class="mf-note" style="text-align:center;margin-top:10px">پس از لمس دکمه، برنامه پیامک گوشی با متن آماده باز می‌شود؛ فقط گیرنده را انتخاب کنید.</p>' +
+                '</div>';
+        }
+
+        // ---- 🏆 موفقیت‌های من (خط زمان خودکار از داده‌های عضو) ----
+        function mfRenderSuccess(c, member) {
+            const items = [];
+            if (member.datMiladi) {
+                const d = new Date(member.datMiladi);
+                if (!isNaN(d.getTime())) items.push({ date: d.toLocaleDateString('fa-IR'), icon: '🌱', title: 'شروع عضویت', desc: 'به خانواده بزرگ صندوق اتحاد پیوستید' });
+            }
+            if (member.loanReceiveDate) items.push({ date: member.loanReceiveDate, icon: '🏦', title: 'دریافت وام', desc: 'تسهیلات شما پرداخت شد و دوره اقساط آغاز گردید' });
+            if ((member.paidInstallments || 0) > 0) items.push({ date: '', icon: '✅', title: member.paidInstallments + ' قسط پرداخت‌شده', desc: 'تاکنون ' + member.paidInstallments + ' قسط را پرداخت کرده‌اید - ادامه بدهید!' });
+            if ((member.savingsStatus || 0) > 0) items.push({ date: '', icon: '💰', title: 'پس‌انداز ' + fmtNum(member.savingsStatus) + ' تومانی', desc: 'پس‌انداز شما در حال رشد است و میوه‌های درختتان زیاد می‌شود' });
+            const sd = memberScores[member.id];
+            if (sd) items.push({ date: '', icon: '⭐', title: 'امتیاز ' + sd.score + ' - سطح ' + sd.tierName, desc: 'با فعالیت مستمر، امتیاز خود را باز هم بالاتر ببرید' });
+
+            let html = '<div class="mf-card"><div class="mf-card-title">🏆 موفقیت‌های من</div><p class="mf-note">دستاوردهای شما به صورت خودکار از اطلاعات حساب‌تان ساخته می‌شود</p><div class="mf-timeline">';
+            items.forEach(function (it) {
+                html += '<div class="mf-tl-item">' + (it.date ? '<div class="mf-tl-date">📅 ' + it.date + '</div>' : '') + '<h4>' + it.icon + ' ' + it.title + '</h4><p>' + it.desc + '</p></div>';
+            });
+            html += '</div>';
+            if ((member.paidInstallments || 0) < 12) {
+                const pct = Math.round((member.paidInstallments || 0) / 12 * 100);
+                html += '<div class="mf-goal"><b>🎯 هدف بعدی: نشان «تیرانداز»</b><div class="mf-progress"><i style="width:' + pct + '%"></i></div><p class="mf-note">' + (member.paidInstallments || 0) + ' از ۱۲ قسط</p></div>';
+            }
+            html += '</div>';
+            c.innerHTML = html;
+        }
+
+        // ---- 🤖 مشاور مالی مجازی ----
+        function mfRenderAdvisor(c) {
+            c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🤖 مشاور مالی مجازی</div>' +
+                '<div class="mf-chat" id="mfChatBox"></div>' +
+                '<div class="mf-chat-row">' +
+                '<input type="text" class="mf-chat-input" id="mfChatInput" placeholder="سؤال مالی خود را بپرسید..." onkeypress="if(event.key===\'Enter\')mfSendChat()">' +
+                '<button class="mf-btn" onclick="mfSendChat()"><i class="fas fa-paper-plane"></i></button>' +
+                '</div>' +
+                '<div class="mf-quick">' +
+                '<button onclick="mfQuickChat(\'چقدر پس‌انداز کنم؟\')">چقدر پس‌انداز کنم؟</button>' +
+                '<button onclick="mfQuickChat(\'وام بگیرم؟\')">وام بگیرم؟</button>' +
+                '<button onclick="mfQuickChat(\'نکته مالی\')">نکته مالی</button>' +
+                '</div></div>';
+            mfBotMsg('سلام! 👋 من مشاور مالی مجازی شما هستم. چطور می‌توانم کمکتان کنم؟');
+        }
+
+        function mfBotMsg(t) { const b = document.getElementById('mfChatBox'); if (!b) return; b.innerHTML += '<div class="mf-msg mf-bot"><div>🤖 ' + t + '</div></div>'; b.scrollTop = b.scrollHeight; }
+        function mfUserMsg(t) { const b = document.getElementById('mfChatBox'); if (!b) return; b.innerHTML += '<div class="mf-msg mf-user"><div>' + t + '</div></div>'; b.scrollTop = b.scrollHeight; }
+        function mfSendChat() {
+            const input = document.getElementById('mfChatInput');
+            if (!input) return;
+            const t = input.value.trim();
+            if (!t) return;
+            mfUserMsg(t);
+            input.value = '';
+            setTimeout(function () { mfBotMsg(mfBotReply(t)); }, 500);
+        }
+        function mfQuickChat(q) { mfUserMsg(q); setTimeout(function () { mfBotMsg(mfBotReply(q)); }, 500); }
+        function mfBotReply(q) {
+            if (q.indexOf('پس‌انداز') >= 0) return 'پیشنهاد من: حداقل ۲۰٪ درآمد ماهانه را پس‌انداز کنید. 💰 اگر تازه شروع کرده‌اید، با ۱۰٪ شروع کنید و هر ماه کمی افزایش دهید.';
+            if (q.indexOf('وام') >= 0) return 'وام گرفتن برای سرمایه‌گذاری یا نیازهای ضروری مناسب است. ✅ مطمئن شوید مجموع اقساط بیشتر از ۳۰٪ درآمدتان نباشد. از بخش شبیه‌ساز وام هم می‌توانید استفاده کنید.';
+            if (q.indexOf('نکته') >= 0) return '💡 نکته امروز: «اول به خودت پرداخت کن!» یعنی به محض دریافت درآمد، سهم پس‌انداز را جدا کنید.';
+            return 'سؤال خوبی است! 🤔 پیشنهاد می‌کنم بخش سواد مالی را هم ببینید. آیا سؤال خاص‌تری دارید؟';
+        }
+
+        // ---- 🔔 هشدارهای هوشمند (خودکار از داده‌های عضو) ----
+        function mfAlertBox(type, icon, title, text) {
+            return '<div class="mf-alert mf-alert-' + type + '"><div class="ic">' + icon + '</div><div class="tx"><b>' + title + '</b>' + text + '</div></div>';
+        }
+
+        function mfRenderAlerts(c, member) {
+            let html = '<div class="mf-card"><div class="mf-card-title">🔔 هشدارهای هوشمند</div>';
+            if (Math.abs(member.overdueInstallments || 0) > 0) {
+                html += mfAlertBox('danger', '⏰', 'قسط معوقه', 'شما ' + Math.abs(member.overdueInstallments) + ' قسط معوقه دارید. هرچه زودتر برای پرداخت اقدام کنید.');
+            }
+            const t = getTodayShamsi();
+            const tn = shamsiDayNum(t.y, t.m, t.d);
+            const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            let nextInst = null;
+            for (let i = 0; i < instDates.length; i++) {
+                const num = shamsiDayNum(instDates[i].year, instDates[i].month, instDates[i].day);
+                if (num >= tn) { nextInst = num; break; }
+            }
+            if (nextInst !== null) {
+                const daysLeft = nextInst - tn;
+                if (daysLeft <= 7) {
+                    html += mfAlertBox('warn', '📅', 'قسط نزدیک', 'قسط بعدی شما ' + (daysLeft === 0 ? 'امروز' : daysLeft + ' روز دیگر') + ' سررسید می‌شود. مبلغ را آماده داشته باشید.');
+                }
+            }
+            if ((member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= (member.monthlySalary || 0)) {
+                html += mfAlertBox('ok', '🎉', 'پس‌انداز عالی', 'پس‌انداز شما معادل حداقل یک مقرری کامل است. آفرین به پشتکار شما!');
+            } else {
+                html += mfAlertBox('warn', '💤', 'یادآوری پس‌انداز', 'مدتی است پس‌انداز جدیدی نداشته‌اید. با مبلغی کوچک شروع کنید؛ تداوم مهم‌تر از مبلغ است.');
+            }
+            if ((member.loanBalance || 0) === 0 && (member.totalInstallments || 0) > 0) {
+                html += mfAlertBox('ok', '🕊️', 'بدون بدهی', 'تبریک! مانده بدهی شما صفر است.');
+            }
+            html += '</div>';
+            c.innerHTML = html;
+        }
+
+        // ---- 🎓 سواد مالی (هر درس ۱ امتیاز - فقط یک‌بار) ----
+        const MF_LESSONS = [
+            { id: 1, title: 'بودجه‌بندی ۵۰/۳۰/۲۰', icon: 'fa-chart-pie', color: '#667eea', time: '۲ دقیقه', content: 'یکی از بهترین روش‌های بودجه‌بندی، قانون ۵۰/۳۰/۲۰ است:\n\n🔹 ۵۰٪ درآمد: نیازهای ضروری (خوراک، مسکن، حمل‌ونقل)\n🔹 ۳۰٪ درآمد: خواسته‌ها (تفریح، خرید)\n🔹 ۲۰٪ درآمد: پس‌انداز و سرمایه‌گذاری\n\nاین قانون ساده به شما کمک می‌کند تعادل مالی داشته باشید.' },
+            { id: 2, title: 'قدرت پس‌انداز خودکار', icon: 'fa-piggy-bank', color: '#10b981', time: '۳ دقیقه', content: 'پس‌انداز خودکار یعنی به محض دریافت درآمد، ابتدا سهم پس‌انداز را جدا کنید.\n\n💡 نکته: «اول به خودت پرداخت کن!»\n\nاگر منتظر بمانید تا آخر ماه چیزی باقی بماند، معمولاً چیزی باقی نمی‌ماند. اما اگر اول ماه ۱۰٪ را پس‌انداز کنید، به مرور ثروت قابل توجهی جمع می‌شود.' },
+            { id: 3, title: 'مدیریت بدهی', icon: 'fa-hand-holding-usd', color: '#ef4444', time: '۴ دقیقه', content: 'همه بدهی‌ها بد نیستند! بدهی خوب سرمایه‌گذاری است که ارزش ایجاد می‌کند.\n\n✅ بدهی خوب: وام مسکن، وام کسب‌وکار\n❌ بدهی بد: خرید کالاهای مصرفی با اقساط طولانی\n\n🎯 قانون طلایی: مجموع اقساط نباید بیشتر از ۳۰٪ درآمد ماهانه باشد.' },
+            { id: 4, title: 'سرمایه‌گذاری با درآمد کم', icon: 'fa-coins', color: '#f59e0b', time: '۵ دقیقه', content: 'برای سرمایه‌گذاری نیاز به پول زیاد نیست!\n\n🌱 از مبالغ کوچک شروع کنید\n📈 تداوم مهم‌تر از مبلغ است\n🥚 همه تخم‌مرغ‌ها را در یک سبد نگذارید\n\nبا ماهی ۵۰۰ هزار تومان هم می‌توانید شروع کنید و در طول زمان نتیجه شگفت‌انگیزی بگیرید.' }
+        ];
+
+        function mfRenderLessons(c, member) {
+            let html = '<div class="mf-card"><div class="mf-card-title">🎓 سواد مالی <span class="mf-note">🎁 هر درس ۱ امتیاز - فقط یک‌بار</span></div>';
+            MF_LESSONS.forEach(function (l) {
+                const read = localStorage.getItem('sandogh_mf_lesson_' + member.id + '_' + l.id) === '1';
+                html += '<div class="mf-lesson">' +
+                    '<div class="mf-lesson-head">' +
+                    '<div style="flex:1"><h4 id="mfLessonTitle' + l.id + '"><i class="fas ' + l.icon + '" style="color:' + l.color + '"></i> ' + l.title + (read ? ' <span style="color:var(--success-color);font-size:0.65rem">✅ پاداش دریافت شد</span>' : '') + '</h4><div class="meta">⏱ ' + l.time + ' | 🎁 ۱ امتیاز (فقط یک‌بار)</div></div>' +
+                    '<button class="mf-mini-btn" id="mfLessonBtn' + l.id + '" onclick="mfToggleLesson(' + l.id + ')">📖 مشاهده درس</button>' +
+                    '</div>' +
+                    '<div class="mf-lesson-body" id="mfLessonBody' + l.id + '">' + l.content + '</div>' +
+                    '</div>';
+            });
+            html += '</div>';
+            c.innerHTML = html;
+        }
+
+        function mfToggleLesson(id) {
+            const el = document.getElementById('mfLessonBody' + id);
+            const btn = document.getElementById('mfLessonBtn' + id);
+            if (!el) return;
+            const isOpen = el.style.display === 'block';
+            el.style.display = isOpen ? 'none' : 'block';
+            if (btn) btn.textContent = isOpen ? '📖 مشاهده درس' : '🔼 بستن';
+            if (!isOpen) {
+                const member = members.find(m => m.id === currentUser.memberId);
+                if (!member) return;
+                const key = 'sandogh_mf_lesson_' + member.id + '_' + id;
+                if (localStorage.getItem(key) !== '1') {
+                    localStorage.setItem(key, '1');
+                    mfAddPoints(1);
+                    const lesson = MF_LESSONS.find(l => l.id === id);
+                    const titleEl = document.getElementById('mfLessonTitle' + id);
+                    if (titleEl) titleEl.innerHTML += ' <span style="color:var(--success-color);font-size:0.65rem">✅ پاداش دریافت شد</span>';
+                    setTimeout(function () { alert('🎉 ۱ امتیاز برای مطالعه درس «' + lesson.title + '» به امتیازات شما اضافه شد!'); }, 300);
+                }
+            }
+        }
+
+        // ---- 🧠 کوئیز (۱ امتیاز فقط برای اولین تکمیل کامل) ----
+        const MF_QUIZ = [
+            { q: 'چند درصد درآمد را باید پس‌انداز کرد؟', options: ['۵٪', '۱۰٪', '۲۰٪', '۵۰٪'], correct: 2 },
+            { q: 'مجموع اقساط نباید بیشتر از چند درصد درآمد باشد؟', options: ['۱۰٪', '۳۰٪', '۵۰٪', '۷۰٪'], correct: 1 },
+            { q: 'کدام بدهی «خوب» محسوب می‌شود؟', options: ['خرید گوشی با اقساط', 'وام مسکن', 'وام سفر', 'خرید لباس'], correct: 1 },
+            { q: 'قانون ۵۰/۳۰/۲۰ مربوط به چیست؟', options: ['سرمایه‌گذاری', 'بودجه‌بندی', 'وام', 'بیمه'], correct: 1 }
+        ];
+        let mfQuizIdx = 0, mfQuizCorrect = 0;
+
+        function mfRenderQuiz(c, member) {
+            mfQuizIdx = 0;
+            mfQuizCorrect = 0;
+            const done = localStorage.getItem('sandogh_mf_quiz_' + member.id) === '1';
+            c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🧠 کوئیز مالی</div>' +
+                '<div class="mf-quiz-info">' + (done ? '🏆 پاداش کوئیز (۱ امتیاز) را قبلاً دریافت کرده‌اید - شرکت مجدد فقط برای تمرین است' : '🏆 پاداش: ۱ امتیاز برای تکمیل کامل کوئیز (پاسخ به همه سؤالات) - فقط یک‌بار') + '</div>' +
+                '<div id="mfQuizBox"></div></div>';
+            mfRenderQuizQuestion();
+        }
+
+        function mfRenderQuizQuestion() {
+            const box = document.getElementById('mfQuizBox');
+            if (!box) return;
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (mfQuizIdx >= MF_QUIZ.length) {
+                const key = 'sandogh_mf_quiz_' + (member ? member.id : '');
+                const done = localStorage.getItem(key) === '1';
+                let reward = '';
+                if (!done) {
+                    localStorage.setItem(key, '1');
+                    mfAddPoints(1);
+                    reward = '<div class="mf-reward-on">🎉 کوئیز کامل شد! ۱ امتیاز به امتیازات شما اضافه شد</div>';
+                } else {
+                    reward = '<div class="mf-reward-off">پاداش این کوئیز را قبلاً دریافت کرده‌اید 🎁</div>';
+                }
+                box.innerHTML = '<div style="text-align:center;padding:20px">' +
+                    '<div style="font-size:3rem">🎉</div>' +
+                    '<h3 style="margin:10px 0">کوئیز تمام شد!</h3>' +
+                    '<p style="color:var(--text-secondary)">پاسخ‌های درست: <b style="color:var(--gold-color)">' + mfQuizCorrect + '</b> از ' + MF_QUIZ.length + '</p>' +
+                    reward +
+                    '<button class="mf-btn" style="margin-top:12px" onclick="mfRestartQuiz()">🔄 شروع دوباره (تمرینی)</button>' +
+                    '</div>';
+                return;
+            }
+            const q = MF_QUIZ[mfQuizIdx];
+            let html = '<h4 style="margin-bottom:12px">سؤال ' + (mfQuizIdx + 1) + ' از ' + MF_QUIZ.length + ': ' + q.q + '</h4>';
+            q.options.forEach(function (opt, i) {
+                html += '<button class="mf-quiz-opt" onclick="mfAnswerQuiz(this,' + i + ')">' + opt + '</button>';
+            });
+            box.innerHTML = html;
+        }
+
+        function mfAnswerQuiz(btn, i) {
+            const q = MF_QUIZ[mfQuizIdx];
+            const opts = btn.parentElement.querySelectorAll('.mf-quiz-opt');
+            opts.forEach(function (b) { b.disabled = true; });
+            if (i === q.correct) { btn.classList.add('correct'); mfQuizCorrect++; }
+            else { btn.classList.add('wrong'); opts[q.correct].classList.add('correct'); }
+            setTimeout(function () { mfQuizIdx++; mfRenderQuizQuestion(); }, 1200);
+        }
+
+        function mfRestartQuiz() {
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (member) mfRenderQuiz(document.getElementById('mfContent'), member);
+        }
+
+        // ---- 📰 خبرنامه مالی ----
+        function mfRenderNews(c) {
+            const items = [
+                { title: '💡 آیا می‌دانستید؟', text: 'خانواده‌هایی که بودجه ماهانه دارند، به طور متوسط ۳۰٪ بیشتر پس‌انداز می‌کنند. همین امروز بودجه ماه بعد را برنامه‌ریزی کنید.', date: 'هفته جاری' },
+                { title: '📈 پس‌انداز در شرایط تورمی', text: 'ترکیب پس‌انداز منظم و استفاده به‌موقع از تسهیلات صندوق، بهترین راه حفظ ارزش پول شماست.', date: 'هفته گذشته' },
+                { title: '🎓 هفته سواد مالی', text: 'با مطالعه درس‌ها و شرکت در کوئیز بخش سواد مالی، امتیاز کسب کنید و سطح مالی خود را ارتقا دهید.', date: 'این ماه' }
+            ];
+            let html = '<div class="mf-card"><div class="mf-card-title">📰 خبرنامه مالی</div>';
+            items.forEach(function (n) {
+                html += '<div class="mf-news"><h4>' + n.title + '</h4><p>' + n.text + '</p><div class="d">📅 ' + n.date + '</div></div>';
+            });
+            html += '</div>';
+            c.innerHTML = html;
+        }
+
+        // ---- 🧮 شبیه‌ساز وام (ورودی دستی کاربر) ----
+        function mfRenderLoan(c) {
+            c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🧮 شبیه‌ساز وام</div>' +
+                '<div class="mf-form">' +
+                '<label>💰 مبلغ وام (تومان)</label><input type="number" id="mfLoanAmount" value="50000000" step="1000000" oninput="mfCalcLoan()">' +
+                '<label>📅 تعداد اقساط (ماه)</label><input type="number" id="mfLoanMonths" value="24" min="1" max="120" oninput="mfCalcLoan()">' +
+                '<label>📊 کارمزد سالانه (درصد)</label><input type="number" id="mfLoanRate" value="2" min="0" max="30" step="0.5" oninput="mfCalcLoan()">' +
+                '</div>' +
+                '<div class="mf-loan-result" id="mfLoanResult"></div></div>';
+            mfCalcLoan();
+        }
+
+        function mfCalcLoan() {
+            const res = document.getElementById('mfLoanResult');
+            if (!res) return;
+            const amount = parseFloat(document.getElementById('mfLoanAmount').value) || 0;
+            let months = parseInt(document.getElementById('mfLoanMonths').value);
+            const rate = parseFloat(document.getElementById('mfLoanRate').value) || 0;
+            if (!months || months < 1) { res.innerHTML = '<div style="font-size:0.85rem">⚠️ لطفاً تعداد اقساط معتبر وارد کنید</div>'; return; }
+            if (months > 120) months = 120;
+            const fee = amount * (rate / 100) * (months / 12);
+            const total = amount + fee;
+            const monthly = total / months;
+            res.innerHTML = '<div class="mf-lr-label">قسط ماهانه شما</div>' +
+                '<div class="mf-lr-amount">' + fmtNum(monthly) + ' تومان</div>' +
+                '<div class="mf-lr-grid"><div>مجموع بازپرداخت<br><b>' + fmtNum(total) + '</b></div><div>کارمزد کل<br><b>' + fmtNum(fee) + '</b></div></div>';
+        }
+
+        // ---- 🏅 نشان‌های کمیاب (خودکار از داده‌های عضو) ----
+        function mfRenderBadges(c, member) {
+            let years = 0;
+            if (member.datMiladi) { const dd = new Date(member.datMiladi); if (!isNaN(dd.getTime())) years = Math.max(0, new Date().getFullYear() - dd.getFullYear()); }
+            const txCount = (transactionsByMember.get(String(member.id)) || []).length;
+            const salary = member.monthlySalary || 0;
+            const badges = [
+                { icon: '👑', name: 'پیشکسوت', desc: 'بیش از ۱۰ سال عضویت', rarity: 'افسانه‌ای', cls: 'mf-r-legendary', on: years >= 10 },
+                { icon: '🕰️', name: 'وفادار', desc: 'بیش از ۵ سال عضویت', rarity: 'حماسی', cls: 'mf-r-epic', on: years >= 5 },
+                { icon: '💯', name: 'صد تراکنشی', desc: '۱۰۰ تراکنش موفق', rarity: 'کمیاب', cls: 'mf-r-rare', on: txCount >= 100 },
+                { icon: '🎯', name: 'تیرانداز', desc: '۱۲ قسط پرداخت‌شده', rarity: 'کمیاب', cls: 'mf-r-rare', on: (member.paidInstallments || 0) >= 12 },
+                { icon: '🐋', name: 'نهنگ پس‌انداز', desc: 'پس‌انداز ≥ ۱۰ مقرری', rarity: 'حماسی', cls: 'mf-r-epic', on: salary > 0 && (member.savingsStatus || 0) >= 10 * salary },
+                { icon: '🕊️', name: 'آسمان آبی', desc: 'بدون هیچ بدهی', rarity: 'معمولی', cls: 'mf-r-common', on: (member.loanBalance || 0) === 0 }
+            ];
+            let html = '<div class="mf-card"><div class="mf-card-title">🏅 نشان‌های کمیاب</div><p class="mf-note">این نشان‌ها بر اساس فعالیت واقعی شما به صورت خودکار فعال می‌شوند</p><div class="mf-badge-grid">';
+            badges.forEach(function (b) {
+                html += '<div class="mf-badge ' + (b.on ? 'on' : 'off') + '"><div class="ic">' + (b.on ? b.icon : '🔒') + '</div><div class="nm">' + b.name + '</div><div class="ds">' + b.desc + '</div><div class="rr ' + b.cls + '">' + b.rarity + '</div></div>';
+            });
+            html += '</div></div>';
+            c.innerHTML = html;
+        }
         // ============================================================
         // بخش ۱۲: رندر صفحات داخلی (تابع اصلی)
         // ============================================================
         function renderContentPage(page, content) {
+            if (page === 'myFund') { renderMyFundPage(content); return; }
             let pageContent = '';
 
             switch (page) {
