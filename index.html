@@ -1626,7 +1626,34 @@
         .ut-modal-close{position:absolute;top:14px;left:14px;background:var(--danger-color);color:#fff;border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:0.9rem}
         @keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
         @media(max-width:600px){.ut-calc-selector{grid-template-columns:repeat(2,1fr)}.ut-form-row{grid-template-columns:1fr}.ut-cal-day{font-size:0.7rem}}
- </style>
+        /* ===== کیک تولد کنار رتبه ===== */
+        .bdaycake{display:inline-block;font-size:1.9rem;line-height:1;margin-right:5px;animation:cakewiggle 0.9s ease-in-out infinite;filter:drop-shadow(0 2px 6px rgba(236,72,153,.45))}
+        @keyframes cakewiggle{0%,100%{transform:rotate(0deg) scale(1)}25%{transform:rotate(-14deg) scale(1.12)}50%{transform:rotate(0deg) scale(1)}75%{transform:rotate(14deg) scale(1.12)}}
+         /* ===== تم‌های رنگی ===== */
+        .settings-section{margin-bottom:15px;padding:12px;background:var(--bg-secondary);border-radius:12px;border:1px solid var(--border-color)}
+        .settings-subtitle{font-size:0.85rem;font-weight:800;color:var(--text-primary);margin-bottom:10px;display:flex;align-items:center;gap:7px}
+        .color-themes-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+        .color-theme-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border-radius:14px;border:2px solid var(--border-color);background:var(--card-bg);cursor:pointer;transition:all .3s;font-family:inherit}
+        .color-theme-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow-color)}
+        .color-theme-btn.active{border-color:var(--gradient-start);background:var(--bg-secondary);box-shadow:0 0 0 3px rgba(102,126,234,.15)}
+        .color-theme-btn .preview{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;color:#fff;box-shadow:0 3px 8px rgba(0,0,0,.15)}
+        .color-theme-btn .preview i{opacity:0;transition:opacity .3s}
+        .color-theme-btn.active .preview i{opacity:1}
+        .color-theme-btn .name{font-size:0.65rem;font-weight:800;color:var(--text-primary);text-align:center}
+        .ct-blue .preview{background:linear-gradient(135deg,#667eea,#764ba2)}
+        .ct-orange .preview{background:linear-gradient(135deg,#f97316,#ea580c)}
+        .ct-gold .preview{background:linear-gradient(135deg,#f59e0b,#d97706)}
+        .ct-green .preview{background:linear-gradient(135deg,#10b981,#059669)}
+        .ct-pink .preview{background:linear-gradient(135deg,#ec4899,#db2777)}
+        .ct-purple .preview{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+        .ct-teal .preview{background:linear-gradient(135deg,#14b8a6,#0d9488)}
+        .ct-red .preview{background:linear-gradient(135deg,#ef4444,#dc2626)}
+        .ct-cyan .preview{background:linear-gradient(135deg,#06b6d4,#0891b2)}
+        .ct-lime .preview{background:linear-gradient(135deg,#84cc16,#65a30d)}
+        .ct-indigo .preview{background:linear-gradient(135deg,#6366f1,#4f46e5)}
+        .ct-slate .preview{background:linear-gradient(135deg,#64748b,#475569)}
+        @media(max-width:500px){.color-themes-grid{grid-template-columns:repeat(3,1fr)}}
+</style>
 </head>
 <body>
 
@@ -1695,6 +1722,23 @@
                     <div class="theme-option active" onclick="setTheme('auto')" id="themeAuto"><i class="fas fa-circle-half-stroke"></i> خودکار</div>
                     <div class="theme-option" onclick="setTheme('light')" id="themeLight"><i class="fas fa-sun"></i> روز</div>
                     <div class="theme-option" onclick="setTheme('dark')" id="themeDark"><i class="fas fa-moon"></i> شب</div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <div class="settings-subtitle"><i class="fas fa-palette" style="color:#ec4899"></i> رنگ اصلی برنامه</div>
+                <div class="color-themes-grid" id="colorThemesGrid">
+                    <div class="color-theme-btn ct-blue active" data-color="blue" onclick="setColorTheme('blue',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">آبی کلاسیک</div></div>
+                    <div class="color-theme-btn ct-orange" data-color="orange" onclick="setColorTheme('orange',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">نارنجی</div></div>
+                    <div class="color-theme-btn ct-gold" data-color="gold" onclick="setColorTheme('gold',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">طلایی</div></div>
+                    <div class="color-theme-btn ct-green" data-color="green" onclick="setColorTheme('green',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">سبز</div></div>
+                    <div class="color-theme-btn ct-pink" data-color="pink" onclick="setColorTheme('pink',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">صورتی</div></div>
+                    <div class="color-theme-btn ct-purple" data-color="purple" onclick="setColorTheme('purple',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">بنفش</div></div>
+                    <div class="color-theme-btn ct-teal" data-color="teal" onclick="setColorTheme('teal',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">فیروزه‌ای</div></div>
+                    <div class="color-theme-btn ct-red" data-color="red" onclick="setColorTheme('red',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">قرمز</div></div>
+                    <div class="color-theme-btn ct-cyan" data-color="cyan" onclick="setColorTheme('cyan',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">فیروزه‌ای روشن</div></div>
+                    <div class="color-theme-btn ct-lime" data-color="lime" onclick="setColorTheme('lime',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">لیمویی</div></div>
+                    <div class="color-theme-btn ct-indigo" data-color="indigo" onclick="setColorTheme('indigo',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">نیلی</div></div>
+                    <div class="color-theme-btn ct-slate" data-color="slate" onclick="setColorTheme('slate',this)"><div class="preview"><i class="fas fa-check"></i></div><div class="name">خاکستری</div></div>
                 </div>
             </div>
             <div class="settings-section">
@@ -2346,6 +2390,62 @@
             const activeBtn = document.querySelector(`.theme-option[onclick="setTheme('${theme}')"]`);
             if (activeBtn) activeBtn.classList.add('active');
         }
+        // ===== تم‌های رنگی =====
+        const COLOR_THEMES = {
+            blue:   { start: '#667eea', end: '#764ba2', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            orange: { start: '#f97316', end: '#ea580c', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            gold:   { start: '#f59e0b', end: '#d97706', gold: '#fbbf24', success: '#10b981', danger: '#ef4444' },
+            green:  { start: '#10b981', end: '#059669', gold: '#f59e0b', success: '#22c55e', danger: '#ef4444' },
+            pink:   { start: '#ec4899', end: '#db2777', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            purple: { start: '#8b5cf6', end: '#7c3aed', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            teal:   { start: '#14b8a6', end: '#0d9488', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            red:    { start: '#ef4444', end: '#dc2626', gold: '#f59e0b', success: '#10b981', danger: '#f87171' },
+            cyan:   { start: '#06b6d4', end: '#0891b2', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            lime:   { start: '#84cc16', end: '#65a30d', gold: '#f59e0b', success: '#a3e635', danger: '#ef4444' },
+            indigo: { start: '#6366f1', end: '#4f46e5', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' },
+            slate:  { start: '#64748b', end: '#475569', gold: '#f59e0b', success: '#10b981', danger: '#ef4444' }
+        };
+
+        function setColorTheme(name, btn) {
+            const theme = COLOR_THEMES[name];
+            if (!theme) return;
+            const r = document.documentElement;
+            r.style.setProperty('--gradient-start', theme.start);
+            r.style.setProperty('--gradient-end', theme.end);
+            r.style.setProperty('--gold-color', theme.gold);
+            r.style.setProperty('--success-color', theme.success);
+            r.style.setProperty('--danger-color', theme.danger);
+            r.style.setProperty('--gradient-start-light', theme.start + '33');
+            r.style.setProperty('--gradient-end-light', theme.end + '33');
+
+            // ذخیره در localStorage
+            try { localStorage.setItem('sandogh_color_theme', name); } catch (e) { }
+
+            // فعال کردن دکمه
+            document.querySelectorAll('.color-theme-btn').forEach(function (b) {
+                b.classList.remove('active');
+            });
+            if (btn) {
+                btn.classList.add('active');
+            }
+        }
+
+        function loadSavedColorTheme() {
+            let saved = 'blue';
+            try { saved = localStorage.getItem('sandogh_color_theme') || 'blue'; } catch (e) { }
+            if (COLOR_THEMES[saved]) {
+                setColorTheme(saved, null);
+                // فعال کردن دکمه صحیح
+                setTimeout(function () {
+                    document.querySelectorAll('.color-theme-btn').forEach(function (b) {
+                        b.classList.toggle('active', b.getAttribute('data-color') === saved);
+                    });
+                }, 100);
+            }
+        }
+
+        // بارگذاری تم ذخیره‌شده هنگام شروع
+        loadSavedColorTheme();
 
         // ============================================================
         // بخش ۴: مدیریت ورود و خروج
@@ -3255,7 +3355,7 @@
         // ============================================================
         // بخش ۱۱: رندر منوی اصلی
         // ============================================================
-                function renderMenuPage(content) {
+                        function renderMenuPage(content) {
             const member = members.find(m => m.id === currentUser.memberId);
             if (!member) { content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>'; return; }
 
@@ -3269,48 +3369,16 @@
             const betterThan = totalFam > 1 ? Math.round((totalFam - myRank) / (totalFam - 1) * 100) : 100;
             const posPct = Math.round((totalFam - myRank + 1) / totalFam * 100);
 
-            // 🎂 نزدیک‌ترین تولد
             const t = getTodayShamsi();
             const tn = shamsiDayNum(t.y, t.m, t.d);
-            const familyAll = [member, ...getFamilyMembers()];
-            const up = [];
-            familyAll.forEach(fm => {
-                if (!fm.birthDateShamsi) return;
-                const bp = fm.birthDateShamsi.split('/');
-                if (bp.length !== 3) return;
-                let bn = shamsiDayNum(t.y, +bp[1], +bp[2]);
-                if (bn < tn) bn = shamsiDayNum(t.y + 1, +bp[1], +bp[2]);
-                up.push({ name: fm.firstName, days: bn - tn });
-            });
-            up.sort((a, b) => a.days - b.days);
-            let bdayHtml = '';
-            if (up.length) {
-                bdayHtml = '<div class="bdayrow"><span class="bday">' + ((up[0].days === 0) ? ('🎂 امروز تولد ' + up[0].name + ' است 🎉') : ('🎂 نزدیک‌ترین تولد: ' + up[0].name + ' · ' + up[0].days + ' روز دیگر')) + '</span></div>';
-            }
 
-            // 🏅 ۱۰ نشان (بر اساس شخص)
-            let years = 0;
-            if (member.datMiladi) { const dd = new Date(member.datMiladi); if (!isNaN(dd.getTime())) years = Math.max(0, new Date().getFullYear() - dd.getFullYear()); }
-            const txs = transactionsByMember.get(String(member.id)) || [];
-            let active = false;
-            txs.forEach(tx => { const tp = (tx['تاریخ تراکنش'] || '').split('/'); if (tp.length === 3 && +tp[1] === t.m && +tp[0] === t.y) active = true; });
-            let birthMonth = false;
-            if (member.birthDateShamsi) { const bb = member.birthDateShamsi.split('/'); if (bb.length === 3 && +bb[1] === t.m) birthMonth = true; }
-            const badges = [
-                { i: '🕰️', n: 'باسابقه', e: years >= 5, d: years + ' سال عضویت' },
-                { i: '✅', n: 'منظم', e: (member.paidInstallments || 0) > 0 && (member.overdueInstallments || 0) === 0, d: 'پرداخت منظم اقساط' },
-                { i: '💚', n: 'پس‌اندازگر', e: (member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= (member.monthlySalary || 0), d: 'پس‌انداز ≥ یک مقرری' },
-                { i: '⭐', n: 'طلایی', e: (sd ? sd.score : 0) >= 80, d: 'امتیاز ≥ ۸۰' },
-                { i: '🕊️', n: 'بدون بدهی', e: (member.loanBalance || 0) === 0, d: 'مانده بدهی صفر' },
-                { i: '🎓', n: 'فارغ‌التحصیل وام', e: (member.totalInstallments || 0) > 0 && (member.paidInstallments || 0) >= (member.totalInstallments || 0), d: 'پایان کامل اقساط' },
-                { i: '💎', n: 'پس‌انداز بزرگ', e: (member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= 3 * (member.monthlySalary || 0), d: 'پس‌انداز ≥ ۳ مقرری' },
-                { i: '⚡', n: 'فعال', e: active, d: 'تراکنش در ماه جاری' },
-                { i: '👑', n: 'سرپرست خانوار', e: member.heh2 === '01', d: 'سرپرست خانواده' },
-                { i: '🎂', n: 'تولد این ماه', e: birthMonth, d: 'تولد در این ماه' }
-            ];
-            let achHtml = '<div class="achrow">';
-            badges.forEach(b => { achHtml += '<div class="ach ' + (b.e ? 'on' : 'off') + '"><div class="n">' + (b.e ? '' : '🔒 ') + b.i + ' ' + b.n + '</div><div class="d">' + b.d + '</div></div>'; });
-            achHtml += '</div>';
+            // 🎂 آیا امروز تولد خود کاربر است؟
+            let isUserBirthday = false;
+            if (member.birthDateShamsi) {
+                const bb = member.birthDateShamsi.split('/');
+                if (bb.length === 3 && +bb[1] === t.m && +bb[2] === t.d) isUserBirthday = true;
+            }
+            const bdayCakeHtml = isUserBirthday ? '<span class="bdaycake" title="🎉 تولدتان مبارک!">🎂</span>' : '';
 
             // ⏳ شمارش‌ها + پیشرفت
             let nextInst = null;
@@ -3361,12 +3429,10 @@
 
             content.innerHTML = `
                         <div class="hdr">
-                            <div class="rankrow"><span class="lbl">🏆 رتبه شما</span><span class="big">${sd ? sd.score : 0}</span><span class="tierpill">${sd ? sd.tierEmoji + ' ' + sd.tierName : ''}</span></div>
+                            <div class="greet"><b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b></div>
+                            <div class="rankrow"><span class="lbl">🏆 رتبه شما</span>${bdayCakeHtml}<span class="big">${sd ? sd.score : 0}</span><span class="tierpill">${sd ? sd.tierEmoji + ' ' + sd.tierName : ''}</span></div>
                             <div class="famrank"><div class="t">خانواده ${esc(member.firstName)} · رتبه ${myRank} از ${totalFam} خانوار</div><div class="bar"><i style="width:${posPct}%"></i></div><div class="s">شما از ${betterThan}٪ خانوارها جلوترید 🚀</div></div>
-                            <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span></div>
-                            ${bdayHtml}
-                            <div class="greet"><b>${esc(member.firstName)} عزیز</b><span class="hello">${greeting}</span></div>
-                            ${achHtml}
+                            <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span><span class="hello">${greeting}</span></div>
                             <div class="fin">
                                 <div class="fcell">موجودی<b style="color:var(--success-color)">${fmtNum(member.balance)}</b></div>
                                 <div class="fcell">وضعیت پس‌انداز<b style="color:var(--gold-color)">${fmtNum(member.savingsStatus)}</b></div>
@@ -3392,11 +3458,12 @@
             updateNotifBadge();
             updateFloatingButtons();
         }
-                 // ============================================================
+        // ============================================================
         // 🆕 صندوق من - صفحه تعاملی اعضا
         // ============================================================
 
         const MF_TABS = [
+            { id: 'performance', label: '🏅 عملکرد شما' },
             { id: 'tree', label: '🌳 درخت رشد' },
             { id: 'postcards', label: '💌 کارت پستال' },
             { id: 'success', label: '🏆 موفقیت‌های من' },
@@ -3418,7 +3485,7 @@
             });
             tabsHtml += '</div>';
             content.innerHTML = '<div class="mf-header"><div class="mf-title"><i class="fas fa-gem" style="color:var(--gold-color)"></i> صندوق من</div>' + tabsHtml + '</div><div id="mfContent"></div>';
-            switchMfTab('tree');
+            switchMfTab('performance');
         }
 
         function switchMfTab(id) {
@@ -3427,7 +3494,8 @@
             if (!c) return;
             const member = members.find(m => m.id === currentUser.memberId);
             if (!member) return;
-            if (id === 'tree') mfRenderTree(c, member);
+            if (id === 'performance') mfRenderPerformance(c, member);
+            else if (id === 'tree') mfRenderTree(c, member);
             else if (id === 'postcards') mfRenderPostcards(c);
             else if (id === 'success') mfRenderSuccess(c, member);
             else if (id === 'advisor') mfRenderAdvisor(c);
@@ -3439,7 +3507,6 @@
             else if (id === 'badges') mfRenderBadges(c, member);
         }
 
-        // ---- امتیاز (اتصال به سیستم امتیازات اصلی برنامه) ----
         function mfAddPoints(n) {
             try {
                 const key = 'sandogh_coins_' + currentUser.memberId;
@@ -3448,12 +3515,57 @@
             } catch (e) { }
         }
 
-        // ---- 🌳 درخت رشد (کاملاً خودکار با داده‌های واقعی عضو) ----
+        // ---- 🏅 عملکرد شما ----
+        function mfRenderPerformance(c, member) {
+            const t = getTodayShamsi();
+            const tn = shamsiDayNum(t.y, t.m, t.d);
+            const familyAll = [member, ...getFamilyMembers()];
+            const up = [];
+            familyAll.forEach(fm => {
+                if (!fm.birthDateShamsi) return;
+                const bp = fm.birthDateShamsi.split('/');
+                if (bp.length !== 3) return;
+                let bn = shamsiDayNum(t.y, +bp[1], +bp[2]);
+                if (bn < tn) bn = shamsiDayNum(t.y + 1, +bp[1], +bp[2]);
+                up.push({ name: fm.firstName, days: bn - tn });
+            });
+            up.sort((a, b) => a.days - b.days);
+            let bdayHtml = '';
+            if (up.length) {
+                bdayHtml = '<div class="bdayrow"><span class="bday">' + ((up[0].days === 0) ? ('🎂 امروز تولد ' + esc(up[0].name) + ' است 🎉') : ('🎂 نزدیک‌ترین تولد: ' + esc(up[0].name) + ' · ' + up[0].days + ' روز دیگر')) + '</span></div>';
+            }
+            let years = 0;
+            if (member.datMiladi) { const dd = new Date(member.datMiladi); if (!isNaN(dd.getTime())) years = Math.max(0, new Date().getFullYear() - dd.getFullYear()); }
+            const txs = transactionsByMember.get(String(member.id)) || [];
+            let active = false;
+            txs.forEach(tx => { const tp = (tx['تاریخ تراکنش'] || '').split('/'); if (tp.length === 3 && +tp[1] === t.m && +tp[0] === t.y) active = true; });
+            let birthMonth = false;
+            if (member.birthDateShamsi) { const bb = member.birthDateShamsi.split('/'); if (bb.length === 3 && +bb[1] === t.m) birthMonth = true; }
+            const sd = memberScores[member.id];
+            const badges = [
+                { i: '🕰️', n: 'باسابقه', e: years >= 5, d: years + ' سال عضویت' },
+                { i: '✅', n: 'منظم', e: (member.paidInstallments || 0) > 0 && (member.overdueInstallments || 0) === 0, d: 'پرداخت منظم اقساط' },
+                { i: '💚', n: 'پس‌اندازگر', e: (member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= (member.monthlySalary || 0), d: 'پس‌انداز ≥ یک مقرری' },
+                { i: '⭐', n: 'طلایی', e: (sd ? sd.score : 0) >= 80, d: 'امتیاز ≥ ۸۰' },
+                { i: '🕊️', n: 'بدون بدهی', e: (member.loanBalance || 0) === 0, d: 'مانده بدهی صفر' },
+                { i: '🎓', n: 'فارغ‌التحصیل وام', e: (member.totalInstallments || 0) > 0 && (member.paidInstallments || 0) >= (member.totalInstallments || 0), d: 'پایان کامل اقساط' },
+                { i: '💎', n: 'پس‌انداز بزرگ', e: (member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= 3 * (member.monthlySalary || 0), d: 'پس‌انداز ≥ ۳ مقرری' },
+                { i: '⚡', n: 'فعال', e: active, d: 'تراکنش در ماه جاری' },
+                { i: '👑', n: 'سرپرست خانوار', e: member.heh2 === '01', d: 'سرپرست خانواده' },
+                { i: '🎂', n: 'تولد این ماه', e: birthMonth, d: 'تولد در این ماه' }
+            ];
+            let achHtml = '<div class="achrow">';
+            badges.forEach(b => { achHtml += '<div class="ach ' + (b.e ? 'on' : 'off') + '"><div class="n">' + (b.e ? '' : '🔒 ') + b.i + ' ' + b.n + '</div><div class="d">' + b.d + '</div></div>'; });
+            achHtml += '</div>';
+            c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🏅 عملکرد شما</div>' + bdayHtml + achHtml + '</div>';
+        }
+
+        // ---- 🌳 درخت رشد ----
         function mfTreeData(member) {
-            const leaves = member.paidInstallments || 0;                                        // هر قسط به‌موقع = ۱ برگ
+            const leaves = member.paidInstallments || 0;
             const salary = member.monthlySalary || 1;
-            const fruitsSavings = Math.max(0, Math.floor((member.savingsStatus || 0) / salary)); // هر مقرری پس‌انداز = ۱ میوه
-            const fruitsInst = Math.floor((member.paidInstallments || 0) / 3);                   // هر ۳ قسط = ۱ میوه اضافی
+            const fruitsSavings = Math.max(0, Math.floor((member.savingsStatus || 0) / salary));
+            const fruitsInst = Math.floor((member.paidInstallments || 0) / 3);
             const fruits = fruitsSavings + fruitsInst;
             const total = leaves + fruits;
             const level = total >= 80 ? 5 : total >= 50 ? 4 : total >= 30 ? 3 : total >= 12 ? 2 : 1;
@@ -3471,7 +3583,7 @@
             }
             c.innerHTML =
                 '<div class="mf-card">' +
-                '<div class="mf-card-title">🌳 درخت رشد مالی شما <span class="mf-note">به صورت خودکار با فعالیت شما رشد می‌کند</span></div>' +
+                '<div class="mf-card-title">🌳 درخت رشد مالی شما</div>' +
                 '<div class="mf-tree-wrap">' +
                 '<svg class="mf-tree-svg" viewBox="0 0 200 220">' +
                 '<rect x="90" y="140" width="20" height="70" fill="#8b5cf6" rx="3"/>' +
@@ -3486,12 +3598,12 @@
                 '<div class="mf-tree-stat"><div class="n">' + d.fruits + '</div><div class="l">🍎 میوه<br>پس‌انداز و اقساط</div></div>' +
                 '<div class="mf-tree-stat"><div class="n">سطح ' + d.level + '</div><div class="l">🌳 رشد درخت</div></div>' +
                 '</div>' +
-                '<div class="mf-tree-rules">🍃 هر پرداخت به‌موقع قسط = ۱ برگ سبز<br>🍎 هر ۱ مقرری پس‌انداز = ۱ میوه<br>🍎 هر ۳ قسط پرداخت‌شده = ۱ میوه اضافی<br>✨ با افزایش پس‌انداز و پرداخت اقساط، درخت شما خودبه‌خود رشد می‌کند</div>' +
+                '<div class="mf-tree-rules">🍃 هر پرداخت به‌موقع قسط = ۱ برگ سبز<br>🍎 هر ۱ مقرری پس‌انداز = ۱ میوه<br>🍎 هر ۳ قسط پرداخت‌شده = ۱ میوه اضافی</div>' +
                 '</div>' +
                 '</div>';
         }
 
-        // ---- 💌 کارت پستال دیجیتال با ارسال پیامکی ----
+        // ---- 💌 کارت پستال ----
         const MF_POSTCARDS = [
             { title: 'تبریک تولد', emoji: '🎂', text: 'تولدت مبارک! برایت سلامتی، شادی و موفقیت آرزومندم. 🌟', cls: 'mf-pc-birthday' },
             { title: 'تبریک نوروز', emoji: '🌸', text: 'نوروزتان پیروز! سالی سرشار از برکت و سلامتی برایتان آرزومندم. 🌷', cls: 'mf-pc-nowruz' },
@@ -3501,7 +3613,7 @@
 
         function mfRenderPostcards(c) {
             let html = '<div class="mf-card"><div class="mf-card-title">💌 کارت پستال دیجیتال</div>' +
-                '<p class="mf-note">کارت مورد نظر را انتخاب کنید و متن آماده را از طریق پیامک برای عزیزان ارسال کنید</p>' +
+                '<p class="mf-note">کارت را انتخاب کنید و از طریق پیامک ارسال کنید</p>' +
                 '<div class="mf-pc-grid">';
             MF_POSTCARDS.forEach(function (p, i) {
                 html += '<div class="mf-postcard ' + p.cls + '" onclick="mfShowPostcard(' + i + ')"><div class="mf-pc-emoji">' + p.emoji + '</div><div class="mf-pc-title">' + p.title + '</div></div>';
@@ -3523,24 +3635,23 @@
                 '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">' +
                 '<a href="' + smsLink + '" class="mf-btn mf-btn-success">📱 ارسال با پیامک</a>' +
                 '</div>' +
-                '<p class="mf-note" style="text-align:center;margin-top:10px">پس از لمس دکمه، برنامه پیامک گوشی با متن آماده باز می‌شود؛ فقط گیرنده را انتخاب کنید.</p>' +
+                '<p class="mf-note" style="text-align:center;margin-top:10px">پس از لمس دکمه، برنامه پیامک گوشی باز می‌شود.</p>' +
                 '</div>';
         }
 
-        // ---- 🏆 موفقیت‌های من (خط زمان خودکار از داده‌های عضو) ----
+        // ---- 🏆 موفقیت‌های من ----
         function mfRenderSuccess(c, member) {
             const items = [];
             if (member.datMiladi) {
                 const d = new Date(member.datMiladi);
                 if (!isNaN(d.getTime())) items.push({ date: d.toLocaleDateString('fa-IR'), icon: '🌱', title: 'شروع عضویت', desc: 'به خانواده بزرگ صندوق اتحاد پیوستید' });
             }
-            if (member.loanReceiveDate) items.push({ date: member.loanReceiveDate, icon: '🏦', title: 'دریافت وام', desc: 'تسهیلات شما پرداخت شد و دوره اقساط آغاز گردید' });
-            if ((member.paidInstallments || 0) > 0) items.push({ date: '', icon: '✅', title: member.paidInstallments + ' قسط پرداخت‌شده', desc: 'تاکنون ' + member.paidInstallments + ' قسط را پرداخت کرده‌اید - ادامه بدهید!' });
-            if ((member.savingsStatus || 0) > 0) items.push({ date: '', icon: '💰', title: 'پس‌انداز ' + fmtNum(member.savingsStatus) + ' تومانی', desc: 'پس‌انداز شما در حال رشد است و میوه‌های درختتان زیاد می‌شود' });
+            if (member.loanReceiveDate) items.push({ date: member.loanReceiveDate, icon: '🏦', title: 'دریافت وام', desc: 'تسهیلات شما پرداخت شد' });
+            if ((member.paidInstallments || 0) > 0) items.push({ date: '', icon: '✅', title: member.paidInstallments + ' قسط پرداخت‌شده', desc: 'ادامه بدهید!' });
+            if ((member.savingsStatus || 0) > 0) items.push({ date: '', icon: '💰', title: 'پس‌انداز ' + fmtNum(member.savingsStatus) + ' تومانی', desc: 'پس‌انداز شما در حال رشد است' });
             const sd = memberScores[member.id];
-            if (sd) items.push({ date: '', icon: '⭐', title: 'امتیاز ' + sd.score + ' - سطح ' + sd.tierName, desc: 'با فعالیت مستمر، امتیاز خود را باز هم بالاتر ببرید' });
-
-            let html = '<div class="mf-card"><div class="mf-card-title">🏆 موفقیت‌های من</div><p class="mf-note">دستاوردهای شما به صورت خودکار از اطلاعات حساب‌تان ساخته می‌شود</p><div class="mf-timeline">';
+            if (sd) items.push({ date: '', icon: '⭐', title: 'امتیاز ' + sd.score + ' - سطح ' + sd.tierName, desc: 'با فعالیت مستمر، امتیاز خود را بالاتر ببرید' });
+            let html = '<div class="mf-card"><div class="mf-card-title">🏆 موفقیت‌های من</div><p class="mf-note">دستاوردهای شما به صورت خودکار ساخته می‌شود</p><div class="mf-timeline">';
             items.forEach(function (it) {
                 html += '<div class="mf-tl-item">' + (it.date ? '<div class="mf-tl-date">📅 ' + it.date + '</div>' : '') + '<h4>' + it.icon + ' ' + it.title + '</h4><p>' + it.desc + '</p></div>';
             });
@@ -3553,7 +3664,7 @@
             c.innerHTML = html;
         }
 
-        // ---- 🤖 مشاور مالی مجازی ----
+        // ---- 🤖 مشاور مالی ----
         function mfRenderAdvisor(c) {
             c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🤖 مشاور مالی مجازی</div>' +
                 '<div class="mf-chat" id="mfChatBox"></div>' +
@@ -3582,21 +3693,20 @@
         }
         function mfQuickChat(q) { mfUserMsg(q); setTimeout(function () { mfBotMsg(mfBotReply(q)); }, 500); }
         function mfBotReply(q) {
-            if (q.indexOf('پس‌انداز') >= 0) return 'پیشنهاد من: حداقل ۲۰٪ درآمد ماهانه را پس‌انداز کنید. 💰 اگر تازه شروع کرده‌اید، با ۱۰٪ شروع کنید و هر ماه کمی افزایش دهید.';
-            if (q.indexOf('وام') >= 0) return 'وام گرفتن برای سرمایه‌گذاری یا نیازهای ضروری مناسب است. ✅ مطمئن شوید مجموع اقساط بیشتر از ۳۰٪ درآمدتان نباشد. از بخش شبیه‌ساز وام هم می‌توانید استفاده کنید.';
+            if (q.indexOf('پس‌انداز') >= 0) return 'پیشنهاد من: حداقل ۲۰٪ درآمد ماهانه را پس‌انداز کنید.';
+            if (q.indexOf('وام') >= 0) return 'وام گرفتن برای سرمایه‌گذاری مناسب است. مجموع اقساط بیشتر از ۳۰٪ درآمدتان نباشد.';
             if (q.indexOf('نکته') >= 0) return '💡 نکته امروز: «اول به خودت پرداخت کن!» یعنی به محض دریافت درآمد، سهم پس‌انداز را جدا کنید.';
-            return 'سؤال خوبی است! 🤔 پیشنهاد می‌کنم بخش سواد مالی را هم ببینید. آیا سؤال خاص‌تری دارید؟';
+            return 'سؤال خوبی است! پیشنهاد می‌کنم بخش سواد مالی را هم ببینید.';
         }
 
-        // ---- 🔔 هشدارهای هوشمند (خودکار از داده‌های عضو) ----
+        // ---- 🔔 هشدارها ----
         function mfAlertBox(type, icon, title, text) {
             return '<div class="mf-alert mf-alert-' + type + '"><div class="ic">' + icon + '</div><div class="tx"><b>' + title + '</b>' + text + '</div></div>';
         }
-
         function mfRenderAlerts(c, member) {
             let html = '<div class="mf-card"><div class="mf-card-title">🔔 هشدارهای هوشمند</div>';
             if (Math.abs(member.overdueInstallments || 0) > 0) {
-                html += mfAlertBox('danger', '⏰', 'قسط معوقه', 'شما ' + Math.abs(member.overdueInstallments) + ' قسط معوقه دارید. هرچه زودتر برای پرداخت اقدام کنید.');
+                html += mfAlertBox('danger', '⏰', 'قسط معوقه', 'شما ' + Math.abs(member.overdueInstallments) + ' قسط معوقه دارید.');
             }
             const t = getTodayShamsi();
             const tn = shamsiDayNum(t.y, t.m, t.d);
@@ -3609,13 +3719,13 @@
             if (nextInst !== null) {
                 const daysLeft = nextInst - tn;
                 if (daysLeft <= 7) {
-                    html += mfAlertBox('warn', '📅', 'قسط نزدیک', 'قسط بعدی شما ' + (daysLeft === 0 ? 'امروز' : daysLeft + ' روز دیگر') + ' سررسید می‌شود. مبلغ را آماده داشته باشید.');
+                    html += mfAlertBox('warn', '📅', 'قسط نزدیک', 'قسط بعدی شما ' + (daysLeft === 0 ? 'امروز' : daysLeft + ' روز دیگر') + ' سررسید می‌شود.');
                 }
             }
             if ((member.monthlySalary || 0) > 0 && (member.savingsStatus || 0) >= (member.monthlySalary || 0)) {
-                html += mfAlertBox('ok', '🎉', 'پس‌انداز عالی', 'پس‌انداز شما معادل حداقل یک مقرری کامل است. آفرین به پشتکار شما!');
+                html += mfAlertBox('ok', '🎉', 'پس‌انداز عالی', 'پس‌انداز شما معادل حداقل یک مقرری کامل است.');
             } else {
-                html += mfAlertBox('warn', '💤', 'یادآوری پس‌انداز', 'مدتی است پس‌انداز جدیدی نداشته‌اید. با مبلغی کوچک شروع کنید؛ تداوم مهم‌تر از مبلغ است.');
+                html += mfAlertBox('warn', '💤', 'یادآوری پس‌انداز', 'با مبلغی کوچک شروع کنید؛ تداوم مهم‌تر از مبلغ است.');
             }
             if ((member.loanBalance || 0) === 0 && (member.totalInstallments || 0) > 0) {
                 html += mfAlertBox('ok', '🕊️', 'بدون بدهی', 'تبریک! مانده بدهی شما صفر است.');
@@ -3624,21 +3734,21 @@
             c.innerHTML = html;
         }
 
-        // ---- 🎓 سواد مالی (هر درس ۱ امتیاز - فقط یک‌بار) ----
+        // ---- 🎓 سواد مالی ----
         const MF_LESSONS = [
-            { id: 1, title: 'بودجه‌بندی ۵۰/۳۰/۲۰', icon: 'fa-chart-pie', color: '#667eea', time: '۲ دقیقه', content: 'یکی از بهترین روش‌های بودجه‌بندی، قانون ۵۰/۳۰/۲۰ است:\n\n🔹 ۵۰٪ درآمد: نیازهای ضروری (خوراک، مسکن، حمل‌ونقل)\n🔹 ۳۰٪ درآمد: خواسته‌ها (تفریح، خرید)\n🔹 ۲۰٪ درآمد: پس‌انداز و سرمایه‌گذاری\n\nاین قانون ساده به شما کمک می‌کند تعادل مالی داشته باشید.' },
-            { id: 2, title: 'قدرت پس‌انداز خودکار', icon: 'fa-piggy-bank', color: '#10b981', time: '۳ دقیقه', content: 'پس‌انداز خودکار یعنی به محض دریافت درآمد، ابتدا سهم پس‌انداز را جدا کنید.\n\n💡 نکته: «اول به خودت پرداخت کن!»\n\nاگر منتظر بمانید تا آخر ماه چیزی باقی بماند، معمولاً چیزی باقی نمی‌ماند. اما اگر اول ماه ۱۰٪ را پس‌انداز کنید، به مرور ثروت قابل توجهی جمع می‌شود.' },
-            { id: 3, title: 'مدیریت بدهی', icon: 'fa-hand-holding-usd', color: '#ef4444', time: '۴ دقیقه', content: 'همه بدهی‌ها بد نیستند! بدهی خوب سرمایه‌گذاری است که ارزش ایجاد می‌کند.\n\n✅ بدهی خوب: وام مسکن، وام کسب‌وکار\n❌ بدهی بد: خرید کالاهای مصرفی با اقساط طولانی\n\n🎯 قانون طلایی: مجموع اقساط نباید بیشتر از ۳۰٪ درآمد ماهانه باشد.' },
-            { id: 4, title: 'سرمایه‌گذاری با درآمد کم', icon: 'fa-coins', color: '#f59e0b', time: '۵ دقیقه', content: 'برای سرمایه‌گذاری نیاز به پول زیاد نیست!\n\n🌱 از مبالغ کوچک شروع کنید\n📈 تداوم مهم‌تر از مبلغ است\n🥚 همه تخم‌مرغ‌ها را در یک سبد نگذارید\n\nبا ماهی ۵۰۰ هزار تومان هم می‌توانید شروع کنید و در طول زمان نتیجه شگفت‌انگیزی بگیرید.' }
+            { id: 1, title: 'بودجه‌بندی ۵۰/۳۰/۲۰', icon: 'fa-chart-pie', color: '#667eea', time: '۲ دقیقه', content: 'قانون ۵۰/۳۰/۲۰:\n\n🔹 ۵۰٪ درآمد: نیازهای ضروری\n🔹 ۳۰٪ درآمد: خواسته‌ها\n🔹 ۲۰٪ درآمد: پس‌انداز' },
+            { id: 2, title: 'قدرت پس‌انداز خودکار', icon: 'fa-piggy-bank', color: '#10b981', time: '۳ دقیقه', content: '💡 نکته: «اول به خودت پرداخت کن!»\n\nاگر اول ماه ۱۰٪ را پس‌انداز کنید، به مرور ثروت قابل توجهی جمع می‌شود.' },
+            { id: 3, title: 'مدیریت بدهی', icon: 'fa-hand-holding-usd', color: '#ef4444', time: '۴ دقیقه', content: '✅ بدهی خوب: وام مسکن، وام کسب‌وکار\n❌ بدهی بد: خرید کالاهای مصرفی\n\n🎯 مجموع اقساط نباید بیشتر از ۳۰٪ درآمد باشد.' },
+            { id: 4, title: 'سرمایه‌گذاری با درآمد کم', icon: 'fa-coins', color: '#f59e0b', time: '۵ دقیقه', content: '🌱 از مبالغ کوچک شروع کنید\n📈 تداوم مهم‌تر از مبلغ است\n🥚 همه تخم‌مرغ‌ها را در یک سبد نگذارید' }
         ];
 
         function mfRenderLessons(c, member) {
-            let html = '<div class="mf-card"><div class="mf-card-title">🎓 سواد مالی <span class="mf-note">🎁 هر درس ۱ امتیاز - فقط یک‌بار</span></div>';
+            let html = '<div class="mf-card"><div class="mf-card-title">🎓 سواد مالی <span class="mf-note">🎁 هر درس ۱ امتیاز</span></div>';
             MF_LESSONS.forEach(function (l) {
                 const read = localStorage.getItem('sandogh_mf_lesson_' + member.id + '_' + l.id) === '1';
                 html += '<div class="mf-lesson">' +
                     '<div class="mf-lesson-head">' +
-                    '<div style="flex:1"><h4 id="mfLessonTitle' + l.id + '"><i class="fas ' + l.icon + '" style="color:' + l.color + '"></i> ' + l.title + (read ? ' <span style="color:var(--success-color);font-size:0.65rem">✅ پاداش دریافت شد</span>' : '') + '</h4><div class="meta">⏱ ' + l.time + ' | 🎁 ۱ امتیاز (فقط یک‌بار)</div></div>' +
+                    '<div style="flex:1"><h4 id="mfLessonTitle' + l.id + '"><i class="fas ' + l.icon + '" style="color:' + l.color + '"></i> ' + l.title + (read ? ' <span style="color:var(--success-color);font-size:0.65rem">✅ دریافت شد</span>' : '') + '</h4><div class="meta">⏱ ' + l.time + ' | 🎁 ۱ امتیاز</div></div>' +
                     '<button class="mf-mini-btn" id="mfLessonBtn' + l.id + '" onclick="mfToggleLesson(' + l.id + ')">📖 مشاهده درس</button>' +
                     '</div>' +
                     '<div class="mf-lesson-body" id="mfLessonBody' + l.id + '">' + l.content + '</div>' +
@@ -3664,13 +3774,13 @@
                     mfAddPoints(1);
                     const lesson = MF_LESSONS.find(l => l.id === id);
                     const titleEl = document.getElementById('mfLessonTitle' + id);
-                    if (titleEl) titleEl.innerHTML += ' <span style="color:var(--success-color);font-size:0.65rem">✅ پاداش دریافت شد</span>';
-                    setTimeout(function () { alert('🎉 ۱ امتیاز برای مطالعه درس «' + lesson.title + '» به امتیازات شما اضافه شد!'); }, 300);
+                    if (titleEl) titleEl.innerHTML += ' <span style="color:var(--success-color);font-size:0.65rem">✅ دریافت شد</span>';
+                    setTimeout(function () { alert('🎉 ۱ امتیاز برای «' + lesson.title + '» اضافه شد!'); }, 300);
                 }
             }
         }
 
-        // ---- 🧠 کوئیز (۱ امتیاز فقط برای اولین تکمیل کامل) ----
+        // ---- 🧠 کوئیز ----
         const MF_QUIZ = [
             { q: 'چند درصد درآمد را باید پس‌انداز کرد؟', options: ['۵٪', '۱۰٪', '۲۰٪', '۵۰٪'], correct: 2 },
             { q: 'مجموع اقساط نباید بیشتر از چند درصد درآمد باشد؟', options: ['۱۰٪', '۳۰٪', '۵۰٪', '۷۰٪'], correct: 1 },
@@ -3684,7 +3794,7 @@
             mfQuizCorrect = 0;
             const done = localStorage.getItem('sandogh_mf_quiz_' + member.id) === '1';
             c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🧠 کوئیز مالی</div>' +
-                '<div class="mf-quiz-info">' + (done ? '🏆 پاداش کوئیز (۱ امتیاز) را قبلاً دریافت کرده‌اید - شرکت مجدد فقط برای تمرین است' : '🏆 پاداش: ۱ امتیاز برای تکمیل کامل کوئیز (پاسخ به همه سؤالات) - فقط یک‌بار') + '</div>' +
+                '<div class="mf-quiz-info">' + (done ? '🏆 پاداش را قبلاً دریافت کرده‌اید' : '🏆 ۱ امتیاز برای تکمیل کامل') + '</div>' +
                 '<div id="mfQuizBox"></div></div>';
             mfRenderQuizQuestion();
         }
@@ -3700,21 +3810,21 @@
                 if (!done) {
                     localStorage.setItem(key, '1');
                     mfAddPoints(1);
-                    reward = '<div class="mf-reward-on">🎉 کوئیز کامل شد! ۱ امتیاز به امتیازات شما اضافه شد</div>';
+                    reward = '<div class="mf-reward-on">🎉 ۱ امتیاز اضافه شد</div>';
                 } else {
-                    reward = '<div class="mf-reward-off">پاداش این کوئیز را قبلاً دریافت کرده‌اید 🎁</div>';
+                    reward = '<div class="mf-reward-off">پاداش قبلاً دریافت شده 🎁</div>';
                 }
                 box.innerHTML = '<div style="text-align:center;padding:20px">' +
                     '<div style="font-size:3rem">🎉</div>' +
-                    '<h3 style="margin:10px 0">کوئیز تمام شد!</h3>' +
-                    '<p style="color:var(--text-secondary)">پاسخ‌های درست: <b style="color:var(--gold-color)">' + mfQuizCorrect + '</b> از ' + MF_QUIZ.length + '</p>' +
+                    '<h3>کوئیز تمام شد!</h3>' +
+                    '<p>پاسخ درست: <b>' + mfQuizCorrect + '</b> از ' + MF_QUIZ.length + '</p>' +
                     reward +
-                    '<button class="mf-btn" style="margin-top:12px" onclick="mfRestartQuiz()">🔄 شروع دوباره (تمرینی)</button>' +
+                    '<button class="mf-btn" style="margin-top:12px" onclick="mfRestartQuiz()">🔄 شروع دوباره</button>' +
                     '</div>';
                 return;
             }
             const q = MF_QUIZ[mfQuizIdx];
-            let html = '<h4 style="margin-bottom:12px">سؤال ' + (mfQuizIdx + 1) + ' از ' + MF_QUIZ.length + ': ' + q.q + '</h4>';
+            let html = '<h4 style="margin-bottom:12px">سؤال ' + (mfQuizIdx + 1) + ': ' + q.q + '</h4>';
             q.options.forEach(function (opt, i) {
                 html += '<button class="mf-quiz-opt" onclick="mfAnswerQuiz(this,' + i + ')">' + opt + '</button>';
             });
@@ -3735,12 +3845,12 @@
             if (member) mfRenderQuiz(document.getElementById('mfContent'), member);
         }
 
-        // ---- 📰 خبرنامه مالی ----
+        // ---- 📰 خبرنامه ----
         function mfRenderNews(c) {
             const items = [
-                { title: '💡 آیا می‌دانستید؟', text: 'خانواده‌هایی که بودجه ماهانه دارند، به طور متوسط ۳۰٪ بیشتر پس‌انداز می‌کنند. همین امروز بودجه ماه بعد را برنامه‌ریزی کنید.', date: 'هفته جاری' },
-                { title: '📈 پس‌انداز در شرایط تورمی', text: 'ترکیب پس‌انداز منظم و استفاده به‌موقع از تسهیلات صندوق، بهترین راه حفظ ارزش پول شماست.', date: 'هفته گذشته' },
-                { title: '🎓 هفته سواد مالی', text: 'با مطالعه درس‌ها و شرکت در کوئیز بخش سواد مالی، امتیاز کسب کنید و سطح مالی خود را ارتقا دهید.', date: 'این ماه' }
+                { title: '💡 آیا می‌دانستید؟', text: 'خانواده‌هایی که بودجه ماهانه دارند، ۳۰٪ بیشتر پس‌انداز می‌کنند.', date: 'هفته جاری' },
+                { title: '📈 پس‌انداز در شرایط تورمی', text: 'ترکیب پس‌انداز منظم و تسهیلات صندوق، بهترین راه حفظ ارزش پول شماست.', date: 'هفته گذشته' },
+                { title: '🎓 هفته سواد مالی', text: 'با مطالعه درس‌ها و کوئیز، امتیاز کسب کنید.', date: 'این ماه' }
             ];
             let html = '<div class="mf-card"><div class="mf-card-title">📰 خبرنامه مالی</div>';
             items.forEach(function (n) {
@@ -3750,7 +3860,7 @@
             c.innerHTML = html;
         }
 
-        // ---- 🧮 شبیه‌ساز وام (ورودی دستی کاربر) ----
+        // ---- 🧮 شبیه‌ساز وام ----
         function mfRenderLoan(c) {
             c.innerHTML = '<div class="mf-card"><div class="mf-card-title">🧮 شبیه‌ساز وام</div>' +
                 '<div class="mf-form">' +
@@ -3768,7 +3878,7 @@
             const amount = parseFloat(document.getElementById('mfLoanAmount').value) || 0;
             let months = parseInt(document.getElementById('mfLoanMonths').value);
             const rate = parseFloat(document.getElementById('mfLoanRate').value) || 0;
-            if (!months || months < 1) { res.innerHTML = '<div style="font-size:0.85rem">⚠️ لطفاً تعداد اقساط معتبر وارد کنید</div>'; return; }
+            if (!months || months < 1) { res.innerHTML = '<div style="font-size:0.85rem">⚠️ تعداد اقساط معتبر وارد کنید</div>'; return; }
             if (months > 120) months = 120;
             const fee = amount * (rate / 100) * (months / 12);
             const total = amount + fee;
@@ -3778,7 +3888,7 @@
                 '<div class="mf-lr-grid"><div>مجموع بازپرداخت<br><b>' + fmtNum(total) + '</b></div><div>کارمزد کل<br><b>' + fmtNum(fee) + '</b></div></div>';
         }
 
-        // ---- 🏅 نشان‌های کمیاب (خودکار از داده‌های عضو) ----
+        // ---- 🏅 نشان‌های کمیاب ----
         function mfRenderBadges(c, member) {
             let years = 0;
             if (member.datMiladi) { const dd = new Date(member.datMiladi); if (!isNaN(dd.getTime())) years = Math.max(0, new Date().getFullYear() - dd.getFullYear()); }
@@ -3792,13 +3902,14 @@
                 { icon: '🐋', name: 'نهنگ پس‌انداز', desc: 'پس‌انداز ≥ ۱۰ مقرری', rarity: 'حماسی', cls: 'mf-r-epic', on: salary > 0 && (member.savingsStatus || 0) >= 10 * salary },
                 { icon: '🕊️', name: 'آسمان آبی', desc: 'بدون هیچ بدهی', rarity: 'معمولی', cls: 'mf-r-common', on: (member.loanBalance || 0) === 0 }
             ];
-            let html = '<div class="mf-card"><div class="mf-card-title">🏅 نشان‌های کمیاب</div><p class="mf-note">این نشان‌ها بر اساس فعالیت واقعی شما به صورت خودکار فعال می‌شوند</p><div class="mf-badge-grid">';
+            let html = '<div class="mf-card"><div class="mf-card-title">🏅 نشان‌های کمیاب</div><p class="mf-note">بر اساس فعالیت واقعی شما فعال می‌شوند</p><div class="mf-badge-grid">';
             badges.forEach(function (b) {
                 html += '<div class="mf-badge ' + (b.on ? 'on' : 'off') + '"><div class="ic">' + (b.on ? b.icon : '🔒') + '</div><div class="nm">' + b.name + '</div><div class="ds">' + b.desc + '</div><div class="rr ' + b.cls + '">' + b.rarity + '</div></div>';
             });
             html += '</div></div>';
             c.innerHTML = html;
         }
+
         // ============================================================
         // 🧰 برنامه‌های کاربردی (دفترچه تلفن، ماشین‌حساب، یادداشت، تقویم)
         // ============================================================
@@ -3846,7 +3957,6 @@
             return String(s).replace(/[0-9]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
         }
 
-        // ---- 📞 دفترچه تلفن ----
         function utLoadContacts() {
             let list = null;
             try { list = JSON.parse(localStorage.getItem('sandogh_ut_contacts')); } catch (e) { }
@@ -3904,7 +4014,7 @@
             const name = document.getElementById('utNcName').value.trim();
             const rel = document.getElementById('utNcRel').value;
             const phone = document.getElementById('utNcPhone').value.trim();
-            if (!name || !phone) { alert('⚠️ لطفاً نام و شماره تماس را وارد کنید'); return; }
+            if (!name || !phone) { alert('⚠️ نام و شماره تماس را وارد کنید'); return; }
             const list = utLoadContacts();
             list.push({ id: Date.now(), name: name, rel: rel, phone: phone });
             utSaveContacts(list);
@@ -3918,7 +4028,6 @@
             utRenderContactsList();
         }
 
-        // ---- 🧮 ماشین‌حساب‌های تخصصی ----
         let utCurrentCalc = 'zakat';
 
         function utRenderCalc(c) {
@@ -3946,40 +4055,40 @@
             if (utCurrentCalc === 'zakat') {
                 el.innerHTML =
                     '<div class="ut-form-row"><div class="ut-form-group"><label>🥇 طلا (گرم)</label><input type="number" id="utZGold" value="0" oninput="utCalcZakat()"></div>' +
-                    '<div class="ut-form-group"><label>قیمت هر گرم طلا (تومان)</label><input type="number" id="utZGoldPrice" value="4500000" oninput="utCalcZakat()"></div></div>' +
+                    '<div class="ut-form-group"><label>قیمت هر گرم طلا</label><input type="number" id="utZGoldPrice" value="4500000" oninput="utCalcZakat()"></div></div>' +
                     '<div class="ut-form-row"><div class="ut-form-group"><label>🥈 نقره (گرم)</label><input type="number" id="utZSilver" value="0" oninput="utCalcZakat()"></div>' +
-                    '<div class="ut-form-group"><label>قیمت هر گرم نقره (تومان)</label><input type="number" id="utZSilverPrice" value="60000" oninput="utCalcZakat()"></div></div>' +
-                    '<div class="ut-form-row"><div class="ut-form-group"><label>🌾 گندم، جو، خرما یا کشمش (کیلوگرم)</label><input type="number" id="utZCrop" value="0" oninput="utCalcZakat()"></div>' +
-                    '<div class="ut-form-group"><label>قیمت هر کیلو (تومان)</label><input type="number" id="utZCropPrice" value="20000" oninput="utCalcZakat()"></div></div>' +
-                    '<div class="ut-form-group"><label>💧 روش آبیاری محصولات</label><select id="utZIrrigation" onchange="utCalcZakat()"><option value="10">باران یا چشمه (۱۰٪)</option><option value="5">آبیاری با هزینه و وسیله (۵٪)</option></select></div>' +
+                    '<div class="ut-form-group"><label>قیمت هر گرم نقره</label><input type="number" id="utZSilverPrice" value="60000" oninput="utCalcZakat()"></div></div>' +
+                    '<div class="ut-form-row"><div class="ut-form-group"><label>🌾 غلات (کیلوگرم)</label><input type="number" id="utZCrop" value="0" oninput="utCalcZakat()"></div>' +
+                    '<div class="ut-form-group"><label>قیمت هر کیلو</label><input type="number" id="utZCropPrice" value="20000" oninput="utCalcZakat()"></div></div>' +
+                    '<div class="ut-form-group"><label>💧 روش آبیاری</label><select id="utZIrrigation" onchange="utCalcZakat()"><option value="10">بارانی (۱۰٪)</option><option value="5">ابزاری (۵٪)</option></select></div>' +
                     '<div class="ut-calc-result" id="utZakatResult"></div>' +
-                    '<div class="ut-calc-note">📌 نصاب طلا: ۸۵ گرم | نصاب نقره: ۵۹۵ گرم | نصاب غلات: ۸۴۷ کیلوگرم<br>نرخ زکات طلا و نقره: ۲/۵٪ | زکات فقط در صورت رسیدن به نصاب واجب است.</div>';
+                    '<div class="ut-calc-note">📌 نصاب طلا: ۸۵ گرم | نصاب نقره: ۵۹۵ گرم | نصاب غلات: ۸۴۷ کیلوگرم</div>';
                 utCalcZakat();
             } else if (utCurrentCalc === 'khums') {
                 el.innerHTML =
-                    '<div class="ut-form-group"><label>💰 درآمد کل سالانه (تومان)</label><input type="number" id="utKIncome" value="300000000" oninput="utCalcKhums()"></div>' +
-                    '<div class="ut-form-group"><label>🏠 هزینه‌های زندگی در سال (تومان)</label><input type="number" id="utKExpense" value="220000000" oninput="utCalcKhums()"></div>' +
-                    '<div class="ut-form-group"><label>📉 بدهی‌ها و اقساط قابل کسر (تومان)</label><input type="number" id="utKDebt" value="0" oninput="utCalcKhums()"></div>' +
+                    '<div class="ut-form-group"><label>💰 درآمد کل سالانه</label><input type="number" id="utKIncome" value="300000000" oninput="utCalcKhums()"></div>' +
+                    '<div class="ut-form-group"><label>🏠 هزینه‌های زندگی</label><input type="number" id="utKExpense" value="220000000" oninput="utCalcKhums()"></div>' +
+                    '<div class="ut-form-group"><label>📉 بدهی‌های قابل کسر</label><input type="number" id="utKDebt" value="0" oninput="utCalcKhums()"></div>' +
                     '<div class="ut-calc-result" id="utKhumsResult"></div>' +
-                    '<div class="ut-calc-note">📌 خمس = ۲۰٪ از مازاد درآمد سالانه پس از کسر هزینه‌های متعارف زندگی<br>برای اطمینان از مصادیق قابل کسر، با مرجع تقلید خود مشورت کنید.</div>';
+                    '<div class="ut-calc-note">📌 خمس = ۲۰٪ از مازاد درآمد سالانه</div>';
                 utCalcKhums();
             } else if (utCurrentCalc === 'retire') {
                 el.innerHTML =
                     '<div class="ut-form-row"><div class="ut-form-group"><label>🎂 سن فعلی</label><input type="number" id="utRAge" value="35" oninput="utCalcRetire()"></div>' +
                     '<div class="ut-form-group"><label>🏖️ سن بازنشستگی</label><input type="number" id="utRRetireAge" value="60" oninput="utCalcRetire()"></div></div>' +
-                    '<div class="ut-form-row"><div class="ut-form-group"><label>💵 درآمد ماهانه (تومان)</label><input type="number" id="utRIncome" value="30000000" oninput="utCalcRetire()"></div>' +
-                    '<div class="ut-form-group"><label>📊 درصد پس‌انداز ماهانه (٪)</label><input type="number" id="utRPercent" value="20" oninput="utCalcRetire()"></div></div>' +
-                    '<div class="ut-form-group"><label>📈 نرخ رشد سالانه سرمایه‌گذاری (٪)</label><input type="number" id="utRRate" value="25" oninput="utCalcRetire()"></div>' +
+                    '<div class="ut-form-row"><div class="ut-form-group"><label>💵 درآمد ماهانه</label><input type="number" id="utRIncome" value="30000000" oninput="utCalcRetire()"></div>' +
+                    '<div class="ut-form-group"><label>📊 درصد پس‌انداز</label><input type="number" id="utRPercent" value="20" oninput="utCalcRetire()"></div></div>' +
+                    '<div class="ut-form-group"><label>📈 نرخ رشد سالانه</label><input type="number" id="utRRate" value="25" oninput="utCalcRetire()"></div>' +
                     '<div class="ut-calc-result" id="utRetireResult"></div>' +
-                    '<div class="ut-calc-note">📌 این محاسبه بر اساس سود مرکب است. هرچه زودتر شروع کنید، نتیجه بزرگ‌تری خواهید گرفت! 🌱</div>';
+                    '<div class="ut-calc-note">📌 محاسبه بر اساس سود مرکب</div>';
                 utCalcRetire();
             } else if (utCurrentCalc === 'inflation') {
                 el.innerHTML =
-                    '<div class="ut-form-group"><label>💰 مبلغ فعلی (تومان)</label><input type="number" id="utIAmount" value="100000000" oninput="utCalcInflation()"></div>' +
-                    '<div class="ut-form-group"><label>📉 نرخ تورم سالانه (٪)</label><input type="number" id="utIRate" value="40" oninput="utCalcInflation()"></div>' +
+                    '<div class="ut-form-group"><label>💰 مبلغ فعلی</label><input type="number" id="utIAmount" value="100000000" oninput="utCalcInflation()"></div>' +
+                    '<div class="ut-form-group"><label>📉 نرخ تورم سالانه</label><input type="number" id="utIRate" value="40" oninput="utCalcInflation()"></div>' +
                     '<div class="ut-form-group"><label>⏳ تعداد سال</label><input type="number" id="utIYears" value="5" oninput="utCalcInflation()"></div>' +
                     '<div class="ut-calc-result" id="utInflationResult"></div>' +
-                    '<div class="ut-calc-note">📌 برای حفظ ارزش پول، مبلغ شما باید حداقل به اندازه تورم رشد کند.<br>سرمایه‌گذاری هوشمند، راه مقابله با تورم است. 📈</div>';
+                    '<div class="ut-calc-note">📌 برای حفظ ارزش پول، سرمایه‌گذاری لازم است.</div>';
                 utCalcInflation();
             }
         }
@@ -3994,15 +4103,15 @@
             const irrRate = (parseFloat(document.getElementById('utZIrrigation').value) || 10) / 100;
             let total = 0;
             const details = [];
-            if (gold >= 85) { const z = gold * goldP * 0.025; total += z; details.push('🥇 زکات طلا: ' + fmtNum(z) + ' تومان'); }
-            if (silver >= 595) { const z = silver * silverP * 0.025; total += z; details.push('🥈 زکات نقره: ' + fmtNum(z) + ' تومان'); }
-            if (crop >= 847) { const z = crop * cropP * irrRate; total += z; details.push('🌾 زکات محصولات: ' + fmtNum(z) + ' تومان'); }
+            if (gold >= 85) { const z = gold * goldP * 0.025; total += z; details.push('🥇 طلا: ' + fmtNum(z)); }
+            if (silver >= 595) { const z = silver * silverP * 0.025; total += z; details.push('🥈 نقره: ' + fmtNum(z)); }
+            if (crop >= 847) { const z = crop * cropP * irrRate; total += z; details.push('🌾 محصولات: ' + fmtNum(z)); }
             const el = document.getElementById('utZakatResult');
             if (!el) return;
             if (total > 0) {
-                el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">مجموع زکات واجب شما</div><div class="big">' + fmtNum(total) + ' تومان</div><div class="sub">' + details.join('<br>') + '</div>';
+                el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">مجموع زکات واجب</div><div class="big">' + fmtNum(total) + ' تومان</div><div class="sub">' + details.join('<br>') + '</div>';
             } else {
-                el.innerHTML = '<div style="font-size:0.95rem">✅ در حال حاضر زکات به دارایی شما تعلق نمی‌گیرد</div><div class="sub">دارایی شما به نصاب نرسیده است.</div>';
+                el.innerHTML = '<div style="font-size:0.95rem">✅ زکات واجب نیست</div><div class="sub">دارایی شما به نصاب نرسیده.</div>';
             }
         }
 
@@ -4014,9 +4123,9 @@
             const el = document.getElementById('utKhumsResult');
             if (!el) return;
             if (surplus > 0) {
-                el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">خمس سالانه شما (۲۰٪ مازاد)</div><div class="big">' + fmtNum(surplus * 0.2) + ' تومان</div><div class="sub">مازاد درآمد: ' + fmtNum(surplus) + ' تومان</div>';
+                el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">خمس سالانه (۲۰٪)</div><div class="big">' + fmtNum(surplus * 0.2) + ' تومان</div><div class="sub">مازاد: ' + fmtNum(surplus) + ' تومان</div>';
             } else {
-                el.innerHTML = '<div style="font-size:0.95rem">✅ خمس به شما تعلق نمی‌گیرد</div><div class="sub">درآمد شما پس از کسر هزینه‌ها مازادی ندارد.</div>';
+                el.innerHTML = '<div style="font-size:0.95rem">✅ خمس واجب نیست</div><div class="sub">مازاد درآمدی وجود ندارد.</div>';
             }
         }
 
@@ -4028,14 +4137,14 @@
             const rate = parseFloat(document.getElementById('utRRate').value) || 0;
             const el = document.getElementById('utRetireResult');
             if (!el) return;
-            if (retireAge <= age) { el.innerHTML = '<div style="font-size:0.9rem">⚠️ سن بازنشستگی باید بیشتر از سن فعلی باشد</div>'; return; }
+            if (retireAge <= age) { el.innerHTML = '<div style="font-size:0.9rem">⚠️ سن بازنشستگی باید بیشتر باشد</div>'; return; }
             const years = retireAge - age;
             const n = years * 12;
             const monthly = income * percent / 100;
             const r = rate / 100 / 12;
             const fv = r > 0 ? monthly * ((Math.pow(1 + r, n) - 1) / r) : monthly * n;
-            el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">سرمایه شما در زمان بازنشستگی</div><div class="big">' + fmtNum(fv) + ' تومان</div>' +
-                '<div class="sub">⏳ ' + utFaDigits(years) + ' سال تا بازنشستگی | 💵 پس‌انداز ماهانه: ' + fmtNum(monthly) + ' تومان<br>📈 با نرخ رشد سالانه ' + utFaDigits(rate) + '٪</div>';
+            el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">سرمایه در زمان بازنشستگی</div><div class="big">' + fmtNum(fv) + ' تومان</div>' +
+                '<div class="sub">⏳ ' + utFaDigits(years) + ' سال | 💵 ماهانه: ' + fmtNum(monthly) + ' تومان</div>';
         }
 
         function utCalcInflation() {
@@ -4047,12 +4156,11 @@
             const power = factor > 0 ? amount / factor : amount;
             const el = document.getElementById('utInflationResult');
             if (!el) return;
-            el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">برای حفظ ارزش پول، در ' + utFaDigits(years) + ' سال آینده نیاز دارید به</div>' +
+            el.innerHTML = '<div style="font-size:0.82rem;opacity:.9">در ' + utFaDigits(years) + ' سال نیاز دارید به</div>' +
                 '<div class="big">' + fmtNum(needed) + ' تومان</div>' +
-                '<div class="sub">📉 قدرت خرید امروزِ ' + fmtNum(amount) + ' تومان، در آن زمان معادل <b>' + fmtNum(power) + ' تومان</b> خواهد بود.</div>';
+                '<div class="sub">📉 قدرت خرید معادل <b>' + fmtNum(power) + '</b> تومان امروز خواهد بود.</div>';
         }
 
-        // ---- 📝 یادداشت‌های مالی ----
         const UT_CATS = {
             money: { label: '💰 مالی', badge: 'ut-cat-badge-money' },
             reminder: { label: '⏰ یادآوری', badge: 'ut-cat-badge-reminder' },
@@ -4073,7 +4181,7 @@
             c.innerHTML = '<div class="ut-card">' +
                 '<div class="ut-card-title"><i class="fas fa-sticky-note" style="color:#ec4899"></i> یادداشت‌های مالی ' +
                 '<button class="ut-btn ut-btn-sm" style="margin-right:auto" onclick="utOpenNoteForm()"><i class="fas fa-plus"></i> یادداشت جدید</button></div>' +
-                '<div class="ut-search"><input type="text" id="utNoteSearch" placeholder="جستجو در یادداشت‌ها..." oninput="utRenderNotesList()"><i class="fas fa-search"></i></div>' +
+                '<div class="ut-search"><input type="text" id="utNoteSearch" placeholder="جستجو..." oninput="utRenderNotesList()"><i class="fas fa-search"></i></div>' +
                 '<div id="utNotesList"></div></div>';
             utRenderNotesList();
         }
@@ -4085,7 +4193,7 @@
             if (q) list = list.filter(function (n) { return n.title.indexOf(q) >= 0 || n.text.indexOf(q) >= 0; });
             const el = document.getElementById('utNotesList');
             if (!el) return;
-            if (!list.length) { el.innerHTML = '<div class="ut-empty"><div class="ic">📝</div>هنوز یادداشتی ندارید<br>روی «یادداشت جدید» کلیک کنید</div>'; return; }
+            if (!list.length) { el.innerHTML = '<div class="ut-empty"><div class="ic">📝</div>هنوز یادداشتی ندارید</div>'; return; }
             const t = getTodayShamsi();
             const todayNum = t.y * 10000 + t.m * 100 + t.d;
             let html = '';
@@ -4114,11 +4222,11 @@
 
         function utOpenNoteForm() {
             utShowModal('<h2 style="margin-bottom:15px">📝 یادداشت جدید</h2>' +
-                '<div class="ut-form-group"><label>عنوان</label><input type="text" id="utNtTitle" placeholder="مثلاً: قرارداد با آقای محمدی"></div>' +
-                '<div class="ut-form-group"><label>متن یادداشت</label><textarea id="utNtText" placeholder="جزئیات یادداشت..."></textarea></div>' +
+                '<div class="ut-form-group"><label>عنوان</label><input type="text" id="utNtTitle"></div>' +
+                '<div class="ut-form-group"><label>متن</label><textarea id="utNtText"></textarea></div>' +
                 '<div class="ut-form-group"><label>دسته‌بندی</label><select id="utNtCat"><option value="money">💰 مالی</option><option value="reminder">⏰ یادآوری</option><option value="personal">👤 شخصی</option></select></div>' +
                 '<div class="ut-form-group"><label>تاریخ یادآوری (اختیاری)</label><input type="date" id="utNtRemind"></div>' +
-                '<button class="ut-btn" style="width:100%" onclick="utSaveNote()">✅ ذخیره یادداشت</button>');
+                '<button class="ut-btn" style="width:100%" onclick="utSaveNote()">✅ ذخیره</button>');
         }
 
         function utSaveNote() {
@@ -4126,7 +4234,7 @@
             const text = document.getElementById('utNtText').value.trim();
             const cat = document.getElementById('utNtCat').value;
             const remindInput = document.getElementById('utNtRemind').value;
-            if (!title) { alert('⚠️ لطفاً عنوان یادداشت را وارد کنید'); return; }
+            if (!title) { alert('⚠️ عنوان را وارد کنید'); return; }
             let remind = '';
             if (remindInput) {
                 const j = utDateToJalali(new Date(remindInput + 'T12:00:00'));
@@ -4142,37 +4250,36 @@
         }
 
         function utDeleteNote(id) {
-            if (!confirm('آیا از حذف این یادداشت مطمئن هستید؟')) return;
+            if (!confirm('حذف این یادداشت؟')) return;
             utSaveNotes(utLoadNotes().filter(function (n) { return n.id !== id; }));
             utRenderNotesList();
         }
 
-        // ---- 📅 تقویم مذهبی و ملی ----
         const UT_MONTHS = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
         const UT_WEEKDAYS = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
         const UT_EVENTS = [
-            { m: 1, d: 1, t: 'نوروز - جشن سال نو', h: true },
+            { m: 1, d: 1, t: 'نوروز', h: true },
             { m: 1, d: 2, t: 'عید نوروز', h: true },
             { m: 1, d: 3, t: 'عید نوروز', h: true },
             { m: 1, d: 4, t: 'عید نوروز', h: true },
             { m: 1, d: 12, t: 'روز جمهوری اسلامی', h: true },
-            { m: 1, d: 13, t: 'روز طبیعت (سیزده‌بدر)', h: true },
+            { m: 1, d: 13, t: 'روز طبیعت', h: true },
             { m: 2, d: 2, t: 'روز معلم' },
             { m: 3, d: 14, t: 'رحلت امام خمینی', h: true },
             { m: 3, d: 15, t: 'قیام ۱۵ خرداد', h: true },
             { m: 4, d: 4, t: 'تاسوعای حسینی (تقریبی)', h: true, r: true },
             { m: 4, d: 5, t: 'عاشورای حسینی (تقریبی)', h: true, r: true },
             { m: 5, d: 14, t: 'اربعین حسینی (تقریبی)', h: true, r: true },
-            { m: 5, d: 24, t: 'رحلت پیامبر و شهادت امام حسن (تقریبی)', h: true, r: true },
+            { m: 5, d: 24, t: 'رحلت پیامبر (تقریبی)', h: true, r: true },
             { m: 6, d: 2, t: 'شهادت امام رضا (تقریبی)', h: true, r: true },
             { m: 6, d: 17, t: 'قیام ۱۷ شهریور', h: true },
             { m: 6, d: 27, t: 'روز شعر و ادب فارسی' },
             { m: 6, d: 31, t: 'آغاز هفته دفاع مقدس' },
-            { m: 7, d: 14, t: 'میلاد پیامبر و امام صادق (تقریبی)', h: true, r: true },
+            { m: 7, d: 14, t: 'میلاد پیامبر (تقریبی)', h: true, r: true },
             { m: 8, d: 13, t: 'روز دانش‌آموز' },
             { m: 9, d: 16, t: 'روز دانشجو' },
             { m: 10, d: 25, t: 'عید مبعث (تقریبی)', h: true, r: true },
-            { m: 11, d: 14, t: 'نیمه شعبان - میلاد امام زمان (تقریبی)', h: true, r: true },
+            { m: 11, d: 14, t: 'نیمه شعبان (تقریبی)', h: true, r: true },
             { m: 11, d: 22, t: 'پیروزی انقلاب اسلامی', h: true },
             { m: 12, d: 18, t: 'عید فطر (تقریبی)', h: true, r: true },
             { m: 12, d: 29, t: 'ملی شدن صنعت نفت', h: true }
@@ -4205,7 +4312,7 @@
 
         function utJalaliWeekday(jy, jm, jd) {
             const g = utJalaliToGregorian(jy, jm, jd);
-            return (new Date(g.gy, g.gm - 1, g.gd).getDay() + 1) % 7; // 0 = شنبه
+            return (new Date(g.gy, g.gm - 1, g.gd).getDay() + 1) % 7;
         }
 
         function utDayOfYear(jm, jd) {
@@ -4225,7 +4332,7 @@
                 '<div class="ut-month-name" id="utCalMonthName"></div>' +
                 '<button onclick="utChangeMonth(1)"><i class="fas fa-chevron-left"></i></button></div>' +
                 '<div class="ut-cal-grid" id="utCalGrid"></div>' +
-                '<p class="ut-cal-hint">🔴 جمعه‌ها و روزهای دارای نقطه طلایی مناسبت دارند (روی آن‌ها کلیک کنید)</p>' +
+                '<p class="ut-cal-hint">🔴 جمعه‌ها و روزهای دارای نقطه طلایی مناسبت دارند</p>' +
                 '</div>' +
                 '<div class="ut-card"><div class="ut-card-title">⏳ مناسبت‌های پیش رو</div><div id="utUpcoming"></div></div>';
             utRenderCalendarGrid();
@@ -4291,7 +4398,7 @@
                 const countdown = e.diff === 0 ? '🎉 امروز' : (e.diff === 1 ? 'فردا' : utFaDigits(e.diff) + ' روز دیگر');
                 html += '<div class="ut-event-item">' +
                     '<div class="ut-event-date"><span class="d">' + utFaDigits(e.d) + '</span><span class="m">' + UT_MONTHS[e.m - 1] + '</span></div>' +
-                    '<div class="ut-event-info"><h4>' + esc(e.t) + '</h4><p>' + (e.h ? 'تعطیل رسمی' : '') + (e.r ? ' | مناسبت مذهبی' : '') + '</p></div>' +
+                    '<div class="ut-event-info"><h4>' + esc(e.t) + '</h4><p>' + (e.h ? 'تعطیل رسمی' : '') + (e.r ? ' | مذهبی' : '') + '</p></div>' +
                     '<div class="ut-event-countdown">' + countdown + '</div></div>';
             });
             el.innerHTML = html;
