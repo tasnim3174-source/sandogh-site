@@ -2669,32 +2669,66 @@
             try { return JSON.parse(localStorage.getItem('sandogh_purchases_' + memberId)) || []; } catch (e) { return []; }
         }
 
-        function calculateMemberScore(member) {
+                function calculateMemberScore(member) {
             let score = 0;
             const totalInstallments = member.totalInstallments || 0;
             const paidInstallments = member.paidInstallments || 0;
             const overdueInstallments = Math.abs(member.overdueInstallments || 0);
+            const monthlySalary = member.monthlySalary || 1;
+            const savings = member.savingsStatus || 0;
+            const balance = member.balance || 0;
+
+            // ═══ بخش ۱: بازپرداخت اقساط وام (۳۰ امتیاز) ═══
             let installmentScore = 0;
             if (totalInstallments > 0) {
-                installmentScore = (paidInstallments / totalInstallments) * 40;
-                installmentScore = Math.max(0, installmentScore - (overdueInstallments * 5));
-            } else { installmentScore = 40; }
-            installmentScore = Math.max(0, Math.min(40, installmentScore));
-            const savings = member.savingsStatus || 0;
-            let savingsScore = 0;
-            if (savings >= 0) { savingsScore = 25; }
-            else {
-                const monthlySalary = member.monthlySalary || 1;
-                savingsScore = Math.max(0, 25 - (Math.abs(savings) / monthlySalary * 25));
+                // امتیاز بر اساس نسبت اقساط پرداخت‌شده
+                const payRatio = paidInstallments / totalInstallments;
+                installmentScore = payRatio * 30;
+                // جریمه هر قسط معوقه
+                installmentScore = Math.max(0, installmentScore - (overdueInstallments * 4));
+                // پاداش نظم: اگر هیچ قسط معوقه‌ای ندارد
+                if (overdueInstallments === 0 && paidInstallments > 0) {
+                    installmentScore = Math.min(30, installmentScore + 5);
+                }
+            } else {
+                // وام ندارد: امتیاز پایه منطقی (نه رایگان کامل، نه صفر)
+                installmentScore = 15;
             }
-            savingsScore = Math.max(0, Math.min(25, savingsScore));
+            installmentScore = Math.max(0, Math.min(30, installmentScore));
+
+            // ═══ بخش ۲: پس‌انداز (۳۰ امتیاز) ═══
+            // هرچه پس‌انداز نسبت به مقرری ماهانه بیشتر باشد، امتیاز بیشتر
+            let savingsScore = 0;
+            if (savings > 0) {
+                // ۶ برابر مقرری ماهانه = امتیاز کامل
+                const savingsRatio = Math.min(savings / monthlySalary, 6) / 6;
+                savingsScore = savingsRatio * 30;
+            } else {
+                savingsScore = 0;
+            }
+            savingsScore = Math.max(0, Math.min(30, savingsScore));
+
+            // ═══ بخش ۳: سلامت مالی / موجودی (۲۰ امتیاز) ═══
+            // موجودی بیشتر = امتیاز بیشتر (رفع مشکل وارونگی موجودی)
+            let balanceScore = 0;
+            if (balance > 0) {
+                // ۳ برابر مقرری ماهانه = امتیاز کامل
+                const balanceRatio = Math.min(balance / (monthlySalary * 3), 1);
+                balanceScore = balanceRatio * 20;
+            } else {
+                balanceScore = 0;
+            }
+            balanceScore = Math.max(0, Math.min(20, balanceScore));
+
+            // ═══ بخش ۴: فعالیت و امتیازات (۲۰ امتیاز) ═══
             const coins = getMemberCoins(member.id);
-            let coinsScore = Math.min(coins / 50, 1) * 20;
-            coinsScore = Math.max(0, Math.min(20, coinsScore));
+            let coinsScore = Math.min(coins / 50, 1) * 10;
             const txCount = transactions.filter(t => String(t._memberId) === String(member.id)).length;
-            let activityScore = Math.min(txCount / 10, 1) * 15;
-            activityScore = Math.max(0, Math.min(15, activityScore));
-            score = Math.round(Math.max(0, Math.min(100, installmentScore + savingsScore + coinsScore + activityScore)));
+            let activityScore = Math.min(txCount / 10, 1) * 10;
+            const activityTotal = Math.max(0, Math.min(20, coinsScore + activityScore));
+
+            score = Math.round(Math.max(0, Math.min(100, installmentScore + savingsScore + balanceScore + activityTotal)));
+
             let tier, tierName, tierEmoji;
             if (score >= 80) { tier = 'gold'; tierName = 'طلایی'; tierEmoji = '⭐'; }
             else if (score >= 50) { tier = 'silver'; tierName = 'نقره‌ای'; tierEmoji = '🥈'; }
