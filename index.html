@@ -219,6 +219,8 @@
         #newLoader .stp.dn .ck { opacity: 1; transform: scale(1); }
         #newLoader .fact { font-size: 11.5px; color: #cdd8ec; font-weight: 700; text-align: center; background: rgba(255,201,77,.08); border: 1px dashed rgba(255,201,77,.5); padding: 9px 15px; border-radius: 99px; max-width: 94%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .3s; }
         #newLoader .fact.fd { opacity: 0; }
+        #newLoader .tip { margin-top: 10px; font-size: 12px; color: #ffe08a; background: rgba(245, 158, 11, 0.12); border: 1px dashed rgba(245, 158, 11, 0.4); padding: 8px 14px; border-radius: 12px; max-width: 85%; margin-left: auto; margin-right: auto; text-align: center; line-height: 1.7; opacity: 1; transition: opacity 0.3s; }
+        #newLoader .tip.fd { opacity: 0; }
         #newLoader .loaderBot { display: flex; justify-content: center; align-items: center; }
         #newLoader .time { font-size: 12px; color: #cdd8ec; }
         #newLoader .time b { color: #ffe08a; font-size: 13px; }
@@ -1719,6 +1721,7 @@
                 <div class="stp" id="ldrS3"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>داشبورد مالی</div>
             </div>
             <div class="fact" id="ldrFact">💡 حسابداری به «زبان کسب‌وکار» معروف است</div>
+<div class="tip" id="ldrTip">📌 راهنما: در بخش کلیدهای کاربردی می‌توانید زکات و خمس خود را محاسبه کنید</div>
         </div>
         <div class="loaderBot"><span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span></div>
     </div>
@@ -1963,7 +1966,7 @@
             { u: 78, t: 'همگام‌سازی تراکنش‌ها' },
             { u: 101, t: 'بارگذاری داشبورد مالی' }
         ];
-        var ldrFacts = [
+                var ldrFacts = [
             '💡 حسابداری به «زبان کسب‌وکار» معروف است',
             '💡 اولین حسابداری دوطرفه در قرن سیزدهم در ایتالیا ثبت شد',
             '💡 واژهٔ «Check» ریشهٔ فارسی دارد',
@@ -1971,6 +1974,28 @@
             '💡 صندوق اتحاد: شفافیت مالی، اعتماد جمعی 🤝',
             '💡 پس‌انداز منظم در بلندمدت شگفتی‌ساز است'
         ];
+        var ldrTips = [
+            '💰 در بخش کلیدهای کاربردی می‌توانید زکات و خمس خود را محاسبه کنید',
+            '🏥 در برنامه‌های کاربردی می‌توانید سلامتی و درمان یا مفاتیح و قرآن را مطالعه کنید',
+            '👤 در بخش پروفایل می‌توانید تاریخچه ورود خود را ببینید',
+            '⭐ در داشبورد می‌توانید رتبه و امتیاز خود را ببینید',
+            '📅 در برنامه‌های کاربردی تقویم مذهبی و ملی را ببینید',
+            '📊 شورا و مدیر در بخش گزارش‌گیری آمار کامل صندوق را می‌بینند',
+            '🧮 در بخش ماشین‌حساب‌ها محاسبات مالی خود را انجام دهید',
+            '📞 در دفترچه تلفن شماره‌های مهم را ذخیره کنید',
+            '📝 در بخش یادداشت‌ها نکات مهم را یادداشت کنید',
+            '🎯 با پرداخت به‌موقع اقساط، امتیاز و رتبه خود را افزایش دهید',
+            '🥇 با رعایت شرایط طلایی (مقرری، بدون معوقه، موجودی کافی) رتبه طلایی بگیرید',
+            '👨‍👩‍👧‍👦 رتبه خانوادگی بر اساس میانگین امتیاز اعضای خانواده محاسبه می‌شود'
+        ];
+        var ldrTipIdx = 0;
+            '💡 حسابداری به «زبان کسب‌وکار» معروف است',
+            '💡 اولین حسابداری دوطرفه در قرن سیزدهم در ایتالیا ثبت شد',
+            '💡 واژهٔ «Check» ریشهٔ فارسی دارد',
+            '💡 جریان نقدی سالم، قلب تپندهٔ هر صندوق است',
+            '💡 صندوق اتحاد: شفافیت مالی، اعتماد جمعی 🤝',
+            '💡 پس‌انداز منظم در بلندمدت شگفتی‌ساز است'
+       
         var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
         var C = 414.7;
         var loginDataReady = false;
@@ -2170,11 +2195,16 @@ ldrSecT = setInterval(function() {
                 f.classList.add('fd');
                 setTimeout(function() { ldrFi = (ldrFi + 1) % ldrFacts.length; f.textContent = ldrFacts[ldrFi]; f.classList.remove('fd'); }, 300);
             }, 3000);
+            setInterval(function() {
+                var tipEl = document.getElementById('ldrTip');
+                if (!tipEl) return;
+                tipEl.classList.add('fd');
+                setTimeout(function() { ldrTipIdx = (ldrTipIdx + 1) % ldrTips.length; tipEl.textContent = '📌 راهنما: ' + ldrTips[ldrTipIdx]; tipEl.classList.remove('fd'); }, 300);
+            }, 4000);
             setTimeout(ldrTick, 500);
         }
 
         window.addEventListener('resize', ldrResize);
-
         // ============================================================
         // بخش ۱: متغیرهای سراسری
         // ============================================================
@@ -4065,11 +4095,13 @@ if (nextInst !== null) {
         // ============================================================
 
         const UT_TABS = [
-            { id: 'phone', label: '📞 دفترچه تلفن' },
-            { id: 'calc', label: '🧮 ماشین‌حساب‌ها' },
-            { id: 'notes', label: '📝 یادداشت‌ها' },
-            { id: 'calendar', label: '📅 تقویم مذهبی و ملی' }
-        ];
+    { id: 'phone', label: '📞 دفترچه تلفن' },
+    { id: 'calc', label: '🧮 ماشین‌حساب‌ها' },
+    { id: 'notes', label: '📝 یادداشت‌ها' },
+    { id: 'calendar', label: '📅 تقویم مذهبی و ملی' },
+    { id: 'health', label: '🏥 سلامتی و درمان' },
+    { id: 'religious', label: '🕌 معارف اسلامی' }
+];
 
         function renderUtilitiesPage(content) {
             let tabsHtml = '<div class="ut-tabs">';
@@ -4083,16 +4115,45 @@ if (nextInst !== null) {
                 '<div class="ut-modal-overlay" id="utModal"><div class="ut-modal-content"><button class="ut-modal-close" onclick="utCloseModal()">✕</button><div id="utModalBody"></div></div></div>';
             switchUtilTab('phone');
         }
+function utRenderHealth(c) {
+    c.innerHTML =
+        '<div class="ut-card">' +
+            '<div class="ut-card-title"><i class="fas fa-heartbeat" style="color:#ef4444"></i> سلامتی و درمان از احادیث و طب سنتی</div>' +
+            '<p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.9;margin-bottom:12px;">راهکارهای سلامتی و درمان بر اساس احادیث و طب سنتی ایرانی-اسلامی</p>' +
+            '<button class="ut-btn" onclick="utShowModal(\'<h2 style=margin-bottom:12px>🌿 سلامتی و درمان از احادیث و طب سنتی</h2><div style=font-size:0.8rem;color:var(--text-secondary);line-height:2.2><p>📖 محتوای این بخش به زودی اضافه می‌شود...</p></div>\')">🌿 مشاهده مطالب</button>' +
+        '</div>' +
+        '<div class="ut-card">' +
+            '<div class="ut-card-title"><i class="fas fa-stethoscope" style="color:#3b82f6"></i> درمان و سلامتی طب نوین</div>' +
+            '<p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.9;margin-bottom:12px;">راهکارهای سلامتی و درمان بر اساس طب نوین و علم پزشکی</p>' +
+            '<button class="ut-btn" onclick="utShowModal(\'<h2 style=margin-bottom:12px>🏥 درمان و سلامتی طب نوین</h2><div style=font-size:0.8rem;color:var(--text-secondary);line-height:2.2><p>📖 محتوای این بخش به زودی اضافه می‌شود...</p></div>\')">🏥 مشاهده مطالب</button>' +
+        '</div>';
+}
+
+function utRenderReligious(c) {
+    c.innerHTML =
+        '<div class="ut-card">' +
+            '<div class="ut-card-title"><i class="fas fa-book-open" style="color:#10b981"></i> قرآن و احادیث</div>' +
+            '<p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.9;margin-bottom:12px;">آیات قرآن کریم و احادیث معصومین (ع)</p>' +
+            '<button class="ut-btn" onclick="utShowModal(\'<h2 style=margin-bottom:12px>📖 قرآن و احادیث</h2><div style=font-size:0.8rem;color:var(--text-secondary);line-height:2.2><p>📖 محتوای این بخش به زودی اضافه می‌شود...</p></div>\')">📖 مشاهده مطالب</button>' +
+        '</div>' +
+        '<div class="ut-card">' +
+            '<div class="ut-card-title"><i class="fas fa-praying-hands" style="color:#f59e0b"></i> دعا و مفاتیح</div>' +
+            '<p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.9;margin-bottom:12px;">ادعیه و زیارتنامه‌ها از مفاتیح الجنان</p>' +
+            '<button class="ut-btn" onclick="utShowModal(\'<h2 style=margin-bottom:12px>🤲 دعا و مفاتیح</h2><div style=font-size:0.8rem;color:var(--text-secondary);line-height:2.2><p>📖 محتوای این بخش به زودی اضافه می‌شود...</p></div>\')">🤲 مشاهده مطالب</button>' +
+        '</div>';
+}
 
         function switchUtilTab(id) {
-            document.querySelectorAll('.ut-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-ut') === id); });
-            const c = document.getElementById('utContent');
-            if (!c) return;
-            if (id === 'phone') utRenderPhone(c);
-            else if (id === 'calc') utRenderCalc(c);
-            else if (id === 'notes') utRenderNotes(c);
-            else if (id === 'calendar') utRenderCalendarPage(c);
-        }
+    document.querySelectorAll('.ut-tab').forEach(function (t) { t.classList.toggle('active', t.getAttribute('data-ut') === id); });
+    const c = document.getElementById('utContent');
+    if (!c) return;
+    if (id === 'phone') utRenderPhone(c);
+    else if (id === 'calc') utRenderCalc(c);
+    else if (id === 'notes') utRenderNotes(c);
+    else if (id === 'calendar') utRenderCalendarPage(c);
+    else if (id === 'health') utRenderHealth(c);
+    else if (id === 'religious') utRenderReligious(c);
+}
 
         function utShowModal(html) {
             const m = document.getElementById('utModal');
