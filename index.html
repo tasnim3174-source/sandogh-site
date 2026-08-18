@@ -1415,6 +1415,32 @@
             h1 { font-size: 1.2rem; }
             .report-summary { grid-template-columns: 1fr 1fr; }
         }
+                @media (max-width: 480px) {
+            /* قوانین فونت بزرگ‌تر و کلفت‌تر برای موبایل */
+            body { font-size: 1rem !important; line-height: 1.6 !important; }
+            
+            .grid-menu-item .menu-label { font-size: 0.85rem !important; font-weight: 800 !important; }
+            .quick-info-box .info-item .info-label { font-size: 0.85rem !important; font-weight: 700 !important; }
+            .quick-info-box .info-item .info-value { font-size: 1.15rem !important; font-weight: 900 !important; }
+            .header-date .date-row { font-size: 1rem !important; font-weight: 700 !important; }
+            .header-date .date-row span { font-size: 1rem !important; font-weight: 700 !important; }
+            .header-date .date-row #clockDisplay { font-size: 1.3rem !important; font-weight: 900 !important; }
+            .header-rank .rank-label { font-size: 0.85rem !important; font-weight: 700 !important; }
+            .header-rank .rank-value { font-size: 1.4rem !important; font-weight: 900 !important; }
+            .service-item .service-label { font-size: 0.85rem !important; font-weight: 800 !important; }
+            
+            h1, h2, h3, h4 { font-weight: 900 !important; }
+            h1 { font-size: 1.4rem !important; }
+            h2 { font-size: 1.2rem !important; }
+            h3 { font-size: 1.1rem !important; }
+            
+            button, .btn, .ut-btn { font-weight: 800 !important; font-size: 0.9rem !important; }
+            
+            .card-title, .section-title { font-size: 1.1rem !important; font-weight: 900 !important; }
+            
+            table { font-size: 0.9rem !important; }
+            th, td { font-weight: 700 !important; }
+                    }
         /* ===== صفحه اصلی جدید ===== */
         .hdr{background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;box-shadow:0 14px 40px var(--shadow-color);padding:16px;margin-bottom:14px}
         .hdr .lbl{font-size:0.78rem;color:var(--text-secondary);font-weight:700}
