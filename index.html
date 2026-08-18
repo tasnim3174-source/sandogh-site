@@ -1653,6 +1653,27 @@
         .ct-indigo .preview{background:linear-gradient(135deg,#6366f1,#4f46e5)}
         .ct-slate .preview{background:linear-gradient(135deg,#64748b,#475569)}
         @media(max-width:500px){.color-themes-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width: 768px) {
+    .greet {
+        flex-direction: column !important;
+        text-align: center !important;
+        justify-content: center !important;
+    }
+    .greet > b {
+        text-align: center;
+        width: 100%;
+    }
+    .greet > span {
+        justify-content: center !important;
+        width: 100%;
+    }
+    .daterow {
+        justify-content: center !important;
+        text-align: center !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+}
 </style>
 </head>
 <body>
@@ -2696,24 +2717,131 @@ ldrSecT = setInterval(function() {
     let activityScore = Math.min(txCount / 10, 1) * 10;
     const activityTotal = Math.max(0, Math.min(20, coinsScore + activityScore));
 
-    score = Math.round(Math.max(0, Math.min(100, installmentScore + savingsScore + balanceScore + activityTotal)));
+                score = Math.round(Math.max(0, Math.min(100, installmentScore + savingsScore + balanceScore + activityTotal)));
 
-    // تعیین سطح (بدون checkGoldConditions)
-    let tier, tierName, tierEmoji;
-    if (score >= 80) { 
-        tier = 'gold'; 
-        tierName = 'طلایی'; 
-        tierEmoji = '⭐'; 
-    } else if (score >= 50) { 
-        tier = 'silver'; 
-        tierName = 'نقره‌ای'; 
-        tierEmoji = '🥈'; 
-    } else { 
-        tier = 'black'; 
-        tierName = 'سیاه'; 
-        tierEmoji = '⚫'; 
+            let tier, tierName, tierEmoji;
+            const goldEligible = checkGoldConditions(member);
+            if (goldEligible) {
+                if (score < 80) score = 80;
+                tier = 'gold'; tierName = 'طلایی'; tierEmoji = '⭐';
+            } else if (score >= 50) {
+                tier = 'silver'; tierName = 'نقره‌ای'; tierEmoji = '🥈';
+            } else {
+                tier = 'black'; tierName = 'سیاه'; tierEmoji = '⚫';
+            }
+            return { score, tier, tierName, tierEmoji };
+}
+function toggleGoldGuide() {
+    var el = document.getElementById('goldGuideBox');
+    if (el) { el.style.display = el.style.display === 'none' ? 'block' : 'none'; }
+}
+function getGoldRequirements(member) {
+    var result = [];
+    var memberTxns = transactions.filter(function(t) { return String(t._memberId) === String(member.id); });
+    var hasSalary = false;
+    if (memberTxns.length > 0) {
+        var sortedTxns = memberTxns.slice().sort(function(a, b) { return String(b['تاریخ تراکنش'] || '').localeCompare(String(a['تاریخ تراکنش'] || '')); });
+        var lastTxn = sortedTxns[0];
+        hasSalary = (parseInt(lastTxn['مقرری ماهانه']) || 0) > 0;
     }
-    return { score, tier, tierName, tierEmoji };
+    result.push({ text: 'مقرری ماهانه', met: hasSalary });
+    var noOverdue = Math.abs(member.overdueInstallments || 0) === 0;
+    result.push({ text: 'بدون قسط معوقه', met: noOverdue });
+    var currentMonthBalance = parseFloat(member.currentMonthBalance) || 0;
+    var balance = parseFloat(member.balance) || 0;
+    result.push({ text: 'موجودی کافی', met: balance >= currentMonthBalance });
+    var hasLoan = (parseInt(member.totalInstallments) || 0) > 0 || (parseFloat(member.mabVam1) || 0) > 0;
+    var loanCompleted = hasLoan && (parseInt(member.paidInstallments) || 0) >= (parseInt(member.totalInstallments) || 0);
+    if (hasLoan && !loanCompleted) {
+        var paidInstallments = parseInt(member.paidInstallments) || 0;
+        var totalInstallments = parseInt(member.totalInstallments) || 0;
+        var paidEnough = true;
+        if (totalInstallments > 0 && member.loanReceiveDate) {
+            try {
+                var instDates = generateInstallmentDates(member.loanReceiveDate, totalInstallments);
+                var now = new Date();
+                var jy, jm, jd;
+                try {
+                    var j = toJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+                    jy = j.jy; jm = j.jm; jd = j.jd;
+                } catch(e) {
+                    var fmt = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {year:'numeric',month:'2-digit',day:'2-digit'});
+                    var parts = fmt.format(now).split('/');
+                    jy = parseInt(parts[0]); jm = parseInt(parts[1]); jd = parseInt(parts[2]);
+                }
+                var currentDayNum = shamsiDayNum(jy, jm, jd);
+                var expectedByNow = instDates.filter(function(d) { return shamsiDayNum(d.year, d.month, d.day) <= currentDayNum; }).length;
+                paidEnough = paidInstallments >= expectedByNow;
+            } catch(e) { paidEnough = true; }
+        }
+        result.push({ text: 'اقساط کافی', met: paidEnough });
+    }
+    return result;
+}
+function checkGoldConditions(member) {
+    // شرط ۳: بدون قسط معوقه
+    if (Math.abs(member.overdueInstallments || 0) > 0) return false;
+    
+    // پیدا کردن آخرین ماه ثبت‌شده (از بین همه تراکنش‌ها)
+    var allMonths = [];
+    transactions.forEach(function(t) {
+        var d = String(t['تاریخ تراکنش'] || '');
+        if (d.length >= 6) allMonths.push(d.substring(0, 6));
+    });
+    if (allMonths.length === 0) return false;
+    allMonths.sort();
+    var lastRegisteredMonth = allMonths[allMonths.length - 1];
+    
+    // تراکنش‌های عضو
+    var memberTxns = transactions.filter(function(t) { return String(t._memberId) === String(member.id); });
+    if (memberTxns.length === 0) return false;
+    
+    // شرط ۱: آیا عضو در آخرین ماه ثبت‌شده تراکنش مقرری دارد؟
+    var hasSalaryInLastMonth = memberTxns.some(function(t) {
+        var d = String(t['تاریخ تراکنش'] || '');
+        return d.length >= 6 && d.substring(0, 6) === lastRegisteredMonth && (parseInt(t['مقرری ماهانه']) || 0) > 0;
+    });
+    if (!hasSalaryInLastMonth) return false;
+    
+    // شرط ۵: موجودی کافی (از آخرین تراکنش)
+    var sortedTxns = memberTxns.slice().sort(function(a, b) { return (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0); });
+    var lastTxn = sortedTxns[0];
+    var realBalance = lastTxn ? (parseInt(lastTxn['موجودی']) || 0) : 0;
+    var requiredBalance = parseFloat(member.currentMonthBalance) || 0;
+    if (requiredBalance > 0 && realBalance < requiredBalance) return false;
+    
+    // بررسی وضعیت وام
+    var hasLoan = (parseInt(member.totalInstallments) || 0) > 0 || (parseFloat(member.mabVam1) || 0) > 0;
+    var loanCompleted = hasLoan && (parseInt(member.paidInstallments) || 0) >= (parseInt(member.totalInstallments) || 0);
+    
+    // اگر وام ندارد یا وامش تمام شده، فقط شرط ۱، ۳، ۵ کافی است
+    if (!hasLoan || loanCompleted) {
+        return true;
+    }
+    
+    // اگر وام فعال دارد، شرط ۴ هم بررسی شود (اقساط کافی پرداخت شده)
+    var paidInstallments = parseInt(member.paidInstallments) || 0;
+    var totalInstallments = parseInt(member.totalInstallments) || 0;
+    if (totalInstallments > 0 && member.loanReceiveDate) {
+        try {
+            var instDates = generateInstallmentDates(member.loanReceiveDate, totalInstallments);
+            var now = new Date();
+            var jy, jm, jd;
+            try {
+                var j = toJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+                jy = j.jy; jm = j.jm; jd = j.jd;
+            } catch(e) {
+                var fmt = new Intl.DateTimeFormat('fa-IR-u-nu-latn', {year:'numeric',month:'2-digit',day:'2-digit'});
+                var parts = fmt.format(now).split('/');
+                jy = parseInt(parts[0]); jm = parseInt(parts[1]); jd = parseInt(parts[2]);
+            }
+            var currentDayNum = shamsiDayNum(jy, jm, jd);
+            var expectedByNow = instDates.filter(function(d) { return shamsiDayNum(d.year, d.month, d.day) <= currentDayNum; }).length;
+            if (paidInstallments < expectedByNow) return false;
+        } catch(e) {}
+    }
+    
+    return true;
 }
         function getFamilyRank(memberId) {
             const member = members.find(m => m.id === memberId);
@@ -3454,7 +3582,7 @@ const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidIns
 
             content.innerHTML = `
                         <div class="hdr">
-                            <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"><b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b><span style="display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;">${bdayCakeHtml}<span class="tierpill">رتبه شخص شما در صندوق: ${sd ? sd.tierEmoji + ' ' + sd.tierName : ''}</span>${sd && sd.tier !== 'gold' ? '<span style="font-size:0.78rem;color:var(--text-muted);background:rgba(255,255,255,.08);padding:4px 10px;border-radius:99px;">تا مرحله <b style="color:' + (sd.tier === 'black' ? 'var(--silver-color,#c0c0c0)' : 'var(--gold-color)') + ';">' + (sd.tier === 'black' ? 'نقره‌ای 🥈' : 'طلایی ⭐') + '</b>: ' + ((sd.tier === 'black' ? 50 : 80) - sd.score) + ' امتیاز مانده</span>' : '<span style="font-size:0.78rem;color:var(--gold-color);background:rgba(245,158,11,.15);padding:4px 10px;border-radius:99px;">🏆 بالاترین سطح</span>'}<span style="font-size:0.82rem;font-weight:900;color:var(--gold-color);background:rgba(245,158,11,.12);padding:3px 12px;border-radius:99px;">امتیاز: ${sd ? sd.score : 0}</span></span></div>
+                            <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"><b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b><span style="display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;">${bdayCakeHtml}<span class="tierpill" style="background:${sd && sd.tier === 'gold' ? 'linear-gradient(135deg, rgba(80,60,10,.85), rgba(50,35,5,.75))' : sd && sd.tier === 'silver' ? 'linear-gradient(135deg, rgba(70,70,75,.85), rgba(45,45,50,.75))' : 'linear-gradient(135deg, rgba(40,40,40,.85), rgba(25,25,25,.75))'};color:${sd && sd.tier === 'gold' ? '#ffd700' : sd && sd.tier === 'silver' ? '#e0e0e0' : '#aaa'};border:1px solid ${sd && sd.tier === 'gold' ? 'rgba(255,215,0,.5)' : sd && sd.tier === 'silver' ? 'rgba(220,220,220,.4)' : 'rgba(150,150,150,.3)'};">رتبه شخص شما در صندوق: ${sd ? sd.tierEmoji + ' ' + sd.tierName : ''}</span>${sd && sd.tier !== 'gold' ? '<span style="font-size:0.78rem;color:var(--text-muted);background:rgba(255,255,255,.08);padding:4px 10px;border-radius:99px;">تا مرحله <b style="color:' + (sd.tier === 'black' ? 'var(--silver-color,#c0c0c0)' : 'var(--gold-color)') + ';">' + (sd.tier === 'black' ? 'نقره‌ای 🥈' : 'طلایی ⭐') + '</b>: ' + ((sd.tier === 'black' ? 50 : 80) - sd.score) + ' امتیاز مانده</span>' : '<span style="font-size:0.78rem;color:var(--gold-color);background:rgba(245,158,11,.15);padding:4px 10px;border-radius:99px;">🏆 بالاترین سطح</span>'}<span style="font-size:0.82rem;font-weight:900;color:var(--gold-color);background:rgba(245,158,11,.12);padding:3px 12px;border-radius:99px;">امتیاز: ${sd ? sd.score : 0}</span><button onclick="toggleGoldGuide()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--text-muted);font-size:0.75rem;padding:4px 10px;border-radius:99px;cursor:pointer;">📈 راهنمای ارتقا به رتبه بالاتر</button></span>${sd && sd.tier !== 'gold' ? '<div id="goldGuideBox" style="display:none;margin-top:10px;padding:12px;background:rgba(255,255,255,.05);border-radius:12px;border:1px solid rgba(255,255,255,.1);"><div style="font-size:0.8rem;font-weight:700;margin-bottom:8px;color:var(--text-muted);">شرایط لازم برای طلایی شدن:</div><div style="display:flex;flex-wrap:wrap;gap:6px;">' + getGoldRequirements(member).map(function(r) { return '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;background:' + (r.met ? 'rgba(16,185,129,.12)' : 'rgba(239,68,68,.12)') + ';color:' + (r.met ? '#10b981' : '#ef4444') + ';font-size:0.75rem;">' + (r.met ? '✅' : '❌') + ' ' + r.text + '</span>'; }).join('') + '</div></div>' : ''}</div>
                             
                             <div class="famrank"><div class="t">خانواده ${esc(member.firstName)} · رتبه ${myRank} از ${totalFam} خانوار</div><div class="bar"><i style="width:${posPct}%"></i></div><div class="s">شما از ${betterThan}٪ خانوارها جلوترید 🚀</div></div>
                             <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span><span class="hello">${greeting}</span></div>
@@ -4598,13 +4726,13 @@ function renderDashboardContent() {
     const overdueInstallments = Math.abs(member?.overdueInstallments || 0);
     const progressPercent = Math.min(100, Math.round((paidInstallments / totalInstallments) * 100));
 
-            let paymentStatus = '', paymentColor = '', paymentIcon = '';
+                       let paymentStatus = '', paymentColor = '', paymentIcon = '';
             const overdue = Math.abs(member.overdueInstallments || 0);
-            if (member.overdueInstallments < 0 && overdue > 0) { paymentStatus = `⚠️ ${overdue} قسط معوقه`; paymentColor = '#ef4444'; paymentIcon = '🔴'; }
-            else if (member.overdueInstallments < 0 && overdue === 0) { paymentStatus = '✅ همه اقساط پرداخت شده'; paymentColor = '#10b981'; paymentIcon = '🟢'; }
-            else if (member.overdueInstallments === 0 && member.loanBalance > 0) { paymentStatus = '🟡 در حال پرداخت'; paymentColor = '#f59e0b'; paymentIcon = '🟡'; }
+            const hasActiveLoan = (parseInt(member.totalInstallments) || 0) > 0 && (parseInt(member.paidInstallments) || 0) < (parseInt(member.totalInstallments) || 0);
+            if (overdue > 0) { paymentStatus = `⚠️ ${overdue} قسط معوقه`; paymentColor = '#ef4444'; paymentIcon = '🔴'; }
+            else if (hasActiveLoan) { paymentStatus = '🟡 در حال پرداخت'; paymentColor = '#f59e0b'; paymentIcon = '🟡'; }
+            else if ((parseInt(member.totalInstallments) || 0) > 0 && (parseInt(member.paidInstallments) || 0) >= (parseInt(member.totalInstallments) || 0)) { paymentStatus = '✅ همه اقساط پرداخت شده'; paymentColor = '#10b981'; paymentIcon = '🟢'; }
             else { paymentStatus = '✅ بدون بدهی'; paymentColor = '#10b981'; paymentIcon = '🟢'; }
-
             let adminHtml = '';
             if (currentUser.role === 'admin') {
                 const totalMembers = members.length;
@@ -5775,7 +5903,7 @@ function renderDashboardContent() {
                                                     <td style="font-weight:bold;font-size:0.55rem;">${idx + 1}</td>
                                                     <td style="font-size:0.55rem;">${esc(m.firstName)}</td>
                                                     <td style="color:var(--gold-color);font-size:0.55rem;font-weight:bold;">${sd?.score || 0}</td>
-                                                    <td><span style="background:${tierColor};color:#fff;padding:2px 10px;border-radius:12px;font-size:0.45rem;">${tierEmoji} ${sd?.tierName || ''}</span></td>
+                                                    <td><span style="background:${tierColor};color:#fff;padding:0.5px 1px;border-radius:12px;font-size:0.45rem;">${tierEmoji} ${sd?.tierName || ''}</span></td>
                                                     <td style="font-size:0.5rem;">${txCount}</td>
                                                 </tr>
                                             `;
