@@ -1695,6 +1695,84 @@
         gap: 6px !important;
     }
 }
+        /* نوار پایین - استایل همراه بانک رفاه */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(12px);
+        }
+
+        .bottom-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            flex: 1;
+        }
+
+        .bottom-nav-btn span {
+            font-size: 0.68rem;
+            font-weight: 500;
+        }
+
+        .bottom-nav-btn:hover {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .bottom-nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .bottom-nav-btn i {
+            font-size: 1.3rem;
+        }
+
+        .bottom-nav-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: #fff;
+            border: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            margin-top: -20px;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+        }
+
+        .bottom-nav-center:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        .bottom-nav-center:active {
+            transform: scale(0.95);
+        }
 </style>
 </head>
 <body>
@@ -1823,15 +1901,7 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <button class="floating-home-btn" id="floatingHomeBtn" onclick="goToMenu()" aria-label="بازگشت به منو">
-        <i class="fas fa-home"></i>
-    </button>
-    <button class="floating-settings-btn" id="floatingSettingsBtn" onclick="openSettings()" aria-label="تنظیمات">
-        <i class="fas fa-sliders-h"></i>
-    </button>
-    <button class="floating-logout-btn" id="floatingLogoutBtn" onclick="doLogout()" aria-label="خروج">
-        <i class="fas fa-sign-out-alt"></i>
-    </button>
+    
 
     <!-- APP - صفحه اصلی -->
     <div class="container" id="appContainer">
@@ -2612,6 +2682,19 @@ ldrSecT = setInterval(function() {
             }
             loginDataReady = true;
         }
+        function startKeepAlive() {
+            if (keepAliveInterval) clearInterval(keepAliveInterval);
+            keepAliveInterval = setInterval(function() {
+                fetch(DATA_URL, { method: 'HEAD', cache: 'no-cache' }).catch(function() {});
+            }, 30000);
+        }
+
+        function stopKeepAlive() {
+            if (keepAliveInterval) {
+                clearInterval(keepAliveInterval);
+                keepAliveInterval = null;
+            }
+        }
 
         function doLogout() {
             if (confirm('آیا مطمئن هستید که می‌خواهید خارج شوید؟')) {
@@ -2623,6 +2706,339 @@ ldrSecT = setInterval(function() {
             }
         }
 
+        function handleLogoutFromNav() {
+            doLogout();
+        }
+
+                                function showBottomNavModal() {
+            if (!currentUser) {
+                alert('⚠️ لطفاً ابتدا وارد شوید');
+                return;
+            }
+            
+            const member = members.find(m => m.id === currentUser.memberId);
+            if (!member) {
+                alert('⚠️ اطلاعات عضو یافت نشد');
+                return;
+            }
+            
+            // محاسبه اطلاعات رتبه شخصی
+            const sd = memberScores[member.id];
+            const score = sd ? sd.score : 0;
+            const tierName = sd ? sd.tierName : 'نامشخص';
+            const tierEmoji = sd ? sd.tierEmoji : '❓';
+            const isGold = sd && sd.tier === 'gold';
+            const isSilver = sd && sd.tier === 'silver';
+            
+            // محاسبه امتیاز مانده تا مرحله بعد
+            let nextTierText = '';
+            let pointsNeeded = 0;
+            if (!isGold) {
+                if (sd && sd.tier === 'black') {
+                    pointsNeeded = 50 - score;
+                    nextTierText = 'نقره‌ای 🥈';
+                } else {
+                    pointsNeeded = 80 - score;
+                    nextTierText = 'طلایی ⭐';
+                }
+            }
+            
+            // محاسبه رتبه خانواده
+            const famScores = computeFamilyScores();
+            const myRank = famScores.findIndex(f => f.code === member.heh1) + 1;
+            const totalFam = famScores.length;
+            const betterThan = totalFam > 1 ? Math.round((totalFam - myRank) / (totalFam - 1) * 100) : 100;
+            const posPct = Math.round((totalFam - myRank + 1) / totalFam * 100);
+            
+            // محاسبه اطلاعات مالی
+            const t = getTodayShamsi();
+            const tn = shamsiDayNum(t.y, t.m, t.d);
+            let nm2 = t.m + 1, ny2 = t.y;
+            if (nm2 > 12) { nm2 = 1; ny2++; }
+            const sal = shamsiDayNum(ny2, nm2, 1) - tn;
+            const monthLength = t.d + sal - 1;
+            const salaryProgress = monthLength > 0 ? Math.min(100, Math.round((t.d / monthLength) * 100)) : 0;
+            
+            let nextInst = null;
+            const todayCont = shamsiToContDays(t.y, t.m, t.d);
+            const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            for (let i = 0; i < instDates.length; i++) {
+                const num = shamsiToContDays(instDates[i].year, instDates[i].month, instDates[i].day);
+                if (num >= todayCont) { nextInst = num; break; }
+            }
+            let inst = (nextInst !== null) ? (nextInst - todayCont) : null;
+            let instCycle = 30;
+            if (instDates.length >= 2) {
+                instCycle = shamsiDayNum(instDates[1].year, instDates[1].month, instDates[1].day) - shamsiDayNum(instDates[0].year, instDates[0].month, instDates[0].day);
+            }
+            const instProgress = (inst !== null && inst > 0 && instCycle > 0) ? Math.min(100, Math.round(((instCycle - inst) / instCycle) * 100)) : 0;
+            const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidInstallments || 0) / member.totalInstallments * 100) : 0;
+            
+            // ساخت شرایط طلایی شدن
+            let goldRequirementsHtml = '';
+            if (!isGold) {
+                const requirements = getGoldRequirements(member);
+                goldRequirementsHtml = `
+                    <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid rgba(255,255,255,.1);">
+                        <div style="font-size:0.8rem;font-weight:700;margin-bottom:8px;color:var(--text-secondary);">📋 شرایط لازم برای طلایی شدن:</div>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                            ${requirements.map(r => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;background:${r.met ? 'rgba(16,185,129,.12)' : 'rgba(239,68,68,.12)'};color:${r.met ? '#10b981' : '#ef4444'};font-size:0.75rem;">${r.met ? '✅' : '❌'} ${r.text}</span>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            var modalHtml = `
+                <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);" onclick="if(event.target===this)this.remove()">
+                    <div style="background:var(--card-bg);border-radius:20px;padding:24px;max-width:420px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px var(--shadow-color);border:1px solid var(--glass-border);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <h3 style="color:var(--text-primary);font-size:1.1rem;margin:0;">📊 اطلاعات حساب شما</h3>
+                            <button onclick="this.closest('div[style*=fixed]').remove()" style="background:var(--danger-color);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
+                        </div>
+                        
+                        <!-- بخش ۱: خلاصه حساب -->
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold;margin-bottom:12px;">💰 خلاصه حساب</div>
+                            
+                            <!-- ردیف اول: موجودی و مانده بدهی -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                                <div style="background:rgba(16,185,129,.1);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(16,185,129,.2);">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">💵 موجودی</div>
+                                    <div style="font-size:1.1rem;color:var(--success-color);font-weight:bold;">${fmtNum(getMemberRealBalance(member.id))}</div>
+                                </div>
+                                <div style="background:rgba(239,68,68,.1);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(239,68,68,.2);">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">💳 مانده بدهی</div>
+                                    <div style="font-size:1.1rem;color:var(--danger-color);font-weight:bold;">${fmtNum(member.loanBalance || 0)}</div>
+                                </div>
+                            </div>
+                            
+                            <!-- ردیف دوم: وضعیت پس انداز و قسط معوقه -->
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+                                <div style="background:rgba(245,158,11,.1);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(245,158,11,.2);">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">🏦 وضعیت پس‌انداز</div>
+                                    <div style="font-size:1.1rem;color:${(member.savingsStatus || 0) >= 0 ? 'var(--success-color)' : 'var(--danger-color)'};font-weight:bold;">${fmtNum(member.savingsStatus || 0)}</div>
+                                </div>
+                                <div style="background:rgba(139,92,246,.1);border-radius:10px;padding:12px;text-align:center;border:1px solid rgba(139,92,246,.2);">
+                                    <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">⚠️ قسط معوقه</div>
+                                    <div style="font-size:1.1rem;color:var(--purple-color,#8b5cf6);font-weight:bold;">${Math.abs(member.overdueInstallments || 0)} قسط</div>
+                                </div>
+                            </div>
+                            
+                            <!-- ردیف سوم: جزئیات اقساط -->
+                            <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;">
+                                <div style="font-size:0.8rem;color:var(--text-primary);font-weight:bold;margin-bottom:8px;">📋 جزئیات اقساط</div>
+                                
+                                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">📅 تاریخ دریافت وام:</span>
+                                    <span style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;direction:ltr;">${esc(member.loanReceiveDate || '---')}</span>
+                                </div>
+                                
+                                <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);">
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">✅ قسط پرداخت شده:</span>
+                                    <span style="font-size:0.75rem;color:var(--success-color);font-weight:bold;">${member.paidInstallments || 0} از ${member.totalInstallments || 0}</span>
+                                </div>
+                                
+                                <div style="display:flex;justify-content:space-between;padding:6px 0;">
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">🕐 آخرین قسط وام:</span>
+                                    <span style="font-size:0.75rem;color:var(--text-primary);font-weight:bold;direction:ltr;">${esc(member.lastInstallmentDate || '---')}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- بخش ۲: مانده تا مقرری و قسط بعدی -->
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:6px;">💰 مانده تا مقرری و قسط بعدی</div>
+                            <div style="font-size:1.2rem;color:${inst !== null ? (inst <= 3 ? 'var(--danger-color)' : 'var(--success-color)') : 'var(--success-color)'};font-weight:bold;margin-bottom:8px;">${inst !== null ? inst + ' روز دیگه' : 'تسویه شده'}</div>
+                            ${inst !== null && inst > 0 ? `<div style="height:8px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;">
+                                <div style="height:100%;width:${instProgress}%;background:${inst <= 3 ? 'var(--danger-color)' : 'var(--success-color)'};border-radius:99px;"></div>
+                            </div>` : ''}
+                        </div>
+                        
+                        <!-- بخش ۳: پیشرفت اقساط -->
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;">📊 پیشرفت اقساط</div>
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                                <span style="font-size:0.8rem;color:var(--text-muted);">${member.paidInstallments || 0} قسط از ${member.totalInstallments || 0} قسط پرداخت شده</span>
+                                <span style="font-size:1.1rem;color:var(--gold-color);font-weight:bold;">${progPct}٪</span>
+                            </div>
+                            <div style="height:8px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;">
+                                <div style="height:100%;width:${progPct}%;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));border-radius:99px;"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- بخش ۴: رتبه شخصی -->
+                        <div style="background:linear-gradient(135deg, ${isGold ? 'rgba(80,60,10,.85)' : isSilver ? 'rgba(70,70,75,.85)' : 'rgba(40,40,40,.85)'}, ${isGold ? 'rgba(50,35,5,.75)' : isSilver ? 'rgba(45,45,50,.75)' : 'rgba(25,25,25,.75)'});border-radius:12px;padding:16px;margin-bottom:12px;border:1px solid ${isGold ? 'rgba(255,215,0,.5)' : isSilver ? 'rgba(220,220,220,.4)' : 'rgba(150,150,150,.3)'};">
+                            <div style="font-size:0.85rem;color:${isGold ? '#ffd700' : isSilver ? '#e0e0e0' : '#aaa'};margin-bottom:6px;">⭐ رتبه شخص شما در صندوق:</div>
+                            <div style="font-size:1.3rem;font-weight:bold;color:${isGold ? '#ffd700' : isSilver ? '#e0e0e0' : '#aaa'};">${tierEmoji} ${tierName}</div>
+                        </div>
+                        
+                        <!-- بخش ۵: امتیاز و مرحله بعد -->
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                                <span style="font-size:0.85rem;color:var(--text-secondary);">💎 امتیاز کل:</span>
+                                <span style="font-size:1.2rem;font-weight:900;color:var(--gold-color);">${score}</span>
+                            </div>
+                            ${isGold 
+                                ? '<div style="font-size:0.85rem;color:var(--gold-color);background:rgba(245,158,11,.15);padding:6px 12px;border-radius:99px;text-align:center;">🏆 بالاترین سطح را دارید</div>'
+                                : `<div style="font-size:0.85rem;color:var(--text-secondary);">تا مرحله <b style="color:var(--gold-color);">${nextTierText}</b>: <b style="color:var(--gold-color);">${pointsNeeded}</b> امتیاز مانده</div>`
+                            }
+                        </div>
+                        
+                        <!-- بخش ۶: رتبه خانواده -->
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:8px;">👨‍👩‍👧‍👦 خانواده شما:</div>
+                            <div style="font-size:1.1rem;color:var(--text-primary);font-weight:bold;margin-bottom:8px;">خانواده ${member.firstName} · رتبه ${myRank} از ${totalFam} خانوار</div>
+                            <div style="height:8px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin-bottom:6px;">
+                                <div style="height:100%;width:${posPct}%;background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));border-radius:99px;transition:width 0.5s ease;"></div>
+                            </div>
+                            <div style="font-size:0.85rem;color:var(--success-color);font-weight:bold;">شما از ${betterThan}٪ خانوارها جلوترید 🚀</div>
+                        </div>
+                        
+                        ${goldRequirementsHtml}
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function showInfoNavModal() {
+            if (!currentUser) {
+                alert('⚠️ لطفاً ابتدا وارد شوید');
+                return;
+            }
+            
+            var modalHtml = `
+                <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);" onclick="if(event.target===this)this.remove()">
+                    <div style="background:var(--card-bg);border-radius:20px;padding:24px;max-width:420px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 60px var(--shadow-color);border:1px solid var(--glass-border);">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                            <h3 style="color:var(--text-primary);font-size:1.1rem;margin:0;">ℹ️ اطلاعات، تماس و راهنما</h3>
+                            <button onclick="this.closest('div[style*=fixed]').remove()" style="background:var(--danger-color);color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;">✕</button>
+                        </div>
+                        
+                        <!-- بخش ۱: اطلاعات تماس -->
+                        ${SUPPORT_INFO.phone ? `
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold;margin-bottom:12px;">📞 اطلاعات تماس</div>
+                            <div style="background:rgba(255,255,255,.05);border-radius:10px;padding:12px;">
+                                <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:4px;">تلفن حسابداری</div>
+                                <div style="font-size:1rem;color:var(--text-primary);font-weight:bold;direction:ltr;text-align:left;margin-bottom:8px;">${esc(SUPPORT_INFO.phone)}</div>
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                    <button onclick="copyText('${esc(SUPPORT_INFO.phone)}',this)" style="background:var(--success-color);color:#fff;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.75rem;">📋 کپی</button>
+                                    <a href="tel:${esc(SUPPORT_INFO.phone)}" style="background:var(--success-color);color:#fff;padding:6px 14px;border-radius:8px;text-decoration:none;font-size:0.75rem;">📞 تماس</a>
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <!-- بخش ۲: اطلاعات حساب صندوق -->
+                        ${(SUPPORT_INFO.accountNumber || SUPPORT_INFO.cardNumber || SUPPORT_INFO.shebaNumber) ? `
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold;margin-bottom:12px;">🏦 اطلاعات حساب صندوق</div>
+                            
+                            ${SUPPORT_INFO.accountNumber ? `
+                            <div style="background:rgba(66,153,225,.1);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid rgba(66,153,225,.2);">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                    <i class="fas fa-university" style="color:#4299e1;"></i>
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">شماره حساب</span>
+                                </div>
+                                <div style="font-size:0.95rem;color:var(--text-primary);font-weight:bold;direction:ltr;text-align:left;margin-bottom:6px;">${esc(SUPPORT_INFO.accountNumber)}</div>
+                                <button onclick="copyText('${esc(SUPPORT_INFO.accountNumber)}',this)" style="background:#4299e1;color:#fff;border:none;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.7rem;">📋 کپی</button>
+                            </div>
+                            ` : ''}
+                            
+                            ${SUPPORT_INFO.cardNumber ? `
+                            <div style="background:rgba(159,122,234,.1);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid rgba(159,122,234,.2);">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                    <i class="fas fa-credit-card" style="color:#9f7aea;"></i>
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">شماره کارت</span>
+                                </div>
+                                <div style="font-size:0.95rem;color:var(--text-primary);font-weight:bold;direction:ltr;text-align:left;margin-bottom:6px;">${esc(SUPPORT_INFO.cardNumber)}</div>
+                                <button onclick="copyText('${esc(SUPPORT_INFO.cardNumber)}',this)" style="background:#9f7aea;color:#fff;border:none;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.7rem;">📋 کپی</button>
+                            </div>
+                            ` : ''}
+                            
+                            ${SUPPORT_INFO.shebaNumber ? `
+                            <div style="background:rgba(237,137,54,.1);border-radius:10px;padding:12px;border:1px solid rgba(237,137,54,.2);">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                    <i class="fas fa-file-invoice" style="color:#ed8936;"></i>
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">شماره شبا</span>
+                                </div>
+                                <div style="font-size:0.8rem;color:var(--text-primary);font-weight:bold;direction:ltr;text-align:left;margin-bottom:6px;word-break:break-all;">${esc(SUPPORT_INFO.shebaNumber)}</div>
+                                <button onclick="copyText('${esc(SUPPORT_INFO.shebaNumber)}',this)" style="background:#ed8936;color:#fff;border:none;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.7rem;">📋 کپی</button>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                        
+                        <!-- بخش ۳: وب‌سایت و شبکه‌های اجتماعی -->
+                        ${(SUPPORT_INFO.websiteAddress || SUPPORT_INFO.itaaAddress) ? `
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;margin-bottom:12px;">
+                            <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold;margin-bottom:12px;">🌐 وب‌سایت و شبکه‌های اجتماعی</div>
+                            
+                            ${SUPPORT_INFO.websiteAddress ? `
+                            <div style="background:rgba(56,178,172,.1);border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid rgba(56,178,172,.2);">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                    <i class="fas fa-globe" style="color:#38b2ac;"></i>
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">وب‌سایت صندوق</span>
+                                </div>
+                                <div style="font-size:0.75rem;color:var(--text-primary);direction:ltr;text-align:left;margin-bottom:6px;word-break:break-all;">${esc(SUPPORT_INFO.websiteAddress)}</div>
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                    <button onclick="copyText('${esc(SUPPORT_INFO.websiteAddress)}',this)" style="background:#38b2ac;color:#fff;border:none;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.7rem;">📋 کپی</button>
+                                    <a href="${esc(SUPPORT_INFO.websiteAddress)}" target="_blank" style="background:#38b2ac;color:#fff;padding:4px 12px;border-radius:8px;text-decoration:none;font-size:0.7rem;">🌐 بازدید</a>
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            ${SUPPORT_INFO.itaaAddress ? `
+                            <div style="background:rgba(124,58,237,.1);border-radius:10px;padding:12px;border:1px solid rgba(124,58,237,.2);">
+                                <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                    <i class="fas fa-comment-dots" style="color:#7c3aed;"></i>
+                                    <span style="font-size:0.75rem;color:var(--text-secondary);">ایتا</span>
+                                </div>
+                                <div style="font-size:0.95rem;color:var(--text-primary);font-weight:bold;margin-bottom:6px;">${esc(SUPPORT_INFO.itaaAddress)}</div>
+                                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                                    <button onclick="copyText('${esc(SUPPORT_INFO.itaaAddress)}',this)" style="background:#7c3aed;color:#fff;border:none;padding:4px 12px;border-radius:8px;cursor:pointer;font-size:0.7rem;">📋 کپی</button>
+                                    <a href="https://eitaa.com/${esc(SUPPORT_INFO.itaaAddress.replace('@',''))}" target="_blank" style="background:#7c3aed;color:#fff;padding:4px 12px;border-radius:8px;text-decoration:none;font-size:0.7rem;">💬 بازدید</a>
+                                </div>
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                        
+                        <!-- بخش ۴: راهنمای برنامه -->
+                        <div style="background:var(--bg-secondary);border-radius:12px;padding:16px;">
+                            <div style="font-size:0.9rem;color:var(--text-primary);font-weight:bold;margin-bottom:12px;">📖 راهنمای برنامه</div>
+                            <div style="display:grid;gap:10px;font-size:0.8rem;color:var(--text-secondary);">
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">🏠 خانه:</b> بازگشت به صفحه اصلی
+                                </div>
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">📊 دکمه وسط:</b> مشاهده رتبه، امتیاز و اطلاعات مالی
+                                </div>
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">📋 صورتحساب:</b> جزئیات اقساط و پرداخت‌ها
+                                </div>
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">📝 درخواست‌ها:</b> ثبت و پیگیری درخواست‌ها
+                                </div>
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">⭐ امتیازات:</b> مشاهده امتیازات و رتبه‌ها
+                                </div>
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">👨‍👩‍👧 خانواده من:</b> اطلاعات اعضای خانواده (فقط سرپرستان)
+                                </div>
+                                <div style="padding:8px;background:rgba(255,255,255,.03);border-radius:8px;">
+                                    <b style="color:var(--text-primary);">👑 بخش شورا:</b> مدیریت و گزارش‌گیری (فقط شورا و مدیر)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
         function updateVisitInfo() {
             const memberId = currentUser?.memberId;
             if (!memberId) return;
@@ -2662,18 +3078,12 @@ ldrSecT = setInterval(function() {
             return { count, lastVisit, history };
         }
 
-        function updateFloatingButtons() {
+                function updateFloatingButtons() {
             const isLoggedIn = !!currentUser;
-            document.getElementById('floatingHomeBtn').style.display = isLoggedIn ? 'flex' : 'none';
-            document.getElementById('floatingSettingsBtn').style.display = isLoggedIn ? 'flex' : 'none';
-            document.getElementById('floatingLogoutBtn').style.display = isLoggedIn ? 'flex' : 'none';
-        }
-
-        function startKeepAlive() {
-            if (keepAliveInterval) clearInterval(keepAliveInterval);
-            keepAliveInterval = setInterval(() => {
-                fetch(DATA_URL, { method: 'HEAD', cache: 'no-cache' }).catch(() => {});
-            }, 30000);
+            
+            // نمایش نوار پایین به جای دکمه‌های شناور
+            var bottomNav = document.getElementById('bottomNav');
+            if (bottomNav) bottomNav.style.display = isLoggedIn ? 'flex' : 'none';
         }
 
         function stopKeepAlive() {
@@ -3549,7 +3959,7 @@ function shamsiToContDays(jy, jm, jd) {
         // ============================================================
         // بخش ۱۱: رندر منوی اصلی
         // ============================================================
-                        function renderMenuPage(content) {
+                                function renderMenuPage(content) {
             const member = members.find(m => m.id === currentUser.memberId);
             if (!member) { content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>'; return; }
 
@@ -3575,22 +3985,23 @@ function shamsiToContDays(jy, jm, jd) {
             const bdayCakeHtml = isUserBirthday ? '<span class="bdaycake" title="🎉 تولدتان مبارک!">🎂</span>' : '';
 
             // ⏳ شمارش‌ها + پیشرفت
-          let nextInst = null;
-const todayCont = shamsiToContDays(t.y, t.m, t.d);
-const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
-for (let i = 0; i < instDates.length; i++) {
-    const num = shamsiToContDays(instDates[i].year, instDates[i].month, instDates[i].day);
-    if (num >= todayCont) { nextInst = num; break; }
-}
-let inst = (nextInst !== null) ? (nextInst - todayCont) : null;
-let nm2 = t.m + 1, ny2 = t.y; if (nm2 > 12) { nm2 = 1; ny2++; }
-const sal = shamsiDayNum(ny2, nm2, 1) - tn;
-const monthLength = t.d + sal - 1;
-const salaryProgress = monthLength > 0 ? Math.min(100, Math.round((t.d / monthLength) * 100)) : 0;
-let instCycle = 30;
-if (instDates.length >= 2) { instCycle = shamsiDayNum(instDates[1].year, instDates[1].month, instDates[1].day) - shamsiDayNum(instDates[0].year, instDates[0].month, instDates[0].day); }
-const instProgress = (inst !== null && inst > 0 && instCycle > 0) ? Math.min(100, Math.round(((instCycle - inst) / instCycle) * 100)) : 0;
-const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidInstallments || 0) / member.totalInstallments * 100) : 0;
+            let nextInst = null;
+            const todayCont = shamsiToContDays(t.y, t.m, t.d);
+            const instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+            for (let i = 0; i < instDates.length; i++) {
+                const num = shamsiToContDays(instDates[i].year, instDates[i].month, instDates[i].day);
+                if (num >= todayCont) { nextInst = num; break; }
+            }
+            let inst = (nextInst !== null) ? (nextInst - todayCont) : null;
+            let nm2 = t.m + 1, ny2 = t.y; if (nm2 > 12) { nm2 = 1; ny2++; }
+            const sal = shamsiDayNum(ny2, nm2, 1) - tn;
+            const monthLength = t.d + sal - 1;
+            const salaryProgress = monthLength > 0 ? Math.min(100, Math.round((t.d / monthLength) * 100)) : 0;
+            let instCycle = 30;
+            if (instDates.length >= 2) { instCycle = shamsiDayNum(instDates[1].year, instDates[1].month, instDates[1].day) - shamsiDayNum(instDates[0].year, instDates[0].month, instDates[0].day); }
+            const instProgress = (inst !== null && inst > 0 && instCycle > 0) ? Math.min(100, Math.round(((instCycle - inst) / instCycle) * 100)) : 0;
+            const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidInstallments || 0) / member.totalInstallments * 100) : 0;
+            
             // 🗂️ منوی اصلی
             const isCouncil = hasCouncilOrAdminAccess();
             const isHead = isHeadOfHousehold();
@@ -3630,23 +4041,19 @@ const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidIns
             gridHtml += '</div>';
 
             content.innerHTML = `
-                        <div class="hdr">
-                            <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;"><b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b><span style="display:inline-flex;align-items:center;gap:7px;flex-wrap:wrap;">${bdayCakeHtml}<span class="tierpill" style="background:${sd && sd.tier === 'gold' ? 'linear-gradient(135deg, rgba(80,60,10,.85), rgba(50,35,5,.75))' : sd && sd.tier === 'silver' ? 'linear-gradient(135deg, rgba(70,70,75,.85), rgba(45,45,50,.75))' : 'linear-gradient(135deg, rgba(40,40,40,.85), rgba(25,25,25,.75))'};color:${sd && sd.tier === 'gold' ? '#ffd700' : sd && sd.tier === 'silver' ? '#e0e0e0' : '#aaa'};border:1px solid ${sd && sd.tier === 'gold' ? 'rgba(255,215,0,.5)' : sd && sd.tier === 'silver' ? 'rgba(220,220,220,.4)' : 'rgba(150,150,150,.3)'};">رتبه شخص شما در صندوق: ${sd ? sd.tierEmoji + ' ' + sd.tierName : ''}</span>${sd && sd.tier !== 'gold' ? '<span style="font-size:0.78rem;color:var(--text-muted);background:rgba(255,255,255,.08);padding:4px 10px;border-radius:99px;">تا مرحله <b style="color:' + (sd.tier === 'black' ? 'var(--silver-color,#c0c0c0)' : 'var(--gold-color)') + ';">' + (sd.tier === 'black' ? 'نقره‌ای 🥈' : 'طلایی ⭐') + '</b>: ' + ((sd.tier === 'black' ? 50 : 80) - sd.score) + ' امتیاز مانده</span>' : '<span style="font-size:0.78rem;color:var(--gold-color);background:rgba(245,158,11,.15);padding:4px 10px;border-radius:99px;">🏆 بالاترین سطح</span>'}<span style="font-size:0.82rem;font-weight:900;color:var(--gold-color);background:rgba(245,158,11,.12);padding:3px 12px;border-radius:99px;">امتیاز: ${sd ? sd.score : 0}</span><button onclick="toggleGoldGuide()" style="background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--text-muted);font-size:0.75rem;padding:4px 10px;border-radius:99px;cursor:pointer;">📈 راهنمای ارتقا به رتبه بالاتر</button></span>${sd && sd.tier !== 'gold' ? '<div id="goldGuideBox" style="display:none;margin-top:10px;padding:12px;background:rgba(255,255,255,.05);border-radius:12px;border:1px solid rgba(255,255,255,.1);"><div style="font-size:0.8rem;font-weight:700;margin-bottom:8px;color:var(--text-muted);">شرایط لازم برای طلایی شدن:</div><div style="display:flex;flex-wrap:wrap;gap:6px;">' + getGoldRequirements(member).map(function(r) { return '<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:99px;background:' + (r.met ? 'rgba(16,185,129,.12)' : 'rgba(239,68,68,.12)') + ';color:' + (r.met ? '#10b981' : '#ef4444') + ';font-size:0.75rem;">' + (r.met ? '✅' : '❌') + ' ' + r.text + '</span>'; }).join('') + '</div></div>' : ''}</div>
-                            
-                            <div class="famrank"><div class="t">خانواده ${esc(member.firstName)} · رتبه ${myRank} از ${totalFam} خانوار</div><div class="bar"><i style="width:${posPct}%"></i></div><div class="s">شما از ${betterThan}٪ خانوارها جلوترید 🚀</div></div>
-                            <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span><span class="hello">${greeting}</span></div>
-                            <div class="fin">
-                                
-                                <div class="fcell cd">تا مقرری بعدی<b style="color:var(--gold-color)">${sal} روز مانده</b><div style="height:4px;background:rgba(255,255,255,.12);border-radius:99px;margin-top:6px;overflow:hidden;"><i style="display:block;height:100%;width:${salaryProgress}%;background:var(--gold-color);border-radius:99px;"></i></div></div>
-                                                                <div class="fcell cd">تا قسط بعدی<b style="color:${inst !== null ? 'var(--danger-color)' : 'var(--success-color)'}">${inst !== null ? inst + ' روز دیگه' : '—'}</b>${inst !== null && inst > 0 ? '<div style="height:4px;background:rgba(255,255,255,.12);border-radius:99px;margin-top:6px;overflow:hidden;"><i style="display:block;height:100%;width:' + instProgress + '%;background:' + (inst <= 3 ? 'var(--danger-color)' : 'var(--success-color)') + ';border-radius:99px;"></i></div>' : ''}</div>
-                            <div style="margin-top:10px;">
-<div class="plabel"><span>پیشرفت اقساط</span><span style="font-size:0.68rem;color:var(--text-muted);font-weight:normal;">${member.paidInstallments || 0} قسط از ${member.totalInstallments || 0} قسط پرداخت شده</span><span>${progPct}٪</span></div>
-<div class="pbar" style="margin-top:6px;"><i style="width:${progPct}%"></i></div>
-</div>                  </div>
-                        ${SYSTEM_MESSAGE ? `<div class="system-message-box"><div class="message-icon"><i class="fas fa-bullhorn"></i></div><div class="message-text">${esc(SYSTEM_MESSAGE)}</div></div>` : ''}
-                        ${gridHtml}
-                        <div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.8rem;">برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید</div>
-                    `;
+                <div class="hdr">
+                    <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                        <b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b>
+                        <span style="display:inline-flex;align-items:center;gap:7px;">${bdayCakeHtml}</span>
+                    </div>
+                    <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span><span class="hello">${greeting}</span></div>
+                    
+                </div>
+                ${SYSTEM_MESSAGE ? `<div class="system-message-box"><div class="message-icon"><i class="fas fa-bullhorn"></i></div><div class="message-text">${esc(SYSTEM_MESSAGE)}</div></div>` : ''}
+                ${gridHtml}
+                <div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.8rem;">برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید</div>
+            `;
+            
             // 🕐 ساعت زنده با ثانیه
             setInterval(function() {
                 const clk = document.getElementById('liveClock');
@@ -6485,6 +6892,22 @@ function renderDashboardContent() {
         });
 
         console.log('✅ تمام اسکریپت‌ها بارگذاری شدند - نسخه نهایی با صفحهٔ بارگذاری جدید');
+
+        // اضافه کردن نوار پایین با JavaScript (روش مطمئن)
+        (function() {
+            if (!document.getElementById('bottomNav')) {
+                var navHtml = '<div class="bottom-nav" id="bottomNav" style="display:none;">';
+                navHtml += '<button class="bottom-nav-btn" onclick="goToMenu()"><i class="fas fa-home"></i><span>خانه</span></button>';
+                navHtml += '<button class="bottom-nav-btn" onclick="handleLogoutFromNav()"><i class="fas fa-sign-out-alt"></i><span>خروج</span></button>';
+                navHtml += '<button class="bottom-nav-center" onclick="showBottomNavModal()"><i class="fas fa-chart-pie"></i></button>';
+                navHtml += '<button class="bottom-nav-btn" onclick="openSettings()"><i class="fas fa-sliders-h"></i><span>تنظیمات</span></button>';
+                navHtml += '<button class="bottom-nav-btn" onclick="showInfoNavModal()"><i class="fas fa-info-circle"></i><span>اطلاعات</span></button>';
+                navHtml += '</div>';
+                document.body.insertAdjacentHTML('beforeend', navHtml);
+                console.log('✅ نوار پایین با JavaScript اضافه شد');
+            }
+        })();
     </script>
+    
 </body>
 </html>
