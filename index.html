@@ -597,6 +597,20 @@ margin-top: 50px;
             user-select: none;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
+        .blink-dashboard {
+            animation: blinkSoft 1s ease-in-out infinite !important;
+        }
+
+        @keyframes blinkSoft {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+                transform: scale(1.05);
+            }
+        }
 
         .grid-menu-item:active { transform: scale(0.94); }
         .grid-menu-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 30px var(--shadow-color); border-color: var(--gradient-start); }
@@ -879,7 +893,7 @@ margin-top: 50px;
         .quick-info-box .progress-bar { height: 100%; border-radius: 6px; transition: width 1s ease; background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end)); }
 
         .dashboard-section {
-            background: var(--card-bg);
+            background: transparent;
             backdrop-filter: blur(10px);
             padding: 14px;
             margin-bottom: 12px;
@@ -889,7 +903,11 @@ margin-top: 50px;
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
         }
-
+                               .summary-section {
+            background-color: white !important;
+            border: 1px solid   white !important;
+            border-right: 4px solid   white !important;
+        }
         .dashboard-section:hover { box-shadow: 0 8px 30px var(--shadow-color); }
         .dashboard-section h3 { color: var(--text-primary); margin-bottom: 10px; font-size: 1.05rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
@@ -1534,6 +1552,113 @@ background: Wormy !important;
         }
             
         /* ===== صفحه اصلی جدید ===== */
+        /* ===== خلاصه حساب جدید ===== */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .summary-card {
+            background: var(--bg-secondary);
+            padding: 14px 10px;
+            border-radius: 14px;
+            text-align: center;
+            border-right: 4px solid;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, currentColor, transparent);
+            opacity: 0.3;
+        }
+
+        .summary-card:active {
+            transform: scale(0.97);
+        }
+
+        .summary-card .sc-icon {
+            font-size: 1.4rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .summary-card .sc-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .summary-card .sc-value {
+            font-size: 1.3rem;
+            font-weight: 900;
+            direction: ltr;
+        }
+
+        .summary-card.sc-balance {
+            border-right-color: var(--success-color);
+            background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(5,150,105,0.04));
+        }
+        .summary-card.sc-balance .sc-value { color: var(--success-color); }
+        .summary-card.sc-balance .sc-icon { color: var(--success-color); }
+
+        .summary-card.sc-debt {
+            border-right-color: var(--danger-color);
+            background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(220,38,38,0.04));
+        }
+        .summary-card.sc-debt .sc-value { color: var(--danger-color); }
+        .summary-card.sc-debt .sc-icon { color: var(--danger-color); }
+
+        .summary-card.sc-progress {
+            border-right-color: var(--gold-color);
+            background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(217,119,6,0.04));
+        }
+        .summary-card.sc-progress .sc-value { color: var(--gold-color); }
+        .summary-card.sc-progress .sc-icon { color: var(--gold-color); }
+
+        .summary-card.sc-overdue {
+            border-right-color: var(--purple-color);
+            background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(124,58,237,0.04));
+        }
+        .summary-card.sc-overdue .sc-value { color: var(--purple-color); }
+        .summary-card.sc-overdue .sc-icon { color: var(--purple-color); }
+
+        /* موبایل: ۲ ستون */
+        @media (max-width: 600px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .summary-card {
+                padding: 16px 8px;
+            }
+            .summary-card .sc-icon {
+                font-size: 1.6rem;
+            }
+            .summary-card .sc-label {
+                font-size: 0.75rem;
+            }
+            .summary-card .sc-value {
+                font-size: 1.4rem;
+            }
+        }
+
+        /* دسکتاپ: ۴ ستون */
+        @media (min-width: 601px) {
+            .summary-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+        }
                            .hdr {
             background: var(--card-bg);
             border: none;
@@ -4145,7 +4270,8 @@ function shamsiToContDays(jy, jm, jd) {
                 { tab: 'reports', label: 'گزارش‌گیری پیشرفته', icon: 'fa-file-alt', color: '#8b5cf6' }
             ];
             let gridHtml = '<div class="grid-menu">';
-            publicItems.forEach(item => { gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; });
+            publicItems.forEach(item => { const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
+            gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; });
             gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));"><i class="fas fa-gem"></i> ویژه اعضا</div>';
             specialItems.forEach(item => { gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="showComingSoon('${item.label}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span></div>`; });
             gridHtml += '<div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
@@ -5415,10 +5541,10 @@ function renderDashboardContent() {
                                         <span class="remaining">${remainingCount} باقیمانده</span>
                                     </div>
                                 </div>
-                                <div style="font-size:0.55rem;color:var(--text-secondary);margin-bottom:6px;">
-                                    تاریخ دریافت وام: <strong>${esc(member.loanReceiveDate || '---')}</strong> | 
-                                    تعداد کل اقساط: <strong>${totalInstallments}</strong> | 
-                                    مبلغ هر قسط: <strong>${member.installmentAmount ? fmtNum(member.installmentAmount) : '---'}</strong>
+                                <div style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:8px;display:flex;flex-direction:column;gap:4px;">
+                                    <div>📅 تاریخ دریافت وام: <strong style="color:var(--text-primary);">${esc(member.loanReceiveDate || '---')}</strong></div>
+                                    <div>🔢 تعداد کل اقساط: <strong style="color:var(--text-primary);">${totalInstallments}</strong></div>
+                                    <div>💰 مبلغ هر قسط: <strong style="color:var(--text-primary);">${member.installmentAmount ? fmtNum(member.installmentAmount) : '---'}</strong></div>
                                 </div>
                                 <div class="installment-table-wrapper" style="max-height:250px;overflow-y:auto;">
                                     <table>
@@ -5469,17 +5595,17 @@ function renderDashboardContent() {
             let lastTxHtml = '';
             if (topFiveTxns.length > 0) {
                 lastTxHtml = `
-                            <div class="dashboard-section" style="border-right-color:var(--orange-color);">
+                           <div class="dashboard-section" style="border-right-color:var(--orange-color);">
                                 <h3 style="color:var(--orange-color);font-size:0.9rem;"><i class="fas fa-receipt" style="color:var(--orange-color);"></i> ۵ تراکنش آخر</h3>
                                 <div class="mini-excel-wrapper">
                                     <table>
-                                        <thead><tr><th>شناسه</th><th>تاریخ</th><th>مبلغ</th><th>موجودی</th></tr></thead>
+                                        <thead><tr><th>شناسه</th><th>تاریخ</th><th>مقرری</th><th>موجودی</th></tr></thead>
                                         <tbody>
                                             ${topFiveTxns.map(tx => `
                                                 <tr>
                                                     <td>${esc(tx['ID'] || '---')}</td>
                                                     <td>${esc(tx['تاریخ تراکنش'] || '---')}</td>
-                                                    <td>${fmtNum(tx['مبلغ تراکنش'] || 0)}</td>
+                                                    <td>${fmtNum(tx['مقرری ماهانه'] || 0)}</td>
                                                     <td>${fmtNum(tx['موجودی'] || 0)}</td>
                                                 </tr>
                                             `).join('')}
@@ -5487,6 +5613,7 @@ function renderDashboardContent() {
                                     </table>
                                 </div>
                             </div>
+                                                   
                         `;
             }
 
@@ -5535,30 +5662,35 @@ function renderDashboardContent() {
             }
 
             const summaryBox = `
-                        <div class="dashboard-section" style="border-right-color:var(--gold-color);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(217,119,6,0.06));">
-                            <h3 style="font-size:0.95rem;margin-bottom:8px;"><i class="fas fa-file-invoice" style="color:var(--gold-color);"></i> خلاصه حساب</h3>
-                            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
-                                <div style="background:var(--bg-secondary);padding:10px;border-radius:10px;text-align:center;border-right:3px solid var(--success-color);">
-                                    <div style="font-size:0.6rem;color:var(--text-secondary);">موجودی</div>
-                                    <div style="font-size:1.2rem;font-weight:bold;color:var(--success-color);">${fmtNum(balance)}</div>
+                  <div class="dashboard-section summary-section"><h3 style="font-size:0.95rem;margin-bottom:12px;"><i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب</h3>
+                            <div class="summary-grid">
+                                <div class="summary-card sc-balance">
+                                    <span class="sc-icon"><i class="fas fa-wallet"></i></span>
+                                    <div class="sc-label">موجودی</div>
+                                    <div class="sc-value">${fmtNum(balance)}</div>
                                 </div>
-                                <div style="background:var(--bg-secondary);padding:10px;border-radius:10px;text-align:center;border-right:3px solid var(--danger-color);">
-                                    <div style="font-size:0.6rem;color:var(--text-secondary);">بدهی</div>
-                                    <div style="font-size:1.2rem;font-weight:bold;color:var(--danger-color);">${fmtNum(member?.loanBalance || 0)}</div>
+                                <div class="summary-card sc-debt">
+                                    <span class="sc-icon"><i class="fas fa-hand-holding-usd"></i></span>
+                                    <div class="sc-label">بدهی</div>
+                                    <div class="sc-value">${fmtNum(member?.loanBalance || 0)}</div>
                                 </div>
-                                <div style="background:var(--bg-secondary);padding:10px;border-radius:10px;text-align:center;border-right:3px solid var(--gold-color);">
-                                    <div style="font-size:0.6rem;color:var(--text-secondary);">پیشرفت اقساط</div>
-                                    <div style="font-size:1.2rem;font-weight:bold;color:var(--gold-color);">${progressPercent}%</div>
-                                    <div style="width:100%;height:4px;background:var(--bg-secondary);border-radius:4px;overflow:hidden;margin-top:2px;"><div style="width:${progressPercent}%;height:100%;background:linear-gradient(90deg,var(--gold-color),#d97706);border-radius:4px;"></div></div>
+                                <div class="summary-card sc-progress">
+                                    <span class="sc-icon"><i class="fas fa-chart-line"></i></span>
+                                    <div class="sc-label">پیشرفت اقساط</div>
+                                    <div class="sc-value">${progressPercent}%</div>
+                                    <div style="width:100%;height:5px;background:rgba(255,255,255,0.1);border-radius:99px;overflow:hidden;margin-top:6px;"><div style="width:${progressPercent}%;height:100%;background:linear-gradient(90deg,var(--gold-color),#d97706);border-radius:99px;transition:width 0.5s ease;"></div></div>
                                 </div>
-                                <div style="background:var(--bg-secondary);padding:10px;border-radius:10px;text-align:center;border-right:3px solid var(--purple-color);">
-                                    <div style="font-size:0.6rem;color:var(--text-secondary);">اقساط معوقه</div>
-                                    <div style="font-size:1.2rem;font-weight:bold;color:var(--purple-color);">${overdueInstallments}</div>
+                                <div class="summary-card sc-overdue">
+                                    <span class="sc-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                                    <div class="sc-label">اقساط معوقه</div>
+                                    <div class="sc-value">${overdueInstallments}</div>
                                 </div>
+                            </div>
+                        </div>
                             </div>
                             <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:0.6rem;color:var(--text-secondary);">
                                 <div><span style="font-weight:bold;">وضعیت پرداخت:</span> <span style="color:${paymentColor};">${paymentStatus}</span></div>
-                                <div><span style="font-weight:bold;">تعداد اقساط:</span> ${member?.totalInstallments || 0} (پرداخت شده: ${member?.paidInstallments || 0})</div>
+                                
                             </div>
                         </div>
                     `;
@@ -5634,19 +5766,22 @@ function renderDashboardContent() {
             return `
                         <div class="info-box"><i class="fas fa-chart-line"></i> صورتحساب مالی شما</div>
                         ${summaryBox}
-                        <div class="dashboard-section" style="border-right-color:${paymentColor};padding:10px 14px;">
-                            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-                                <span style="font-size:1.5rem;">${paymentIcon}</span>
-                                <span style="font-weight:bold;color:${paymentColor};font-size:1rem;">${paymentStatus}</span>
-                                ${member.loanBalance > 0 ? `<span style="font-size:0.7rem;color:var(--text-secondary);">| مانده وام: ${fmtNum(member.loanBalance || 0)}</span>` : ''}
+                        <div class="dashboard-section" style="border-right-color:${paymentColor};padding:12px 14px;">
+                            <div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;">
+                                <span style="font-size:1.8rem;flex-shrink:0;">${paymentIcon}</span>
+                                <div style="flex:1;min-width:0;">
+                                    <div style="font-weight:900;color:${paymentColor};font-size:1.05rem;line-height:1.4;">${paymentStatus}</div>
+                                    <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:2px;">تعداد اقساط: ${totalInstallments} (پرداخت شده: ${paidInstallments})</div>
+                                    ${member.loanBalance > 0 ? `<div style="font-size:0.72rem;color:var(--text-secondary);margin-top:2px;">مانده وام: ${fmtNum(member.loanBalance || 0)}</div>` : ''}
+                                </div>
                             </div>
                         </div>
                         ${adminHtml}
                         ${warningsHtml}
                         ${loanInfoHtml}
-                        ${approvedHtml}
                         ${installmentPlanHtml}
                         ${lastTxHtml}
+                        ${approvedHtml}
                         ${allTxnsHtml}
                         ${miniSmsHtml}
                     `;
