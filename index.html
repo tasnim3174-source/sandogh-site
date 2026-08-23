@@ -90,7 +90,7 @@
             scroll-behavior: smooth;
         }
 
-        body {
+                body {
             font-size: 1rem;
             background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             min-height: 100vh;
@@ -100,10 +100,28 @@
             -webkit-overflow-scrolling: touch;
             height: 100%;
             transition: background 0.5s ease;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            opacity: 2;
+            pointer-events: none;
+            z-index: -1;
+            transition: opacity 0.5s ease;
         }
 
         [data-theme="dark"] body {
             background: linear-gradient(135deg, #0a0a1a 0%, #141428 100%);
+        }
+        [data-theme="dark"] body::before {
+            opacity: 0.8;
         }
 
         .login-bg-animated {
@@ -257,8 +275,7 @@
             z-index: 1;
         }
 
-        .login-page,
-        .app-page {
+                .login-page {
             background: var(--login-box-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -272,9 +289,23 @@
             transition: all 0.5s ease;
         }
 
-        .login-page:hover,
-        .app-page:hover {
+        .login-page:hover {
             box-shadow: 0 12px 48px rgba(102, 126, 234, 0.4);
+        }
+
+        .app-page {
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            max-width: 100%;
+            width: 100%;
+            overflow: hidden;
+            overflow-y: auto;
+            border: none;
+            transition: all 0.5s ease;
         }
 
         h1 {
@@ -492,17 +523,65 @@
 
         .login-combined-hint .hint-item i { margin-left: 4px; }
 
-        .grid-menu {
+            .grid-menu {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 14px;
-            padding: 16px;
-            background: var(--card-bg);
-            border-radius: 18px;
-            box-shadow: 0 4px 30px var(--shadow-color);
+            padding: 5px 16px;
+margin-top: 50px;
+            background: transparent;
+            border-radius: 0;
+            box-shadow: none;
             margin-bottom: 14px;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            backdrop-filter: none;
+            border: none;
+            width: 100%;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* منوی اصلی در موبایل: ۳ ستون */
+        @media (max-width: 600px) {
+            .grid-menu {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+                padding: 10px;
+            }
+        }
+
+        /* منوی اصلی در تبلت: ۴ ستون */
+        @media (min-width: 601px) and (max-width: 900px) {
+            .grid-menu {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+        }
+
+        /* منوی اصلی در دسکتاپ: ۵ ستون */
+        @media (min-width: 901px) {
+            .grid-menu {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 16px;
+            }
         }
 
         .grid-menu-item {
@@ -522,17 +601,25 @@
         .grid-menu-item:active { transform: scale(0.94); }
         .grid-menu-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 8px 30px var(--shadow-color); border-color: var(--gradient-start); }
 
-        .grid-menu-item .menu-icon {
-            width: 120px; height: 120px;
-            border-radius: 28px;
+                .grid-menu-item .menu-icon {
+            width: 70px; height: 70px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 4rem;
+            margin: 0 auto 10px;
+            font-size: 1.8rem;
             color: #fff;
             transition: all 0.3s ease;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* آیکون بزرگ‌تر در دسکتاپ */
+        @media (min-width: 901px) {
+            .grid-menu-item .menu-icon {
+                width: 90px; height: 90px;
+                font-size: 2.5rem;
+            }
         }
 
         .grid-menu-item:hover .menu-icon { transform: scale(1.05) rotate(-3deg); box-shadow: 0 8px 35px rgba(0, 0, 0, 0.2); }
@@ -1334,31 +1421,42 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.04); }
         }
-        .grid-menu {
+                .grid-menu {
+background: Wormy !important;
             background: linear-gradient(160deg, var(--card-bg), rgba(102,126,234,0.05));
         }
-        .grid-menu-item {
-            transition: all 0.35s cubic-bezier(0.34, 1.3, 0.64, 1);
+                .grid-menu-item {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 16px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid var(--border-color);
             position: relative;
-            overflow: hidden;
+            touch-action: manipulation;
+            user-select: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            animation: fadeInUp 0.6s ease backwards;
         }
-        .grid-menu-item::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -80%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-            transform: skewX(-20deg);
-            transition: left 0.6s ease;
-            pointer-events: none;
-        }
-        .grid-menu-item:hover::after {
-            left: 130%;
-        }
-        .grid-menu-item:hover {
-            transform: translateY(-6px) scale(1.03);
-            box-shadow: 0 14px 38px var(--shadow-color);
-        }
+
+        /* انیمیشن تأخیری برای هر آیتم */
+        .grid-menu-item:nth-child(1) { animation-delay: 0.05s; }
+        .grid-menu-item:nth-child(2) { animation-delay: 0.1s; }
+        .grid-menu-item:nth-child(3) { animation-delay: 0.15s; }
+        .grid-menu-item:nth-child(4) { animation-delay: 0.2s; }
+        .grid-menu-item:nth-child(5) { animation-delay: 0.25s; }
+        .grid-menu-item:nth-child(6) { animation-delay: 0.3s; }
+        .grid-menu-item:nth-child(7) { animation-delay: 0.35s; }
+        .grid-menu-item:nth-child(8) { animation-delay: 0.4s; }
+        .grid-menu-item:nth-child(9) { animation-delay: 0.45s; }
+        .grid-menu-item:nth-child(10) { animation-delay: 0.5s; }
+        .grid-menu-item:nth-child(11) { animation-delay: 0.55s; }
+        .grid-menu-item:nth-child(12) { animation-delay: 0.6s; }
+        .grid-menu-item:nth-child(13) { animation-delay: 0.65s; }
+        .grid-menu-item:nth-child(14) { animation-delay: 0.7s; }
+        .grid-menu-item:nth-child(15) { animation-delay: 0.75s; }
+        .grid-menu-item:nth-child(16) { animation-delay: 0.8s; }
         .grid-menu-item:hover .menu-icon {
             transform: scale(1.08) rotate(-4deg);
         }
@@ -1411,7 +1509,8 @@
             .header-date .date-row { font-size: 0.8rem; gap: 4px; }
             .header-date .date-row #clockDisplay { font-size: 1rem; }
             .header-rank .rank-value { font-size: 1.2rem; }
-            .login-page, .app-page { padding: 12px; border-radius: 18px; }
+                        .login-page { padding: 12px; border-radius: 18px; }
+            .app-page { padding: 0 !important; border-radius: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; width: 100% !important; max-width: 100% !important; }
             h1 { font-size: 1.2rem; }
             .report-summary { grid-template-columns: 1fr 1fr; }
         }
@@ -1435,8 +1534,23 @@
         }
             
         /* ===== صفحه اصلی جدید ===== */
-        .hdr{background:var(--card-bg);border:1px solid var(--border-color);border-radius:24px;box-shadow:0 14px 40px var(--shadow-color);padding:16px;margin-bottom:14px}
-        .hdr .lbl{font-size:0.78rem;color:var(--text-secondary);font-weight:700}
+                           .hdr {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 0;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            padding: 16px;
+            margin-bottom: 0;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 99;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+                .hdr .lbl{font-size:0.78rem;color:var(--text-secondary);font-weight:700}
         .rankrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
         .rankrow .big{font-size:2.1rem;font-weight:900;color:var(--gold-color)}
         .tierpill{background:linear-gradient(135deg,var(--gold-color),#d97706);color:#fff;padding:4px 14px;border-radius:99px;font-size:0.75rem;font-weight:800}
@@ -1445,12 +1559,12 @@
         .famrank .bar{height:7px;background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:99px;overflow:hidden;margin:7px 0 5px}
         .famrank .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gradient-start),var(--gradient-end))}
         .famrank .s{font-size:0.68rem;color:var(--text-secondary)}
-        .daterow{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:0.78rem;color:var(--text-secondary);font-weight:700;flex-wrap:nowrap;overflow-x:auto}
+                .daterow{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:0.78rem;color:var(--text-secondary);font-weight:700;flex-wrap:nowrap;overflow-x:auto}
         .clock{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:99px;padding:3px 11px;font-size:0.72rem;color:var(--text-primary);white-space:nowrap}
         .bdayrow{margin-top:8px}
         .bday{display:inline-block;background:linear-gradient(135deg,#ed64a6,#db2777);color:#fff;border-radius:14px;padding:6px 14px;font-size:0.72rem;font-weight:800;animation:blink 1.6s infinite}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:.6}}
-        .greet{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+                .greet{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
         .greet b{font-size:1.05rem;color:var(--text-primary)}
         .hello{background:rgba(245,158,11,.15);color:var(--gold-color);border-radius:99px;padding:4px 16px;font-size:0.8rem;font-weight:800}
         .achrow{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
