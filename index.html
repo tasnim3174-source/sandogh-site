@@ -4341,14 +4341,51 @@ function shamsiToContDays(jy, jm, jd) {
             const t = getTodayShamsi();
             const tn = shamsiDayNum(t.y, t.m, t.d);
 
-            // 🎂 آیا امروز تولد خود کاربر است؟
-            let isUserBirthday = false;
+            // 🎂 آیا در این ماه تولد خود کاربر است؟
+            let isUserBirthdayMonth = false;
+            let birthdayDay = 0;
             if (member.birthDateShamsi) {
-                const bb = member.birthDateShamsi.split('/');
-                if (bb.length === 3 && +bb[1] === t.m && +bb[2] === t.d) isUserBirthday = true;
+                // پشتیبانی از فرمت‌های مختلف: 13600630 یا 1360/06/30
+                let dateStr = String(member.birthDateShamsi).trim();
+                let month, day;
+                
+                // فرمت ۸ رقمی: 13600630
+                if (/^\d{8}$/.test(dateStr)) {
+                    month = +dateStr.substring(4, 6);
+                    day = +dateStr.substring(6, 8);
+                } else {
+                    // فرمت با جداکننده: 1360/06/30 یا 1360-06-30
+                    dateStr = dateStr.replace(/[-.]/g, '/');
+                    const bb = dateStr.split('/');
+                    if (bb.length === 3) {
+                        month = +bb[1];
+                        day = +bb[2];
+                    }
+                }
+                
+                if (month === t.m) {
+                    isUserBirthdayMonth = true;
+                    birthdayDay = day;
+                }
             }
-            const bdayCakeHtml = isUserBirthday ? '<span class="bdaycake" title="🎉 تولدتان مبارک!">🎂</span>' : '';
-
+            
+           const isBirthdayToday = (isUserBirthdayMonth && birthdayDay === t.d);
+            
+            // 🎯 ذخیره روز تولد برای استفاده در تابع کلیک
+            if (isUserBirthdayMonth) {
+                window.currentMemberBirthdayDay = birthdayDay;
+                window.currentMemberBirthdayMonth = t.m;
+                window.isBirthdayToday = isBirthdayToday;
+            }
+            
+            let bdayCakeHtml = '';
+            if (isUserBirthdayMonth) {
+                if (isBirthdayToday) {
+                    bdayCakeHtml = '<span class="bdaycake" onclick="showBirthdayInfo()" style="cursor:pointer;" title="🎉 برای اطلاعات بیشتر کلیک کنید">🎂</span>';
+                } else {
+                    bdayCakeHtml = `<span class="bdaycake" onclick="showBirthdayInfo()" style="cursor:pointer;" title="🎂 برای اطلاعات بیشتر کلیک کنید">🎂</span>`;
+                }
+            }
             // ⏳ شمارش‌ها + پیشرفت
             let nextInst = null;
             const todayCont = shamsiToContDays(t.y, t.m, t.d);
@@ -4434,8 +4471,8 @@ function shamsiToContDays(jy, jm, jd) {
             content.innerHTML = `
                 <div class="hdr">
                     <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                        <b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b>
-                        <span style="display:inline-flex;align-items:center;gap:7px;">${bdayCakeHtml}</span>
+                        <b>${bdayCakeHtml}${esc(member.firstName)} عزیز، خوش آمدید</b>
+                        
                     </div>
                     <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span><span class="hello">${greeting}</span></div>
                     
@@ -4517,26 +4554,74 @@ function shamsiToContDays(jy, jm, jd) {
             const tn = shamsiDayNum(t.y, t.m, t.d);
             const familyAll = [member, ...getFamilyMembers()];
             const up = [];
-            familyAll.forEach(fm => {
+            const birthdayList = [];
+            let birthMonth = false;
+            
+         familyAll.forEach(fm => {
                 if (!fm.birthDateShamsi) return;
-                const bp = fm.birthDateShamsi.split('/');
-                if (bp.length !== 3) return;
-                let bn = shamsiDayNum(t.y, +bp[1], +bp[2]);
-                if (bn < tn) bn = shamsiDayNum(t.y + 1, +bp[1], +bp[2]);
-                up.push({ name: fm.firstName, days: bn - tn });
+                // پشتیبانی از فرمت‌های مختلف: 13600630 یا 1360/06/30 یا 1360-06-30
+                let dateStr = String(fm.birthDateShamsi).trim();
+                let year, month, day;
+                
+                // فرمت ۸ رقمی: 13600630
+                if (/^\d{8}$/.test(dateStr)) {
+                    year = +dateStr.substring(0, 4);
+                    month = +dateStr.substring(4, 6);
+                    day = +dateStr.substring(6, 8);
+                } else {
+                    // فرمت با جداکننده: 1360/06/30 یا 1360-06-30
+                    dateStr = dateStr.replace(/[-.]/g, '/');
+                    const bb = dateStr.split('/');
+                    if (bb.length !== 3) return;
+                    year = +bb[0];
+                    month = +bb[1];
+                    day = +bb[2];
+                }
+                
+                // 🎯 محاسبه روزهای واقعی با استفاده از shamsiToContDays
+                const todayDays = shamsiToContDays(t.y, t.m, t.d);
+                let birthdayDays = shamsiToContDays(t.y, month, day);
+                if (birthdayDays <= todayDays) {
+                    birthdayDays = shamsiToContDays(t.y + 1, month, day);
+                }
+                const daysUntil = birthdayDays - todayDays;
+                up.push({ name: fm.firstName, days: daysUntil });
+                
+                // برای لیست تولدهای این ماه
+                if (month === t.m) {
+                    birthdayList.push({ name: fm.firstName, day: day });
+                    if (fm.id === member.id) birthMonth = true;
+                }
             });
             up.sort((a, b) => a.days - b.days);
+            birthdayList.sort((a, b) => a.day - b.day);
+            
             let bdayHtml = '';
             if (up.length) {
                 bdayHtml = '<div class="bdayrow"><span class="bday">' + ((up[0].days === 0) ? ('🎂 امروز تولد ' + esc(up[0].name) + ' است 🎉') : ('🎂 نزدیک‌ترین تولد: ' + esc(up[0].name) + ' · ' + up[0].days + ' روز دیگر')) + '</span></div>';
             }
+            
+            // 🎯 نمایش لیست تولدهای این ماه
+            if (birthdayList.length > 0) {
+                bdayHtml += '<div style="margin-top:10px;background:var(--bg-secondary);border-radius:12px;padding:12px;border:1px solid var(--border-color);">';
+                bdayHtml += '<div style="font-size:0.85rem;font-weight:800;color:var(--text-primary);margin-bottom:8px;">🎂 تولدهای این ماه:</div>';
+                birthdayList.forEach(b => {
+                    const isToday = (b.day === t.d);
+                    bdayHtml += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--border-color);">';
+                    bdayHtml += '<span style="font-size:1.2rem;">🎂</span>';
+                    bdayHtml += '<span style="font-size:0.8rem;font-weight:700;color:var(--text-primary);">' + esc(b.name) + '</span>';
+                    bdayHtml += '<span style="font-size:0.75rem;color:var(--text-secondary);">روز ' + b.day + ' ماه</span>';
+                    if (isToday) bdayHtml += '<span style="background:var(--gold-color);color:#fff;padding:2px 8px;border-radius:99px;font-size:0.65rem;font-weight:800;">امروز 🎉</span>';
+                    bdayHtml += '</div>';
+                });
+                bdayHtml += '</div>';
+            }
+            
             let years = 0;
             if (member.datMiladi) { const dd = new Date(member.datMiladi); if (!isNaN(dd.getTime())) years = Math.max(0, new Date().getFullYear() - dd.getFullYear()); }
             const txs = transactionsByMember.get(String(member.id)) || [];
             let active = false;
             txs.forEach(tx => { const tp = (tx['تاریخ تراکنش'] || '').split('/'); if (tp.length === 3 && +tp[1] === t.m && +tp[0] === t.y) active = true; });
-            let birthMonth = false;
-            if (member.birthDateShamsi) { const bb = member.birthDateShamsi.split('/'); if (bb.length === 3 && +bb[1] === t.m) birthMonth = true; }
             const sd = memberScores[member.id];
             const badges = [
                 { i: '🕰️', n: 'باسابقه', e: years >= 5, d: years + ' سال عضویت' },
@@ -5499,12 +5584,13 @@ const realBalance = getMemberRealBalance(member.id);
 
             return `
                         <div class="info-box"><i class="fas fa-user-circle"></i> اطلاعات شخصی شما</div>
-                        <div class="dashboard-section">
-                            <div style="display:flex;align-items:center;gap:15px;flex-wrap:wrap;">
+                        <div class="dashboard-section" style="background:#ffffff;border:1px solid rgba(102,126,234,0.2);">
+                            <div style="display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;text-align:center;">
+                                <div style="min-width:150px;">
                                 <div style="flex:1;min-width:150px;">
                                     <div style="font-size:1.2rem;font-weight:bold;color:var(--text-primary);">${esc(member.firstName)}</div>
                                     <div style="font-size:0.85rem;color:var(--text-secondary);">${esc(member.accountNumber)}</div>
-                                    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+                                    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
                                         <span class="account-status-badge ${member.active !== false ? 'active' : 'inactive'}">${member.active !== false ? 'فعال' : 'غیرفعال'}</span>
                                         <span style="font-size:0.7rem;background:${memberScores[member.id]?.tier === 'gold' ? '#FFD700' : memberScores[member.id]?.tier === 'silver' ? '#C0C0C0' : '#6B7280'};color:#fff;padding:2px 12px;border-radius:12px;">${memberScores[member.id]?.tierName || 'عادی'}</span>
                                     </div>
@@ -5513,6 +5599,24 @@ const realBalance = getMemberRealBalance(member.id);
                                     <div><div style="font-size:0.6rem;color:var(--text-secondary);">مدت عضویت</div><div style="font-weight:bold;font-size:0.95rem;">${membershipDuration}</div></div>
                                     <div><div style="font-size:0.6rem;color:var(--text-secondary);">تعداد ورود</div><div style="font-weight:bold;font-size:0.95rem;">${visitInfo.count || 0}</div></div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-section">
+                            <h3><i class="fas fa-user"></i> اطلاعات کامل</h3>
+                            <div class="last-tx-grid">
+                                <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">مدت عضویت</div><div class="last-tx-value" style="color:var(--gradient-start);">${membershipDuration}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="profilePwd" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button onclick="toggleProfilePwd()" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.65rem;touch-action:manipulation;min-height:28px;"><i id="profilePwdIcon" class="fas fa-eye"></i></button></div></div>
+                                <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
                             </div>
                         </div>
 
@@ -5542,40 +5646,7 @@ const realBalance = getMemberRealBalance(member.id);
                                 ` : ''}
                             </div>
                         </div>
-
-                        <div class="dashboard-section">
-                            <h3><i class="fas fa-user"></i> اطلاعات کامل</h3>
-                            <div class="last-tx-grid">
-                                <div class="last-tx-item"><div class="last-tx-label">نام</div><div class="last-tx-value">${esc(member.firstName)}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">شماره حساب</div><div class="last-tx-value">${esc(member.accountNumber)}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">تلفن ۱</div><div class="last-tx-value">${esc(member.phone1 || '---')}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">تلفن ۲</div><div class="last-tx-value">${esc(member.phone2 || '---')}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">تاریخ تولد</div><div class="last-tx-value">${esc(member.birthDateShamsi || '---')}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">کد خانوار</div><div class="last-tx-value">${esc(member.heh1 || '---')}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">نقش خانوار</div><div class="last-tx-value">${member.heh2 === '01' ? 'سرپرست خانوار' : (member.heh2 === '02' ? 'همسر' : 'فرزند')}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">تاریخ عضویت</div><div class="last-tx-value">${esc(member.openDate || '---')}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">مدت عضویت</div><div class="last-tx-value" style="color:var(--gradient-start);">${membershipDuration}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">نام کاربری</div><div class="last-tx-value">${esc(currentUser.username)}</div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">رمز عبور</div><div class="password-field"><span class="value" id="profilePwd" data-password="${esc(actualPassword)}" data-visible="false">••••••••</span><button onclick="toggleProfilePwd()" style="background:rgba(102,126,234,0.1);border:none;color:var(--gradient-start);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.65rem;touch-action:manipulation;min-height:28px;"><i id="profilePwdIcon" class="fas fa-eye"></i></button></div></div>
-                                <div class="last-tx-item"><div class="last-tx-label">نقش</div><div class="last-tx-value">${currentUser.role === 'admin' ? 'مدیر' : (member.isCouncil ? 'عضو شورا' : 'عضو')}</div></div>
-                            </div>
-                        </div>
                     `;
-        }
-
-        function toggleProfilePwd() {
-            const el = document.getElementById('profilePwd');
-            const icon = document.getElementById('profilePwdIcon');
-            if (!el) return;
-            if (el.dataset.visible === 'false') {
-                el.textContent = el.dataset.password;
-                el.dataset.visible = 'true';
-                icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash');
-            } else {
-                el.textContent = '••••••••';
-                el.dataset.visible = 'false';
-                icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye');
-            }
         }
         // ============================================================
         // بخش ۱۴: رندر صورتحساب
@@ -6591,14 +6662,34 @@ function renderDashboardContent() {
             const totalOverdue = members.reduce((sum, m) => sum + Math.abs(m.overdueInstallments || 0), 0);
             const membersWithLoan = members.filter(m => m.loanBalance > 0).length;
 
-            const now = new Date();
-            const jalaliMonth = now.getMonth() + 1;
-            const birthdays = members.filter(m => {
-                if (!m.birthDateShamsi) return false;
-                const parts = m.birthDateShamsi.split('/');
-                return parts.length === 3 && parseInt(parts[1]) === jalaliMonth;
+            const t = getTodayShamsi();
+            const birthdays = [];
+            members.forEach(m => {
+                if (!m.birthDateShamsi) return;
+                // پشتیبانی از فرمت‌های مختلف: 13600630 یا 1360/06/30 یا 1360-06-30
+                let dateStr = String(m.birthDateShamsi).trim();
+                let year, month, day;
+                
+                // فرمت ۸ رقمی: 13600630
+                if (/^\d{8}$/.test(dateStr)) {
+                    year = dateStr.substring(0, 4);
+                    month = dateStr.substring(4, 6);
+                    day = dateStr.substring(6, 8);
+                } else {
+                    // فرمت با جداکننده: 1360/06/30 یا 1360-06-30
+                    dateStr = dateStr.replace(/[-.]/g, '/');
+                    const parts = dateStr.split('/');
+                    if (parts.length !== 3) return;
+                    year = parts[0];
+                    month = parts[1];
+                    day = parts[2];
+                }
+                
+                if (+month === t.m) {
+                    birthdays.push({ member: m, day: +day, fullDate: `${year}/${month}/${day}` });
+                }
             });
-
+            birthdays.sort((a, b) => a.day - b.day);
             const overdueMembers = members.filter(m => m.overdueInstallments < 0);
 
             return `
@@ -6619,7 +6710,15 @@ function renderDashboardContent() {
                         <div class="dashboard-section" style="border-right-color:#14b8a6;">
                             <h3><i class="fas fa-birthday-cake" style="color:#14b8a6;"></i> تولدهای این ماه (${birthdays.length} نفر)</h3>
                             ${birthdays.length === 0 ? '<p style="color:var(--text-secondary);padding:10px;font-size:0.75rem;">تولدی ثبت نشده</p>' :
-                                birthdays.map(m => `<div style="padding:6px 10px;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;"><span style="font-size:0.7rem;">${esc(m.firstName)}</span><span style="font-size:0.6rem;color:var(--text-secondary);">${esc(m.birthDateShamsi)}</span></div>`).join('')}
+                                birthdays.map(b => {
+                                    const isToday = (b.day === t.d);
+                                    return `<div style="padding:8px 10px;border-bottom:1px solid var(--border-color);display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:1rem;">🎂</span>
+                                        <span style="font-size:0.75rem;font-weight:700;color:var(--text-primary);">${esc(b.member.firstName)}</span>
+                                        <span style="font-size:0.65rem;color:var(--text-secondary);">روز ${b.day} ماه</span>
+                                        ${isToday ? '<span style="background:var(--gold-color);color:#fff;padding:2px 8px;border-radius:99px;font-size:0.6rem;font-weight:800;margin-right:auto;">امروز 🎉</span>' : ''}
+                                    </div>`;
+                                }).join('')}
                         </div>
                         <div class="dashboard-section" style="border-right-color:#f97316;">
                             <h3><i class="fas fa-hand-holding-usd" style="color:#f97316;"></i> معوقه‌ها (${overdueMembers.length} نفر)</h3>
@@ -7030,6 +7129,79 @@ function renderDashboardContent() {
             renderPage('menu');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
+// 🎯 نمایش اطلاعات تولد در مودال
+function showBirthdayInfo() {
+    const member = members.find(m => m.id === currentUser.memberId);
+    if (!member) return;
+    
+    const birthdayDay = window.currentMemberBirthdayDay;
+    const birthdayMonth = window.currentMemberBirthdayMonth;
+    const isToday = window.isBirthdayToday;
+    const t = getTodayShamsi();
+    
+    // محاسبه روزهای باقی‌مانده
+    const todayDays = shamsiToContDays(t.y, t.m, t.d);
+    let birthdayDays = shamsiToContDays(t.y, birthdayMonth, birthdayDay);
+    if (birthdayDays <= todayDays) {
+        birthdayDays = shamsiToContDays(t.y + 1, birthdayMonth, birthdayDay);
+    }
+    const daysUntil = birthdayDays - todayDays;
+    
+    const monthNames = ['', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+    const monthName = monthNames[birthdayMonth] || '';
+    
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);animation:fadeIn 0.3s;';
+    
+    const box = document.createElement('div');
+    box.style.cssText = 'background:var(--card-bg);border-radius:24px;padding:30px;text-align:center;max-width:360px;margin:20px;box-shadow:0 20px 60px var(--shadow-color);border:2px solid var(--gold-color);';
+    
+    const emoji = document.createElement('div');
+    emoji.style.cssText = 'font-size:5rem;margin-bottom:16px;animation:bounce 1s ease-in-out infinite;';
+    emoji.textContent = isToday ? '🎉' : '🎂';
+    
+    const title = document.createElement('h2');
+    title.style.cssText = 'color:var(--text-primary);margin-bottom:12px;font-size:1.3rem;font-weight:900;';
+    title.textContent = isToday ? '🎉 تولدتان مبارک!' : '🎂 اطلاعات تولد شما';
+    
+    const info = document.createElement('div');
+    info.style.cssText = 'background:var(--bg-secondary);border-radius:16px;padding:16px;margin:16px 0;border:1px solid var(--border-color);';
+    
+    if (isToday) {
+        info.innerHTML = `
+            <div style="font-size:1rem;color:var(--gold-color);font-weight:800;margin-bottom:8px;">امروز روز تولد شماست!</div>
+            <div style="font-size:0.9rem;color:var(--text-secondary);line-height:1.8;">
+                🎂 تاریخ تولد: <strong style="color:var(--text-primary);">روز ${birthdayDay} ${monthName}</strong><br>
+                🎉 امیدواریم سالی پر از شادی و موفقیت داشته باشید!
+            </div>
+        `;
+    } else {
+        info.innerHTML = `
+            <div style="font-size:1rem;color:var(--text-primary);font-weight:800;margin-bottom:8px;">📅 تاریخ تولد شما</div>
+            <div style="font-size:1.4rem;color:var(--gold-color);font-weight:900;margin:12px 0;">روز ${birthdayDay} ${monthName}</div>
+            <div style="font-size:0.9rem;color:var(--text-secondary);line-height:1.8;">
+                ⏳ <strong>${daysUntil} روز</strong> تا تولد شما باقی مانده
+            </div>
+        `;
+    }
+    
+    const btn = document.createElement('button');
+    btn.style.cssText = 'background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));color:#fff;border:none;padding:12px 32px;border-radius:14px;cursor:pointer;font-size:0.95rem;font-weight:800;touch-action:manipulation;box-shadow:0 4px 15px var(--shadow-color);font-family:inherit;margin-top:8px;';
+    btn.textContent = 'بستن ✕';
+    btn.onclick = function() { modal.remove(); };
+    
+    box.appendChild(emoji);
+    box.appendChild(title);
+    box.appendChild(info);
+    box.appendChild(btn);
+    modal.appendChild(box);
+    document.body.appendChild(modal);
+    
+    // بستن با کلیک روی پس‌زمینه
+    modal.onclick = function(e) {
+        if (e.target === modal) modal.remove();
+    };
+}
 
         function selectMenuItem(tab) {
             currentPage = tab;
