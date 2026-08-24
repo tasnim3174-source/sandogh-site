@@ -4255,10 +4255,10 @@ function shamsiToContDays(jy, jm, jd) {
                 { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316' }
             ];
             const specialItems = [
-                { tab: 'toddlerGrowth', label: 'رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
-                { tab: 'teenPiggy', label: 'قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
-                { tab: 'ladySpecial', label: 'بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' }
-            ];
+    { tab: 'toddlerGrowth', label: '🧒 رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
+    { tab: 'teenPiggy', label: 'قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
+    { tab: 'ladySpecial', label: 'بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' }
+];
             const familyItems = [
                 { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
                 { tab: 'familyInfo', label: 'اطلاعات کلی خانواده', icon: 'fa-users-cog', color: '#10b981' }
@@ -4273,7 +4273,32 @@ function shamsiToContDays(jy, jm, jd) {
             publicItems.forEach(item => { const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
             gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; });
             gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));"><i class="fas fa-gem"></i> ویژه اعضا</div>';
-            specialItems.forEach(item => { gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="showComingSoon('${item.label}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span></div>`; });
+           specialItems.forEach(item => {
+    let clickHandler = '';
+    let badgeHtml = '';
+    
+    if (item.tab === 'toddlerGrowth') {
+        clickHandler = `openToddlerGames()`;
+        badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">✅ فعال</span>`;
+    } else if (item.tab === 'ladySpecial') {
+        clickHandler = `openLadySection()`;
+        badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">✅ فعال</span>`;
+    } else if (item.tab === 'teenPiggy') {
+        clickHandler = `openTeenPiggy()`;
+        badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🚀 جدید</span>`;
+    } else {
+        clickHandler = `showComingSoon('${item.label}')`;
+        badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span>`;
+    }
+    
+    gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="${clickHandler}">
+        <div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);">
+            <i class="fas ${item.icon}"></i>
+        </div>
+        <div class="menu-label">${item.label}</div>
+        ${badgeHtml}
+    </div>`;
+});
             gridHtml += '<div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
             familyItems.forEach(item => { const disabled = isHead ? '' : 'disabled'; const lock = isHead ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isHead ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`; gridHtml += `<div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
             gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
@@ -7156,6 +7181,4380 @@ function renderDashboardContent() {
                 console.log('✅ نوار پایین با JavaScript اضافه شد');
             }
         })();
+
+// ============================================================
+// 🐍 باز کردن بازی مار و پله (کد اصلی شما)
+// ============================================================
+
+function openSnakeGame() {
+    const container = document.createElement('div');
+    container.id = 'snakeGameContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بستن';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3001;
+        background: rgba(255,255,255,0.25);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.4);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+    `;
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+    };
+
+    const style = document.createElement('style');
+    style.textContent = `
+        #snakeGameContainer * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+        #snakeGameContainer { font-family: 'Segoe UI', Tahoma, sans-serif; color: white; }
+        #snakeGameContainer .snake-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #snakeGameContainer .snake-sub {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #snakeGameContainer .record-box {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            padding: 12px 24px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+        }
+        #snakeGameContainer .record-box .label { opacity: 0.8; font-size: 12px; }
+        #snakeGameContainer .record-box .value { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #FFD700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        #snakeGameContainer .start-btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #333;
+            border: none;
+            padding: 16px 50px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255,165,0,0.4);
+            transition: all 0.3s;
+            font-family: 'B Titr', Tahoma, sans-serif;
+            margin: 5px 0;
+        }
+        #snakeGameContainer .start-btn:active { transform: scale(0.95); }
+        #snakeGameContainer .sound-toggle {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+            padding: 10px 22px;
+            font-size: 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            font-family: 'B Titr', Tahoma, sans-serif;
+            margin-top: 8px;
+        }
+        #snakeGameContainer .top-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 450px;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        #snakeGameContainer .player-card {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            padding: 10px 12px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        #snakeGameContainer .player-card.active {
+            border-color: #FFD700;
+            box-shadow: 0 0 25px rgba(255,215,0,0.6);
+            transform: scale(1.03);
+            background: rgba(255,255,255,0.3);
+        }
+        #snakeGameContainer .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+        #snakeGameContainer .avatar.p1 { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        #snakeGameContainer .avatar.p2 { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        #snakeGameContainer .player-info { flex: 1; min-width: 0; }
+        #snakeGameContainer .player-name { font-size: 12px; opacity: 0.9; }
+        #snakeGameContainer .player-pos { font-size: 16px; font-weight: bold; }
+        #snakeGameContainer #board-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+            margin-bottom: 10px;
+        }
+        #snakeGameContainer #board {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            border: 4px solid #5D4037;
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        #snakeGameContainer .cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: bold;
+            border: 1px solid rgba(139, 69, 19, 0.2);
+            background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+            color: #5D4037;
+            position: relative;
+        }
+        #snakeGameContainer .cell:nth-child(even) {
+            background: linear-gradient(135deg, #FFF8E1 0%, #FFECB3 100%);
+        }
+        #snakeGameContainer .cell-100 {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00) !important;
+            color: white;
+            font-size: 12px;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: inset 0 0 10px rgba(255,215,0,0.5); }
+            to { box-shadow: inset 0 0 20px rgba(255,215,0,0.8); }
+        }
+        #snakeGameContainer .cell-1 {
+            background: linear-gradient(135deg, #C8E6C9, #A5D6A7) !important;
+            color: #2E7D32;
+            font-size: 12px;
+        }
+        #snakeGameContainer #svg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        #snakeGameContainer .player {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+        #snakeGameContainer .p1 { background: linear-gradient(135deg, #2196F3, #1976D2); }
+        #snakeGameContainer .p2 { background: linear-gradient(135deg, #FF9800, #F57C00); }
+        #snakeGameContainer .player.moving { animation: jump 0.4s ease; }
+        @keyframes jump {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.25); }
+        }
+        #snakeGameContainer .controls {
+            margin-top: 8px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            padding: 14px 18px;
+            border-radius: 22px;
+            text-align: center;
+            width: 100%;
+            max-width: 450px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        #snakeGameContainer #dice {
+            font-size: 50px;
+            margin: 4px 0;
+            display: inline-block;
+            transition: transform 0.5s;
+            filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+        }
+        #snakeGameContainer #dice.rolling { animation: roll 0.15s infinite; }
+        @keyframes roll {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.15); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        #snakeGameContainer #info {
+            margin: 8px 0;
+            font-size: 14px;
+            min-height: 22px;
+            padding: 8px 14px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 14px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        #snakeGameContainer .btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        #snakeGameContainer .btn-row button {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(255,165,0,0.4);
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 100px;
+            max-width: 180px;
+            font-family: 'B Titr', Tahoma, sans-serif;
+        }
+        #snakeGameContainer .btn-row button:active:not(:disabled) { transform: scale(0.95); }
+        #snakeGameContainer .btn-row button:disabled { 
+            background: linear-gradient(135deg, #757575, #616161);
+            color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
+            box-shadow: none;
+        }
+        #snakeGameContainer .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -15px;
+            z-index: 3100;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+        #snakeGameContainer #endScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 3050;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        #snakeGameContainer #endScreen .end-content {
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            padding: 28px 24px;
+            border-radius: 28px;
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+            border: 3px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+        #snakeGameContainer #endScreen .end-icon { font-size: 70px; margin-bottom: 10px; }
+        #snakeGameContainer #endScreen .end-title { 
+            font-size: 28px; 
+            font-weight: bold; 
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #snakeGameContainer #endScreen .end-message { font-size: 16px; margin-bottom: 18px; opacity: 0.95; }
+        #snakeGameContainer #endScreen .end-stats {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 18px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        #snakeGameContainer #endScreen .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            font-size: 14px;
+        }
+        #snakeGameContainer #endScreen .stat-row:last-child { border-bottom: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-5deg); }
+            75% { transform: translateY(-15px) rotate(5deg); }
+        }
+    `;
+    container.appendChild(style);
+
+    container.innerHTML += `
+        <div id="snakeStartScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;width:100%;max-width:450px;padding:10px;text-align:center;animation:fadeIn 0.8s ease;">
+            <div style="font-size:70px;margin-bottom:10px;animation:bounce 2s infinite;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.3));">🐍🪜</div>
+            <div class="snake-title">مار و پله</div>
+            <div class="snake-sub">بازی کلاسیک با طراحی مدرن و حرفه‌ای</div>
+            <div class="record-box">
+                <div class="label">🏆 بهترین رکورد تو</div>
+                <div class="value" id="snakeBestRecord">0</div>
+                <div class="label">برد</div>
+            </div>
+            <button class="start-btn" onclick="snakeStartGame()">🎮 شروع بازی</button>
+            <button class="sound-toggle" onclick="snakeToggleSound()">🔊 صدا: روشن</button>
+        </div>
+
+        <div id="snakeGameScreen" style="display:none;flex-direction:column;align-items:center;width:100%;max-width:450px;">
+            <div class="top-bar">
+                <div class="player-card active" id="snakeCard1">
+                    <div class="avatar p1">👤</div>
+                    <div class="player-info">
+                        <div class="player-name">تو</div>
+                        <div class="player-pos" id="snakePos1">خانه ۱</div>
+                    </div>
+                </div>
+                <div class="player-card" id="snakeCard2">
+                    <div class="avatar p2">🤖</div>
+                    <div class="player-info">
+                        <div class="player-name">کامپیوتر</div>
+                        <div class="player-pos" id="snakePos2">خانه ۱</div>
+                    </div>
+                </div>
+            </div>
+            <div id="board-container">
+                <div id="board"></div>
+                <svg id="svg-overlay"></svg>
+            </div>
+            <div class="controls">
+                <div id="dice">🎲</div>
+                <div id="info">🔵 نوبت تو - دکمه تاس رو بزن</div>
+                <div class="btn-row">
+                    <button id="rollBtn" onclick="snakeRollDice()">🎲 پرتاب تاس</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="endScreen">
+            <div class="end-content">
+                <div class="end-icon" id="snakeEndIcon">🏆</div>
+                <div class="end-title" id="snakeEndTitle">تبریک!</div>
+                <div class="end-message" id="snakeEndMessage">تو برنده شدی</div>
+                <div class="end-stats">
+                    <div class="stat-row"><span>🎲 تعداد تاس:</span><span id="statRolls">0</span></div>
+                    <div class="stat-row"><span>🐍 مارهای گرفته:</span><span id="statSnakes">0</span></div>
+                    <div class="stat-row"><span>🪜 پله‌های سوار شده:</span><span id="statLadders">0</span></div>
+                    <div class="stat-row"><span>🎯 تعداد ۶ آوردن:</span><span id="statSixes">0</span></div>
+                </div>
+                <button class="start-btn" onclick="snakeRestartGame()">🔄 بازی دوباره</button>
+                <button class="sound-toggle" onclick="goToSnakeMenu()" style="margin-top:12px">🏠 منوی اصلی</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+
+    setTimeout(function() {
+        const recordEl = document.getElementById('snakeBestRecord');
+        if (recordEl) {
+            const wins = parseInt(localStorage.getItem('snlWins') || '0');
+            recordEl.textContent = wins;
+        }
+        snakeBuildBoard();
+    }, 100);
+}
+
+// ============================================================
+// 🏠 بازگشت از بازی به منو
+// ============================================================
+
+function goToSnakeMenu() {
+    const container = document.getElementById('snakeGameContainer');
+    if (container) {
+        const closeBtn = container.parentElement.querySelector('button[style*="position: fixed; top: 12px; right: 12px;"]');
+        if (closeBtn) closeBtn.click();
+    }
+    renderPage('menu');
+}
+// ============================================================
+// 🐍 کد کامل بازی مار و پله
+// ============================================================
+
+const SNAKE_LADDERS = {1:38, 4:14, 9:31, 21:42, 28:84, 36:44, 51:67, 71:91, 80:100};
+const SNAKE_SNAKES = {16:6, 47:26, 49:11, 56:53, 62:19, 64:60, 87:24, 93:73, 95:75, 98:78};
+const SNAKE_DICE_FACES = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+
+let snakePlayers = [1, 1];
+let snakeCurrentPlayer = 0;
+let snakeGameOver = false;
+let snakeIsRolling = false;
+let snakeSoundEnabled = true;
+let snakeTotalRolls = 0;
+let snakeSnakesHit = 0;
+let snakeLaddersHit = 0;
+let snakeSixesCount = 0;
+let snakeLastRoll = 0;
+let snakeWins = parseInt(localStorage.getItem('snlWins') || '0');
+
+function snakeToggleSound() {
+    snakeSoundEnabled = !snakeSoundEnabled;
+    const btn = document.querySelector('#snakeGameContainer .sound-toggle');
+    if (btn) btn.textContent = snakeSoundEnabled ? '🔊 صدا: روشن' : '🔇 صدا: خاموش';
+}
+
+function snakePlaySound(type) {
+    if (!snakeSoundEnabled) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        if (type === 'dice') {
+            osc.frequency.value = 400;
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+            osc.start(); osc.stop(ctx.currentTime + 0.1);
+        } else if (type === 'move') {
+            osc.frequency.value = 600;
+            gain.gain.setValueAtTime(0.05, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+            osc.start(); osc.stop(ctx.currentTime + 0.05);
+        } else if (type === 'snake') {
+            osc.frequency.value = 200;
+            osc.type = 'sawtooth';
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+            osc.start(); osc.stop(ctx.currentTime + 0.4);
+        } else if (type === 'ladder') {
+            osc.frequency.value = 800;
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+            osc.start(); osc.stop(ctx.currentTime + 0.3);
+        } else if (type === 'six') {
+            [523, 659, 784].forEach((freq, i) => {
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, ctx.currentTime + i * 0.1);
+                g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.1 + 0.15);
+                o.start(ctx.currentTime + i * 0.1);
+                o.stop(ctx.currentTime + i * 0.1 + 0.15);
+            });
+        } else if (type === 'win') {
+            [523, 659, 784, 1047].forEach((freq, i) => {
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.connect(g); g.connect(ctx.destination);
+                o.frequency.value = freq;
+                g.gain.setValueAtTime(0.1, ctx.currentTime + i * 0.15);
+                g.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.15 + 0.2);
+                o.start(ctx.currentTime + i * 0.15);
+                o.stop(ctx.currentTime + i * 0.15 + 0.2);
+            });
+        }
+    } catch(e) {}
+}
+
+function snakeGetCellPosition(num, boardEl) {
+    const row = Math.ceil(num / 10);
+    const col = (num - 1) % 10;
+    const actualCol = (row % 2 === 1) ? col : (9 - col);
+    const actualRow = 10 - row;
+    const cellWidth = boardEl.offsetWidth / 10;
+    const cellHeight = boardEl.offsetHeight / 10;
+    return {
+        x: actualCol * cellWidth + cellWidth / 2,
+        y: actualRow * cellHeight + cellHeight / 2
+    };
+}
+
+function snakeDrawLaddersAndSnakes() {
+    const svg = document.getElementById('svg-overlay');
+    const board = document.getElementById('board');
+    if (!svg || !board) return;
+    svg.innerHTML = '';
+    const cellSize = board.offsetWidth / 10 || 40;
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const sg = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    sg.setAttribute('id', 'snakeGradient');
+    sg.setAttribute('x1', '0%'); sg.setAttribute('y1', '0%');
+    sg.setAttribute('x2', '100%'); sg.setAttribute('y2', '100%');
+    ['#D32F2F','#F44336','#B71C1C'].forEach((c, i) => {
+        const s = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        s.setAttribute('offset', (i*50)+'%');
+        s.setAttribute('style', 'stop-color:'+c+';stop-opacity:1');
+        sg.appendChild(s);
+    });
+    defs.appendChild(sg);
+    const lg = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    lg.setAttribute('id', 'ladderGradient');
+    lg.setAttribute('x1', '0%'); lg.setAttribute('y1', '0%');
+    lg.setAttribute('x2', '100%'); lg.setAttribute('y2', '0%');
+    ['#8D6E63','#A1887F','#6D4C41'].forEach((c, i) => {
+        const s = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+        s.setAttribute('offset', (i*50)+'%');
+        s.setAttribute('style', 'stop-color:'+c+';stop-opacity:1');
+        lg.appendChild(s);
+    });
+    defs.appendChild(lg);
+    svg.appendChild(defs);
+    
+    Object.entries(SNAKE_LADDERS).forEach(([from, to]) => {
+        const fp = snakeGetCellPosition(parseInt(from), board);
+        const tp = snakeGetCellPosition(to, board);
+        const angle = Math.atan2(tp.y - fp.y, tp.x - fp.x);
+        const perpAngle = angle + Math.PI / 2;
+        const offset = cellSize * 0.25;
+        const x1l = fp.x + Math.cos(perpAngle) * offset;
+        const y1l = fp.y + Math.sin(perpAngle) * offset;
+        const x2l = tp.x + Math.cos(perpAngle) * offset;
+        const y2l = tp.y + Math.sin(perpAngle) * offset;
+        const x1r = fp.x - Math.cos(perpAngle) * offset;
+        const y1r = fp.y - Math.sin(perpAngle) * offset;
+        const x2r = tp.x - Math.cos(perpAngle) * offset;
+        const y2r = tp.y - Math.sin(perpAngle) * offset;
+        const l1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        l1.setAttribute('x1', x1l); l1.setAttribute('y1', y1l);
+        l1.setAttribute('x2', x2l); l1.setAttribute('y2', y2l);
+        l1.setAttribute('stroke', 'url(#ladderGradient)');
+        l1.setAttribute('stroke-width', cellSize * 0.12);
+        l1.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(l1);
+        const l2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        l2.setAttribute('x1', x1r); l2.setAttribute('y1', y1r);
+        l2.setAttribute('x2', x2r); l2.setAttribute('y2', y2r);
+        l2.setAttribute('stroke', 'url(#ladderGradient)');
+        l2.setAttribute('stroke-width', cellSize * 0.12);
+        l2.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(l2);
+        const dist = Math.sqrt(Math.pow(tp.x - fp.x, 2) + Math.pow(tp.y - fp.y, 2));
+        const numRungs = Math.max(3, Math.floor(dist / (cellSize * 0.4)));
+        for (let i = 1; i < numRungs; i++) {
+            const t = i / numRungs;
+            const x = fp.x + (tp.x - fp.x) * t;
+            const y = fp.y + (tp.y - fp.y) * t;
+            const r = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            r.setAttribute('x1', x + Math.cos(perpAngle) * offset);
+            r.setAttribute('y1', y + Math.sin(perpAngle) * offset);
+            r.setAttribute('x2', x - Math.cos(perpAngle) * offset);
+            r.setAttribute('y2', y - Math.sin(perpAngle) * offset);
+            r.setAttribute('stroke', '#6D4C41');
+            r.setAttribute('stroke-width', cellSize * 0.08);
+            r.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(r);
+        }
+    });
+    
+    Object.entries(SNAKE_SNAKES).forEach(([from, to]) => {
+        const fp = snakeGetCellPosition(parseInt(from), board);
+        const tp = snakeGetCellPosition(to, board);
+        const dx = tp.x - fp.x, dy = tp.y - fp.y;
+        const length = Math.sqrt(dx*dx + dy*dy);
+        const amplitude = cellSize * 0.3;
+        const pts = [];
+        for (let i = 0; i <= 20; i++) {
+            const t = i / 20;
+            const x = fp.x + dx * t;
+            const y = fp.y + dy * t;
+            const wave = Math.sin(t * Math.PI * 4) * amplitude * (1 - t * 0.5);
+            const perpX = -dy / length * wave;
+            const perpY = dx / length * wave;
+            pts.push({ x: x + perpX, y: y + perpY });
+        }
+        let pathData = `M ${pts[0].x} ${pts[0].y}`;
+        for (let i = 1; i < pts.length - 1; i++) {
+            const xc = (pts[i].x + pts[i+1].x) / 2;
+            const yc = (pts[i].y + pts[i+1].y) / 2;
+            pathData += ` Q ${pts[i].x} ${pts[i].y} ${xc} ${yc}`;
+        }
+        pathData += ` L ${pts[pts.length-1].x} ${pts[pts.length-1].y}`;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('stroke', 'url(#snakeGradient)');
+        path.setAttribute('stroke-width', cellSize * 0.15);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke-linecap', 'round');
+        path.setAttribute('stroke-linejoin', 'round');
+        svg.appendChild(path);
+        const head = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        head.setAttribute('cx', fp.x); head.setAttribute('cy', fp.y);
+        head.setAttribute('r', cellSize * 0.18);
+        head.setAttribute('fill', '#D32F2F');
+        head.setAttribute('stroke', '#B71C1C');
+        head.setAttribute('stroke-width', '2');
+        svg.appendChild(head);
+    });
+}
+
+function snakeBuildBoard() {
+    const board = document.getElementById('board');
+    if (!board) return;
+    board.innerHTML = '';
+    for (let row = 10; row >= 1; row--) {
+        for (let col = 1; col <= 10; col++) {
+            let num = (row-1)*10 + (((10-row)%2===0) ? col : (11-col));
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = 'cell-' + num;
+            if (num === 100) { cell.classList.add('cell-100'); cell.textContent = '🏆'; }
+            else if (num === 1) { cell.classList.add('cell-1'); cell.textContent = '🚩'; }
+            else { cell.textContent = num; }
+            board.appendChild(cell);
+        }
+    }
+    setTimeout(() => {
+        snakeDrawLaddersAndSnakes();
+        snakeUpdatePlayers();
+    }, 100);
+}
+
+function snakeUpdatePlayers() {
+    document.querySelectorAll('#board .player').forEach(p => p.remove());
+    snakePlayers.forEach((pos, i) => {
+        const cell = document.getElementById('cell-' + pos);
+        if (cell) {
+            const marker = document.createElement('div');
+            marker.className = 'player p' + (i+1);
+            marker.textContent = i === 0 ? '👤' : '🤖';
+            cell.appendChild(marker);
+        }
+    });
+    document.getElementById('snakePos1').textContent = 'خانه ' + snakePlayers[0];
+    document.getElementById('snakePos2').textContent = 'خانه ' + snakePlayers[1];
+}
+
+function snakeAnimateMove(playerIndex, from, to, callback) {
+    const direction = to > from ? 1 : -1;
+    let current = from;
+    const steps = Math.abs(to - from);
+    let step = 0;
+    const interval = setInterval(() => {
+        current += direction;
+        snakePlayers[playerIndex] = current;
+        snakeUpdatePlayers();
+        snakePlaySound('move');
+        const marker = document.querySelector('#board .p' + (playerIndex+1));
+        if (marker) { marker.classList.add('moving'); setTimeout(() => marker.classList.remove('moving'), 400); }
+        step++;
+        if (step >= steps) { clearInterval(interval); if (callback) callback(); }
+    }, 180);
+}
+
+function snakeRollDice() {
+    if (snakeGameOver || snakeIsRolling || snakeCurrentPlayer !== 0) return;
+    snakeIsRolling = true;
+    snakeTotalRolls++;
+    const btn = document.getElementById('rollBtn');
+    if (btn) btn.disabled = true;
+    const dice = document.getElementById('dice');
+    if (dice) { dice.classList.add('rolling'); }
+    snakePlaySound('dice');
+    let count = 0;
+    const anim = setInterval(() => {
+        if (dice) dice.textContent = SNAKE_DICE_FACES[Math.floor(Math.random()*6)];
+        count++;
+        if (count > 10) {
+            clearInterval(anim);
+            if (dice) dice.classList.remove('rolling');
+            const roll = Math.floor(Math.random()*6)+1;
+            snakeLastRoll = roll;
+            if (dice) dice.textContent = SNAKE_DICE_FACES[roll-1];
+            snakeIsRolling = false;
+            snakeMovePlayer(roll);
+        }
+    }, 80);
+}
+
+function snakeMovePlayer(steps) {
+    const info = document.getElementById('info');
+    let pos = snakePlayers[snakeCurrentPlayer];
+    const isComputer = snakeCurrentPlayer === 1;
+    const color = isComputer ? '🟠' : '🔵';
+    const name = isComputer ? 'کامپیوتر' : 'تو';
+    if (pos + steps > 100) {
+        if (info) info.textContent = `${color} ${name}: عدد ${steps} اومد، ولی باید دقیقاً به ۱۰۰ برسی!`;
+        setTimeout(() => {
+            if (snakeLastRoll === 6) { snakeGiveBonusRoll(); }
+            else { snakeNextTurn(); }
+        }, 1500);
+        return;
+    }
+    const targetPos = pos + steps;
+    if (info) info.textContent = `${color} ${name}: تاس ${steps} اومد!`;
+    snakeAnimateMove(snakeCurrentPlayer, pos, targetPos, () => {
+        setTimeout(() => {
+            const finalPos = snakePlayers[snakeCurrentPlayer];
+            if (SNAKE_SNAKES[finalPos]) {
+                if (snakeCurrentPlayer === 0) snakeSnakesHit++;
+                snakePlaySound('snake');
+                if (info) info.textContent = `${color} ${name} 🐍 ماری گرفت! از ${finalPos} به ${SNAKE_SNAKES[finalPos]} سقوط کرد!`;
+                setTimeout(() => {
+                    snakeAnimateMove(snakeCurrentPlayer, finalPos, SNAKE_SNAKES[finalPos], () => {
+                        if (!snakeCheckWin()) {
+                            if (snakeLastRoll === 6) snakeGiveBonusRoll();
+                            else snakeNextTurn();
+                        }
+                    });
+                }, 800);
+            } else if (SNAKE_LADDERS[finalPos]) {
+                if (snakeCurrentPlayer === 0) snakeLaddersHit++;
+                snakePlaySound('ladder');
+                if (info) info.textContent = `${color} ${name} 🪜 پله‌ای پیدا کرد! از ${finalPos} به ${SNAKE_LADDERS[finalPos]} صعود کرد!`;
+                setTimeout(() => {
+                    snakeAnimateMove(snakeCurrentPlayer, finalPos, SNAKE_LADDERS[finalPos], () => {
+                        if (!snakeCheckWin()) {
+                            if (snakeLastRoll === 6) snakeGiveBonusRoll();
+                            else snakeNextTurn();
+                        }
+                    });
+                }, 800);
+            } else {
+                if (!snakeCheckWin()) {
+                    if (snakeLastRoll === 6) snakeGiveBonusRoll();
+                    else snakeNextTurn();
+                }
+            }
+        }, 400);
+    });
+}
+
+function snakeGiveBonusRoll() {
+    const info = document.getElementById('info');
+    const isComputer = snakeCurrentPlayer === 1;
+    const color = isComputer ? '🟠' : '🔵';
+    const name = isComputer ? 'کامپیوتر' : 'تو';
+    if (snakeCurrentPlayer === 0) snakeSixesCount++;
+    snakePlaySound('six');
+    if (info) info.textContent = `🎉 ${color} ${name} ۶ آوردی! یک بار دیگه تاس بنداز! 🎲`;
+    setTimeout(() => {
+        if (snakeCurrentPlayer === 0) {
+            const btn = document.getElementById('rollBtn');
+            if (btn) btn.disabled = false;
+            if (info) info.textContent = '🔵 نوبت تو - دکمه تاس رو بزن (جایزه ۶!)';
+        } else {
+            snakeComputerRoll();
+        }
+    }, 1500);
+}
+
+function snakeComputerRoll() {
+    if (snakeGameOver || snakeIsRolling) return;
+    snakeIsRolling = true;
+    snakeTotalRolls++;
+    const dice = document.getElementById('dice');
+    const info = document.getElementById('info');
+    if (info) info.textContent = '🤖 کامپیوتر در حال پرتاب تاس...';
+    if (dice) dice.classList.add('rolling');
+    snakePlaySound('dice');
+    let count = 0;
+    const anim = setInterval(() => {
+        if (dice) dice.textContent = SNAKE_DICE_FACES[Math.floor(Math.random()*6)];
+        count++;
+        if (count > 10) {
+            clearInterval(anim);
+            if (dice) dice.classList.remove('rolling');
+            const roll = Math.floor(Math.random()*6)+1;
+            snakeLastRoll = roll;
+            if (dice) dice.textContent = SNAKE_DICE_FACES[roll-1];
+            snakeIsRolling = false;
+            snakeMovePlayer(roll);
+        }
+    }, 80);
+}
+
+function snakeCheckWin() {
+    if (snakePlayers[snakeCurrentPlayer] === 100) {
+        snakeGameOver = true;
+        if (snakeCurrentPlayer === 0) {
+            snakeWins++;
+            localStorage.setItem('snlWins', snakeWins);
+            snakePlaySound('win');
+            snakeShowConfetti();
+        }
+        setTimeout(() => snakeShowEndScreen(snakeCurrentPlayer === 0), 1000);
+        return true;
+    }
+    return false;
+}
+
+function snakeNextTurn() {
+    snakeCurrentPlayer = 1 - snakeCurrentPlayer;
+    const info = document.getElementById('info');
+    const btn = document.getElementById('rollBtn');
+    const card1 = document.getElementById('snakeCard1');
+    const card2 = document.getElementById('snakeCard2');
+    if (snakeCurrentPlayer === 0) {
+        if (info) info.textContent = '🔵 نوبت تو - دکمه تاس رو بزن';
+        if (btn) btn.disabled = false;
+        if (card1) card1.classList.add('active');
+        if (card2) card2.classList.remove('active');
+    } else {
+        if (info) info.textContent = '🟠 نوبت کامپیوتر...';
+        if (btn) btn.disabled = true;
+        if (card1) card1.classList.remove('active');
+        if (card2) card2.classList.add('active');
+        setTimeout(() => { if (!snakeGameOver) snakeComputerRoll(); }, 1500);
+    }
+}
+
+function snakeShowConfetti() {
+    const colors = ['#FFD700','#FF6B6B','#4CAF50','#2196F3','#FF9800','#E91E63','#9C27B0'];
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const el = document.createElement('div');
+            el.className = 'confetti';
+            el.style.left = Math.random()*100 + '%';
+            el.style.background = colors[Math.floor(Math.random()*colors.length)];
+            el.style.animationDuration = (Math.random()*2+2)+'s';
+            el.style.transform = 'rotate('+Math.random()*360+'deg)';
+            el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }, i*40);
+    }
+}
+
+function snakeShowEndScreen(won) {
+    const screen = document.getElementById('endScreen');
+    if (!screen) return;
+    screen.style.display = 'flex';
+    if (won) {
+        document.getElementById('snakeEndIcon').textContent = '🏆';
+        document.getElementById('snakeEndTitle').textContent = 'تبریک!';
+        document.getElementById('snakeEndMessage').textContent = 'تو برنده شدی! 🎉';
+    } else {
+        document.getElementById('snakeEndIcon').textContent = '😢';
+        document.getElementById('snakeEndTitle').textContent = 'باختی!';
+        document.getElementById('snakeEndMessage').textContent = 'کامپیوتر برنده شد. دوباره تلاش کن!';
+    }
+    document.getElementById('statRolls').textContent = snakeTotalRolls;
+    document.getElementById('statSnakes').textContent = snakeSnakesHit;
+    document.getElementById('statLadders').textContent = snakeLaddersHit;
+    document.getElementById('statSixes').textContent = snakeSixesCount;
+}
+
+function snakeStartGame() {
+    document.getElementById('snakeStartScreen').style.display = 'none';
+    document.getElementById('snakeGameScreen').style.display = 'flex';
+    document.getElementById('endScreen').style.display = 'none';
+    snakeResetGame();
+}
+
+function snakeRestartGame() {
+    document.getElementById('endScreen').style.display = 'none';
+    snakeResetGame();
+}
+
+function snakeResetGame() {
+    snakePlayers = [1, 1];
+    snakeCurrentPlayer = 0;
+    snakeGameOver = false;
+    snakeIsRolling = false;
+    snakeTotalRolls = 0;
+    snakeSnakesHit = 0;
+    snakeLaddersHit = 0;
+    snakeSixesCount = 0;
+    snakeLastRoll = 0;
+    const btn = document.getElementById('rollBtn');
+    if (btn) btn.disabled = false;
+    const dice = document.getElementById('dice');
+    if (dice) dice.textContent = '🎲';
+    const info = document.getElementById('info');
+    if (info) info.textContent = '🔵 نوبت تو - دکمه تاس رو بزن';
+    const card1 = document.getElementById('snakeCard1');
+    const card2 = document.getElementById('snakeCard2');
+    if (card1) card1.classList.add('active');
+    if (card2) card2.classList.remove('active');
+    snakeBuildBoard();
+}
+
+function initSnakeGame() {
+    const recordEl = document.getElementById('snakeBestRecord');
+    if (recordEl) recordEl.textContent = snakeWins;
+    snakeBuildBoard();
+}
+// ============================================================
+// 🧒 صفحه رشد ویژه خردسالان
+// ============================================================
+
+function openToddlerGames() {
+    const container = document.createElement('div');
+    container.id = 'toddlerGamesContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بازگشت به منو';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3001;
+        background: rgba(255,255,255,0.25);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.4);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+    `;
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+    };
+
+    container.innerHTML = getToddlerGamesHTML();
+    
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+}
+
+function getToddlerGamesHTML() {
+    return `
+    <style>
+        #toddlerGamesContainer .toddler-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #toddlerGamesContainer .toddler-sub {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #toddlerGamesContainer .games-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 450px;
+            margin: 10px 0;
+        }
+        #toddlerGamesContainer .game-card {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 20px 12px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        #toddlerGamesContainer .game-card:active {
+            transform: scale(0.95);
+        }
+        #toddlerGamesContainer .game-card .game-icon {
+            font-size: 55px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        #toddlerGamesContainer .game-card .game-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #toddlerGamesContainer .game-card .game-desc {
+            font-size: 12px;
+            color: rgba(255,255,255,0.8);
+            margin-top: 5px;
+        }
+        #toddlerGamesContainer .game-card .game-badge {
+            display: inline-block;
+            background: rgba(255,215,0,0.3);
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #FFD700;
+            margin-top: 8px;
+            border: 1px solid rgba(255,215,0,0.3);
+        }
+        #toddlerGamesContainer .toddler-footer {
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:450px;min-height:70vh;padding:10px;text-align:center;">
+        <div style="font-size:60px;margin-bottom:5px;">🧒</div>
+        <div class="toddler-title">رشد ویژه خردسالان</div>
+        <div class="toddler-sub">🎮 بازی‌های آموزشی و سرگرم‌کننده برای کودکان</div>
+        
+        <div class="games-grid">
+            <!-- بازی مار و پله -->
+            <div class="game-card" onclick="openSnakeGame()">
+                <span class="game-icon">🐍</span>
+                <div class="game-name">مار و پله</div>
+                <div class="game-desc">بازی کلاسیک با کامپیوتر</div>
+                <span class="game-badge">🎯 فعال</span>
+            </div>
+            
+            <!-- بازی دوز -->
+            <div class="game-card" onclick="openTicTacToe()">
+                <span class="game-icon">❌⭕</span>
+                <div class="game-name">بازی دوز</div>
+                <div class="game-desc">بازی فکری با هوش مصنوعی</div>
+                <span class="game-badge">🧠 جدید</span>
+            </div>
+
+            <!-- بازی ریاضی -->
+            <div class="game-card" onclick="openMathGameNew()">
+                <span class="game-icon">🧮</span>
+                <div class="game-name">بازی ریاضی</div>
+                <div class="game-desc">تمرین ریاضی با تایمر</div>
+                <span class="game-badge">📚 جدید</span>
+            </div>
+        </div>
+        
+        <div class="toddler-footer">
+            💡 این بازی‌ها برای تقویت مهارت‌های ذهنی و ریاضی کودکان طراحی شده‌اند
+        </div>
+    </div>
+    `;
+}
+// ============================================================
+// ❌⭕ باز کردن بازی دوز
+// ============================================================
+
+function openTicTacToe() {
+    const container = document.createElement('div');
+    container.id = 'tttGameContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e8ba3 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بستن';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3001;
+        background: rgba(255,255,255,0.25);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.4);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+    `;
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+    };
+
+    // استایل‌های بازی
+    const style = document.createElement('style');
+    style.textContent = `
+        #tttGameContainer * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+        #tttGameContainer { font-family: 'Segoe UI', Tahoma, sans-serif; color: white; }
+        #tttGameContainer .ttt-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            text-shadow: 3px 3px 10px rgba(0,0,0,0.5);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #tttGameContainer .ttt-sub {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #tttGameContainer .record-box {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            padding: 12px 24px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            color: white;
+            text-align: center;
+        }
+        #tttGameContainer .record-box .label { opacity: 0.8; font-size: 12px; }
+        #tttGameContainer .record-box .value { 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: #FFD700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        #tttGameContainer .diff-section {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(15px);
+            padding: 18px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 350px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        #tttGameContainer .diff-title { font-size: 15px; margin-bottom: 12px; font-weight: bold; }
+        #tttGameContainer .diff-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        #tttGameContainer .diff-btn {
+            flex: 1;
+            min-width: 70px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-family: 'B Titr', Tahoma, sans-serif;
+        }
+        #tttGameContainer .diff-btn.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            border-color: white;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+        #tttGameContainer .start-btn {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #333;
+            border: none;
+            padding: 16px 50px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(255,165,0,0.4);
+            transition: all 0.3s;
+            font-family: 'B Titr', Tahoma, sans-serif;
+            margin: 5px 0;
+        }
+        #tttGameContainer .start-btn:active { transform: scale(0.95); }
+        #tttGameContainer .top-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        #tttGameContainer .player-card {
+            flex: 1;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(15px);
+            padding: 10px 12px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid transparent;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+        #tttGameContainer .player-card.active {
+            border-color: #FFD700;
+            box-shadow: 0 0 25px rgba(255,215,0,0.6);
+            transform: scale(1.03);
+            background: rgba(255,255,255,0.3);
+        }
+        #tttGameContainer .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            flex-shrink: 0;
+        }
+        #tttGameContainer .avatar.p1 { background: linear-gradient(135deg, #2196F3, #1976D2); color: white; }
+        #tttGameContainer .avatar.p2 { background: linear-gradient(135deg, #FF9800, #F57C00); color: white; }
+        #tttGameContainer .player-info { flex: 1; min-width: 0; }
+        #tttGameContainer .player-name { font-size: 12px; opacity: 0.9; }
+        #tttGameContainer .player-score { font-size: 18px; font-weight: bold; }
+        #tttGameContainer #tttBoard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            padding: 16px;
+            border-radius: 22px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            margin: 12px 0;
+            width: 100%;
+            max-width: 350px;
+            aspect-ratio: 1;
+        }
+        #tttGameContainer .ttt-cell {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+            user-select: none;
+            aspect-ratio: 1;
+        }
+        #tttGameContainer .ttt-cell:active:not(.taken) {
+            transform: scale(0.95);
+        }
+        #tttGameContainer .ttt-cell.taken { 
+            cursor: not-allowed;
+            animation: pop 0.3s ease-out;
+        }
+        @keyframes pop {
+            0% { transform: scale(0); }
+            70% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        #tttGameContainer .ttt-cell.x { color: #2196F3; }
+        #tttGameContainer .ttt-cell.o { color: #FF9800; }
+        #tttGameContainer .ttt-cell.win {
+            background: linear-gradient(135deg, #4CAF50, #45a049) !important;
+            color: white !important;
+            animation: pulse 0.6s infinite alternate;
+            box-shadow: 0 0 30px rgba(76,175,80,0.6);
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.08); }
+        }
+        #tttGameContainer #tttInfo {
+            font-size: 16px;
+            margin: 10px 0;
+            min-height: 28px;
+            background: rgba(0,0,0,0.3);
+            padding: 12px 20px;
+            border-radius: 18px;
+            text-align: center;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 350px;
+        }
+        #tttGameContainer .btn-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 350px;
+        }
+        #tttGameContainer .btn-row button {
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #333;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(255,165,0,0.4);
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 100px;
+            max-width: 160px;
+            font-family: 'B Titr', Tahoma, sans-serif;
+        }
+        #tttGameContainer .btn-row button:active:not(:disabled) { transform: scale(0.95); }
+        #tttGameContainer .btn-secondary {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        #tttGameContainer .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -15px;
+            z-index: 3100;
+            animation: fall linear forwards;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+        #tttGameContainer #tttEndScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 3050;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+        #tttGameContainer #tttEndScreen .end-content {
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #7e8ba3);
+            padding: 28px 24px;
+            border-radius: 28px;
+            text-align: center;
+            max-width: 360px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.6);
+            border: 3px solid rgba(255,255,255,0.3);
+            color: white;
+        }
+        #tttGameContainer #tttEndScreen .end-icon { font-size: 70px; margin-bottom: 10px; }
+        #tttGameContainer #tttEndScreen .end-title { 
+            font-size: 28px; 
+            font-weight: bold; 
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #tttGameContainer #tttEndScreen .end-message { font-size: 16px; margin-bottom: 18px; opacity: 0.95; }
+        #tttGameContainer #tttEndScreen .end-stats {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 18px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        #tttGameContainer #tttEndScreen .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            font-size: 14px;
+        }
+        #tttGameContainer #tttEndScreen .stat-row:last-child { border-bottom: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-5deg); }
+            75% { transform: translateY(-15px) rotate(5deg); }
+        }
+        @media (max-height: 700px) {
+            #tttGameContainer .ttt-cell { font-size: 50px; }
+            #tttGameContainer #tttBoard { padding: 12px; gap: 8px; }
+        }
+        @media (max-height: 600px) {
+            #tttGameContainer .ttt-cell { font-size: 40px; }
+            #tttGameContainer #tttBoard { padding: 10px; gap: 6px; }
+        }
+    `;
+    container.appendChild(style);
+
+    // HTML بازی دوز
+    container.innerHTML += `
+        <div id="tttStartScreen" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;width:100%;max-width:450px;padding:10px;text-align:center;animation:fadeIn 0.8s ease;">
+            <div style="font-size:70px;margin-bottom:10px;animation:bounce 2s infinite;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.3));">❌⭕</div>
+            <div class="ttt-title">بازی دوز</div>
+            <div class="ttt-sub">بازی کلاسیک با هوش مصنوعی</div>
+            
+            <div class="record-box">
+                <div class="label">🏆 تعداد برد تو</div>
+                <div class="value" id="tttBestRecord">0</div>
+            </div>
+            
+            <div class="diff-section">
+                <div class="diff-title">🎯 سطح سختی:</div>
+                <div class="diff-buttons">
+                    <button class="diff-btn active" data-level="easy" onclick="tttSetDifficulty('easy')">آسون</button>
+                    <button class="diff-btn" data-level="medium" onclick="tttSetDifficulty('medium')">متوسط</button>
+                    <button class="diff-btn" data-level="hard" onclick="tttSetDifficulty('hard')">سخت</button>
+                </div>
+            </div>
+            
+            <button class="start-btn" onclick="tttStartGame()">🎮 شروع بازی</button>
+        </div>
+
+        <div id="tttGameScreen" style="display:none;flex-direction:column;align-items:center;width:100%;max-width:450px;">
+            <div class="top-bar">
+                <div class="player-card active" id="tttCard1">
+                    <div class="avatar p1">❌</div>
+                    <div class="player-info">
+                        <div class="player-name">تو</div>
+                        <div class="player-score" id="tttScore1">0</div>
+                    </div>
+                </div>
+                <div class="player-card" id="tttCard2">
+                    <div class="avatar p2">⭕</div>
+                    <div class="player-info">
+                        <div class="player-name">کامپیوتر</div>
+                        <div class="player-score" id="tttScore2">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="tttBoard"></div>
+            
+            <div id="tttInfo">نوبت تو (❌) - روی یک خانه کلیک کن</div>
+            
+            <div class="btn-row">
+                <button onclick="tttResetGame()">🔄 بازی جدید</button>
+                <button class="btn-secondary" onclick="tttExitGame()">🚪 خروج</button>
+            </div>
+        </div>
+
+        <div id="tttEndScreen">
+            <div class="end-content">
+                <div class="end-icon" id="tttEndIcon">🏆</div>
+                <div class="end-title" id="tttEndTitle">تبریک!</div>
+                <div class="end-message" id="tttEndMessage">تو برنده شدی</div>
+                <div class="end-stats">
+                    <div class="stat-row"><span>❌ برد تو:</span><span id="tttStatWins">0</span></div>
+                    <div class="stat-row"><span>⭕ برد کامپیوتر:</span><span id="tttStatLosses">0</span></div>
+                    <div class="stat-row"><span>🤝 مساوی:</span><span id="tttStatDraws">0</span></div>
+                </div>
+                <button class="start-btn" onclick="tttRestartGame()">🔄 بازی دوباره</button>
+                <button class="btn-secondary" onclick="tttGoToMenu()" style="margin-top:12px">🏠 منوی اصلی</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+
+    // مقداردهی اولیه
+    setTimeout(function() {
+        tttBuildBoard();
+    }, 100);
+}
+// ============================================================
+// ❌⭕ کد کامل بازی دوز
+// ============================================================
+
+let tttBoard = Array(9).fill('');
+let tttGameActive = true;
+let tttDifficulty = 'easy';
+let tttScores = { X: 0, O: 0, D: 0 };
+let tttWins = parseInt(localStorage.getItem('tttWins') || '0');
+const TTT_HUMAN = 'X';
+const TTT_COMPUTER = 'O';
+const TTT_WIN_PATTERNS = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
+
+// نمایش رکورد
+function tttUpdateBestRecord() {
+    const el = document.getElementById('tttBestRecord');
+    if (el) el.textContent = tttWins;
+}
+
+// تنظیم سطح سختی
+function tttSetDifficulty(level) {
+    tttDifficulty = level;
+    document.querySelectorAll('#tttGameContainer .diff-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.level === level) {
+            btn.classList.add('active');
+        }
+    });
+}
+
+// ساخت صفحه بازی
+function tttBuildBoard() {
+    const boardEl = document.getElementById('tttBoard');
+    if (!boardEl) return;
+    boardEl.innerHTML = '';
+    for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'ttt-cell';
+        cell.dataset.index = i;
+        cell.addEventListener('click', () => tttHandleCellClick(i));
+        boardEl.appendChild(cell);
+    }
+    tttUpdateBestRecord();
+}
+
+function tttHandleCellClick(index) {
+    if (!tttGameActive || tttBoard[index] !== '') return;
+    
+    tttMakeMove(index, TTT_HUMAN);
+    
+    const result = tttCheckResult();
+    if (result) {
+        tttEndGame(result);
+        return;
+    }
+    
+    // نوبت کامپیوتر
+    tttGameActive = false;
+    document.getElementById('tttInfo').textContent = '🤖 کامپیوتر در حال فکر کردن...';
+    document.getElementById('tttCard1').classList.remove('active');
+    document.getElementById('tttCard2').classList.add('active');
+    
+    setTimeout(() => {
+        const bestMove = tttGetBestMove();
+        tttMakeMove(bestMove, TTT_COMPUTER);
+        const result2 = tttCheckResult();
+        if (result2) {
+            tttEndGame(result2);
+            return;
+        }
+        tttGameActive = true;
+        document.getElementById('tttInfo').textContent = 'نوبت تو (❌) - روی یک خانه کلیک کن';
+        document.getElementById('tttCard1').classList.add('active');
+        document.getElementById('tttCard2').classList.remove('active');
+    }, 600);
+}
+
+function tttMakeMove(index, player) {
+    tttBoard[index] = player;
+    const cell = document.querySelector(`#tttBoard .ttt-cell[data-index="${index}"]`);
+    if (cell) {
+        cell.textContent = player === 'X' ? '❌' : '⭕';
+        cell.classList.add('taken', player.toLowerCase());
+    }
+}
+
+function tttCheckResult() {
+    for (const pattern of TTT_WIN_PATTERNS) {
+        const [a, b, c] = pattern;
+        if (tttBoard[a] && tttBoard[a] === tttBoard[b] && tttBoard[a] === tttBoard[c]) {
+            return { winner: tttBoard[a], pattern: pattern };
+        }
+    }
+    if (!tttBoard.includes('')) {
+        return { winner: 'D', pattern: null };
+    }
+    return null;
+}
+
+function tttEndGame(result) {
+    tttGameActive = false;
+    const info = document.getElementById('tttInfo');
+    
+    if (result.winner === TTT_HUMAN) {
+        info.textContent = '🎉 تبریک! تو برنده شدی! 🏆';
+        tttScores.X++;
+        tttWins++;
+        localStorage.setItem('tttWins', tttWins);
+        tttShowConfetti();
+    } else if (result.winner === TTT_COMPUTER) {
+        info.textContent = '😢 کامپیوتر برنده شد! دوباره تلاش کن';
+        tttScores.O++;
+    } else {
+        info.textContent = '🤝 بازی مساوی شد!';
+        tttScores.D++;
+    }
+    
+    if (result.pattern) {
+        result.pattern.forEach(i => {
+            const cell = document.querySelector(`#tttBoard .ttt-cell[data-index="${i}"]`);
+            if (cell) cell.classList.add('win');
+        });
+    }
+    
+    tttUpdateScores();
+    tttUpdateBestRecord();
+    
+    setTimeout(() => tttShowEndScreen(result.winner), 2000);
+}
+
+function tttUpdateScores() {
+    document.getElementById('tttScore1').textContent = tttScores.X;
+    document.getElementById('tttScore2').textContent = tttScores.O;
+}
+
+// الگوریتم انتخاب حرکت
+function tttGetBestMove() {
+    if (tttDifficulty === 'easy') {
+        if (Math.random() < 0.7) return tttGetRandomMove();
+    } else if (tttDifficulty === 'medium') {
+        if (Math.random() < 0.3) return tttGetRandomMove();
+    }
+    return tttGetMinimaxMove();
+}
+
+function tttGetRandomMove() {
+    const available = [];
+    for (let i = 0; i < 9; i++) {
+        if (tttBoard[i] === '') available.push(i);
+    }
+    return available[Math.floor(Math.random() * available.length)];
+}
+
+function tttGetMinimaxMove() {
+    let bestScore = -Infinity;
+    let bestMove = -1;
+    
+    for (let i = 0; i < 9; i++) {
+        if (tttBoard[i] === '') {
+            tttBoard[i] = TTT_COMPUTER;
+            const score = tttMinimax(tttBoard, 0, false);
+            tttBoard[i] = '';
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = i;
+            }
+        }
+    }
+    return bestMove;
+}
+
+function tttMinimax(boardState, depth, isMaximizing) {
+    const result = tttCheckResultFor(boardState);
+    if (result !== null) {
+        if (result === TTT_COMPUTER) return 10 - depth;
+        if (result === TTT_HUMAN) return depth - 10;
+        return 0;
+    }
+    
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < 9; i++) {
+            if (boardState[i] === '') {
+                boardState[i] = TTT_COMPUTER;
+                const score = tttMinimax(boardState, depth + 1, false);
+                boardState[i] = '';
+                bestScore = Math.max(score, bestScore);
+            }
+        }
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < 9; i++) {
+            if (boardState[i] === '') {
+                boardState[i] = TTT_HUMAN;
+                const score = tttMinimax(boardState, depth + 1, true);
+                boardState[i] = '';
+                bestScore = Math.min(score, bestScore);
+            }
+        }
+        return bestScore;
+    }
+}
+
+function tttCheckResultFor(boardState) {
+    for (const pattern of TTT_WIN_PATTERNS) {
+        const [a, b, c] = pattern;
+        if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+            return boardState[a];
+        }
+    }
+    if (!boardState.includes('')) return 'D';
+    return null;
+}
+
+function tttShowConfetti() {
+    const colors = ['#FFD700', '#FF6B6B', '#4CAF50', '#2196F3', '#FF9800', '#E91E63', '#9C27B0'];
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const el = document.createElement('div');
+            el.className = 'confetti';
+            el.style.left = Math.random() * 100 + '%';
+            el.style.background = colors[Math.floor(Math.random() * colors.length)];
+            el.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            el.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
+            el.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }, i * 40);
+    }
+}
+
+function tttShowEndScreen(winner) {
+    const screen = document.getElementById('tttEndScreen');
+    if (!screen) return;
+    screen.style.display = 'flex';
+    if (winner === TTT_HUMAN) {
+        document.getElementById('tttEndIcon').textContent = '🏆';
+        document.getElementById('tttEndTitle').textContent = 'تبریک!';
+        document.getElementById('tttEndMessage').textContent = 'تو برنده شدی! 🎉';
+    } else if (winner === TTT_COMPUTER) {
+        document.getElementById('tttEndIcon').textContent = '😢';
+        document.getElementById('tttEndTitle').textContent = 'باختی!';
+        document.getElementById('tttEndMessage').textContent = 'کامپیوتر برنده شد. دوباره تلاش کن!';
+    } else {
+        document.getElementById('tttEndIcon').textContent = '🤝';
+        document.getElementById('tttEndTitle').textContent = 'مساوی!';
+        document.getElementById('tttEndMessage').textContent = 'بازی مساوی شد!';
+    }
+    document.getElementById('tttStatWins').textContent = tttScores.X;
+    document.getElementById('tttStatLosses').textContent = tttScores.O;
+    document.getElementById('tttStatDraws').textContent = tttScores.D;
+}
+
+function tttStartGame() {
+    document.getElementById('tttStartScreen').style.display = 'none';
+    document.getElementById('tttGameScreen').style.display = 'flex';
+    tttResetGame();
+}
+
+function tttRestartGame() {
+    document.getElementById('tttEndScreen').style.display = 'none';
+    tttResetGame();
+}
+
+function tttResetGame() {
+    tttBoard = Array(9).fill('');
+    tttGameActive = true;
+    document.getElementById('tttInfo').textContent = 'نوبت تو (❌) - روی یک خانه کلیک کن';
+    document.getElementById('tttCard1').classList.add('active');
+    document.getElementById('tttCard2').classList.remove('active');
+    tttBuildBoard();
+}
+
+function tttGoToMenu() {
+    const container = document.getElementById('tttGameContainer');
+    if (container) {
+        const closeBtn = container.parentElement.querySelector('button[style*="position: fixed; top: 12px; right: 12px;"]');
+        if (closeBtn) closeBtn.click();
+    }
+    renderPage('menu');
+}
+
+function tttExitGame() {
+    if (confirm('می‌خوای از بازی خارج بشی؟')) {
+        tttGoToMenu();
+    }
+}
+
+// مقداردهی اولیه بازی دوز
+function initTicTacToe() {
+    tttUpdateBestRecord();
+    tttBuildBoard();
+}
+// ============================================================
+// 🧮 باز کردن بازی ریاضی
+// ============================================================
+
+function openMathGameNew() {
+    const container = document.createElement('div');
+    container.id = 'mathGameContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بستن';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3001;
+        background: rgba(255,255,255,0.25);
+        color: white;
+        border: 2px solid rgba(255,255,255,0.4);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+    `;
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+        // توقف تایمر اگر در حال اجراست
+        if (window.mathTimerInterval) {
+            clearInterval(window.mathTimerInterval);
+            window.mathTimerInterval = null;
+        }
+    };
+
+    // استایل‌های بازی
+    const style = document.createElement('style');
+    style.textContent = `
+        #mathGameContainer * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+        #mathGameContainer { font-family: 'Segoe UI', Tahoma, sans-serif; color: white; }
+        #mathGameContainer .math-container {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 25px 20px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        #mathGameContainer .math-title {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #mathGameContainer .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 18px;
+            gap: 8px;
+        }
+        #mathGameContainer .stat-box {
+            background: rgba(0,0,0,0.3);
+            padding: 12px 10px;
+            border-radius: 16px;
+            text-align: center;
+            flex: 1;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        #mathGameContainer .stat-box .label { 
+            font-size: 11px; 
+            opacity: 0.85; 
+            margin-bottom: 4px;
+        }
+        #mathGameContainer .stat-box .value { 
+            font-size: 24px; 
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #mathGameContainer #mathTimer.warning { 
+            color: #ff6b6b; 
+            animation: blink 0.5s infinite;
+        }
+        @keyframes blink { 
+            50% { opacity: 0.5; } 
+        }
+        #mathGameContainer .question-box {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            padding: 30px 18px;
+            border-radius: 22px;
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 48px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+        #mathGameContainer .question-box.correct {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-color: #4CAF50;
+        }
+        #mathGameContainer .question-box.wrong {
+            background: linear-gradient(135deg, #f44336, #d32f2f);
+            color: white;
+            border-color: #f44336;
+        }
+        #mathGameContainer .answer-input {
+            width: 100%;
+            padding: 18px;
+            font-size: 28px;
+            text-align: center;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 18px;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            font-weight: bold;
+            outline: none;
+            margin-bottom: 14px;
+            transition: all 0.3s;
+        }
+        #mathGameContainer .answer-input:focus { 
+            border-color: #FFD700;
+            box-shadow: 0 0 20px rgba(255,215,0,0.4);
+        }
+        #mathGameContainer .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: bold;
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            background: linear-gradient(135deg, #FFD700, #FFA500, #FF8C00);
+            color: #333;
+            box-shadow: 0 6px 20px rgba(255,165,0,0.4);
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+            font-family: 'B Titr', Tahoma, sans-serif;
+        }
+        #mathGameContainer .btn:active:not(:disabled) { 
+            transform: scale(0.95);
+        }
+        #mathGameContainer .btn:disabled { 
+            opacity: 0.5; 
+            cursor: not-allowed;
+            transform: none;
+        }
+        #mathGameContainer .btn-secondary { 
+            background: rgba(255,255,255,0.25); 
+            color: white;
+            border: 2px solid rgba(255,255,255,0.4);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        #mathGameContainer .combo-display {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+            min-height: 26px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #mathGameContainer .combo-display.active { 
+            color: #FFD700; 
+            animation: pulse 0.5s;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        #mathGameContainer .game-over h2 {
+            font-size: 34px;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #mathGameContainer .final-stats {
+            background: rgba(0,0,0,0.3);
+            padding: 20px 16px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        #mathGameContainer .final-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+            font-size: 16px;
+        }
+        #mathGameContainer .final-stat:last-child { border-bottom: none; }
+        #mathGameContainer .hidden { display: none; }
+        #mathGameContainer .settings {
+            background: rgba(0,0,0,0.25);
+            padding: 20px 16px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        #mathGameContainer .settings h3 { 
+            margin-bottom: 12px; 
+            font-size: 16px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+        #mathGameContainer .options {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        #mathGameContainer .option-btn {
+            flex: 1;
+            min-width: 65px;
+            padding: 12px 8px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            border-radius: 14px;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-align: center;
+            font-family: 'B Titr', Tahoma, sans-serif;
+        }
+        #mathGameContainer .option-btn.active {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #333;
+            border-color: white;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+        #mathGameContainer .option-btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-height: 700px) {
+            #mathGameContainer .math-container { padding: 18px 14px; }
+            #mathGameContainer .math-title { font-size: 26px; margin-bottom: 16px; }
+            #mathGameContainer .question-box { font-size: 40px; padding: 22px 14px; min-height: 100px; }
+            #mathGameContainer .answer-input { font-size: 24px; padding: 14px; }
+            #mathGameContainer .stat-box .value { font-size: 20px; }
+        }
+        @media (max-height: 600px) {
+            #mathGameContainer .math-title { font-size: 22px; }
+            #mathGameContainer .question-box { font-size: 34px; padding: 18px 12px; min-height: 80px; }
+            #mathGameContainer .answer-input { font-size: 20px; padding: 12px; }
+            #mathGameContainer .btn { padding: 14px; font-size: 15px; }
+            #mathGameContainer .stat-box { padding: 10px 6px; }
+            #mathGameContainer .stat-box .value { font-size: 18px; }
+        }
+    `;
+    container.appendChild(style);
+
+    // HTML بازی ریاضی
+    container.innerHTML += `
+        <div class="math-container" id="mathGameContainerInner">
+            <!-- صفحه تنظیمات -->
+            <div id="mathSetupScreen">
+                <div class="math-title">🧮 بازی ریاضی 🎯</div>
+                
+                <div class="settings">
+                    <h3>🎚️ سطح سختی:</h3>
+                    <div class="options" id="mathDifficultyOptions">
+                        <button class="option-btn active" data-value="easy">آسون</button>
+                        <button class="option-btn" data-value="medium">متوسط</button>
+                        <button class="option-btn" data-value="hard">سخت</button>
+                    </div>
+                    
+                    <h3>🔢 نوع عملیات:</h3>
+                    <div class="options" id="mathOperationOptions">
+                        <button class="option-btn active" data-value="+">➕ جمع</button>
+                        <button class="option-btn active" data-value="-">➖ تفریق</button>
+                        <button class="option-btn active" data-value="×">✖️ ضرب</button>
+                        <button class="option-btn active" data-value="÷">➗ تقسیم</button>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="mathStartGame()">🚀 شروع بازی</button>
+            </div>
+
+            <!-- صفحه بازی -->
+            <div id="mathGameScreen" class="hidden">
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="label">⏱️ زمان</div>
+                        <div class="value" id="mathTimer">60</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">⭐ امتیاز</div>
+                        <div class="value" id="mathScore">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="label">✅ درست</div>
+                        <div class="value" id="mathCorrectCount">0</div>
+                    </div>
+                </div>
+                
+                <div class="combo-display" id="mathComboDisplay"></div>
+                
+                <div class="question-box" id="mathQuestionBox">
+                    <span id="mathQuestion">۵ + ۳ = ؟</span>
+                </div>
+                
+                <input type="number" class="answer-input" id="mathAnswerInput" placeholder="پاسخ خود را وارد کنید" autocomplete="off" inputmode="numeric">
+                
+                <button class="btn" onclick="mathSubmitAnswer()">✅ ثبت پاسخ</button>
+                <button class="btn btn-secondary" onclick="mathSkipQuestion()">⏭️ رد شدن</button>
+            </div>
+
+            <!-- صفحه پایان بازی -->
+            <div id="mathEndScreen" class="hidden game-over">
+                <h2>🏆 پایان بازی!</h2>
+                <div class="final-stats">
+                    <div class="final-stat"><span>⭐ امتیاز نهایی:</span><span id="mathFinalScore">0</span></div>
+                    <div class="final-stat"><span>✅ پاسخ درست:</span><span id="mathFinalCorrect">0</span></div>
+                    <div class="final-stat"><span>❌ پاسخ غلط:</span><span id="mathFinalWrong">0</span></div>
+                    <div class="final-stat"><span>⏭️ رد شده:</span><span id="mathFinalSkipped">0</span></div>
+                    <div class="final-stat"><span>🔥 بیشترین Combo:</span><span id="mathFinalCombo">0</span></div>
+                    <div class="final-stat"><span>📊 دقت:</span><span id="mathFinalAccuracy">0%</span></div>
+                </div>
+                <button class="btn" onclick="mathRestartGame()">🔄 بازی دوباره</button>
+                <button class="btn btn-secondary" onclick="mathGoToSetup()">⚙️ تنظیمات</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+
+    // مقداردهی اولیه
+    setTimeout(function() {
+        mathInitGame();
+    }, 100);
+}
+// ============================================================
+// 🧮 کد کامل بازی ریاضی
+// ============================================================
+
+// تنظیمات بازی
+let mathSettings = {
+    difficulty: 'easy',
+    operations: ['+', '-', '×', '÷']
+};
+
+// متغیرهای بازی
+let mathCurrentQuestion = {};
+let mathScore = 0;
+let mathCombo = 0;
+let mathMaxCombo = 0;
+let mathCorrectCount = 0;
+let mathWrongCount = 0;
+let mathSkippedCount = 0;
+let mathTimeLeft = 60;
+let mathTotalQuestions = 0;
+let mathTimerInterval = null;
+let mathGameActive = false;
+
+// تنظیمات سطح سختی
+const mathDifficultyRanges = {
+    easy: { min: 1, max: 10 },
+    medium: { min: 10, max: 50 },
+    hard: { min: 20, max: 100 }
+};
+
+// مقداردهی اولیه
+function mathInitGame() {
+    // دکمه‌های سطح سختی
+    document.querySelectorAll('#mathDifficultyOptions .option-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#mathDifficultyOptions .option-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            mathSettings.difficulty = this.dataset.value;
+        });
+    });
+
+    // دکمه‌های نوع عملیات
+    document.querySelectorAll('#mathOperationOptions .option-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const op = this.dataset.value;
+            if (this.classList.contains('active')) {
+                if (!mathSettings.operations.includes(op)) mathSettings.operations.push(op);
+            } else {
+                mathSettings.operations = mathSettings.operations.filter(o => o !== op);
+            }
+        });
+    });
+
+    // ارسال پاسخ با Enter
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && mathGameActive) {
+            const screen = document.getElementById('mathGameScreen');
+            if (screen && !screen.classList.contains('hidden')) {
+                mathSubmitAnswer();
+            }
+        }
+    });
+}
+
+// شروع بازی
+function mathStartGame() {
+    if (mathSettings.operations.length === 0) {
+        alert('لطفاً حداقل یک نوع عملیات را انتخاب کنید!');
+        return;
+    }
+    
+    // توقف تایمر قبلی اگر وجود دارد
+    if (mathTimerInterval) {
+        clearInterval(mathTimerInterval);
+        mathTimerInterval = null;
+    }
+    
+    mathScore = 0;
+    mathCombo = 0;
+    mathMaxCombo = 0;
+    mathCorrectCount = 0;
+    mathWrongCount = 0;
+    mathSkippedCount = 0;
+    mathTimeLeft = 60;
+    mathTotalQuestions = 0;
+    mathGameActive = true;
+    
+    document.getElementById('mathSetupScreen').classList.add('hidden');
+    document.getElementById('mathEndScreen').classList.add('hidden');
+    document.getElementById('mathGameScreen').classList.remove('hidden');
+    
+    mathUpdateStats();
+    mathGenerateQuestion();
+    
+    mathTimerInterval = setInterval(function() {
+        mathTimeLeft--;
+        document.getElementById('mathTimer').textContent = mathTimeLeft;
+        
+        if (mathTimeLeft <= 10) {
+            document.getElementById('mathTimer').classList.add('warning');
+        }
+        
+        if (mathTimeLeft <= 0) {
+            mathEndGame();
+        }
+    }, 1000);
+    
+    document.getElementById('mathAnswerInput').focus();
+}
+
+// تولید سوال
+function mathGenerateQuestion() {
+    const range = mathDifficultyRanges[mathSettings.difficulty];
+    const op = mathSettings.operations[Math.floor(Math.random() * mathSettings.operations.length)];
+    
+    let a, b, answer;
+    
+    switch(op) {
+        case '+':
+            a = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+            b = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+            answer = a + b;
+            break;
+        case '-':
+            a = Math.floor(Math.random() * (range.max - range.min + 1)) + range.min;
+            b = Math.floor(Math.random() * a) + 1;
+            answer = a - b;
+            break;
+        case '×':
+            const multMax = mathSettings.difficulty === 'easy' ? 10 : mathSettings.difficulty === 'medium' ? 15 : 20;
+            a = Math.floor(Math.random() * multMax) + 1;
+            b = Math.floor(Math.random() * multMax) + 1;
+            answer = a * b;
+            break;
+        case '÷':
+            b = Math.floor(Math.random() * 10) + 2;
+            answer = Math.floor(Math.random() * 10) + 1;
+            a = b * answer;
+            break;
+    }
+    
+    mathCurrentQuestion = { a, b, op, answer };
+    document.getElementById('mathQuestion').textContent = `${a} ${op} ${b} = ؟`;
+    document.getElementById('mathAnswerInput').value = '';
+    document.getElementById('mathAnswerInput').focus();
+}
+
+// ثبت پاسخ
+function mathSubmitAnswer() {
+    if (!mathGameActive) return;
+    
+    const input = document.getElementById('mathAnswerInput');
+    const userAnswer = parseInt(input.value);
+    
+    if (isNaN(userAnswer)) {
+        input.focus();
+        return;
+    }
+    
+    mathTotalQuestions++;
+    const questionBox = document.getElementById('mathQuestionBox');
+    
+    if (userAnswer === mathCurrentQuestion.answer) {
+        mathCombo++;
+        if (mathCombo > mathMaxCombo) mathMaxCombo = mathCombo;
+        mathCorrectCount++;
+        
+        const points = 10 * mathCombo;
+        mathScore += points;
+        
+        questionBox.classList.add('correct');
+        mathUpdateComboDisplay();
+        
+        setTimeout(function() {
+            questionBox.classList.remove('correct');
+            mathGenerateQuestion();
+        }, 400);
+    } else {
+        mathCombo = 0;
+        mathWrongCount++;
+        
+        questionBox.classList.add('wrong');
+        mathUpdateComboDisplay();
+        
+        setTimeout(function() {
+            questionBox.classList.remove('wrong');
+            mathGenerateQuestion();
+        }, 700);
+    }
+    
+    mathUpdateStats();
+}
+
+// رد شدن از سوال
+function mathSkipQuestion() {
+    if (!mathGameActive) return;
+    
+    mathTotalQuestions++;
+    mathSkippedCount++;
+    mathCombo = 0;
+    mathUpdateComboDisplay();
+    mathUpdateStats();
+    mathGenerateQuestion();
+}
+
+// به‌روزرسانی آمار
+function mathUpdateStats() {
+    document.getElementById('mathScore').textContent = mathScore;
+    document.getElementById('mathCorrectCount').textContent = mathCorrectCount;
+}
+
+// نمایش combo
+function mathUpdateComboDisplay() {
+    const display = document.getElementById('mathComboDisplay');
+    if (mathCombo >= 2) {
+        display.textContent = `🔥 Combo x${mathCombo}! امتیاز: ${10 * mathCombo}`;
+        display.classList.add('active');
+        setTimeout(function() {
+            display.classList.remove('active');
+        }, 500);
+    } else {
+        display.textContent = '';
+    }
+}
+
+// پایان بازی
+function mathEndGame() {
+    mathGameActive = false;
+    if (mathTimerInterval) {
+        clearInterval(mathTimerInterval);
+        mathTimerInterval = null;
+    }
+    
+    document.getElementById('mathGameScreen').classList.add('hidden');
+    document.getElementById('mathEndScreen').classList.remove('hidden');
+    
+    const answered = mathCorrectCount + mathWrongCount;
+    const accuracy = answered > 0 ? Math.round((mathCorrectCount / answered) * 100) : 0;
+    
+    document.getElementById('mathFinalScore').textContent = mathScore;
+    document.getElementById('mathFinalCorrect').textContent = mathCorrectCount;
+    document.getElementById('mathFinalWrong').textContent = mathWrongCount;
+    document.getElementById('mathFinalSkipped').textContent = mathSkippedCount;
+    document.getElementById('mathFinalCombo').textContent = mathMaxCombo;
+    document.getElementById('mathFinalAccuracy').textContent = accuracy + '%';
+}
+
+// شروع مجدد
+function mathRestartGame() {
+    document.getElementById('mathTimer').classList.remove('warning');
+    mathStartGame();
+}
+
+function mathGoToSetup() {
+    if (mathTimerInterval) {
+        clearInterval(mathTimerInterval);
+        mathTimerInterval = null;
+    }
+    mathGameActive = false;
+    document.getElementById('mathEndScreen').classList.add('hidden');
+    document.getElementById('mathSetupScreen').classList.remove('hidden');
+    document.getElementById('mathTimer').classList.remove('warning');
+}
+
+// خروج از بازی ریاضی (برای دکمه بستن)
+function mathExitGame() {
+    if (mathTimerInterval) {
+        clearInterval(mathTimerInterval);
+        mathTimerInterval = null;
+    }
+    mathGameActive = false;
+    const container = document.getElementById('mathGameContainer');
+    if (container) {
+        const closeBtn = container.parentElement.querySelector('button[style*="position: fixed; top: 12px; right: 12px;"]');
+        if (closeBtn) closeBtn.click();
+    }
+    renderPage('menu');
+}
+// ============================================================
+// 📄 HTML بخش ویژه بانوان
+// ============================================================
+
+function getLadySectionHTML() {
+    return `
+    <style>
+        #ladySectionContainer .lady-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            color: #764ba2;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        #ladySectionContainer .lady-sub {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        #ladySectionContainer .lady-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 450px;
+            margin: 10px 0;
+        }
+        #ladySectionContainer .lady-card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            border: 2px solid rgba(118,75,162,0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        #ladySectionContainer .lady-card:active {
+            transform: scale(0.95);
+        }
+        #ladySectionContainer .lady-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(118,75,162,0.2);
+            border-color: #764ba2;
+        }
+        #ladySectionContainer .lady-card .lady-icon {
+            font-size: 55px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        #ladySectionContainer .lady-card .lady-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        #ladySectionContainer .lady-card .lady-desc {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        #ladySectionContainer .lady-card .lady-badge {
+            display: inline-block;
+            background: rgba(118,75,162,0.15);
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #764ba2;
+            margin-top: 8px;
+            border: 1px solid rgba(118,75,162,0.2);
+        }
+        #ladySectionContainer .lady-footer {
+            color: #999;
+            font-size: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:450px;min-height:70vh;padding:10px;text-align:center;">
+        <div style="font-size:60px;margin-bottom:5px;">👩</div>
+        <div class="lady-title">بانو ویژه بانوان</div>
+        <div class="lady-sub">💎 برنامه‌های ویژه برای بانوان</div>
+        
+        <div class="lady-grid">
+            <div class="lady-card" onclick="openCookingApp()">
+                <span class="lady-icon">🍽️</span>
+                <div class="lady-name">پخت و پز</div>
+                <div class="lady-desc">منوی غذاهای ایرانی با تهیه مواد</div>
+                <span class="lady-badge">📚 فعال</span>
+            </div>
+            
+            <div class="lady-card" onclick="alert('به زودی اضافه می‌شود')">
+                <span class="lady-icon">🌸</span>
+                <div class="lady-name">به‌زودی...</div>
+                <div class="lady-desc">برنامه‌های جدید در راه است</div>
+                <span class="lady-badge">🚧 در دست ساخت</span>
+            </div>
+        </div>
+        
+        <div class="lady-footer">
+            💡 این بخش شامل برنامه‌های کاربردی ویژه بانوان است
+        </div>
+    </div>
+    `;
+}
+
+// ============================================================
+// 👩 باز کردن بخش ویژه بانوان
+// ============================================================
+
+function openLadySection() {
+    const container = document.createElement('div');
+    container.id = 'ladySectionContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بستن';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3001;
+        background: rgba(255,255,255,0.9);
+        color: #333;
+        border: 2px solid rgba(0,0,0,0.15);
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    `;
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+    };
+
+    container.innerHTML = getLadySectionHTML();
+    
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+}
+
+// ============================================================
+// 🍽️ برنامه پخت و پز (نسخه کامل و زیبا)
+// ============================================================
+
+// داده‌های کامل غذاهای ایرانی
+const ladyFoodItems = [
+    // کباب‌ها
+    {
+        id: 1, name: 'کباب کوبیده', category: 'کباب‌ها', emoji: '🥩',
+        recipe: [
+            { ingredient: 'گوشت مخلوط', amount: '۸۰۰ گرم' },
+            { ingredient: 'پیاز آب گرفته', amount: '۲۰۰ گرم' },
+            { ingredient: 'دنبه تازه گوسفندی', amount: '۱۰۰ گرم' },
+            { ingredient: 'نمک', amount: '۱ قاشق چایخوری' },
+            { ingredient: 'بکینگ پودر (اختیاری)', amount: '۱ قاشق چایخوری' },
+            { ingredient: 'فلفل سیاه', amount: 'به اندازه دلخواه' },
+            { ingredient: 'زعفران دم کرده', amount: '۴ قاشق غذاخوری' }
+        ]
+    },
+    {
+        id: 2, name: 'جوجه کباب', category: 'کباب‌ها', emoji: '🍗',
+        recipe: [
+            { ingredient: 'سینه مرغ', amount: '۱ کیلوگرم' },
+            { ingredient: 'ماست', amount: '۱ پیمانه' },
+            { ingredient: 'پیاز', amount: '۲ عدد' },
+            { ingredient: 'آبلیمو', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'زعفران دم کرده', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'نمک و فلفل', amount: 'به اندازه دلخواه' },
+            { ingredient: 'کره', amount: '۵۰ گرم' }
+        ]
+    },
+    {
+        id: 3, name: 'کباب برگ', category: 'کباب‌ها', emoji: '🍖',
+        recipe: [
+            { ingredient: 'راسته گوسفندی', amount: '۵۰۰ گرم' },
+            { ingredient: 'پیاز رنده شده', amount: '۱ عدد' },
+            { ingredient: 'روغن زیتون', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'نمک و فلفل', amount: 'به اندازه دلخواه' },
+            { ingredient: 'زعفران', amount: '۱ قاشق چایخوری' }
+        ]
+    },
+    // خورشت‌ها
+    {
+        id: 4, name: 'قرمه سبزی', category: 'خورشت‌ها', emoji: '🍲',
+        recipe: [
+            { ingredient: 'سبزی قرمه', amount: '۵۰۰ گرم' },
+            { ingredient: 'گوشت خورشتی', amount: '۳۰۰ گرم' },
+            { ingredient: 'لوبیا قرمز', amount: '۱ پیمانه' },
+            { ingredient: 'لیمو عمانی', amount: '۴ عدد' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'نمک و فلفل', amount: 'به اندازه دلخواه' },
+            { ingredient: 'روغن', amount: '۳ قاشق غذاخوری' }
+        ]
+    },
+    {
+        id: 5, name: 'قیمه', category: 'خورشت‌ها', emoji: '🍛',
+        recipe: [
+            { ingredient: 'گوشت خورشتی', amount: '۳۰۰ گرم' },
+            { ingredient: 'لپه', amount: '۱ پیمانه' },
+            { ingredient: 'لیمو عمانی', amount: '۲ عدد' },
+            { ingredient: 'رب گوجه فرنگی', amount: '۲ قاشق غذاخوری' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'سیب زمینی', amount: '۲ عدد' },
+            { ingredient: 'زعفران', amount: '½ قاشق چایخوری' }
+        ]
+    },
+    {
+        id: 6, name: 'فسنجان', category: 'خورشت‌ها', emoji: '🍗',
+        recipe: [
+            { ingredient: 'گردو', amount: '۳۰۰ گرم' },
+            { ingredient: 'مرغ یا اردک', amount: '۴ تکه' },
+            { ingredient: 'رب انار', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'شکر', amount: '۱ قاشق غذاخوری' },
+            { ingredient: 'نمک و فلفل', amount: 'به اندازه دلخواه' }
+        ]
+    },
+    // پلوها
+    {
+        id: 7, name: 'پلو ساده', category: 'پلوها', emoji: '🍚',
+        recipe: [
+            { ingredient: 'برنج ایرانی', amount: '۳ پیمانه' },
+            { ingredient: 'نمک', amount: '۲ قاشق غذاخوری' },
+            { ingredient: 'روغن یا کره', amount: '۴ قاشق غذاخوری' },
+            { ingredient: 'زعفران دم کرده', amount: '۲ قاشق غذاخوری' },
+            { ingredient: 'نان (برای ته‌دیگ)', amount: 'به اندازه دلخواه' }
+        ]
+    },
+    {
+        id: 8, name: 'سبزی پلو با ماهی', category: 'پلوها', emoji: '🐟',
+        recipe: [
+            { ingredient: 'برنج', amount: '۳ پیمانه' },
+            { ingredient: 'سبزی پلویی', amount: '۳۰۰ گرم' },
+            { ingredient: 'ماهی قزل‌آلا', amount: '۴ تکه' },
+            { ingredient: 'سیر', amount: '۳ حبه' },
+            { ingredient: 'لیمو ترش', amount: '۲ عدد' },
+            { ingredient: 'روغن', amount: 'به اندازه لازم' }
+        ]
+    },
+    {
+        id: 9, name: 'باقالی پلو با ماهیچه', category: 'پلوها', emoji: '🍖',
+        recipe: [
+            { ingredient: 'برنج', amount: '۳ پیمانه' },
+            { ingredient: 'باقالی', amount: '۲ پیمانه' },
+            { ingredient: 'شوید', amount: '۲۰۰ گرم' },
+            { ingredient: 'ماهیچه گوسفندی', amount: '۵۰۰ گرم' },
+            { ingredient: 'پیاز', amount: '۲ عدد' },
+            { ingredient: 'زعفران', amount: '۱ قاشق چایخوری' }
+        ]
+    },
+    {
+        id: 10, name: 'زرشک پلو با مرغ', category: 'پلوها', emoji: '🐔',
+        recipe: [
+            { ingredient: 'برنج', amount: '۳ پیمانه' },
+            { ingredient: 'زرشک', amount: '۱۰۰ گرم' },
+            { ingredient: 'مرغ', amount: '۴ تکه' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'زعفران', amount: '۱ قاشق چایخوری' },
+            { ingredient: 'کره', amount: '۵۰ گرم' },
+            { ingredient: 'شکر', amount: '۱ قاشق غذاخوری' }
+        ]
+    },
+    // آش‌ها
+    {
+        id: 11, name: 'آش رشته', category: 'آش‌ها', emoji: '🥣',
+        recipe: [
+            { ingredient: 'رشته آش', amount: '۲۰۰ گرم' },
+            { ingredient: 'حبوبات (نخود، لوبیا، عدس)', amount: '۱ پیمانه' },
+            { ingredient: 'سبزی آش', amount: '۵۰۰ گرم' },
+            { ingredient: 'پیاز داغ', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'کشک', amount: '۱ پیمانه' },
+            { ingredient: 'نعنا داغ', amount: '۲ قاشق غذاخوری' }
+        ]
+    },
+    {
+        id: 12, name: 'دیزی (آبگوشت)', category: 'آش‌ها', emoji: '🍲',
+        recipe: [
+            { ingredient: 'گوشت گوسفندی با استخوان', amount: '۴۰۰ گرم' },
+            { ingredient: 'نخود', amount: '۱ پیمانه' },
+            { ingredient: 'لوبیا سفید', amount: '½ پیمانه' },
+            { ingredient: 'سیب زمینی', amount: '۲ عدد' },
+            { ingredient: 'گوجه فرنگی', amount: '۲ عدد' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'لیمو عمانی', amount: '۲ عدد' }
+        ]
+    },
+    // غذاهای محلی
+    {
+        id: 13, name: 'میرزا قاسمی', category: 'غذاهای محلی', emoji: '🍆',
+        recipe: [
+            { ingredient: 'بادمجان', amount: '۴ عدد' },
+            { ingredient: 'گوجه فرنگی', amount: '۳ عدد' },
+            { ingredient: 'سیر', amount: '۴ حبه' },
+            { ingredient: 'تخم مرغ', amount: '۲ عدد' },
+            { ingredient: 'روغن', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'نمک و فلفل', amount: 'به اندازه دلخواه' }
+        ]
+    },
+    {
+        id: 14, name: 'کشک بادمجان', category: 'غذاهای محلی', emoji: '🍆',
+        recipe: [
+            { ingredient: 'بادمجان', amount: '۴ عدد' },
+            { ingredient: 'کشک', amount: '۱ پیمانه' },
+            { ingredient: 'پیاز داغ', amount: '۳ قاشق غذاخوری' },
+            { ingredient: 'سیر داغ', amount: '۲ قاشق غذاخوری' },
+            { ingredient: 'نعنا داغ', amount: '۱ قاشق غذاخوری' },
+            { ingredient: 'گردو', amount: '۵۰ گرم' }
+        ]
+    },
+    {
+        id: 15, name: 'کوفته تبریزی', category: 'غذاهای محلی', emoji: '🧆',
+        recipe: [
+            { ingredient: 'گوشت چرخ کرده', amount: '۳۰۰ گرم' },
+            { ingredient: 'لپه', amount: '½ پیمانه' },
+            { ingredient: 'برنج', amount: '۱ پیمانه' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'سبزی معطر', amount: '۱۰۰ گرم' },
+            { ingredient: 'زرشک و آلو', amount: 'به اندازه دلخواه' },
+            { ingredient: 'تخم مرغ', amount: '۱ عدد' }
+        ]
+    },
+    // سالادها و پیش‌غذا
+    {
+        id: 16, name: 'سالاد الویه', category: 'پیش‌غذا', emoji: '🥗',
+        recipe: [
+            { ingredient: 'سیب زمینی', amount: '۳ عدد' },
+            { ingredient: 'تخم مرغ', amount: '۲ عدد' },
+            { ingredient: 'سینه مرغ', amount: '۲۰۰ گرم' },
+            { ingredient: 'خیارشور', amount: '۴ عدد' },
+            { ingredient: 'نخود فرنگی', amount: '۱ پیمانه' },
+            { ingredient: 'سس مایونز', amount: '۱ پیمانه' },
+            { ingredient: 'نمک و فلفل', amount: 'به اندازه دلخواه' }
+        ]
+    },
+    {
+        id: 17, name: 'لازانیا', category: 'پیش‌غذا', emoji: '🍝',
+        recipe: [
+            { ingredient: 'ورقه لازانیا', amount: '۱ بسته' },
+            { ingredient: 'گوشت چرخ کرده', amount: '۴۰۰ گرم' },
+            { ingredient: 'پیاز', amount: '۱ عدد' },
+            { ingredient: 'سس گوجه فرنگی', amount: '۲ پیمانه' },
+            { ingredient: 'پنیر موزارلا', amount: '۳۰۰ گرم' },
+            { ingredient: 'پنیر پارمزان', amount: '۱۰۰ گرم' }
+        ]
+    },
+    {
+        id: 18, name: 'سوسیس بندری', category: 'پیش‌غذا', emoji: '🌭',
+        recipe: [
+            { ingredient: 'سوسیس', amount: '۴ عدد' },
+            { ingredient: 'پیاز', amount: '۲ عدد' },
+            { ingredient: 'سیب زمینی', amount: '۲ عدد' },
+            { ingredient: 'گوجه فرنگی', amount: '۲ عدد' },
+            { ingredient: 'فلفل دلمه', amount: '۱ عدد' },
+            { ingredient: 'رب گوجه', amount: '۲ قاشق غذاخوری' },
+            { ingredient: 'ادویه بندری', amount: '۱ قاشق چایخوری' }
+        ]
+    }
+];
+
+// فروشگاه‌های شبیه‌سازی شده
+const ladyShopsData = {
+    tehran: [
+        { name: 'هایپر استار', address: 'تهران، بزرگراه همت، مرکز خرید کوروش', phone: '021-88776655', lat: 35.7595, lng: 51.3690 },
+        { name: 'رفاه', address: 'تهران، خیابان ولیعصر، نرسیده به میدان ونک', phone: '021-88887777', lat: 35.7617, lng: 51.4044 },
+        { name: 'شهروند', address: 'تهران، سعادت آباد، میدان کاج', phone: '021-22334455', lat: 35.7833, lng: 51.3750 },
+        { name: 'افق کوروش', address: 'تهران، خیابان آزادی، پلاک 123', phone: '021-66554433', lat: 35.6997, lng: 51.3381 }
+    ],
+    isfahan: [
+        { name: 'هایپر رفاه اصفهان', address: 'اصفهان، خیابان چهارباغ بالا', phone: '031-33334444', lat: 32.6546, lng: 51.6680 },
+        { name: 'شهروند اصفهان', address: 'اصفهان، خیابان آمادگاه', phone: '031-32223333', lat: 32.6517, lng: 51.6744 },
+        { name: 'افق کوروش اصفهان', address: 'اصفهان، خیابان هزارجریب', phone: '031-34445555', lat: 32.6400, lng: 51.6800 }
+    ],
+    shiraz: [
+        { name: 'هایپر ستاره فارس', address: 'شیراز، بلوار ارم', phone: '071-32223333', lat: 29.5918, lng: 52.5837 },
+        { name: 'رفاه شیراز', address: 'شیراز، خیابان زند', phone: '071-32334444', lat: 29.6100, lng: 52.5311 },
+        { name: 'شهروند شیراز', address: 'شیراز، معالی آباد', phone: '071-36445555', lat: 29.6300, lng: 52.5100 }
+    ],
+    mashhad: [
+        { name: 'هایپر الماس شرق', address: 'مشهد، بلوار وکیل آباد', phone: '051-38887777', lat: 36.3156, lng: 59.5678 },
+        { name: 'رفاه مشهد', address: 'مشهد، خیابان احمدآباد', phone: '051-37776666', lat: 36.2972, lng: 59.6067 },
+        { name: 'شهروند مشهد', address: 'مشهد، بلوار سجاد', phone: '051-36665555', lat: 36.3200, lng: 59.5800 }
+    ],
+    tabriz: [
+        { name: 'هایپر شهر تبریز', address: 'تبریز، خیابان ولیعصر', phone: '041-33334444', lat: 38.0800, lng: 46.2919 },
+        { name: 'رفاه تبریز', address: 'تبریز، خیابان امام', phone: '041-32223333', lat: 38.0750, lng: 46.2950 }
+    ],
+    karaj: [
+        { name: 'هایپر کرج', address: 'کرج، مهرشهر، بلوار ارم', phone: '026-33334444', lat: 35.8355, lng: 50.9916 },
+        { name: 'افق کوروش کرج', address: 'کرج، گوهردشت', phone: '026-34445555', lat: 35.8400, lng: 51.0000 }
+    ],
+    ahvaz: [
+        { name: 'هایپر اهواز', address: 'اهواز، کیانپارس', phone: '061-33334444', lat: 31.3183, lng: 48.6706 },
+        { name: 'رفاه اهواز', address: 'اهواز، زیتون کارمندی', phone: '061-32223333', lat: 31.3250, lng: 48.6800 }
+    ],
+    qom: [
+        { name: 'هایپر قم', address: 'قم، بلوار امین', phone: '025-33334444', lat: 34.6416, lng: 51.0224 },
+        { name: 'رفاه قم', address: 'قم، خیابان ۱۹ دی', phone: '025-32223333', lat: 34.6450, lng: 51.0300 }
+    ],
+    rasht: [
+        { name: 'هایپر رشت', address: 'رشت، بلوار معلم', phone: '013-33334444', lat: 37.2808, lng: 49.5832 },
+        { name: 'رفاه رشت', address: 'رشت، خیابان سعدی', phone: '013-32223333', lat: 37.2850, lng: 49.5900 }
+    ],
+    kerman: [
+        { name: 'هایپر کرمان', address: 'کرمان، بلوار جهاد', phone: '034-33334444', lat: 30.2839, lng: 57.0834 },
+        { name: 'رفاه کرمان', address: 'کرمان، خیابان شریعتی', phone: '034-32223333', lat: 30.2900, lng: 57.0900 }
+    ]
+};
+
+// ============================================================
+// 🍽️ توابع برنامه پخت و پز (نسخه زیبا)
+// ============================================================
+
+function openCookingApp() {
+    // ایجاد کانتینر اصلی
+    const container = document.createElement('div');
+    container.id = 'cookingAppContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3050;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بستن';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3051;
+        background: rgba(255,255,255,0.95);
+        color: #333;
+        border: 2px solid rgba(0,0,0,0.15);
+        padding: 10px 22px;
+        border-radius: 30px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        transition: all 0.3s ease;
+    `;
+    closeBtn.onmouseover = function() {
+        this.style.background = '#f5576c';
+        this.style.color = 'white';
+        this.style.borderColor = '#f5576c';
+    };
+    closeBtn.onmouseout = function() {
+        this.style.background = 'rgba(255,255,255,0.95)';
+        this.style.color = '#333';
+        this.style.borderColor = 'rgba(0,0,0,0.15)';
+    };
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+    };
+
+    container.innerHTML = `
+    <style>
+        #cookingAppContainer .cook-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 5px 0 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        #cookingAppContainer .cook-sub {
+            font-size: 15px;
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #cookingAppContainer .cook-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            margin: 5px 0;
+        }
+        #cookingAppContainer .cook-btn {
+            flex: 1;
+            padding: 22px 15px;
+            border: none;
+            border-radius: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'B Titr', Tahoma, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        #cookingAppContainer .cook-btn:active {
+            transform: scale(0.95);
+        }
+        #cookingAppContainer .cook-btn:hover {
+            transform: translateY(-4px);
+        }
+        #cookingAppContainer .cook-btn .cook-icon {
+            font-size: 40px;
+        }
+        #cookingAppContainer .cook-btn .cook-label {
+            font-size: 16px;
+        }
+        #cookingAppContainer .cook-btn .cook-desc {
+            font-size: 12px;
+            opacity: 0.85;
+            font-weight: normal;
+        }
+        #cookingAppContainer .cook-btn-food {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 30px rgba(102,126,234,0.35);
+        }
+        #cookingAppContainer .cook-btn-food:hover {
+            box-shadow: 0 12px 45px rgba(102,126,234,0.5);
+        }
+        #cookingAppContainer .cook-btn-shop {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            box-shadow: 0 8px 30px rgba(17,153,142,0.35);
+        }
+        #cookingAppContainer .cook-btn-shop:hover {
+            box-shadow: 0 12px 45px rgba(17,153,142,0.5);
+        }
+        #cookingAppContainer .cook-footer {
+            color: #999;
+            font-size: 13px;
+            margin-top: 20px;
+            text-align: center;
+            max-width: 400px;
+            line-height: 1.8;
+        }
+    </style>
+
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:450px;padding:10px;text-align:center;">
+        <div style="font-size:70px;margin-bottom:5px;">🍽️</div>
+        <div class="cook-title">پخت و پز</div>
+        <div class="cook-sub">🧑‍🍳 منوی غذاهای ایرانی با تهیه مواد اولیه</div>
+        
+        <div class="cook-buttons">
+            <button class="cook-btn cook-btn-food" onclick="openLadyFoodModal()">
+                <span class="cook-icon">🍽️</span>
+                <span class="cook-label">منوی غذا</span>
+                <span class="cook-desc">مشاهده دستور پخت</span>
+            </button>
+            <button class="cook-btn cook-btn-shop" onclick="openLadyShopModal()">
+                <span class="cook-icon">🛒</span>
+                <span class="cook-label">تهیه مواد</span>
+                <span class="cook-desc">نزدیک‌ترین فروشگاه</span>
+            </button>
+        </div>
+        
+        <div class="cook-footer">
+            💡 برای مشاهده دستور پخت، روی <strong>"منوی غذا"</strong> و برای پیدا کردن فروشگاه، روی <strong>"تهیه مواد"</strong> کلیک کنید
+        </div>
+    </div>
+    `;
+    
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+}
+
+// ============================================================
+// 📋 منوی غذا (نسخه زیبا با استایل کامل)
+// ============================================================
+
+function openLadyFoodModal() {
+    const oldModal = document.getElementById('ladyFoodModal');
+    if (oldModal) oldModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'ladyFoodModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 3100;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    `;
+    modal.innerHTML = `
+        <div style="background:white;border-radius:20px;padding:30px;max-width:600px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 10px 50px rgba(0,0,0,0.4);position:relative;">
+            <button onclick="document.getElementById('ladyFoodModal').remove()" 
+                    style="position:absolute;top:15px;left:15px;background:#f5576c;border:none;width:35px;height:35px;border-radius:50%;color:white;cursor:pointer;font-size:20px;transition:all 0.3s;box-shadow:0 2px 10px rgba(245,87,108,0.3);"
+                    onmouseover="this.style.transform='rotate(90deg)'" 
+                    onmouseout="this.style.transform='rotate(0deg)'">✕</button>
+            <div style="text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #eee;">
+                <h2 style="color:#667eea;font-size:28px;">🍽️ منوی غذاهای ایرانی</h2>
+                <p style="color:#888;font-size:13px;margin-top:5px;">برای مشاهده دستور پخت، روی هر غذا کلیک کنید</p>
+            </div>
+            <div id="ladyFoodList"></div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    renderLadyFoodMenu();
+}
+
+function renderLadyFoodMenu() {
+    const foodList = document.getElementById('ladyFoodList');
+    if (!foodList) return;
+    
+    const categories = [...new Set(ladyFoodItems.map(f => f.category))];
+    
+    foodList.innerHTML = categories.map(cat => `
+        <div style="margin:15px 0;">
+            <div style="font-size:17px;color:#764ba2;font-weight:bold;margin-bottom:12px;padding-right:12px;border-right:4px solid #764ba2;">${cat}</div>
+            ${ladyFoodItems.filter(f => f.category === cat).map(item => `
+                <div onclick="showLadyRecipe(${item.id})" 
+                     style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin:8px 0;background:#f8f9fa;border-radius:12px;cursor:pointer;transition:all 0.3s;border-right:3px solid transparent;"
+                     onmouseover="this.style.background='linear-gradient(135deg, #667eea15, #764ba215)';this.style.borderRightColor='#667eea';this.style.transform='translateX(-5px)'"
+                     onmouseout="this.style.background='#f8f9fa';this.style.borderRightColor='transparent';this.style.transform='translateX(0)'">
+                    <div>
+                        <h3 style="color:#333;margin-bottom:4px;font-size:17px;">${item.emoji} ${item.name}</h3>
+                        <p style="color:#888;font-size:12px;">👩‍🍳 برای مشاهده دستور پخت کلیک کنید</p>
+                    </div>
+                    <span style="font-size:28px;color:#667eea;">→</span>
+                </div>
+            `).join('')}
+        </div>
+    `).join('');
+}
+
+function showLadyRecipe(foodId) {
+    const item = ladyFoodItems.find(f => f.id === foodId);
+    if (!item) return;
+
+    const oldModal = document.getElementById('ladyRecipeModal');
+    if (oldModal) oldModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'ladyRecipeModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 3200;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    `;
+    modal.innerHTML = `
+        <div style="background:white;border-radius:20px;padding:30px;max-width:500px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 10px 50px rgba(0,0,0,0.5);position:relative;">
+            <button onclick="document.getElementById('ladyRecipeModal').remove()" 
+                    style="position:absolute;top:15px;left:15px;background:#f5576c;border:none;width:35px;height:35px;border-radius:50%;color:white;cursor:pointer;font-size:20px;transition:all 0.3s;box-shadow:0 2px 10px rgba(245,87,108,0.3);"
+                    onmouseover="this.style.transform='rotate(90deg)'" 
+                    onmouseout="this.style.transform='rotate(0deg)'">✕</button>
+            <div style="text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #667eea;">
+                <h2 style="color:#667eea;font-size:24px;">${item.emoji} دستور پخت ${item.name}</h2>
+                <p style="color:#888;font-size:13px;margin-top:5px;">📋 مواد لازم برای تهیه این غذا</p>
+            </div>
+            <h3 style="font-size:18px;color:#333;margin:15px 0 12px;padding-bottom:10px;border-bottom:2px dashed #e0e0e0;">🧾 مواد لازم</h3>
+            <ul style="list-style:none;padding:0;">
+                ${item.recipe.map(r => `
+                    <li style="padding:12px 18px;margin:8px 0;background:#f8f9fa;border-radius:10px;border-right:4px solid #667eea;display:flex;justify-content:space-between;align-items:center;transition:all 0.3s;"
+                        onmouseover="this.style.background='linear-gradient(135deg, #667eea10, #764ba210)'"
+                        onmouseout="this.style.background='#f8f9fa'">
+                        <span style="color:#333;font-weight:500;font-size:15px;">${r.ingredient}</span>
+                        <span style="color:#667eea;font-weight:bold;font-size:15px;background:#667eea15;padding:3px 12px;border-radius:15px;">${r.amount}</span>
+                    </li>
+                `).join('')}
+            </ul>
+            <div style="text-align:center;margin-top:15px;padding-top:15px;border-top:1px dashed #e0e0e0;">
+                <span style="color:#999;font-size:13px;">👩‍🍳 نوش جان!</span>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+// ============================================================
+// 🛒 تهیه مواد (نسخه زیبا با استایل کامل)
+// ============================================================
+
+function openLadyShopModal() {
+    const oldModal = document.getElementById('ladyShopModal');
+    if (oldModal) oldModal.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'ladyShopModal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 3100;
+        justify-content: center;
+        align-items: center;
+        backdrop-filter: blur(5px);
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    `;
+    modal.innerHTML = `
+        <div style="background:white;border-radius:20px;padding:30px;max-width:550px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 10px 50px rgba(0,0,0,0.4);position:relative;">
+            <button onclick="document.getElementById('ladyShopModal').remove()" 
+                    style="position:absolute;top:15px;left:15px;background:#f5576c;border:none;width:35px;height:35px;border-radius:50%;color:white;cursor:pointer;font-size:20px;transition:all 0.3s;box-shadow:0 2px 10px rgba(245,87,108,0.3);"
+                    onmouseover="this.style.transform='rotate(90deg)'" 
+                    onmouseout="this.style.transform='rotate(0deg)'">✕</button>
+            <div style="text-align:center;margin-bottom:20px;padding-bottom:15px;border-bottom:2px solid #11998e;">
+                <h2 style="color:#11998e;font-size:26px;">🛒 تهیه مواد اولیه</h2>
+                <p style="color:#888;font-size:13px;margin-top:5px;">📍 نزدیک‌ترین فروشگاه به شما را پیدا می‌کنیم</p>
+            </div>
+
+            <div style="margin:15px 0;">
+                <label style="display:block;margin-bottom:8px;color:#333;font-weight:bold;font-size:15px;">🏙️ شهر خود را انتخاب کنید</label>
+                <select id="ladyCitySelect" style="width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;background:white;cursor:pointer;transition:all 0.3s;"
+                        onfocus="this.style.borderColor='#11998e';this.style.boxShadow='0 0 0 3px rgba(17,153,142,0.15)'"
+                        onblur="this.style.borderColor='#e0e0e0';this.style.boxShadow='none'">
+                    <option value="">-- انتخاب شهر --</option>
+                    <option value="tehran">تهران</option>
+                    <option value="isfahan">اصفهان</option>
+                    <option value="shiraz">شیراز</option>
+                    <option value="mashhad">مشهد</option>
+                    <option value="tabriz">تبریز</option>
+                    <option value="karaj">کرج</option>
+                    <option value="ahvaz">اهواز</option>
+                    <option value="qom">قم</option>
+                    <option value="rasht">رشت</option>
+                    <option value="kerman">کرمان</option>
+                </select>
+            </div>
+
+            <div style="margin:15px 0;">
+                <label style="display:block;margin-bottom:8px;color:#333;font-weight:bold;font-size:15px;">🍲 غذای مورد نظر را انتخاب کنید</label>
+                <select id="ladyFoodSelect" style="width:100%;padding:12px 15px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;background:white;cursor:pointer;transition:all 0.3s;"
+                        onfocus="this.style.borderColor='#11998e';this.style.boxShadow='0 0 0 3px rgba(17,153,142,0.15)'"
+                        onblur="this.style.borderColor='#e0e0e0';this.style.boxShadow='none'">
+                    <option value="">-- انتخاب غذا --</option>
+                    ${ladyFoodItems.map(item => `<option value="${item.id}">${item.emoji} ${item.name}</option>`).join('')}
+                </select>
+            </div>
+
+            <div id="ladyIngredientsNeeded" style="display:none;background:linear-gradient(135deg, #fff3cd, #ffeaa7);border:1px solid #f0c674;border-radius:12px;padding:14px 18px;margin:15px 0;font-size:13px;color:#856404;">
+                <strong style="display:block;margin-bottom:6px;font-size:14px;">📝 مواد لازم برای این غذا:</strong>
+                <span id="ladyIngredientsText" style="font-size:13px;line-height:1.8;"></span>
+            </div>
+
+            <button onclick="findLadyShops()" id="ladyFindBtn" 
+                    style="width:100%;padding:16px;background:linear-gradient(135deg, #11998e 0%, #38ef7d 100%);color:white;border:none;border-radius:14px;font-size:18px;font-weight:bold;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:12px;font-family:'B Titr',Tahoma,sans-serif;box-shadow:0 4px 20px rgba(17,153,142,0.3);"
+                    onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 35px rgba(17,153,142,0.4)'"
+                    onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 20px rgba(17,153,142,0.3)'">
+                <span>📍</span>
+                <span>یافتن نزدیک‌ترین فروشگاه</span>
+            </button>
+
+            <div id="ladyLocationStatus" style="margin-top:15px;padding:14px;border-radius:12px;text-align:center;font-size:14px;display:none;font-weight:500;"></div>
+
+            <div id="ladyShopResults" style="margin-top:20px;display:none;">
+                <h3 style="color:#11998e;margin-bottom:15px;font-size:18px;text-align:center;">🏪 فروشگاه‌های نزدیک شما</h3>
+                <div id="ladyShopList"></div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Event listener برای نمایش مواد لازم
+    document.getElementById('ladyFoodSelect').onchange = function() {
+        const foodId = parseInt(this.value);
+        const food = ladyFoodItems.find(f => f.id === foodId);
+        const ingredientsDiv = document.getElementById('ladyIngredientsNeeded');
+        const ingredientsText = document.getElementById('ladyIngredientsText');
+        
+        if (food) {
+            const ingredients = food.recipe.map(r => `${r.ingredient} (${r.amount})`).join('، ');
+            ingredientsText.textContent = ingredients;
+            ingredientsDiv.style.display = 'block';
+            ingredientsDiv.style.animation = 'fadeIn 0.3s ease';
+        } else {
+            ingredientsDiv.style.display = 'none';
+        }
+    };
+}
+
+function findLadyShops() {
+    const city = document.getElementById('ladyCitySelect').value;
+    const foodId = document.getElementById('ladyFoodSelect').value;
+    const statusDiv = document.getElementById('ladyLocationStatus');
+    const resultsDiv = document.getElementById('ladyShopResults');
+    const findBtn = document.getElementById('ladyFindBtn');
+
+    if (!city) {
+        alert('❌ لطفاً ابتدا شهر خود را انتخاب کنید! 🏙️');
+        return;
+    }
+    if (!foodId) {
+        alert('❌ لطفاً غذای مورد نظر را انتخاب کنید! 🍲');
+        return;
+    }
+
+    statusDiv.style.display = 'block';
+    statusDiv.style.background = '#fff3cd';
+    statusDiv.style.color = '#856404';
+    statusDiv.style.border = '1px solid #ffeaa7';
+    statusDiv.innerHTML = '⏳ در حال دریافت موقعیت شما...';
+    resultsDiv.style.display = 'none';
+    findBtn.disabled = true;
+    findBtn.innerHTML = '⏳ در حال جستجو...';
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                
+                statusDiv.style.background = '#d4edda';
+                statusDiv.style.color = '#155724';
+                statusDiv.style.border = '1px solid #c3e6cb';
+                statusDiv.innerHTML = '✅ موقعیت شما دریافت شد';
+                
+                displayLadyShops(city, userLat, userLng);
+                
+                findBtn.disabled = false;
+                findBtn.innerHTML = '<span>📍</span> <span>یافتن نزدیک‌ترین فروشگاه</span>';
+            },
+            function() {
+                statusDiv.style.background = '#f8d7da';
+                statusDiv.style.color = '#721c24';
+                statusDiv.style.border = '1px solid #f5c6cb';
+                statusDiv.innerHTML = '❌ خطا در دریافت موقعیت - از موقعیت پیش‌فرض استفاده می‌شود';
+                
+                const defaultPos = getLadyDefaultCityPosition(city);
+                displayLadyShops(city, defaultPos.lat, defaultPos.lng);
+                
+                findBtn.disabled = false;
+                findBtn.innerHTML = '<span>📍</span> <span>یافتن نزدیک‌ترین فروشگاه</span>';
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        );
+    } else {
+        statusDiv.style.background = '#f8d7da';
+        statusDiv.style.color = '#721c24';
+        statusDiv.style.border = '1px solid #f5c6cb';
+        statusDiv.innerHTML = '❌ مرورگر شما از GPS پشتیبانی نمی‌کند';
+        findBtn.disabled = false;
+    }
+}
+
+function getLadyDefaultCityPosition(city) {
+    const positions = {
+        tehran: { lat: 35.6892, lng: 51.3890 },
+        isfahan: { lat: 32.6546, lng: 51.6680 },
+        shiraz: { lat: 29.5918, lng: 52.5837 },
+        mashhad: { lat: 36.2605, lng: 59.6168 },
+        tabriz: { lat: 38.0800, lng: 46.2919 },
+        karaj: { lat: 35.8355, lng: 50.9916 },
+        ahvaz: { lat: 31.3183, lng: 48.6706 },
+        qom: { lat: 34.6416, lng: 51.0224 },
+        rasht: { lat: 37.2808, lng: 49.5832 },
+        kerman: { lat: 30.2839, lng: 57.0834 }
+    };
+    return positions[city] || { lat: 35.6892, lng: 51.3890 };
+}
+
+function displayLadyShops(city, userLat, userLng) {
+    const shops = ladyShopsData[city] || [];
+    
+    if (shops.length === 0) {
+        document.getElementById('ladyShopList').innerHTML = '<p style="text-align:center;color:#888;padding:20px;">🏪 فروشگاهی در این شهر یافت نشد.</p>';
+    } else {
+        const shopsWithDistance = shops.map(shop => {
+            const R = 6371;
+            const dLat = (shop.lat - userLat) * Math.PI / 180;
+            const dLng = (shop.lng - userLng) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(userLat * Math.PI / 180) * Math.cos(shop.lat * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            const distance = (R * c).toFixed(2);
+            return { ...shop, distance: distance };
+        }).sort((a, b) => a.distance - b.distance);
+
+        document.getElementById('ladyShopList').innerHTML = shopsWithDistance.map((shop, index) => `
+            <div style="background:linear-gradient(135deg, #f8f9fa, #f0f2f5);border-radius:14px;padding:18px;margin:12px 0;border-right:4px solid #11998e;transition:all 0.3s;"
+                 onmouseover="this.style.transform='translateX(-5px)';this.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'"
+                 onmouseout="this.style.transform='translateX(0)';this.style.boxShadow='none'">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                    <span style="font-weight:bold;color:#333;font-size:17px;">${index + 1}. ${shop.name}</span>
+                    <span style="background:linear-gradient(135deg, #11998e, #38ef7d);color:white;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:bold;">${shop.distance} کیلومتر</span>
+                </div>
+                <div style="color:#666;font-size:14px;margin-bottom:5px;">📍 ${shop.address}</div>
+                <div style="color:#888;font-size:13px;margin-bottom:10px;">📞 ${shop.phone}</div>
+                <a href="https://neshan.org/maps#c${shop.lat}-${shop.lng}-15z-0p" 
+                   target="_blank" 
+                   style="display:inline-block;padding:8px 20px;background:linear-gradient(135deg, #667eea, #764ba2);color:white;border-radius:20px;font-size:13px;text-decoration:none;transition:all 0.3s;font-weight:bold;"
+                   onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 15px rgba(102,126,234,0.4)'"
+                   onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
+                    🗺️ مشاهده در نقشه
+                </a>
+            </div>
+        `).join('');
+    }
+
+    document.getElementById('ladyShopResults').style.display = 'block';
+    document.getElementById('ladyLocationStatus').style.background = '#d4edda';
+    document.getElementById('ladyLocationStatus').style.color = '#155724';
+    document.getElementById('ladyLocationStatus').style.border = '1px solid #c3e6cb';
+    document.getElementById('ladyLocationStatus').innerHTML = '✅ فروشگاه‌های نزدیک شما پیدا شدند';
+}
+// ============================================================
+// 🐷 بخش قلک ویژه نوجوانان - نسخه کامل و تصحیح شده
+// ============================================================
+
+// داده‌های اختصاصی قلک نوجوانان
+const teenData = {
+    savings: [],
+    goals: [],
+    challenges: [],
+    points: 0,
+    level: 1,
+    badges: [],
+    budget: { income: 0, expenses: [] },
+    lessons: [],
+    history: []
+};
+
+function getTeenStorageKey() {
+    const memberId = currentUser?.memberId || 'guest';
+    return 'teenPiggy_' + memberId;
+}
+
+function loadTeenData() {
+    try {
+        const saved = localStorage.getItem(getTeenStorageKey());
+        if (saved) {
+            const data = JSON.parse(saved);
+            teenData.savings = data.savings || [];
+            teenData.goals = data.goals || [];
+            teenData.challenges = data.challenges || [];
+            teenData.points = data.points || 0;
+            teenData.level = data.level || 1;
+            teenData.badges = data.badges || [];
+            teenData.budget = data.budget || { income: 0, expenses: [] };
+            teenData.lessons = data.lessons || [];
+            teenData.history = data.history || [];
+        }
+    } catch(e) {}
+    updateTeenUI();
+}
+
+function saveTeenData() {
+    try {
+        localStorage.setItem(getTeenStorageKey(), JSON.stringify(teenData));
+    } catch(e) {}
+    updateTeenUI();
+}
+
+function updateTeenUI() {
+    const pointsEl = document.getElementById('teenPoints');
+    const savingsEl = document.getElementById('teenSavings');
+    const levelEl = document.getElementById('teenLevel');
+    if (pointsEl) pointsEl.textContent = teenData.points;
+    if (savingsEl) {
+        const total = teenData.savings.reduce((sum, s) => sum + s.amount, 0);
+        savingsEl.textContent = total.toLocaleString('fa-IR');
+    }
+    if (levelEl) levelEl.textContent = teenData.level;
+}
+
+function updateTeenLevel() {
+    const points = teenData.points;
+    if (points >= 500) teenData.level = 5;
+    else if (points >= 300) teenData.level = 4;
+    else if (points >= 150) teenData.level = 3;
+    else if (points >= 50) teenData.level = 2;
+    else teenData.level = 1;
+}
+
+// ============================================================
+// 🐷 باز کردن بخش قلک ویژه نوجوانان
+// ============================================================
+
+function openTeenPiggy() {
+    loadTeenData();
+    
+    // حذف کانتینر قبلی اگر وجود داشته باشه
+    const oldContainer = document.getElementById('teenPiggyContainer');
+    if (oldContainer) oldContainer.remove();
+    
+    const container = document.createElement('div');
+    container.id = 'teenPiggyContainer';
+    container.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 3000;
+        background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    `;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '✕ بستن';
+    closeBtn.style.cssText = `
+        position: fixed;
+        top: 12px;
+        right: 12px;
+        z-index: 3001;
+        background: rgba(0,0,0,0.7);
+        color: white;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        backdrop-filter: blur(10px);
+        font-family: 'B Titr', Tahoma, sans-serif;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    `;
+    closeBtn.onclick = function() {
+        document.body.removeChild(container);
+        document.body.removeChild(closeBtn);
+        renderPage('menu');
+    };
+
+    container.innerHTML = getTeenPiggyHTML();
+    
+    document.body.appendChild(container);
+    document.body.appendChild(closeBtn);
+}
+
+// ============================================================
+// 📄 HTML بخش قلک
+// ============================================================
+
+function getTeenPiggyHTML() {
+    return `
+    <style>
+        #teenPiggyContainer .teen-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0 5px;
+            color: #d97706;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+        }
+        #teenPiggyContainer .teen-sub {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        #teenPiggyContainer .teen-stats {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 450px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+        #teenPiggyContainer .teen-stat {
+            text-align: center;
+        }
+        #teenPiggyContainer .teen-stat .value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d97706;
+        }
+        #teenPiggyContainer .teen-stat .label {
+            font-size: 11px;
+            color: #888;
+        }
+        #teenPiggyContainer .teen-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 450px;
+            margin: 10px 0;
+        }
+        #teenPiggyContainer .teen-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            border: 2px solid rgba(217,119,6,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        #teenPiggyContainer .teen-card:active {
+            transform: scale(0.95);
+        }
+        #teenPiggyContainer .teen-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(217,119,6,0.15);
+            border-color: #d97706;
+        }
+        #teenPiggyContainer .teen-card .icon {
+            font-size: 40px;
+            margin-bottom: 8px;
+            display: block;
+        }
+        #teenPiggyContainer .teen-card .name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        #teenPiggyContainer .teen-card .desc {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+        }
+        #teenPiggyContainer .teen-card .badge-new {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-size: 9px;
+            margin-top: 6px;
+        }
+        #teenPiggyContainer .teen-footer {
+            color: #999;
+            font-size: 12px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        #teenPiggyContainer .teen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 3100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        #teenPiggyContainer .teen-modal.show {
+            display: flex;
+        }
+        #teenPiggyContainer .teen-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        #teenPiggyContainer .teen-modal-close {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #f5576c;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+        #teenPiggyContainer .teen-modal-close:hover {
+            transform: rotate(90deg);
+        }
+        #teenPiggyContainer .teen-modal-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            color: #d97706;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #fef3c7;
+        }
+        #teenPiggyContainer .teen-form-group {
+            margin: 12px 0;
+        }
+        #teenPiggyContainer .teen-form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        #teenPiggyContainer .teen-form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        #teenPiggyContainer .teen-form-group input:focus {
+            border-color: #d97706;
+            box-shadow: 0 0 0 3px rgba(217,119,6,0.1);
+        }
+        #teenPiggyContainer .teen-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'B Titr', Tahoma, sans-serif;
+        }
+        #teenPiggyContainer .teen-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(217,119,6,0.3);
+        }
+        #teenPiggyContainer .teen-btn:active {
+            transform: scale(0.97);
+        }
+        #teenPiggyContainer .teen-list-item {
+            background: #f9fafb;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-right: 3px solid #d97706;
+        }
+        #teenPiggyContainer .teen-list-item .amount {
+            font-weight: bold;
+            color: #d97706;
+        }
+        #teenPiggyContainer .teen-progress {
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 99px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        #teenPiggyContainer .teen-progress .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+            border-radius: 99px;
+            transition: width 0.5s ease;
+        }
+        @media (max-width: 500px) {
+            #teenPiggyContainer .teen-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+
+    <div style="display:flex;flex-direction:column;align-items:center;width:100%;max-width:450px;padding:10px;text-align:center;">
+        <div style="font-size:60px;margin-bottom:5px;">🐷</div>
+        <div class="teen-title">قلک ویژه نوجوانان</div>
+        <div class="teen-sub">💰 مدیریت پولت رو یاد بگیر و برای اهداف مالی برنامه‌ریزی کن!</div>
+        
+        <div class="teen-stats">
+            <div class="teen-stat">
+                <div class="value" id="teenPoints">0</div>
+                <div class="label">⭐ امتیاز</div>
+            </div>
+            <div class="teen-stat">
+                <div class="value" id="teenSavings">0</div>
+                <div class="label">💰 پس‌انداز</div>
+            </div>
+            <div class="teen-stat">
+                <div class="value" id="teenLevel">1</div>
+                <div class="label">🏅 سطح</div>
+            </div>
+        </div>
+        
+        <div class="teen-grid">
+            <div class="teen-card" onclick="openTeenPiggyBank()">
+                <span class="icon">🐷</span>
+                <div class="name">قلک دیجیتال</div>
+                <div class="desc">ثبت پس‌انداز و هدف</div>
+            </div>
+            <div class="teen-card" onclick="openTeenChallenges()">
+                <span class="icon">🎯</span>
+                <div class="name">چالش‌ها</div>
+                <div class="desc">چالش‌های مالی</div>
+                <span class="badge-new">جدید</span>
+            </div>
+            <div class="teen-card" onclick="openTeenBudget()">
+                <span class="icon">📊</span>
+                <div class="name">دستیار بودجه</div>
+                <div class="desc">مدیریت درآمد و هزینه</div>
+            </div>
+            <div class="teen-card" onclick="openTeenLessons()">
+                <span class="icon">🎓</span>
+                <div class="name">آموزش مالی</div>
+                <div class="desc">درس‌های کوتاه</div>
+            </div>
+            <div class="teen-card" onclick="openTeenBadges()">
+                <span class="icon">🏅</span>
+                <div class="name">نشان‌ها</div>
+                <div class="desc">مدال‌های افتخار</div>
+            </div>
+            <div class="teen-card" onclick="openTeenHistory()">
+                <span class="icon">📜</span>
+                <div class="name">تاریخچه</div>
+                <div class="desc">فعالیت‌های من</div>
+            </div>
+        </div>
+        
+        <div class="teen-footer">
+            💡 با فعالیت در این بخش، امتیازهای اختصاصی قلک رو دریافت کن!<br>
+            <span style="font-size:11px;color:#bbb;">امتیازات این بخش کاملاً جدا از سیستم اصلی صندوق است</span>
+        </div>
+    </div>
+    `;
+}
+
+// ============================================================
+// 🐷 قلک دیجیتال
+// ============================================================
+
+function openTeenPiggyBank() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    
+    const totalSavings = teenData.savings.reduce((sum, s) => sum + s.amount, 0);
+    const goal = teenData.goals.length > 0 ? teenData.goals[0] : null;
+    const progress = goal ? Math.min(100, Math.round((totalSavings / goal.target) * 100)) : 0;
+    
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">🐷 قلک دیجیتال</div>
+            <div style="margin:10px 0;">
+                <div style="font-size:32px;text-align:center;margin:10px 0;">💰 ${totalSavings.toLocaleString('fa-IR')} تومان</div>
+                ${goal ? `
+                    <div style="background:#f9fafb;padding:12px;border-radius:10px;margin:10px 0;">
+                        <div style="font-weight:bold;color:#d97706;">🎯 هدف: ${goal.name}</div>
+                        <div style="font-size:13px;color:#666;">هدف: ${goal.target.toLocaleString('fa-IR')} تومان</div>
+                        <div class="teen-progress"><div class="fill" style="width:${progress}%"></div></div>
+                        <div style="font-size:12px;color:#888;">${progress}% تکمیل شده</div>
+                    </div>
+                ` : '<div style="color:#888;text-align:center;padding:10px;">هنوز هدفی تعیین نکردی!</div>'}
+            </div>
+            <div class="teen-form-group">
+                <label>💰 مبلغ پس‌انداز (تومان)</label>
+                <input type="number" id="teenSaveAmount" placeholder="مبلغ را وارد کن..." min="1000">
+            </div>
+            <div class="teen-form-group">
+                <label>📝 توضیحات (اختیاری)</label>
+                <input type="text" id="teenSaveDesc" placeholder="مثلاً: پول توجیبی امروز">
+            </div>
+            <button class="teen-btn" onclick="addTeenSaving()">➕ ثبت پس‌انداز</button>
+            <hr style="margin:15px 0;border-color:#eee;">
+            <div style="display:flex;gap:8px;">
+                <button class="teen-btn" style="flex:1;background:linear-gradient(135deg,#10b981,#059669);" onclick="openTeenGoalForm()">🎯 هدف جدید</button>
+                <button class="teen-btn" style="flex:1;background:linear-gradient(135deg,#8b5cf6,#7c3aed);" onclick="showTeenSavingsHistory()">📜 تاریخچه</button>
+            </div>
+            <div id="teenSavingsList" style="margin-top:10px;max-height:200px;overflow-y:auto;"></div>
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+    renderTeenSavingsList();
+}
+
+function addTeenSaving() {
+    const amount = parseInt(document.getElementById('teenSaveAmount').value);
+    const desc = document.getElementById('teenSaveDesc').value || 'پس‌انداز روزانه';
+    if (!amount || amount < 1000) {
+        alert('❌ لطفاً مبلغ معتبر (حداقل ۱۰۰۰ تومان) وارد کن!');
+        return;
+    }
+    teenData.savings.push({ date: new Date().toLocaleDateString('fa-IR'), amount: amount, desc: desc });
+    const pointsEarned = Math.floor(amount / 10000);
+    teenData.points += pointsEarned;
+    teenData.history.push({ date: new Date().toLocaleDateString('fa-IR'), action: 'پس‌انداز', detail: `${amount.toLocaleString('fa-IR')} تومان - ${desc}`, points: pointsEarned });
+    updateTeenLevel();
+    saveTeenData();
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    openTeenPiggyBank();
+}
+
+function openTeenGoalForm() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">🎯 هدف جدید</div>
+            <div class="teen-form-group">
+                <label>🎯 نام هدف</label>
+                <input type="text" id="teenGoalName" placeholder="مثلاً: خرید دوچرخه">
+            </div>
+            <div class="teen-form-group">
+                <label>💰 مبلغ هدف (تومان)</label>
+                <input type="number" id="teenGoalTarget" placeholder="مبلغ هدف رو وارد کن..." min="10000">
+            </div>
+            <button class="teen-btn" onclick="addTeenGoal()">✅ ثبت هدف</button>
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+function addTeenGoal() {
+    const name = document.getElementById('teenGoalName').value;
+    const target = parseInt(document.getElementById('teenGoalTarget').value);
+    if (!name || !target || target < 10000) {
+        alert('❌ لطفاً نام و مبلغ معتبر وارد کن!');
+        return;
+    }
+    teenData.goals = [{ name: name, target: target, date: new Date().toLocaleDateString('fa-IR') }];
+    teenData.history.push({ date: new Date().toLocaleDateString('fa-IR'), action: 'هدف‌گذاری', detail: `${name} - ${target.toLocaleString('fa-IR')} تومان`, points: 5 });
+    teenData.points += 5;
+    saveTeenData();
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    openTeenPiggyBank();
+}
+
+function showTeenSavingsHistory() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    let html = '<div style="max-height:300px;overflow-y:auto;">';
+    if (teenData.savings.length === 0) {
+        html += '<div style="text-align:center;color:#888;padding:20px;">هنوز پس‌اندازی ثبت نشده!</div>';
+    } else {
+        teenData.savings.slice().reverse().forEach(s => {
+            html += `<div class="teen-list-item"><div><div style="font-weight:bold;">${s.desc}</div><div style="font-size:11px;color:#888;">${s.date}</div></div><div class="amount">${s.amount.toLocaleString('fa-IR')} تومان</div></div>`;
+        });
+    }
+    html += '</div>';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">📜 تاریخچه پس‌انداز</div>
+            ${html}
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+function renderTeenSavingsList() {
+    const list = document.getElementById('teenSavingsList');
+    if (!list) return;
+    const recent = teenData.savings.slice().reverse().slice(0, 5);
+    if (recent.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:#888;padding:10px;">هنوز پس‌اندازی ثبت نشده!</div>';
+        return;
+    }
+    list.innerHTML = recent.map(s => `
+        <div class="teen-list-item">
+            <div><div style="font-weight:bold;">${s.desc}</div><div style="font-size:11px;color:#888;">${s.date}</div></div>
+            <div class="amount">${s.amount.toLocaleString('fa-IR')} تومان</div>
+        </div>
+    `).join('');
+}
+
+// ============================================================
+// 🎯 چالش‌های مالی
+// ============================================================
+
+const teenChallengesList = [
+    { id: 1, name: 'چالش ۱۰۰ تومانی', desc: '۳۰ روز هر روز ۱۰۰ تومان پس‌انداز کن!', days: 30, points: 50 },
+    { id: 2, name: 'بدون خرید اینترنتی', desc: '۷ روز هیچ خرید اینترنتی نداشته باش!', days: 7, points: 30 },
+    { id: 3, name: 'مدیریت خرج هفتگی', desc: '۱۴ روز بودجه هفتگی رو مدیریت کن!', days: 14, points: 40 },
+    { id: 4, name: 'پس‌انداز تصادفی', desc: '۳۰ روز هر روز یه عدد تصادفی پس‌انداز کن!', days: 30, points: 60 }
+];
+
+function openTeenChallenges() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    let html = '<div style="max-height:400px;overflow-y:auto;">';
+    teenChallengesList.forEach(ch => {
+        const completed = teenData.challenges.includes(ch.id);
+        html += `
+            <div style="background:${completed ? '#d1fae5' : '#f9fafb'};padding:15px;border-radius:12px;margin:10px 0;border-right:4px solid ${completed ? '#10b981' : '#f59e0b'};">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-weight:bold;color:#333;">${ch.name}</div>
+                        <div style="font-size:12px;color:#666;">${ch.desc}</div>
+                        <div style="font-size:11px;color:#888;">⭐ ${ch.points} امتیاز</div>
+                    </div>
+                    <div>${completed ? '<span style="color:#10b981;font-weight:bold;">✅ انجام شد</span>' : `<button class="teen-btn" style="padding:8px 16px;font-size:13px;width:auto;" onclick="startTeenChallenge(${ch.id})">شروع</button>`}</div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">🎯 چالش‌های مالی</div>
+            ${html}
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+function startTeenChallenge(id) {
+    if (teenData.challenges.includes(id)) {
+        alert('✅ این چالش رو قبلاً انجام دادی!');
+        return;
+    }
+    if (confirm('آماده‌ای چالش رو شروع کنی؟')) {
+        const challenge = teenChallengesList.find(c => c.id === id);
+        teenData.challenges.push(id);
+        teenData.points += challenge.points;
+        teenData.history.push({ date: new Date().toLocaleDateString('fa-IR'), action: 'چالش', detail: `تکمیل چالش: ${challenge.name}`, points: challenge.points });
+        updateTeenLevel();
+        saveTeenData();
+        document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+        openTeenChallenges();
+        alert(`🎉 تبریک! ${challenge.points} امتیاز گرفتی!`);
+    }
+}
+
+// ============================================================
+// 📊 دستیار بودجه‌بندی
+// ============================================================
+
+function openTeenBudget() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    const totalIncome = teenData.budget.income || 0;
+    const totalExpenses = teenData.budget.expenses.reduce((sum, e) => sum + e.amount, 0);
+    const balance = totalIncome - totalExpenses;
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">📊 دستیار بودجه‌بندی</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:10px 0;">
+                <div style="background:#d1fae5;padding:12px;border-radius:10px;text-align:center;"><div style="font-size:11px;color:#666;">درآمد</div><div style="font-weight:bold;color:#10b981;">${totalIncome.toLocaleString('fa-IR')}</div></div>
+                <div style="background:#fef3c7;padding:12px;border-radius:10px;text-align:center;"><div style="font-size:11px;color:#666;">هزینه</div><div style="font-weight:bold;color:#d97706;">${totalExpenses.toLocaleString('fa-IR')}</div></div>
+                <div style="background:${balance >= 0 ? '#d1fae5' : '#fecaca'};padding:12px;border-radius:10px;text-align:center;"><div style="font-size:11px;color:#666;">مانده</div><div style="font-weight:bold;color:${balance >= 0 ? '#10b981' : '#ef4444'};">${balance.toLocaleString('fa-IR')}</div></div>
+            </div>
+            <div style="display:flex;gap:8px;margin:10px 0;">
+                <button class="teen-btn" style="flex:1;background:linear-gradient(135deg,#10b981,#059669);" onclick="openTeenIncomeForm()">➕ ثبت درآمد</button>
+                <button class="teen-btn" style="flex:1;background:linear-gradient(135deg,#ef4444,#dc2626);" onclick="openTeenExpenseForm()">➖ ثبت هزینه</button>
+            </div>
+            <div id="teenBudgetList" style="max-height:250px;overflow-y:auto;margin-top:10px;"></div>
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+    renderTeenBudgetList();
+}
+
+function openTeenIncomeForm() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">➕ ثبت درآمد</div>
+            <div class="teen-form-group"><label>💰 مبلغ درآمد (تومان)</label><input type="number" id="teenIncomeAmount" placeholder="مبلغ رو وارد کن..." min="1000"></div>
+            <div class="teen-form-group"><label>📝 توضیحات</label><input type="text" id="teenIncomeDesc" placeholder="مثلاً: پول توجیبی"></div>
+            <button class="teen-btn" onclick="addTeenIncome()">✅ ثبت درآمد</button>
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+function addTeenIncome() {
+    const amount = parseInt(document.getElementById('teenIncomeAmount').value);
+    const desc = document.getElementById('teenIncomeDesc').value || 'درآمد';
+    if (!amount || amount < 1000) {
+        alert('❌ لطفاً مبلغ معتبر وارد کن!');
+        return;
+    }
+    teenData.budget.income += amount;
+    teenData.budget.expenses.push({ date: new Date().toLocaleDateString('fa-IR'), amount: amount, desc: desc, type: 'income' });
+    teenData.history.push({ date: new Date().toLocaleDateString('fa-IR'), action: 'درآمد', detail: `${amount.toLocaleString('fa-IR')} تومان - ${desc}`, points: 2 });
+    teenData.points += 2;
+    saveTeenData();
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    openTeenBudget();
+}
+
+function openTeenExpenseForm() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">➖ ثبت هزینه</div>
+            <div class="teen-form-group"><label>💰 مبلغ هزینه (تومان)</label><input type="number" id="teenExpenseAmount" placeholder="مبلغ رو وارد کن..." min="1000"></div>
+            <div class="teen-form-group"><label>📝 توضیحات</label><input type="text" id="teenExpenseDesc" placeholder="مثلاً: خرید خوراکی"></div>
+            <button class="teen-btn" onclick="addTeenExpense()">✅ ثبت هزینه</button>
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+function addTeenExpense() {
+    const amount = parseInt(document.getElementById('teenExpenseAmount').value);
+    const desc = document.getElementById('teenExpenseDesc').value || 'هزینه';
+    if (!amount || amount < 1000) {
+        alert('❌ لطفاً مبلغ معتبر وارد کن!');
+        return;
+    }
+    teenData.budget.expenses.push({ date: new Date().toLocaleDateString('fa-IR'), amount: amount, desc: desc, type: 'expense' });
+    teenData.history.push({ date: new Date().toLocaleDateString('fa-IR'), action: 'هزینه', detail: `${amount.toLocaleString('fa-IR')} تومان - ${desc}`, points: 0 });
+    saveTeenData();
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    openTeenBudget();
+}
+
+function renderTeenBudgetList() {
+    const list = document.getElementById('teenBudgetList');
+    if (!list) return;
+    const all = [...teenData.budget.expenses].reverse();
+    if (all.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:#888;padding:10px;">هنوز تراکنشی ثبت نشده!</div>';
+        return;
+    }
+    list.innerHTML = all.map(e => `
+        <div class="teen-list-item" style="border-right-color:${e.type === 'income' ? '#10b981' : '#ef4444'};">
+            <div><div style="font-weight:bold;">${e.desc}</div><div style="font-size:11px;color:#888;">${e.date}</div></div>
+            <div class="amount" style="color:${e.type === 'income' ? '#10b981' : '#ef4444'};">${e.type === 'income' ? '+' : '-'} ${e.amount.toLocaleString('fa-IR')}</div>
+        </div>
+    `).join('');
+}
+
+// ============================================================
+// 🎓 آموزش مالی
+// ============================================================
+
+const teenLessons = [
+    { id: 1, title: '💰 پول چیست؟', desc: 'آشنایی با تاریخچه پول و انواع آن', points: 10 },
+    { id: 2, title: '🏦 بانک و حساب بانکی', desc: 'چطور بانک کار میکنه و چطور حساب باز کنیم؟', points: 10 },
+    { id: 3, title: '📈 سرمایه‌گذاری', desc: 'چطور پولت رو بیشتر کنی؟', points: 15 },
+    { id: 4, title: '🎯 هدف‌گذاری مالی', desc: 'چطور برای اهداف مالی برنامه‌ریزی کنی؟', points: 10 },
+    { id: 5, title: '🛡️ ریسک و بیمه', desc: 'چطور از پولت محافظت کنی؟', points: 15 }
+];
+
+function openTeenLessons() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    let html = '<div style="max-height:400px;overflow-y:auto;">';
+    teenLessons.forEach(lesson => {
+        const completed = teenData.lessons.includes(lesson.id);
+        html += `
+            <div style="background:${completed ? '#d1fae5' : '#f9fafb'};padding:15px;border-radius:12px;margin:10px 0;border-right:4px solid ${completed ? '#10b981' : '#8b5cf6'};">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="font-weight:bold;color:#333;">${lesson.title}</div>
+                        <div style="font-size:12px;color:#666;">${lesson.desc}</div>
+                        <div style="font-size:11px;color:#888;">⭐ ${lesson.points} امتیاز</div>
+                    </div>
+                    <div>${completed ? '<span style="color:#10b981;font-weight:bold;">✅ خوانده شد</span>' : `<button class="teen-btn" style="padding:8px 16px;font-size:13px;width:auto;" onclick="completeTeenLesson(${lesson.id})">📖 بخوان</button>`}</div>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">🎓 آموزش مالی</div>
+            ${html}
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+function completeTeenLesson(id) {
+    if (teenData.lessons.includes(id)) {
+        alert('✅ این درس رو قبلاً خوندی!');
+        return;
+    }
+    const lesson = teenLessons.find(l => l.id === id);
+    teenData.lessons.push(id);
+    teenData.points += lesson.points;
+    teenData.history.push({ date: new Date().toLocaleDateString('fa-IR'), action: 'درس مالی', detail: `تکمیل درس: ${lesson.title}`, points: lesson.points });
+    updateTeenLevel();
+    saveTeenData();
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    openTeenLessons();
+    alert(`🎉 تبریک! ${lesson.points} امتیاز گرفتی!`);
+}
+
+// ============================================================
+// 🏅 نشان‌ها
+// ============================================================
+
+const teenBadgesList = [
+    { id: 'first_save', icon: '🐣', name: 'اولین پس‌انداز', desc: 'اولین پس‌انداز رو ثبت کن' },
+    { id: 'goal_setter', icon: '🎯', name: 'هدف‌گذار', desc: 'اولین هدف رو تعیین کن' },
+    { id: 'challenger', icon: '🏆', name: 'چالش‌گر', desc: 'یک چالش رو کامل کن' },
+    { id: 'saver_10', icon: '💰', name: 'پس‌اندازکار', desc: '۱۰ بار پس‌انداز ثبت کن' },
+    { id: 'budget_master', icon: '📊', name: 'مدیر بودجه', desc: '۵ تراکنش ثبت کن' },
+    { id: 'learner', icon: '🎓', name: 'دانش‌آموز', desc: '۳ درس مالی رو بخوان' }
+];
+
+function openTeenBadges() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    
+    const stats = {
+        savings: teenData.savings.length,
+        goals: teenData.goals.length,
+        challenges: teenData.challenges.length,
+        transactions: teenData.budget.expenses.length,
+        lessons: teenData.lessons.length
+    };
+    
+    teenBadgesList.forEach(badge => {
+        let earned = false;
+        if (badge.id === 'first_save' && stats.savings >= 1) earned = true;
+        else if (badge.id === 'goal_setter' && stats.goals >= 1) earned = true;
+        else if (badge.id === 'challenger' && stats.challenges >= 1) earned = true;
+        else if (badge.id === 'saver_10' && stats.savings >= 10) earned = true;
+        else if (badge.id === 'budget_master' && stats.transactions >= 5) earned = true;
+        else if (badge.id === 'learner' && stats.lessons >= 3) earned = true;
+        
+        if (earned && !teenData.badges.includes(badge.id)) {
+            teenData.badges.push(badge.id);
+        }
+    });
+    saveTeenData();
+    
+    let html = '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;">';
+    teenBadgesList.forEach(badge => {
+        const has = teenData.badges.includes(badge.id);
+        html += `
+            <div style="background:${has ? '#fef3c7' : '#f3f4f6'};padding:15px;border-radius:15px;text-align:center;width:120px;border:2px solid ${has ? '#f59e0b' : '#e5e7eb'};">
+                <div style="font-size:36px;">${has ? badge.icon : '🔒'}</div>
+                <div style="font-size:13px;font-weight:bold;color:${has ? '#92400e' : '#9ca3af'};">${badge.name}</div>
+                <div style="font-size:10px;color:${has ? '#92400e' : '#9ca3af'};">${badge.desc}</div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">🏅 نشان‌های من</div>
+            ${html}
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
+
+// ============================================================
+// 📜 تاریخچه
+// ============================================================
+
+function openTeenHistory() {
+    document.querySelectorAll('#teenPiggyContainer .teen-modal').forEach(el => el.remove());
+    const modal = document.createElement('div');
+    modal.className = 'teen-modal show';
+    let html = '<div style="max-height:400px;overflow-y:auto;">';
+    if (teenData.history.length === 0) {
+        html += '<div style="text-align:center;color:#888;padding:20px;">هنوز فعالیتی ثبت نشده!</div>';
+    } else {
+        teenData.history.slice().reverse().forEach(h => {
+            html += `
+                <div class="teen-list-item">
+                    <div>
+                        <div style="font-weight:bold;">${h.action}</div>
+                        <div style="font-size:12px;color:#666;">${h.detail}</div>
+                        <div style="font-size:11px;color:#888;">${h.date}</div>
+                    </div>
+                    <div style="color:${h.points > 0 ? '#10b981' : '#888'};">${h.points > 0 ? '+' + h.points : ''}</div>
+                </div>
+            `;
+        });
+    }
+    html += '</div>';
+    modal.innerHTML = `
+        <div class="teen-modal-content">
+            <button class="teen-modal-close" onclick="this.closest('.teen-modal').remove()">✕</button>
+            <div class="teen-modal-title">📜 تاریخچه فعالیت‌ها</div>
+            ${html}
+        </div>
+    `;
+    document.getElementById('teenPiggyContainer').appendChild(modal);
+}
     </script>
     
 </body>
