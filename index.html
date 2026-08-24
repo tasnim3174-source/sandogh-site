@@ -2012,6 +2012,132 @@ background: Wormy !important;
         .bottom-nav-center:active {
             transform: scale(0.95);
         }
+/* 🎯 ریسپانسیو برای گوشی‌های خیلی کوچک */
+@media (max-height: 650px) {
+    /* کاهش ارتفاع هدر .hdr */
+    .hdr {
+        padding: 10px 14px !important;
+        min-height: auto !important;
+    }
+    
+    /* تنظیم padding بالای محتوا */
+    .main-content, #main-content, main, body > div:not(.hdr):not(.bottom-nav):not([id*="Modal"]):not([id*="modal"]):not([id*="loader"]):not([id*="Loader"]):not([id*="Game"]):not([id*="game"]) {
+        padding-top: 80px !important;
+    }
+    
+    /* کوچک‌تر کردن دکمه‌های منو */
+    .grid-menu-item {
+        padding: 12px 8px !important;
+        margin-bottom: 12px !important;
+    }
+    
+    .menu-icon {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .menu-label {
+        font-size: 0.7rem !important;
+        margin-top: 6px !important;
+    }
+    
+    /* کاهش فاصله بین ردیف‌ها */
+    .grid-menu {
+        gap: 10px !important;
+    }
+}
+
+/* 🎯 ریسپانسیو برای گوشی‌های بسیار کوچک */
+@media (max-height: 550px) {
+    .hdr {
+        padding: 8px 12px !important;
+    }
+    
+    .main-content, #main-content, main, body > div:not(.hdr):not(.bottom-nav):not([id*="Modal"]):not([id*="modal"]):not([id*="loader"]):not([id*="Loader"]):not([id*="Game"]):not([id*="game"]) {
+        padding-top: 70px !important;
+    }
+    
+    .grid-menu-item {
+        padding: 10px 6px !important;
+        margin-bottom: 10px !important;
+    }
+    
+    .menu-icon {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1rem !important;
+    }
+    
+    .menu-label {
+        font-size: 0.65rem !important;
+        margin-top: 4px !important;
+    }
+    
+    .grid-menu {
+        gap: 8px !important;
+    }
+}
+
+/* 🎯 ریسپانسیو برای گوشی‌های بسیار بسیار کوچک */
+@media (max-height: 480px) {
+    .hdr {
+        padding: 6px 10px !important;
+    }
+    
+    .main-content, #main-content, main, body > div:not(.hdr):not(.bottom-nav):not([id*="Modal"]):not([id*="modal"]):not([id*="loader"]):not([id*="Loader"]):not([id*="Game"]):not([id*="game"]) {
+        padding-top: 65px !important;
+    }
+    
+    .grid-menu-item {
+        padding: 8px 5px !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .menu-icon {
+        width: 36px !important;
+        height: 36px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .menu-label {
+        font-size: 0.6rem !important;
+        margin-top: 3px !important;
+    }
+    
+    .grid-menu {
+        gap: 6px !important;
+    }
+}
+ {
+            .app-header, header, .header {
+                padding: 6px 10px !important;
+            }
+            
+            .main-content, #main-content, main {
+                padding-top: 60px !important;
+            }
+            
+            .grid-menu-item {
+                padding: 10px 6px !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .menu-icon {
+                width: 40px !important;
+                height: 40px !important;
+                font-size: 1rem !important;
+            }
+            
+            .menu-label {
+                font-size: 0.65rem !important;
+                margin-top: 4px !important;
+            }
+            
+            .grid-menu {
+                gap: 8px !important;
+            }
+        }
 </style>
 </head>
 <body>
@@ -7160,6 +7286,38 @@ function renderDashboardContent() {
                     else backBtn.classList.remove('show');
                 });
             }
+            // 🎯 تنظیم پویای فاصله محتوا از هدر برای همه دستگاه‌ها
+function adjustContentPadding() {
+    const header = document.querySelector('.hdr') || document.querySelector('.app-header') || document.querySelector('header') || document.querySelector('.header') || document.querySelector('[class*="header"]');
+    const content = document.querySelector('.main-content') || document.querySelector('#main-content') || document.querySelector('main') || document.querySelector('body > div:not(.hdr):not(.bottom-nav)');
+    
+    if (header && content) {
+        const headerHeight = header.offsetHeight;
+        const computedStyle = window.getComputedStyle(header);
+        const position = computedStyle.position;
+        
+        // فقط اگر هدر ثابت است (fixed یا sticky)
+        if (position === 'fixed' || position === 'sticky') {
+            // اضافه کردن 20px فاصله اضافی برای اطمینان
+            const paddingValue = (headerHeight + 20) + 'px';
+            content.style.paddingTop = paddingValue;
+            console.log('✅ فاصله محتوا تنظیم شد:', paddingValue);
+        }
+    }
+}
+            
+            // اجرا در بارگذاری اولیه
+            adjustContentPadding();
+            
+            // اجرا در تغییر سایز صفحه (چرخش گوشی، تغییر اندازه پنجره)
+            window.addEventListener('resize', adjustContentPadding);
+            
+            // اجرا در تغییر جهت صفحه (موبایل)
+            window.addEventListener('orientationchange', adjustContentPadding);
+            
+            // اجرا بعد از تغییر صفحه (وقتی کاربر بین تب‌ها جابجا می‌شود)
+            const observer = new MutationObserver(adjustContentPadding);
+            observer.observe(document.body, { childList: true, subtree: true });
 
             console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
             console.log('📌 تمام کلیدها فعال هستند');
