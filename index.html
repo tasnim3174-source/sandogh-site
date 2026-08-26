@@ -2155,6 +2155,54 @@ background: Wormy !important;
                 gap: 8px !important;
             }
         }
+        /* 🎯 اصلاح برای موبایل - آمار کلی در دو ردیف */
+        @media (max-width: 768px) {
+            .stats-grid,
+            .report-summary {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            .stat-card,
+            .summary-card {
+                padding: 12px 8px !important;
+                min-height: auto !important;
+            }
+            
+            .stat-value,
+            .summary-value {
+                font-size: 1.2rem !important;
+            }
+            
+            .stat-label,
+            .summary-label {
+                font-size: 0.7rem !important;
+            }
+            
+            .stat-icon,
+            .summary-icon {
+                font-size: 1.2rem !important;
+            }
+        }
+        
+        /* 🎯 اصلاح برای موبایل‌های خیلی کوچک */
+        @media (max-width: 480px) {
+            .stats-grid,
+            .report-summary {
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 6px !important;
+            }
+            
+            .stat-value,
+            .summary-value {
+                font-size: 1rem !important;
+            }
+            
+            .stat-label,
+            .summary-label {
+                font-size: 0.6rem !important;
+            }
+        }
 </style>
 </head>
 <body>
@@ -4450,10 +4498,63 @@ function checkGoldConditions(member) {
             // - کاربران: ترکیب کاربران هر دو فایل
             // - تراکنش‌ها: ترکیب هر دو (قدیمی + جدید)
 
-            // ترکیب اعضا: اعضای قدیمی + اعضای جدید (با اولویت جدید)
+                        // ترکیب هوشمند اعضا: استفاده از بهترین اطلاعات هر دو فایل
             const membersMap = new Map();
-            dataOld.members.forEach(m => membersMap.set(m.accountNumber, m));
-            dataNew.members.forEach(m => membersMap.set(m.accountNumber, m));
+            
+            // اول اعضای قدیمی را اضافه کن
+            dataOld.members.forEach(m => membersMap.set(m.accountNumber, {...m}));
+            
+            // سپس اعضای جدید را با merge هوشمند اضافه کن
+            dataNew.members.forEach(newMember => {
+                const oldMember = membersMap.get(newMember.accountNumber);
+                if (oldMember) {
+                    // ترکیب هوشمند: از هر فایل بهترین داده را بردار
+                    const merged = {...oldMember};
+                    
+                    // فیلدهای مالی: اگر در جدید معتبر است، از جدید استفاده کن
+                    const financialFields = ['balance', 'savingsStatus', 'totalInstallments', 
+                                           'paidInstallments', 'overdueInstallments', 
+                                           'remainingInstallments', 'currentMonthBalance',
+                                           'loanBalance', 'loanReceivedAmount', 'monthlySalary',
+                                           'monthlySalaryApproved'];
+                    
+                    financialFields.forEach(field => {
+                        const newVal = parseFloat(newMember[field]) || 0;
+                        const oldVal = parseFloat(oldMember[field]) || 0;
+                        // از هر کدام که بزرگتر است استفاده کن (بهترین اطلاعات)
+                        if (newVal > oldVal) merged[field] = newMember[field];
+                    });
+                    
+                    // فیلدهای متنی: از جدید استفاده کن اگر موجود است
+                    const textFields = ['phone1', 'phone2', 'openDate', 'datMiladi', 
+                                       'birthDateShamsi', 'loanRequestDate', 'loanReceiveDate',
+                                       'lastInstallmentDate', 'loanNumber'];
+                    
+                    textFields.forEach(field => {
+                        if (newMember[field] && String(newMember[field]).trim() !== '') {
+                            merged[field] = newMember[field];
+                        }
+                    });
+                    
+                    // نام: از جدید استفاده کن
+                    if (newMember.firstName && newMember.firstName.trim()) {
+                        merged.firstName = newMember.firstName;
+                    }
+                    
+                    // سایر فیلدها از جدید
+                    merged.isCouncil = newMember.isCouncil;
+                    merged.karbari = newMember.karbari;
+                    merged.ramz = newMember.ramz;
+                    merged.isLocked = newMember.isLocked;
+                    merged.active = newMember.active;
+                    
+                    membersMap.set(newMember.accountNumber, merged);
+                } else {
+                    // عضو جدید که در قدیمی نیست
+                    membersMap.set(newMember.accountNumber, {...newMember});
+                }
+            });
+            
             const combinedMembers = Array.from(membersMap.values());
             // بازسازی id اعضا برای اطمینان از یکسان بودن
             combinedMembers.forEach((m, idx) => { m.id = idx + 1; });
@@ -7152,7 +7253,7 @@ function getMemberRealBalance(memberId) {
             const totalLoanSum = members.reduce((sum, m) => sum + (m.loanBalance || 0), 0);
             const totalSavings = members.reduce((sum, m) => sum + (m.savingsStatus || 0), 0);
             const totalOverdue = members.reduce((sum, m) => sum + Math.abs(m.overdueInstallments || 0), 0);
-            const membersWithLoan = members.filter(m => m.loanBalance > 0).length;
+            const membersWithLoan = members.filter(m => (m.loanBalance > 0) || (m.loanReceivedAmount > 0)).length;
             const totalPaidInstallments = members.reduce((sum, m) => sum + (m.paidInstallments || 0), 0);
             const totalRemainingInstallments = members.reduce((sum, m) => sum + (m.remainingInstallments || 0), 0);
 
