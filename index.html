@@ -2679,8 +2679,9 @@ ldrSecT = setInterval(function() {
         // ============================================================
         // بخش ۱: متغیرهای سراسری
         // ============================================================
-        const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
-const DATA_URL_1 = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data1.xlsx';
+                const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
+        const DATA_URL_1 = 'https://script.google.com/macros/s/AKfycbwUXsk95sJKMrAIAhGYVjaZ6x84pddGu4rNzyhKDWZRdybAyGmON4HH1M5TQxNEeKZl/exec';
+        const DATA_URL_1_FALLBACK = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data1.xlsx';
         const FEATURES = { showMyFund: true };
 
         let currentUser = null;
@@ -4196,8 +4197,228 @@ function checkGoldConditions(member) {
                 throw error;
             }
         }
+        // 🆕 تابع کمکی: خواندن JSON از Apps Script
+        async function parseOneExcelFromAppsScript(url) {
+            try {
+                const response = await fetch(url, { cache: 'no-cache' });
+                const json = await response.json();
+                
+                if (json.error) {
+                    console.warn('⚠️ خطای Apps Script:', json.error);
+                    return { members: [], transactions: [], users: [] };
+                }
+                
+                const rows = json.rows || [];
+                if (!rows.length) return { members: [], transactions: [], users: [] };
+                
+                console.log('✅ داده‌های Apps Script:', rows.length, 'ردیف');
+                
+                const headers = Object.keys(rows[0]);
+                const colMap = {
+                    accountNumber: findCol(['شماره حساب'], headers),
+                    name: findCol(['name', 'نام'], headers),
+                    phone: findCol(['phone', 'تلفن', 'تلفن 1'], headers),
+                    phone2: findCol(['phone2', 'تلفن2', 'تلفن 2'], headers),
+                    balance: findCol(['موجودی'], headers),
+                    savingsStatus: findCol(['وضعیت پس انداز'], headers),
+                    loanBalanceCol: findCol(['مانده وام'], headers),
+                    paidInstallments: findCol(['paidinstallments', 'تعداد قسط پرداخت شده'], headers),
+                    overdueInstallments: findCol(['overdueinstallments', 'تعداد قسط معوقه'], headers),
+                    remainingInstallments: findCol(['remaininginstallments', 'تعداد قسط مانده'], headers),
+                    monthlySalary: findCol(['monthlysalary', 'مقرری ماهانه'], headers),
+                    monthlySalaryApproved: findCol(['مقرری ماهانه مصوب'], headers),
+                    openDate: findCol(['date ozviyat', 'تاریخ عضویت'], headers),
+                    datMiladi: findCol(['dat miladi', 'تاریخ میلادی'], headers),
+                    dateBirth: findCol(['date birth'], headers),
+                    transactionDate: findCol(['transactiondate', 'تاریخ تراکنش'], headers),
+                    amount: findCol(['amount', 'مبلغ تراکنش'], headers),
+                    fishNumber: findCol(['fishnumber', 'شماره فیش'], headers),
+                    transactionName: findCol(['transactionname', 'نام تراکنش کننده'], headers),
+                    description: findCol(['description', 'توضیحات'], headers),
+                    installmentAmountTx: findCol(['مبلغ قسط واریزی'], headers),
+                    installmentDateTx: findCol(['تاریخ قسط واریزی'], headers),
+                    total: findCol(['total', 'جمع واریزی'], headers),
+                    active: findCol(['active'], headers),
+                    kodOmomi: findCol(['kod omomi'], headers),
+                    kodOverdue: findCol(['kod'], headers),
+                    noVam: findCol(['no vam', 'شماره وام'], headers),
+                    shenaseh: findCol(['shenaseh'], headers),
+                    karbari: findCol(['karbari', 'کاربری', 'username'], headers),
+                    ramz: findCol(['ramz', 'رمز', 'password'], headers),
+                    heh1: findCol(['heh1', 'کد خانوار'], headers),
+                    heh2: findCol(['heh2', 'نقش خانوار'], headers),
+                    mabVam1: findCol(['mab vam1', 'مبلغ وام مصوبه'], headers),
+                    tedad: findCol(['tedad', 'تعداد اقساط مصوبه'], headers),
+                    lock: findCol(['lock', 'قفل'], headers),
+                    mojodiTaInLahzeh: findCol(['mojodi ta in lahzeh'], headers),
+                    mablaghVamReceived: findCol(['mablagh vam', 'مبلغ وام دریافتی'], headers),
+                    dateSabt: findCol(['date sabt', 'تاریخ ثبت'], headers),
+                    dateVam: findCol(['date vam', 'تاریخ وام'], headers),
+                    akharinGhest: findCol(['akharin ghest', 'آخرین قسط'], headers),
+                    mablaghHarGhest: findCol(['mablagh har ghest', 'مبلغ هر قسط'], headers),
+                    mablaghKarmozd: findCol(['mablagh karmozd', 'مبلغ کارمزد'], headers),
+                    tedadAghsat: findCol(['tedad aghsat', 'تعداد اقساط'], headers),
+                    loanBalanceO: findCol(['ooooooo', 'مانده وام', 'loan balance'], headers),
+                    id: findCol(['ID', 'id'], headers),
+                    kodSarparast: findCol(['kod sarparast'], headers),
+                    kodMoavaghe: findCol(['kod moavaghe'], headers),
+                    kodMosabegheh: findCol(['kod mosabegheh'], headers),
+                    kodKhabarnameh: findCol(['kod khabarnameh'], headers),
+                    kodTavalod: findCol(['kod tavalod'], headers),
+                    kodMonasebat: findCol(['kod monasebat'], headers),
+                    waitingLoan: findCol(['CountOfdate ersal payamak vam', 'تعداد افراد در نوبت وام', 'waiting loan', 'نوبت وام'], headers)
+                };
 
-        // 🆕 تابع اصلی: بارگذاری و ترکیب دو فایل
+                if (!colMap.accountNumber) {
+                    console.warn('⚠️ ستون "شماره حساب" یافت نشد');
+                    return { members: [], transactions: [], users: [] };
+                }
+
+                const membersMap = new Map();
+                const txs = [];
+
+                rows.forEach((row, index) => {
+                    const accNum = String(row[colMap.accountNumber] || '').trim();
+                    if (!accNum) return;
+
+                    const smsOmomi = colMap.kodOmomi ? parseBool(row[colMap.kodOmomi]) : false;
+                    const smsOverdue = colMap.kodOverdue ? parseBool(row[colMap.kodOverdue]) : false;
+                    const smsSarparast = colMap.kodSarparast ? parseBool(row[colMap.kodSarparast]) : false;
+                    const smsMoavaghe = colMap.kodMoavaghe ? parseBool(row[colMap.kodMoavaghe]) : false;
+                    const smsMosabegheh = colMap.kodMosabegheh ? parseBool(row[colMap.kodMosabegheh]) : false;
+                    const smsKhabarnameh = colMap.kodKhabarnameh ? parseBool(row[colMap.kodKhabarnameh]) : false;
+                    const smsTavalod = colMap.kodTavalod ? parseBool(row[colMap.kodTavalod]) : false;
+                    const smsMonasebat = colMap.kodMonasebat ? parseBool(row[colMap.kodMonasebat]) : false;
+
+                    if (!membersMap.has(accNum)) {
+                        const memberId = membersMap.size + 1;
+                        const isCouncil = colMap.kodOverdue ? parseBool(row[colMap.kodOverdue]) : false;
+                        const karbari = colMap.karbari ? String(row[colMap.karbari] || '').trim() : '';
+                        const ramz = colMap.ramz ? String(row[colMap.ramz] || '').trim() : '';
+                        const heh1 = colMap.heh1 ? String(row[colMap.heh1] || '').trim() : '';
+                        const heh2 = colMap.heh2 ? String(row[colMap.heh2] || '').trim() : '';
+                        const mabVam1 = colMap.mabVam1 ? parseNum(row[colMap.mabVam1]) : 0;
+                        const tedad = colMap.tedad ? parseNum(row[colMap.tedad]) : 0;
+
+                        membersMap.set(accNum, {
+                            id: memberId,
+                            firstName: colMap.name ? String(row[colMap.name] || '').trim() : '',
+                            accountNumber: accNum,
+                            phone1: colMap.phone ? String(row[colMap.phone] || '').trim() : '',
+                            phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
+                            openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',
+                            datMiladi: colMap.datMiladi ? String(row[colMap.datMiladi] || '').trim() : '',
+                            birthDateShamsi: colMap.dateBirth ? String(row[colMap.dateBirth] || '').trim() : '',
+                            active: colMap.active ? parseBool(row[colMap.active]) : true,
+                            balance: colMap.balance ? parseNum(row[colMap.balance]) : 0,
+                            currentMonthBalance: colMap.mojodiTaInLahzeh ? parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
+                            savingsStatus: colMap.savingsStatus ? parseNum(row[colMap.savingsStatus]) : 0,
+                            loanReceivedAmount: colMap.mablaghVamReceived ? parseNum(row[colMap.mablaghVamReceived]) : 0,
+                            loanBalance: colMap.loanBalanceO ? parseNum(row[colMap.loanBalanceO]) : (colMap.loanBalanceCol ? parseNum(row[colMap.loanBalanceCol]) : 0),
+                            paidInstallments: colMap.paidInstallments ? parseNum(row[colMap.paidInstallments]) : 0,
+                            overdueInstallments: colMap.overdueInstallments ? parseNum(row[colMap.overdueInstallments]) : 0,
+                            remainingInstallments: colMap.remainingInstallments ? parseNum(row[colMap.remainingInstallments]) : 0,
+                            monthlySalary: colMap.monthlySalary ? parseNum(row[colMap.monthlySalary]) : 0,
+                            monthlySalaryApproved: colMap.monthlySalaryApproved ? parseNum(row[colMap.monthlySalaryApproved]) : 0,
+                            loanRequestDate: colMap.dateSabt ? String(row[colMap.dateSabt] || '').trim() : '',
+                            loanReceiveDate: colMap.dateVam ? String(row[colMap.dateVam] || '').trim() : '',
+                            lastInstallmentDate: colMap.akharinGhest ? String(row[colMap.akharinGhest] || '').trim() : '',
+                            installmentAmount: colMap.mablaghHarGhest ? parseNum(row[colMap.mablaghHarGhest]) : 0,
+                            feeAmount: colMap.mablaghKarmozd ? parseNum(row[colMap.mablaghKarmozd]) : 0,
+                            totalInstallments: colMap.tedadAghsat ? parseNum(row[colMap.tedadAghsat]) : 0,
+                            loanNumber: colMap.noVam ? String(row[colMap.noVam] || '').trim() : accNum,
+                            isCouncil: isCouncil,
+                            karbari: karbari,
+                            ramz: ramz,
+                            heh1: heh1,
+                            heh2: heh2,
+                            mabVam1: mabVam1,
+                            tedad: tedad,
+                            isLocked: colMap.lock ? parseBool(row[colMap.lock]) : false
+                        });
+                    }
+
+                    const member = membersMap.get(accNum);
+                    const rowId = colMap.id ? String(row[colMap.id] || '') : String(index + 1);
+                    txs.push({
+                        'ID': rowId,
+                        'شماره حساب': accNum,
+                        'مقرری ماهانه': colMap.monthlySalary ? parseNum(row[colMap.monthlySalary]) : 0,
+                        'شماره فیش': colMap.fishNumber ? String(row[colMap.fishNumber] || '') : '',
+                        'تاریخ تراکنش': colMap.transactionDate ? String(row[colMap.transactionDate] || '') : '',
+                        'مبلغ تراکنش': colMap.amount ? parseNum(row[colMap.amount]) : 0,
+                        'نام تراکنش کننده': colMap.transactionName ? String(row[colMap.transactionName] || '') : '',
+                        'مبلغ قسط واریزی': colMap.installmentAmountTx ? parseNum(row[colMap.installmentAmountTx]) : 0,
+                        'تاریخ قسط واریزی': colMap.installmentDateTx ? String(row[colMap.installmentDateTx] || '') : '',
+                        'جمع واریزی': colMap.total ? parseNum(row[colMap.total]) : 0,
+                        'موجودی': colMap.balance ? parseNum(row[colMap.balance]) : 0,
+                        'تعداد قسط پرداخت شده': colMap.paidInstallments ? parseNum(row[colMap.paidInstallments]) : 0,
+                        'تعداد قسط مانده': colMap.remainingInstallments ? parseNum(row[colMap.remainingInstallments]) : 0,
+                        'وضعیت پس انداز': colMap.savingsStatus ? parseNum(row[colMap.savingsStatus]) : 0,
+                        'پیامک واریز': smsOmomi ? '✅' : '❌',
+                        'پیامک اخطار': smsOverdue ? '❌' : '✅',
+                        'توضیحات': colMap.description ? String(row[colMap.description] || '') : '',
+                        'مانده وام': colMap.loanBalanceO ? parseNum(row[colMap.loanBalanceO]) : (colMap.loanBalanceCol ? parseNum(row[colMap.loanBalanceCol]) : 0),
+                        _transactionId: rowId,
+                        _memberId: member.id,
+                        _amount: colMap.amount ? parseNum(row[colMap.amount]) : 0,
+                        smsActive: colMap.active ? parseBool(row[colMap.active]) : false,
+                        smsOmomi: smsOmomi,
+                        smsKod: smsOverdue,
+                        smsSarparast: smsSarparast,
+                        smsMoavaghe: smsMoavaghe,
+                        smsMosabegheh: smsMosabegheh,
+                        smsKhabarnameh: smsKhabarnameh,
+                        smsTavalod: smsTavalod,
+                        smsMonasebat: smsMonasebat
+                    });
+                });
+
+                const membersArr = Array.from(membersMap.values());
+                const usersArr = membersArr.map(m => {
+                    const username = (m.karbari && m.karbari.trim() !== '') ? m.karbari.trim() : m.accountNumber;
+                    const password = (m.ramz && m.ramz.trim() !== '') ? m.ramz.trim() : m.accountNumber;
+                    return { id: m.id, username, password, role: m.isCouncil ? 'council' : 'member', memberId: m.id };
+                });
+
+                return { members: membersArr, transactions: txs, users: usersArr };
+
+            } catch (error) {
+                console.warn('⚠️ فایل از Apps Script بارگذاری نشد:', error.message);
+                return { members: [], transactions: [], users: [] };
+            }
+        }
+
+        // 🆕 تابع هوشمند: خواندن با اولویت Apps Script، سپس گیت‌هاب
+        async function loadFile1Smart() {
+            console.log('🔍 در حال تلاش برای خواندن از Apps Script...');
+            
+            try {
+                const result1 = await parseOneExcelFromAppsScript(DATA_URL_1);
+                if (result1 && result1.members && result1.members.length > 0) {
+                    console.log('✅ موفق! داده‌ها از Apps Script خوانده شدند.');
+                    return { source: 'Apps Script', data: result1 };
+                }
+            } catch (err) {
+                console.warn('⚠️ Apps Script ناموفق بود:', err.message);
+            }
+            
+            console.log('🔄 در حال تلاش برای خواندن از گیت‌هاب (Fallback)...');
+            try {
+                const result2 = await parseOneExcelFile(DATA_URL_1_FALLBACK);
+                if (result2 && result2.members && result2.members.length > 0) {
+                    console.log('✅ موفق! داده‌ها از گیت‌هاب خوانده شدند.');
+                    return { source: 'GitHub', data: result2 };
+                }
+            } catch (err) {
+                console.warn('⚠️ گیت‌هاب هم ناموفق بود:', err.message);
+            }
+            
+            console.error('❌ هیچ منبع داده‌ای در دسترس نبود');
+            return { source: 'None', data: { members: [], transactions: [], users: [] } };
+        }
+
+ // 🆕 تابع اصلی: بارگذاری و ترکیب دو فایل
         async function loadMainData() {
             // 🔄 بارگذاری کتابخانه XLSX
             if (typeof XLSX === 'undefined') {
@@ -4210,8 +4431,15 @@ function checkGoldConditions(member) {
 
             // 📊 بارگذاری همزمان هر دو فایل
             const [dataOld, dataNew] = await Promise.all([
-                parseOneExcelFile(DATA_URL),
-                parseOneExcelFile(DATA_URL_1).catch(err => {
+                parseOneExcelFile(DATA_URL).catch(err => {
+                    console.warn('⚠️ فایل data بارگذاری نشد:', err.message);
+                    return { members: [], transactions: [], users: [] };
+                }),
+                                (async () => {
+                    const r = await loadFile1Smart();
+                    console.log('📡 منبع داده اول:', r.source);
+                    return r.data;
+                })().catch(err => {
                     console.warn('⚠️ فایل data1 بارگذاری نشد، فقط از data استفاده می‌شود:', err.message);
                     return { members: [], transactions: [], users: [] };
                 })
