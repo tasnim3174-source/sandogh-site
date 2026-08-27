@@ -4231,7 +4231,14 @@ function checkGoldConditions(member) {
                 const usersArr = membersArr.map(m => {
                     const username = (m.karbari && m.karbari.trim() !== '') ? m.karbari.trim() : m.accountNumber;
                     const password = (m.ramz && m.ramz.trim() !== '') ? m.ramz.trim() : m.accountNumber;
-                    return { id: m.id, username, password, role: m.isCouncil ? 'council' : 'member', memberId: m.id };
+                                        // 🔧 اصلاح امنیتی: memberId = accountNumber (نه id موقت)
+                    return { 
+                        id: m.id, 
+                        username, 
+                        password, 
+                        role: m.isCouncil ? 'council' : 'member', 
+                        memberId: username  // 🔧 تغییر: username به جای m.id
+                    };
                 });
                 if (url === DATA_URL) {
                     usersArr.push({ id: 999, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
@@ -4426,7 +4433,7 @@ function checkGoldConditions(member) {
                 const usersArr = membersArr.map(m => {
                     const username = (m.karbari && m.karbari.trim() !== '') ? m.karbari.trim() : m.accountNumber;
                     const password = (m.ramz && m.ramz.trim() !== '') ? m.ramz.trim() : m.accountNumber;
-                    return { id: m.id, username, password, role: m.isCouncil ? 'council' : 'member', memberId: m.id };
+                    return { id: m.id, username, password, role: m.isCouncil ? 'council' : 'member', memberId: username };
                 });
 
                 return { members: membersArr, transactions: txs, users: usersArr };
@@ -7106,7 +7113,7 @@ function getMemberRealBalance(memberId) {
             const totalLoanSum = members.reduce((sum, m) => sum + (m.loanBalance || 0), 0);
             const totalSavings = members.reduce((sum, m) => sum + (m.savingsStatus || 0), 0);
             const totalOverdue = members.reduce((sum, m) => sum + Math.abs(m.overdueInstallments || 0), 0);
-            const membersWithLoan = members.filter(m => m.loanBalance > 0).length;
+            const membersWithLoan = members.filter(m => (m.loanBalance > 0) || (m.loanReceivedAmount > 0) || (m.totalInstallments > 0)).length;
 
             const t = getTodayShamsi();
             const birthdays = [];
