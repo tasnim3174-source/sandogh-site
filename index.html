@@ -2580,6 +2580,7 @@ background: Wormy !important;
                 </div>
             </div>
     <script>
+
         // ============================================================
         // 🆕 منطق صفحهٔ بارگذاری جدید (بلافاصله بعد از کلیک ورود)
         // ============================================================
@@ -3211,6 +3212,7 @@ ldrSecT = setInterval(function() {
                 const user = data.users.find(u => u.username === username && u.password === password);
                 if (user) {
                     loginResult = { success: true, user: user, data: data, username: username, password: password };
+                    logUserLogin(username, user.name || user.firstName || username);
                 } else {
                     loginResult = { success: false, error: 'نام کاربری یا رمز عبور اشتباه است' };
                 }
@@ -12546,6 +12548,48 @@ function openTeenHistory() {
     document.getElementById('teenPiggyContainer').appendChild(modal);
 }
     </script>
-    
+    <script>
+var ADMIN_URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMIjQsl_6Ylj0Kh7bnEkbzYIpZcL7rlO1vpXFKvqb8jDNgC/exec';
+
+async function checkMaintenance() {
+  try {
+    var r = await fetch(ADMIN_URL + '?action=status');
+    var s = await r.json();
+    if (s.enabled === false) {
+      document.body.innerHTML = '<div style="position:fixed;inset:0;background:linear-gradient(135deg,#0f0f23,#1a1a2e);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:tahoma;z-index:99999"><div style="font-size:5rem">⚙️</div><div style="margin-top:20px;font-size:1.5rem;font-weight:900;color:#ffd700">در حال به‌روزرسانی...</div><div style="margin-top:12px;text-align:center;color:rgba(255,255,255,.6);line-height:2">صندوق پس‌انداز موقتاً در دسترس نیست.<br>لطفاً دقایقی دیگر مراجعه فرمایید. 🙏</div></div>';
+      return false;
+    }
+    return true;
+  } catch (e) { return true; }
+}
+
+function logUserLogin(user, name) {
+  var device = navigator.userAgent.includes('Mobile') ? '📱 موبایل' : '💻 کامپیوتر';
+  var browser = navigator.userAgent.includes('Chrome') ? 'کروم' : navigator.userAgent.includes('Safari') ? 'سافاری' : navigator.userAgent.includes('Firefox') ? 'فایرفاکس' : 'مرورگر';
+  fetch(ADMIN_URL + '?action=logLogin&user=' + encodeURIComponent(user) + '&name=' + encodeURIComponent(name) + '&device=' + encodeURIComponent(device) + '&browser=' + encodeURIComponent(browser)).catch(function(){});
+}
+
+// 🛠️ دکمه پنل مدیر در صفحه لاگین
+(function(){
+  function addBtn(){
+    var lp = document.getElementById('loginPage');
+    if (!lp) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.innerHTML = '🛠️';
+    btn.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:99999;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,215,0,.5);background:rgba(15,15,35,.9);color:#ffd700;font-size:20px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.4)';
+    btn.onclick = function(){
+      var p = prompt('🔒 رمز مدیر سیستم:');
+      if (p === 'admin12345') { window.open('admin-final.html','_blank'); }
+      else if (p !== null) { alert('❌ رمز اشتباه است'); }
+    };
+    lp.appendChild(btn);
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', addBtn); } else { addBtn(); }
+})();
+
+checkMaintenance();
+</script>
+</body>
 </body>
 </html>
