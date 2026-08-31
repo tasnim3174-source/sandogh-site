@@ -12551,6 +12551,14 @@ function openTeenHistory() {
     <script>
 var ADMIN_URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMIjQsl_6Ylj0Kh7bnEkbzYIpZcL7rlO1vpXFKvqb8jDNgC/exec';
 
+// 🛠️ نمایش دکمه مدیر فقط در صفحه لاگین
+setInterval(function(){
+  var btn = document.getElementById('adminGearBtn');
+  var lp = document.getElementById('loginPage');
+  if (!btn || !lp) return;
+  var visible = lp.style.display !== 'none' && getComputedStyle(lp).display !== 'none';
+  btn.style.display = visible ? 'block' : 'none';
+}, 500);
 async function checkMaintenance() {
   try {
     var r = await fetch(ADMIN_URL + '?action=status');
