@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🛠️ پنل مدیر</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:tahoma}
+body{min-height:100vh;background:linear-gradient(135deg,#0f0f23,#1a1a2e);padding:20px;color:#fff}
+.card{max-width:420px;margin:60px auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.2);border-radius:24px;padding:30px;text-align:center}
+.logo{font-size:3rem}h1{color:#ffd700;font-size:1.4rem;margin:12px 0 5px}
+.sub{color:rgba(255,255,255,.5);font-size:.85rem;margin-bottom:22px}
+.inp{width:100%;padding:13px;margin-bottom:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;text-align:center;outline:none}
+.btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:900;cursor:pointer}
+.err{color:#ff6b6b;font-size:.85rem;margin-top:10px;display:none}
+.dash{display:none;max-width:800px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.head h2{color:#ffd700;font-size:1.2rem}
+.ctrl{display:flex;gap:6px}
+.ctrl button{padding:8px 14px;border-radius:99px;border:none;cursor:pointer;font-weight:700;font-size:.8rem}
+.on{background:#22c55e;color:#fff}.off{background:#ef4444;color:#fff}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tab{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);cursor:pointer;font-weight:700;font-size:.85rem;text-align:center}
+.tab.on{background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-color:transparent}
+.stats{display:flex;gap:8px;margin-bottom:12px}
+.stat{flex:1;background:rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center}
+.stat b{display:block;color:#ffd700;font-size:1.4rem}.stat span{color:rgba(255,255,255,.5);font-size:.75rem}
+.search{width:100%;padding:11px;margin-bottom:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none}
+.tw{max-height:500px;overflow:auto;border-radius:14px;border:1px solid rgba(255,255,255,.1)}
+table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:600px}
+th{position:sticky;top:0;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;padding:10px 8px;text-align:right;font-weight:900}
+td{padding:9px 8px;color:rgba(255,255,255,.85);border-bottom:1px solid rgba(255,255,255,.06)}
+tr:nth-child(even) td{background:rgba(255,255,255,.04)}
+.status-badge{display:inline-block;padding:5px 12px;border-radius:99px;font-size:.8rem;font-weight:700}
+.status-on{background:rgba(34,197,94,.2);color:#22c55e;border:1px solid #22c55e}
+.status-off{background:rgba(239,68,68,.2);color:#ff6b6b;border:1px solid #ef4444}
+.loader{text-align:center;padding:30px;color:rgba(255,255,255,.5)}
+.refresh{padding:8px 14px;border-radius:99px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-weight:700;font-size:.8rem}
+</style></head>
+<body>
+
+<div class="card" id="login">
+  <div class="logo">🛠️</div><h1>مدیر سیستم</h1>
+  <div class="sub">رمز مدیر را وارد کنید</div>
+  <input class="inp" type="password" id="pass" placeholder="رمز مدیر سیستم">
+  <button class="btn" onclick="check()">🔓 ورود</button>
+  <div class="err" id="err">❌ رمز اشتباه است!</div>
+</div>
+
+<div class="dash" id="dash">
+  <div class="head">
+    <h2>🛠️ پنل مدیر سیستم</h2>
+    <div class="ctrl">
+      <button class="refresh" onclick="loadLogs()">🔄 به‌روزرسانی</button>
+      <button class="on" onclick="toggleSite(true)">✅ فعال</button>
+      <button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
+    </div>
+  </div>
+  <div style="text-align:center;margin-bottom:14px">
+    <span>وضعیت سایت: </span>
+    <span class="status-badge" id="siteStatus">در حال بررسی...</span>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="showTab(1)">📊 گزارش ورودها</div>
+    <div class="tab" onclick="showTab(2)">🛡️ کنترل سایت</div>
+  </div>
+
+  <div id="sec1">
+    <div class="stats">
+      <div class="stat"><b id="sT">0</b><span>کل ورودها</span></div>
+      <div class="stat"><b id="sD">0</b><span>امروز</span></div>
+      <div class="stat"><b id="sU">0</b><span>کاربر فعال</span></div>
+    </div>
+    <input class="search" id="q" oninput="renderLogs()" placeholder="🔍 جستجوی نام یا شماره...">
+    <div class="tw" id="tw1"></div>
+  </div>
+
+  <div id="sec2" style="display:none">
+    <div style="background:rgba(255,255,255,.06);border-radius:16px;padding:20px;text-align:center">
+      <h3 style="color:#ffd700;margin-bottom:15px">🛡️ کنترل وضعیت سایت</h3>
+      <p style="color:rgba(255,255,255,.7);margin-bottom:20px">با دکمه‌های بالا می‌توانی سایت را موقتاً غیرفعال کنی. وقتی سایت غیرفعال باشد، کاربران صفحه «در حال به‌روزرسانی» را می‌بینند.</p>
+      <div style="background:rgba(255,215,0,.08);border:1px dashed rgba(255,215,0,.4);border-radius:12px;padding:15px;margin-top:15px">
+        <p style="color:#ffd700;font-size:.9rem">💡 <b>نکته:</b> این تغییرات در اکانت دوم ذخیره می‌شود و فایل اصلی `data1` دست‌نخورده می‌ماند.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+var URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMIjQsl_6Ylj0Kh7bnEkbzYIpZcL7rlO1vpXFKvqb8jDNgC/exec';
+var KEY = 'admin12345';
+var cur = 1;
+var logs = [];
+
+function check(){
+  if(document.getElementById('pass').value === KEY){
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('dash').style.display = 'block';
+    checkStatus();
+    loadLogs();
+  } else {
+    document.getElementById('err').style.display = 'block';
+  }
+}
+
+function checkStatus(){
+  fetch(URL + '?action=status').then(r=>r.json()).then(s=>{
+    var el = document.getElementById('siteStatus');
+    if(s.enabled){
+      el.textContent = '✅ فعال';
+      el.className = 'status-badge status-on';
+    } else {
+      el.textContent = '⛔ غیرفعال';
+      el.className = 'status-badge status-off';
+    }
+  });
+}
+
+function toggleSite(enable){
+  var a = enable ? 'enable' : 'disable';
+  fetch(URL + '?action=' + a + '&key=' + KEY).then(r=>r.json()).then(d=>{
+    alert(d.msg || 'انجام شد');
+    checkStatus();
+  });
+}
+
+function loadLogs(){
+  fetch(URL + '?action=getLogs').then(r=>r.json()).then(d=>{
+    logs = d.logs || [];
+    renderLogs();
+  });
+}
+
+function showTab(n){
+  cur = n;
+  document.getElementById('sec1').style.display = (n==1?'block':'none');
+  document.getElementById('sec2').style.display = (n==2?'block':'none');
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.className = 'tab' + ((i+1)==n?' on':'');
+  });
+}
+
+function renderLogs(){
+  var q = document.getElementById('q').value.toLowerCase();
+  var today = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {day:'numeric', month:'long'}).format(new Date());
+  var tc = 0, users = {};
+  
+  logs.forEach(l => {
+    var d = new Date(l.timestamp);
+    var day = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {day:'numeric', month:'long'}).format(d);
+    if(day === today) tc++;
+    users[l.user] = 1;
+  });
+  
+  document.getElementById('sT').textContent = logs.length;
+  document.getElementById('sD').textContent = tc;
+  document.getElementById('sU').textContent = Object.keys(users).length;
+  
+  if(logs.length === 0){
+    document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده است</div>';
+    return;
+  }
+  
+  var h = '<table><tr><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
+  logs.forEach(l => {
+    var row = (l.user + l.name).toLowerCase();
+    if(q && row.indexOf(q) < 0) return;
+    var d = new Date(l.timestamp);
+    var ds = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {dateStyle:'medium'}).format(d);
+    var tm = new Intl.DateTimeFormat('fa-IR', {hour:'2-digit', minute:'2-digit'}).format(d);
+    h += `<tr><td>${l.user}</td><td>${l.name}</td><td>${ds}</td><td>${tm}</td><td>${l.device}</td><td>${l.browser}</td></tr>`;
+  });
+  document.getElementById('tw1').innerHTML = h + '</table>';
+}
+</script>
+</body></html>
