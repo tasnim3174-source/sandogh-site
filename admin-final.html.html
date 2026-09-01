@@ -74,8 +74,9 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
 
   <div class="tabs">
     <div class="tab on" onclick="showTab(1)">📊 گزارش ورودها</div>
-    <div class="tab" onclick="showTab(2)">💛 نظرسنجی</div>
-    <div class="tab" onclick="showTab(3)">🛡️ کنترل سایت</div>
+        <div class="tab" onclick="showTab(2)">💛 نظرسنجی</div>
+    <div class="tab" onclick="showTab(3)">🏆 امتیازات</div>
+    <div class="tab" onclick="showTab(4)">🛡️ کنترل سایت</div>
   </div>
 
   <div id="sec1">
@@ -91,8 +92,24 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   <div id="sec2" style="display:none">
     <div class="box" id="surveyBox"><div class="loader">در حال بارگذاری...</div></div>
   </div>
-
   <div id="sec3" style="display:none">
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h3 style="color:#ffd700">🏆 امتیازات اعضا</h3>
+        <button class="refresh" onclick="loadPoints()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <input id="ptUser" placeholder="شماره عضو" style="flex:1;min-width:120px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+        <input id="ptName" placeholder="نام نمایشی" style="flex:1;min-width:120px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+        <input id="ptPts" type="number" placeholder="امتیاز" style="width:90px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+        <button onclick="adminUpdatePoints('add')" style="padding:10px 14px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">➕</button>
+        <button onclick="adminUpdatePoints('subtract')" style="padding:10px 14px;border-radius:10px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-weight:700">➖</button>
+        <button onclick="adminUpdatePoints('set')" style="padding:10px 14px;border-radius:10px;border:none;background:#ffd700;color:#1a1a2e;cursor:pointer;font-weight:700">🎯</button>
+      </div>
+      <div id="pointsList"><div class="loader">در حال بارگذاری...</div></div>
+    </div>
+  </div>
+    <div id="sec4" style="display:none">
     <div class="box" style="text-align:center">
       <h3 style="color:#ffd700;margin-bottom:15px">🛡️ کنترل وضعیت سایت</h3>
       <p style="color:rgba(255,255,255,.7);margin-bottom:10px;line-height:2">با دکمه‌های بالا می‌توانی سایت را موقتاً غیرفعال کنی.<br>وقتی سایت غیرفعال باشد، کاربران صفحه «در حال به‌روزرسانی» را می‌بینند.</p>
@@ -131,7 +148,7 @@ function check(){
   }
 }
 
-function refreshAll(){ loadLogs(); loadSurvey(); }
+function refreshAll(){ loadLogs(); loadSurvey(); loadPoints(); }
 
 function checkStatus(){
   fetch(URL + '?action=status').then(r=>r.json()).then(s=>{
@@ -248,6 +265,56 @@ function renderSurvey(){
   h += '</div>';
   
   document.getElementById('surveyBox').innerHTML = h;
+}
+// ===== امتیازات =====
+function loadPoints(){
+  fetch(URL + '?action=getPoints').then(r=>r.json()).then(d=>{
+    renderPoints(d.points || []);
+  }).catch(function(){
+    document.getElementById('pointsList').innerHTML = '<div class="loader">خطا در دریافت</div>';
+  });
+}
+
+function renderPoints(arr){
+  if(arr.length === 0){
+    document.getElementById('pointsList').innerHTML = '<div class="loader">هنوز امتیازی ثبت نشده 🏆</div>';
+    return;
+  }
+  arr.sort(function(a,b){ return (b.points||0) - (a.points||0); });
+  var h = '<table><tr><th>رتبه</th><th>عضو</th><th>شماره</th><th>امتیاز</th><th>آخرین به‌روزرسانی</th></tr>';
+  arr.forEach(function(p, idx){
+    var medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🏅';
+    var dt = p.lastUpdate ? new Date(p.lastUpdate) : null;
+    var ds = dt ? fmtDate(dt) + ' ' + fmtTime(dt) : '-';
+    h += '<tr><td>' + medal + '</td><td>' + (p.name || p.user) + '</td><td>' + p.user + '</td><td style="color:#22c55e;font-weight:900">' + (p.points||0) + ' ⭐</td><td>' + ds + '</td></tr>';
+  });
+  document.getElementById('pointsList').innerHTML = h + '</table>';
+}
+
+function adminUpdatePoints(type){
+  var uid = document.getElementById('ptUser').value.trim();
+  var uname = document.getElementById('ptName').value.trim();
+  var upts = document.getElementById('ptPts').value.trim();
+  
+  if(!uid){ alert('❌ شماره عضو را وارد کن'); return; }
+  if(!upts){ alert('❌ مقدار امتیاز را وارد کن'); return; }
+  
+  fetch(URL + '?action=updatePoints&user=' + encodeURIComponent(uid) +
+        '&name=' + encodeURIComponent(uname) +
+        '&points=' + encodeURIComponent(upts) +
+        '&type=' + type).then(r=>r.json()).then(d=>{
+    if(d.ok){
+      alert('✅ ثبت شد');
+      loadPoints();
+      document.getElementById('ptUser').value = '';
+      document.getElementById('ptName').value = '';
+      document.getElementById('ptPts').value = '';
+    } else {
+      alert('❌ خطا: ' + (d.error || 'نامشخص'));
+    }
+  }).catch(function(){
+    alert('❌ خطا در اتصال');
+  });
 }
 </script>
 </body></html>
