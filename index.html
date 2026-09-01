@@ -5041,11 +5041,12 @@ function shamsiToContDays(jy, jm, jd) {
                 { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
                 { tab: 'familyInfo', label: 'اطلاعات کلی خانواده', icon: 'fa-users-cog', color: '#10b981' }
             ];
-            const councilItems = [
+                        const councilItems = [
                 { tab: 'access', label: 'دسترسی‌ها', icon: 'fa-key', color: '#f59e0b' },
                 { tab: 'infoStats', label: 'اطلاعات و آمار', icon: 'fa-chart-pie', color: '#f59e0b' },
                 { tab: 'manageCoins', label: 'مدیریت امتیازها', icon: 'fa-coins', color: '#f59e0b' },
-                { tab: 'reports', label: 'گزارش‌گیری پیشرفته', icon: 'fa-file-alt', color: '#8b5cf6' }
+                { tab: 'reports', label: 'گزارش‌گیری پیشرفته', icon: 'fa-file-alt', color: '#8b5cf6' },
+                { tab: 'adminPanel', label: '🛠️ پنل مدیر سیستم', icon: 'fa-cog', color: '#ffd700' }
             ];
             let gridHtml = '<div class="grid-menu">';
             publicItems.forEach(item => { const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
@@ -5081,8 +5082,21 @@ function shamsiToContDays(jy, jm, jd) {
             
             gridHtml += '<div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
             familyItems.forEach(item => { const disabled = isHead ? '' : 'disabled'; const lock = isHead ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isHead ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`; gridHtml += `<div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
-            gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
-            councilItems.forEach(item => { const disabled = isCouncil ? '' : 'disabled'; const lock = isCouncil ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isCouncil ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط اعضای شورا و مدیر دسترسی دارند')`; gridHtml += `<div class="grid-menu-item council-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
+                        gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
+            councilItems.forEach(function(item) {
+                var disabled = isCouncil ? '' : 'disabled';
+                var lock = isCouncil ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>';
+                var click;
+                if (isCouncil) {
+                    click = (item.tab === 'adminPanel') ? 'openAdminPanel()' : "selectMenuItem('" + item.tab + "')";
+                } else {
+                    click = "alert('🔒 فقط اعضای شورا و مدیر دسترسی دارند')";
+                }
+                gridHtml += '<div class="grid-menu-item council-item ' + disabled + '" data-tab="' + item.tab + '" onclick="' + click + '">' +
+                    '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+                    '<i class="fas ' + item.icon + '"></i></div>' +
+                    '<div class="menu-label">' + item.label + '</div>' + lock + '</div>';
+            });
             gridHtml += '</div>';
 
             // ✅ باکس پیام سیستم (زیر هدر و بالای منو)
@@ -5091,13 +5105,18 @@ function shamsiToContDays(jy, jm, jd) {
                 systemMessageHtml = `<div class="system-message-box" style="margin-top:120px;"><div class="message-icon"><i class="fas fa-bullhorn"></i></div><div class="message-text">${esc(SYSTEM_MESSAGE)}</div></div>`;
             }
 
-            content.innerHTML = `
+                        content.innerHTML = `
                 <div class="hdr">
                     <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                         <b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b>
                         <span style="display:inline-flex;align-items:center;gap:7px;">${bdayCakeHtml}</span>
                     </div>
-                    <div class="daterow"><span>📅 ${new Date().toLocaleDateString('fa-IR')}</span><span class="clock" id="liveClock">🕐 --:--:--</span><span>${getPersianDayName()}</span><span class="hello">${greeting}</span></div>
+                    <div class="daterow">
+                        <span>📅 ${new Date().toLocaleDateString('fa-IR')}</span>
+                        <span class="clock" id="liveClock">🕐 --:--:--</span>
+                        <span>${getPersianDayName()}</span>
+                        <span class="hello">${greeting}</span>
+                    </div>
                 </div>
                 ${systemMessageHtml}
                 ${gridHtml}
@@ -5107,7 +5126,13 @@ function shamsiToContDays(jy, jm, jd) {
             // 🕐 ساعت زنده با ثانیه
             setInterval(function() {
                 const clk = document.getElementById('liveClock');
-                if (clk) clk.textContent = '🕐 ' + new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                                if (clk) {
+                    const now = new Date();
+                    const h = String(now.getHours()).padStart(2, '0');
+                    const m = String(now.getMinutes()).padStart(2, '0');
+                    const s = String(now.getSeconds()).padStart(2, '0');
+                    clk.textContent = '🕐 ' + h + ':' + m + ':' + s;
+                }
             }, 1000);
 
             updateNotifBadge();
@@ -12551,14 +12576,6 @@ function openTeenHistory() {
     <script>
 var ADMIN_URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMIjQsl_6Ylj0Kh7bnEkbzYIpZcL7rlO1vpXFKvqb8jDNgC/exec';
 
-// 🛠️ نمایش دکمه مدیر فقط در صفحه لاگین
-setInterval(function(){
-  var btn = document.getElementById('adminGearBtn');
-  var lp = document.getElementById('loginPage');
-  if (!btn || !lp) return;
-  var visible = lp.style.display !== 'none' && getComputedStyle(lp).display !== 'none';
-  btn.style.display = visible ? 'block' : 'none';
-}, 500);
 async function checkMaintenance() {
   try {
     var r = await fetch(ADMIN_URL + '?action=status');
@@ -12577,23 +12594,6 @@ function logUserLogin(user, name) {
   fetch(ADMIN_URL + '?action=logLogin&user=' + encodeURIComponent(user) + '&name=' + encodeURIComponent(name) + '&device=' + encodeURIComponent(device) + '&browser=' + encodeURIComponent(browser)).catch(function(){});
 }
 
-(function(){
-  function addBtn(){
-    if (document.getElementById('adminGearBtn')) return;
-    var btn = document.createElement('button');
-    btn.id = 'adminGearBtn';
-    btn.type = 'button';
-    btn.innerHTML = '🛠️';
-    btn.style.cssText = 'position:fixed;top:12px;left:12px;z-index:2147483647;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,215,0,.5);background:rgba(15,15,35,.9);color:#ffd700;font-size:18px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.4)';
-    btn.onclick = function(){
-      var p = prompt('🔒 رمز مدیر سیستم:');
-      if (p === 'admin12345') { window.location.href = 'admin-final.html'; }
-      else if (p !== null) { alert('❌ رمز اشتباه است'); }
-    };
-    document.body.appendChild(btn);
-  }
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', addBtn); } else { addBtn(); }
-})();
 // ===== نظرسنجی هنگام خروج =====
 (function(){
   var st = document.createElement('style');
@@ -12654,6 +12654,15 @@ function logUserLogin(user, name) {
 
   window.doLogout = function(){ openS(); };
 })();
+// ===== باز کردن پنل مدیر از منوی شورا =====
+window.openAdminPanel = function(){
+  var pass = prompt('🔒 رمز مدیر سیستم:');
+  if (pass === 'admin12345') {
+    window.location.href = 'admin-final.html';
+  } else if (pass !== null) {
+    alert('❌ رمز اشتباه است');
+  }
+};
 checkMaintenance();
 </script>
 </body>
