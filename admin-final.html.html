@@ -61,9 +61,10 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   <div class="head">
     <h2>🛠️ پنل مدیر سیستم</h2>
     <div class="ctrl">
-      <button class="refresh" onclick="refreshAll()">🔄 به‌روزرسانی</button>
-      <button class="on" onclick="toggleSite(true)">✅ فعال</button>
-      <button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
+     <button class="refresh" onclick="refreshAll()">🔄 به‌روزرسانی</button>
+<button class="on" onclick="toggleSite(true)">✅ فعال</button>
+<button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
+<button class="off" onclick="resetAll()" style="background:#dc2626!important;margin-right:8px">🗑️ ریست همه</button>>
     </div>
   </div>
   <div style="text-align:center;margin-bottom:14px">
@@ -147,7 +148,21 @@ function toggleSite(enable){
     checkStatus();
   });
 }
-
+function resetAll(){
+  if(!confirm('⚠️ آیا مطمئن هستید؟\n\nهمه گزارش ورودها و نظرسنجی‌ها پاک خواهد شد.\nاین عمل قابل برگشت نیست!')) return;
+  if(!confirm('🔴 تایید نهایی: واقعاً می‌خواهید همه اطلاعات را پاک کنید؟')) return;
+  
+  fetch(URL + '?action=resetAll&key=' + KEY).then(r=>r.json()).then(d=>{
+    if(d.ok){
+      alert(d.msg);
+      refreshAll();
+    } else {
+      alert('❌ خطا در پاک کردن اطلاعات');
+    }
+  }).catch(function(){
+    alert('❌ خطا در اتصال');
+  });
+}
 function showTab(n){
   for(var i=1;i<=3;i++){
     document.getElementById('sec'+i).style.display = (i==n?'block':'none');
