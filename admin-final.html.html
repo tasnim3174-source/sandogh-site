@@ -105,6 +105,16 @@ var URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMIjQsl_6
 var KEY = 'admin12345';
 var logs = [], surveys = [];
 
+function fmtDate(d){
+  return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
+}
+function fmtTime(d){
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+}
+function fmtFull(d){
+  return fmtDate(d) + ' ' + fmtTime(d);
+}
+
 function check(){
   if(document.getElementById('pass').value === KEY){
     document.getElementById('login').style.display = 'none';
@@ -153,12 +163,11 @@ function loadLogs(){
 
 function renderLogs(){
   var q = document.getElementById('q').value.toLowerCase();
-  var today = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {day:'numeric', month:'long'}).format(new Date());
+  var todayStr = fmtDate(new Date());
   var tc = 0, users = {};
   logs.forEach(function(l){
     var d = new Date(l.timestamp);
-    var day = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {day:'numeric', month:'long'}).format(d);
-    if(day === today) tc++;
+    if(fmtDate(d) === todayStr) tc++;
     users[l.user] = 1;
   });
   document.getElementById('sT').textContent = logs.length;
@@ -174,9 +183,7 @@ function renderLogs(){
     var row = (l.user + l.name).toLowerCase();
     if(q && row.indexOf(q) < 0) return;
     var d = new Date(l.timestamp);
-    var ds = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {dateStyle:'medium'}).format(d);
-    var tm = new Intl.DateTimeFormat('fa-IR', {hour:'2-digit', minute:'2-digit'}).format(d);
-    h += '<tr><td>'+l.user+'</td><td>'+l.name+'</td><td>'+ds+'</td><td>'+tm+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
+    h += '<tr><td>'+l.user+'</td><td>'+l.name+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
   });
   document.getElementById('tw1').innerHTML = h + '</table>';
 }
@@ -185,6 +192,8 @@ function loadSurvey(){
   fetch(URL + '?action=getSurvey').then(r=>r.json()).then(d=>{
     surveys = d.responses || [];
     renderSurvey();
+  }).catch(function(){
+    document.getElementById('surveyBox').innerHTML = '<div class="loader">خطا در دریافت نظرات</div>';
   });
 }
 
@@ -213,10 +222,9 @@ function renderSurvey(){
   h += '<div style="margin-top:16px"><div style="color:#fff;font-size:.85rem;font-weight:700;margin-bottom:10px">📋 جزئیات آرا:</div>';
   surveys.forEach(function(r){
     var dt = new Date(r.timestamp);
-    var ds = new Intl.DateTimeFormat('fa-IR', {dateStyle:'medium', hour:'2-digit', minute:'2-digit'}).format(dt);
     h += '<div class="opinion"><div class="who">' + r.name + ' <span style="font-weight:400;font-size:.75rem">' + '💛'.repeat(r.stars) + '🤍'.repeat(5 - r.stars) + '</span></div>';
     if (r.text) h += '<div class="txt">' + r.text + '</div>';
-    h += '<div style="color:rgba(255,255,255,.35);font-size:.68rem;margin-top:4px">' + ds + '</div></div>';
+    h += '<div style="color:rgba(255,255,255,.35);font-size:.68rem;margin-top:4px">' + fmtFull(dt) + '</div></div>';
   });
   h += '</div>';
   
