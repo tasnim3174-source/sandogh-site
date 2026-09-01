@@ -106,13 +106,17 @@ var KEY = 'admin12345';
 var logs = [], surveys = [];
 
 function fmtDate(d){
-  return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
+  try {
+    return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric', month:'2-digit', day:'2-digit'}).format(d);
+  } catch(e) {
+    return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
+  }
 }
 function fmtTime(d){
   return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
 }
 function fmtFull(d){
-  return fmtDate(d) + ' ' + fmtTime(d);
+  return fmtDate(d) + ' - ساعت ' + fmtTime(d);
 }
 
 function check(){
