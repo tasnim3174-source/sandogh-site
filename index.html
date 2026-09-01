@@ -5188,13 +5188,27 @@ function shamsiToContDays(jy, jm, jd) {
         }
 
         function mfAddPoints(n) {
-            try {
-                const key = 'sandogh_coins_' + currentUser.memberId;
-                const cur = parseInt(localStorage.getItem(key)) || 0;
-                localStorage.setItem(key, cur + n);
-            } catch (e) { }
-        }
+    try {
+        const key = 'sandogh_coins_' + currentUser.memberId;
+        const cur = parseInt(localStorage.getItem(key)) || 0;
+        const newPts = cur + n;
+        localStorage.setItem(key, newPts);
+        
+        // ارسال به سرور (بدون انتظار)
+        syncPointsToServer(currentUser.memberId, currentUser.name || currentUser.firstName || '', newPts);
+    } catch (e) { }
+}
 
+// تابع ارسال امتیازات به سرور
+function syncPointsToServer(userId, userName, points) {
+    try {
+        fetch(ADMIN_URL + '?action=updatePoints&user=' + encodeURIComponent(userId) +
+              '&name=' + encodeURIComponent(userName) +
+              '&points=' + encodeURIComponent(points) +
+              '&type=set')
+            .catch(function(){}); // خطا را نادیده بگیر
+    } catch(e) {}
+}
         // ---- 🏅 عملکرد شما ----
         function mfRenderPerformance(c, member) {
             const t = getTodayShamsi();
