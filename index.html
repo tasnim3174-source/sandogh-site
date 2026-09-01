@@ -12663,7 +12663,8 @@ window.openAdminPanel = function(){
     alert('❌ رمز اشتباه است');
   }
 };
-checkMaintenance();
+// صفحه لاگین سریع نمایش داده شود، بعد وضعیت سایت چک شود
+setTimeout(function(){ checkMaintenance(); }, 50);
 </script>
 </body>
 </body>
