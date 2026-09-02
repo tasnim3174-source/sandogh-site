@@ -75,11 +75,12 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   <div class="tabs">
     <div class="tab on" onclick="showTab(1)">📊 گزارش ورودها</div>
         <div class="tab" onclick="showTab(2)">💛 نظرسنجی</div>
-    <div class="tab" onclick="showTab(3)">🏆 امتیازات</div>
-    <div class="tab" onclick="showTab(4)">🛡️ کنترل سایت</div>
+        <div class="tab" onclick="showTab(3)">🏆 امتیازات</div>
+    <div class="tab" onclick="showTab(4)">📋 نتایج مسابقات</div>
+    <div class="tab" onclick="showTab(5)">🛡️ کنترل سایت</div>
   </div>
 
-  <div id="sec1">
+   <div id="sec1">
     <div class="stats">
       <div class="stat"><b id="sT">0</b><span>کل ورودها</span></div>
       <div class="stat"><b id="sD">0</b><span>امروز</span></div>
@@ -92,6 +93,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   <div id="sec2" style="display:none">
     <div class="box" id="surveyBox"><div class="loader">در حال بارگذاری...</div></div>
   </div>
+
   <div id="sec3" style="display:none">
     <div class="box">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -109,14 +111,22 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       <div id="pointsList"><div class="loader">در حال بارگذاری...</div></div>
     </div>
   </div>
-    <div id="sec4" style="display:none">
+
+  <div id="sec4" style="display:none">
+    <div class="box">
+      <h3 style="color:#ffd700;margin-bottom:14px">📋 نتایج مسابقات</h3>
+      <div id="quizSelect"><div class="loader">در حال بارگذاری...</div></div>
+      <div id="quizResults" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <div id="sec5" style="display:none">
     <div class="box" style="text-align:center">
       <h3 style="color:#ffd700;margin-bottom:15px">🛡️ کنترل وضعیت سایت</h3>
       <p style="color:rgba(255,255,255,.7);margin-bottom:10px;line-height:2">با دکمه‌های بالا می‌توانی سایت را موقتاً غیرفعال کنی.<br>وقتی سایت غیرفعال باشد، کاربران صفحه «در حال به‌روزرسانی» را می‌بینند.</p>
       <p style="color:#ffd700;font-size:.85rem">💡 همه تغییرات در اکانت دوم ذخیره می‌شود و فایل اصلی دست‌نخورده می‌ماند.</p>
     </div>
   </div>
-</div>
 
 <script>
 var URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMIjQsl_6Ylj0Kh7bnEkbzYIpZcL7rlO1vpXFKvqb8jDNgC/exec';
@@ -148,7 +158,7 @@ function check(){
   }
 }
 
-function refreshAll(){ loadLogs(); loadSurvey(); loadPoints(); }
+function refreshAll(){ loadLogs(); loadSurvey(); loadPoints(); loadQuizResults(); }
 
 function checkStatus(){
   fetch(URL + '?action=status').then(r=>r.json()).then(s=>{
@@ -181,15 +191,28 @@ function resetAll(){
   });
 }
 function showTab(n){
-  for(var i=1;i<=3;i++){
-    document.getElementById('sec'+i).style.display = (i==n?'block':'none');
+  // نمایش/مخفی کردن بخش‌ها
+  for(var i=1;i<=5;i++){
+    var sec = document.getElementById('sec'+i);
+    if(sec) sec.style.display = (i==n?'block':'none');
   }
+  
+  // فعال کردن تب انتخابی
   document.querySelectorAll('.tab').forEach(function(t,idx){
     t.className = 'tab' + ((idx+1)==n?' on':'');
   });
-  document.getElementById('q').style.display = (n==1?'block':'none');
+  
+  // نمایش بخش جستجو فقط در تب گزارش ورود
+  var qEl = document.getElementById('q');
+  if(qEl) qEl.style.display = (n==1?'block':'none');
+  
+  // بارگذاری خودکار محتوا هنگام باز شدن هر تب
+  if(n==1) loadLogs();
+  if(n==2) loadSurvey();
+  if(n==3) loadPoints();
+  if(n==4) loadQuizResults();
 }
-
+ 
 function loadLogs(){
   fetch(URL + '?action=getLogs').then(r=>r.json()).then(d=>{
     logs = d.logs || [];
@@ -267,9 +290,70 @@ function renderSurvey(){
   document.getElementById('surveyBox').innerHTML = h;
 }
 // ===== امتیازات =====
+function loadQuizResults(){
+  fetch(URL + '?action=getQuizzes').then(function(r){ return r.json(); }).then(function(d){
+    var quizzes = d.quizzes || [];
+    var html = '<label style="color:#ffd700;display:block;margin-bottom:8px">انتخاب مسابقه:</label>';
+    html += '<select id="quizSelect" onchange="showQuizResults(this.value)" style="width:100%;padding:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,215,0,.3);border-radius:10px;color:#fff;font-family:tahoma;font-size:.9rem">';
+    html += '<option value="" style="background:#1a1a2e">-- یک مسابقه انتخاب کنید --</option>';
+    quizzes.forEach(function(q){
+      html += '<option value="' + q.id + '" style="background:#1a1a2e">' + q.title + ' (' + q.questions.length + ' سوال)</option>';
+    });
+    html += '</select>';
+    document.getElementById('quizSelect').innerHTML = html;
+    document.getElementById('quizResults').innerHTML = '';
+  }).catch(function(){
+    document.getElementById('quizSelect').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>';
+  });
+}
+
+function showQuizResults(quizId){
+  if(!quizId){
+    document.getElementById('quizResults').innerHTML = '';
+    return;
+  }
+  document.getElementById('quizResults').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+  fetch(URL + '?action=getQuizResults&quizId=' + encodeURIComponent(quizId)).then(function(r){ return r.json(); }).then(function(d){
+    var results = d.results || [];
+    if(results.length === 0){
+      document.getElementById('quizResults').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">هنوز کسی در این مسابقه شرکت نکرده</div>';
+      return;
+    }
+    
+    results.sort(function(a,b){ return (b.score||0) - (a.score||0); });
+    
+    var html = '<div style="background:rgba(255,215,0,.08);border-radius:12px;padding:12px;margin-bottom:14px;text-align:center">';
+    html += '<b style="color:#ffd700">📊 آمار مسابقه</b><br>';
+    html += '<span style="font-size:.85rem;color:rgba(255,255,255,.7)">👥 ' + results.length + ' شرکت‌کننده</span></div>';
+    
+    html += '<table style="width:100%;border-collapse:collapse;font-size:.85rem">';
+    html += '<tr style="background:rgba(255,215,0,.1)"><th style="padding:10px;color:#ffd700;text-align:right">رتبه</th><th style="padding:10px;color:#ffd700;text-align:right">نام/شماره</th><th style="padding:10px;color:#ffd700;text-align:center">امتیاز</th><th style="padding:10px;color:#ffd700;text-align:center">درصد</th><th style="padding:10px;color:#ffd700;text-align:right">تاریخ</th></tr>';
+    
+    results.forEach(function(r, idx){
+      var medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🏅';
+      var displayName = (r.name && r.name.trim() && r.name.trim() !== 'عضو ') ? r.name : 'شماره ' + r.user;
+      var percent = Math.round(((r.score||0) / (r.maxScore||1)) * 100);
+      var dt = r.submittedAt ? new Date(r.submittedAt) : null;
+      var ds = dt ? dt.toLocaleDateString('fa-IR') + ' ' + dt.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}) : '-';
+      
+      html += '<tr style="border-bottom:1px solid rgba(255,255,255,.05)">';
+      html += '<td style="padding:10px">' + medal + '</td>';
+      html += '<td style="padding:10px">' + displayName + '</td>';
+      html += '<td style="padding:10px;text-align:center;color:#22c55e;font-weight:700">' + (r.score||0) + ' از ' + (r.maxScore||0) + '</td>';
+      html += '<td style="padding:10px;text-align:center">' + percent + '%</td>';
+      html += '<td style="padding:10px;font-size:.75rem;color:rgba(255,255,255,.6)">' + ds + '</td>';
+      html += '</tr>';
+    });
+    html += '</table>';
+    
+    document.getElementById('quizResults').innerHTML = html;
+  }).catch(function(){
+    document.getElementById('quizResults').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت نتایج</div>';
+  });
+}
 function loadPoints(){
-  fetch(URL + '?action=getPoints').then(r=>r.json()).then(d=>{
-    renderPoints(d.points || []);
+  fetch(URL + '?action=getAllMembersWithPoints').then(r=>r.json()).then(d=>{
+    renderPoints(d.members || []);
   }).catch(function(){
     document.getElementById('pointsList').innerHTML = '<div class="loader">خطا در دریافت</div>';
   });
@@ -277,20 +361,36 @@ function loadPoints(){
 
 function renderPoints(arr){
   if(arr.length === 0){
-    document.getElementById('pointsList').innerHTML = '<div class="loader">هنوز امتیازی ثبت نشده 🏆</div>';
+    document.getElementById('pointsList').innerHTML = '<div class="loader">هیچ عضوی پیدا نشد</div>';
     return;
   }
   arr.sort(function(a,b){ return (b.points||0) - (a.points||0); });
-  var h = '<table><tr><th>رتبه</th><th>عضو</th><th>شماره</th><th>امتیاز</th><th>آخرین به‌روزرسانی</th></tr>';
+  var totalPoints = 0;
+  arr.forEach(function(p){ totalPoints += (p.points||0); });
+  
+  var h = '<div style="background:rgba(255,215,0,.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">';
+  h += '<b style="color:#ffd700">📊 آمار کلی</b><br>';
+  h += '<span style="font-size:.85rem">👥 ' + arr.length + ' عضو | ⭐ ' + totalPoints + ' امتیاز کل</span></div>';
+  
+  h += '<table><tr><th>رتبه</th><th>عضو</th><th>شماره</th><th>امتیاز</th><th>آخرین به‌روزرسانی</th></tr>';
+  
+  var rank = 1;
   arr.forEach(function(p, idx){
-    var medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🏅';
+    var medal = '🏅';
+    if ((p.points||0) > 0) {
+      if (idx === 0) medal = '🥇';
+      else if (idx === 1) medal = '🥈';
+      else if (idx === 2) medal = '🥉';
+    } else {
+      medal = '⚪';
+    }
     var dt = p.lastUpdate ? new Date(p.lastUpdate) : null;
     var ds = dt ? fmtDate(dt) + ' ' + fmtTime(dt) : '-';
-    h += '<tr><td>' + medal + '</td><td>' + (p.name || p.user) + '</td><td>' + p.user + '</td><td style="color:#22c55e;font-weight:900">' + (p.points||0) + ' ⭐</td><td>' + ds + '</td></tr>';
+    var ptsColor = (p.points||0) > 0 ? '#22c55e' : 'rgba(255,255,255,.3)';
+    h += '<tr><td>' + medal + '</td><td>' + (p.name || p.user) + '</td><td>' + p.user + '</td><td style="color:' + ptsColor + ';font-weight:900">' + (p.points||0) + ' ⭐</td><td>' + ds + '</td></tr>';
   });
   document.getElementById('pointsList').innerHTML = h + '</table>';
 }
-
 function adminUpdatePoints(type){
   var uid = document.getElementById('ptUser').value.trim();
   var uname = document.getElementById('ptName').value.trim();
@@ -314,6 +414,51 @@ function adminUpdatePoints(type){
     }
   }).catch(function(){
     alert('❌ خطا در اتصال');
+  });
+}
+// ===== نتایج مسابقات =====
+function loadQuizResults(){
+  fetch(URL + '?action=getQuizzes').then(r=>r.json()).then(d=>{
+    var quizzes = d.quizzes || [];
+    var h = '<select id="quizSelector" onchange="showQuizResults()" style="width:100%;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;margin-bottom:10px">';
+    h += '<option value="">-- انتخاب مسابقه --</option>';
+    quizzes.forEach(function(q){
+      h += '<option value="' + q.id + '">' + q.title + ' (' + q.questions.length + ' سوال)</option>';
+    });
+    h += '</select>';
+    document.getElementById('quizSelect').innerHTML = h;
+  }).catch(function(){
+    document.getElementById('quizSelect').innerHTML = '<div class="loader">خطا در دریافت</div>';
+  });
+}
+
+function showQuizResults(){
+  var quizId = document.getElementById('quizSelector').value;
+  if(!quizId){
+    document.getElementById('quizResults').innerHTML = '';
+    return;
+  }
+  
+  fetch(URL + '?action=getQuizResults&quizId=' + quizId).then(r=>r.json()).then(d=>{
+    var results = d.results || [];
+    if(results.length === 0){
+      document.getElementById('quizResults').innerHTML = '<div class="loader">هنوز کسی در این مسابقه شرکت نکرده</div>';
+      return;
+    }
+    
+    results.sort(function(a,b){ return (b.score||0) - (a.score||0); });
+    
+    var h = '<table><tr><th>رتبه</th><th>عضو</th><th>شماره</th><th>امتیاز</th><th>درصد</th><th>تاریخ</th></tr>';
+    results.forEach(function(r, idx){
+      var medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🏅';
+      var percent = Math.round(((r.score||0) / (r.maxScore||1)) * 100);
+      var dt = r.submittedAt ? new Date(r.submittedAt) : null;
+      var ds = dt ? fmtDate(dt) + ' ' + fmtTime(dt) : '-';
+      h += '<tr><td>' + medal + '</td><td>' + (r.name && r.name.trim() ? r.name : 'عضو ' + r.user) + '</td><td>' + r.user + '</td><td style="color:#22c55e;font-weight:900">' + (r.score||0) + ' از ' + (r.maxScore||0) + '</td><td>' + percent + '%</td><td>' + ds + '</td></tr>';
+    });
+    document.getElementById('quizResults').innerHTML = h + '</table>';
+  }).catch(function(){
+    document.getElementById('quizResults').innerHTML = '<div class="loader">خطا در دریافت نتایج</div>';
   });
 }
 </script>
