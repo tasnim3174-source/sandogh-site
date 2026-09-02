@@ -5036,9 +5036,11 @@ function shamsiToContDays(jy, jm, jd) {
                 { tab: 'toddlerGrowth', label: '🧒 رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
                 { tab: 'teenPiggy', label: '🐷 قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
                 { tab: 'ladySpecial', label: '👩 بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' },
-                { tab: 'quizzes', label: '🏆 مسابقات', icon: 'fa-trophy', color: '#ffd700' }
+                { tab: 'quizzes', label: '🏆 مسابقات', icon: 'fa-trophy', color: '#ffd700' },
+                { tab: 'messaging', label: '📨 ارسال پیام', icon: 'fa-paper-plane', color: '#8b5cf6' },
+                { tab: 'survey', label: '📊 نظرسنجی', icon: 'fa-poll', color: '#ec4899' }
             ];
-          
+                  
             const familyItems = [
                 { tab: 'family', label: 'خانواده من', icon: 'fa-users', color: '#10b981' },
                 { tab: 'familyInfo', label: 'اطلاعات کلی خانواده', icon: 'fa-users-cog', color: '#10b981' }
@@ -5054,7 +5056,6 @@ function shamsiToContDays(jy, jm, jd) {
             publicItems.forEach(item => { const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
             gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; });
             gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));"><i class="fas fa-gem"></i> ویژه اعضا</div>';
-            
             specialItems.forEach(item => {
                 let clickHandler = '';
                 let badgeHtml = '';
@@ -5062,20 +5063,25 @@ function shamsiToContDays(jy, jm, jd) {
                 if (item.tab === 'toddlerGrowth') {
                     clickHandler = `openToddlerGames()`;
                     badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">✅ فعال</span>`;
-                                } else if (item.tab === 'ladySpecial') {
+                } else if (item.tab === 'ladySpecial') {
                     clickHandler = `openLadySection()`;
-                    badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">✅ فعال</span>`;
+                    badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#d946ef,#a21caf);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">👩 فعال</span>`;
                 } else if (item.tab === 'quizzes') {
                     clickHandler = 'openQuizzes()';
                     badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🏆 جدید</span>';
+                } else if (item.tab === 'messaging') {
+                    clickHandler = "showComingSoon('سامانه ارسال پیام به اعضا')";
+                    badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">📨 بزودی</span>';
+                } else if (item.tab === 'survey') {
+                    clickHandler = "showComingSoon('نظرسنجی')";
+                    badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">📊 بزودی</span>';
                 } else if (item.tab === 'teenPiggy') {
-                    clickHandler = `openTeenPiggy()`;
-                    badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🚀 جدید</span>`;
+                    clickHandler = 'openTeenPiggy()';
+                    badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🚀 جدید</span>';
                 } else {
-                    clickHandler = `showComingSoon('${item.label}')`;
-                    badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span>`;
+                    clickHandler = "showComingSoon('" + item.label + "')";
+                    badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span>';
                 }
-                
                 gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="${clickHandler}">
                     <div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);">
                         <i class="fas ${item.icon}"></i>
@@ -5083,8 +5089,7 @@ function shamsiToContDays(jy, jm, jd) {
                     <div class="menu-label">${item.label}</div>
                     ${badgeHtml}
                 </div>`;
-            });
-            
+            }); 
             gridHtml += '<div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
             familyItems.forEach(item => { const disabled = isHead ? '' : 'disabled'; const lock = isHead ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isHead ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`; gridHtml += `<div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
                         gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
