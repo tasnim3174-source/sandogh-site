@@ -78,6 +78,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         <div class="tab" onclick="showTab(3)">🏆 امتیازات</div>
     <div class="tab" onclick="showTab(4)">📋 نتایج مسابقات</div>
     <div class="tab" onclick="showTab(5)">🛡️ کنترل سایت</div>
+    <div class="tab" onclick="showTab(6)">🎯 ساخت مسابقه</div>
   </div>
 
    <div id="sec1">
@@ -119,7 +120,36 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       <div id="quizResults" style="margin-top:14px"></div>
     </div>
   </div>
-
+  <div id="sec6" style="display:none">
+    <div class="box">
+      <h3 style="color:#ffd700;margin-bottom:14px">🎯 ساخت مسابقه جدید</h3>
+      
+      <div style="margin-bottom:14px">
+        <label style="color:#ffd700;display:block;margin-bottom:6px">📋 عنوان مسابقه:</label>
+        <input id="quizTitle" placeholder="مثلاً: مسابقه هفتگی" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+      </div>
+      
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="flex:1;min-width:150px">
+          <label style="color:#ffd700;display:block;margin-bottom:6px">📅 تاریخ شروع:</label>
+          <input id="quizStart" type="date" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+        </div>
+        <div style="flex:1;min-width:150px">
+          <label style="color:#ffd700;display:block;margin-bottom:6px">📅 تاریخ پایان:</label>
+          <input id="quizEnd" type="date" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+        </div>
+      </div>
+      
+      <div id="questionsContainer"></div>
+      
+      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+        <button onclick="addQuestion()" style="padding:10px 16px;border-radius:10px;border:none;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700">➕ افزودن سوال</button>
+        <button onclick="createQuizFromPanel()" style="padding:10px 16px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">✅ ساخت مسابقه</button>
+      </div>
+      
+      <div id="quizBuilderMsg" style="margin-top:14px;text-align:center"></div>
+    </div>
+  </div>
   <div id="sec5" style="display:none">
     <div class="box" style="text-align:center">
       <h3 style="color:#ffd700;margin-bottom:15px">🛡️ کنترل وضعیت سایت</h3>
@@ -192,7 +222,7 @@ function resetAll(){
 }
 function showTab(n){
   // نمایش/مخفی کردن بخش‌ها
-  for(var i=1;i<=5;i++){
+  for(var i=1;i<=6;i++){
     var sec = document.getElementById('sec'+i);
     if(sec) sec.style.display = (i==n?'block':'none');
   }
@@ -211,6 +241,7 @@ function showTab(n){
   if(n==2) loadSurvey();
   if(n==3) loadPoints();
   if(n==4) loadQuizResults();
+  if(n==6) loadQuizBuilder();
 }
  
 function loadLogs(){
@@ -351,6 +382,111 @@ function showQuizResults(quizId){
     document.getElementById('quizResults').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت نتایج</div>';
   });
 }
+
+// ===== ساخت مسابقه در پنل مدیریت =====
+var quizQuestionCount = 0;
+
+function loadQuizBuilder(){
+  if(quizQuestionCount === 0){
+    addQuestion();
+  }
+}
+
+function addQuestion(){
+  quizQuestionCount++;
+  var qNum = quizQuestionCount;
+  var html = '<div class="question-box" id="questionBox' + qNum + '" style="background:rgba(255,255,255,.05);border-radius:12px;padding:14px;margin-bottom:14px;border:1px solid rgba(255,215,0,.2)">';
+  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
+  html += '<b style="color:#ffd700">سوال ' + qNum + '</b>';
+  html += '<button onclick="removeQuestion(' + qNum + ')" style="padding:4px 10px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer">🗑️</button>';
+  html += '</div>';
+  html += '<input id="q' + qNum + '_text" placeholder="متن سوال" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;margin-bottom:10px">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
+  for(var i=1;i<=4;i++){
+    html += '<div style="display:flex;align-items:center;gap:6px">';
+    html += '<input id="q' + qNum + '_opt' + i + '" placeholder="گزینه ' + i + '" style="flex:1;padding:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;outline:none">';
+    html += '<button onclick="setCorrectAnswer(' + qNum + ',' + (i-1) + ')" id="q' + qNum + '_correctBtn' + i + '" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;cursor:pointer">✓</button>';
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '<input type="hidden" id="q' + qNum + '_correct" value="0">';
+  html += '<p style="color:rgba(255,255,255,.5);font-size:.75rem;margin-top:8px">💡 روی دکمه ✓ گزینه صحیح کلیک کنید (سبز می‌شود)</p>';
+  html += '</div>';
+  document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
+}
+
+function removeQuestion(qNum){
+  var box = document.getElementById('questionBox' + qNum);
+  if(box) box.remove();
+}
+
+function setCorrectAnswer(qNum, optIdx){
+  document.getElementById('q' + qNum + '_correct').value = optIdx;
+  for(var j=1;j<=4;j++){
+    var btn = document.getElementById('q' + qNum + '_correctBtn' + j);
+    if(btn){
+      btn.style.background = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.05)';
+      btn.style.borderColor = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.2)';
+    }
+  }
+}
+
+function createQuizFromPanel(){
+  var title = document.getElementById('quizTitle').value.trim();
+  var startDate = document.getElementById('quizStart').value;
+  var endDate = document.getElementById('quizEnd').value;
+  
+  if(!title){
+    document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ عنوان مسابقه را وارد کنید</div>';
+    return;
+  }
+  
+  var params = 'action=createQuiz&key=' + encodeURIComponent(ADMIN_KEY) + '&title=' + encodeURIComponent(title) + '&startDate=' + startDate + '&endDate=' + endDate;
+  
+  var questionCount = 0;
+  for(var i=1;i<=quizQuestionCount;i++){
+    var qText = document.getElementById('q' + i + '_text');
+    if(!qText) continue;
+    var qTextVal = qText.value.trim();
+    var qOpt1 = document.getElementById('q' + i + '_opt1').value.trim();
+    var qOpt2 = document.getElementById('q' + i + '_opt2').value.trim();
+    
+    if(qTextVal && qOpt1 && qOpt2){
+      questionCount++;
+      params += '&q' + questionCount + '_text=' + encodeURIComponent(qTextVal);
+      params += '&q' + questionCount + '_opt1=' + encodeURIComponent(qOpt1);
+      params += '&q' + questionCount + '_opt2=' + encodeURIComponent(qOpt2);
+      params += '&q' + questionCount + '_opt3=' + encodeURIComponent(document.getElementById('q' + i + '_opt3').value.trim());
+      params += '&q' + questionCount + '_opt4=' + encodeURIComponent(document.getElementById('q' + i + '_opt4').value.trim());
+      params += '&q' + questionCount + '_correct=' + document.getElementById('q' + i + '_correct').value;
+    }
+  }
+  
+  if(questionCount === 0){
+    document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ حداقل یک سوال با دو گزینه لازم است</div>';
+    return;
+  }
+  
+  document.getElementById('quizBuilderMsg').innerHTML = '<div class="loader">در حال ساخت مسابقه...</div>';
+  
+  fetch(URL + '?' + params).then(function(r){ return r.json(); }).then(function(d){
+    if(d.ok){
+      document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#22c55e">✅ مسابقه «' + title + '» با موفقیت ساخته شد!</div>';
+      document.getElementById('quizTitle').value = '';
+      document.getElementById('quizStart').value = '';
+      document.getElementById('quizEnd').value = '';
+      document.getElementById('questionsContainer').innerHTML = '';
+      quizQuestionCount = 0;
+      addQuestion();
+      if(typeof loadQuizResults === 'function') loadQuizResults();
+    } else {
+      document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>';
+    }
+  }).catch(function(){
+    document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا در ارتباط با سرور</div>';
+  });
+}
+
 function loadPoints(){
   fetch(URL + '?action=getAllMembersWithPoints').then(r=>r.json()).then(d=>{
     renderPoints(d.members || []);
@@ -358,7 +494,6 @@ function loadPoints(){
     document.getElementById('pointsList').innerHTML = '<div class="loader">خطا در دریافت</div>';
   });
 }
-
 function renderPoints(arr){
   if(arr.length === 0){
     document.getElementById('pointsList').innerHTML = '<div class="loader">هیچ عضوی پیدا نشد</div>';
