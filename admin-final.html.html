@@ -146,7 +146,10 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         <button onclick="addQuestion()" style="padding:10px 16px;border-radius:10px;border:none;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700">➕ افزودن سوال</button>
         <button onclick="createQuizFromPanel()" style="padding:10px 16px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">✅ ساخت مسابقه</button>
       </div>
-      
+            <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+        <h4 style="color:#ffd700;margin-bottom:10px">📋 مسابقات موجود</h4>
+        <div id="existingQuizzesList"><div class="loader">در حال بارگذاری...</div></div>
+      </div>
       <div id="quizBuilderMsg" style="margin-top:14px;text-align:center"></div>
     </div>
   </div>
@@ -390,6 +393,45 @@ function loadQuizBuilder(){
   if(quizQuestionCount === 0){
     addQuestion();
   }
+  loadExistingQuizzes();
+}
+
+function loadExistingQuizzes(){
+  fetch(URL + '?action=getQuizzes').then(function(r){ return r.json(); }).then(function(d){
+    var quizzes = d.quizzes || [];
+    if(quizzes.length === 0){
+      document.getElementById('existingQuizzesList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:10px;text-align:center">هیچ مسابقه‌ای وجود ندارد</div>';
+      return;
+    }
+    var html = '<div style="display:flex;flex-direction:column;gap:8px">';
+    quizzes.forEach(function(q){
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,215,0,.1)">';
+      html += '<div style="flex:1"><b style="color:#ffd700">' + q.title + '</b><br><span style="font-size:.75rem;color:rgba(255,255,255,.5)">' + (q.questions.length || 0) + ' سوال | ' + (q.startDate || '') + ' تا ' + (q.endDate || '') + '</span></div>';
+      html += '<button onclick="deleteQuizFromPanel(\'' + q.id + '\', \'' + q.title.replace(/'/g, "\\'") + '\')" style="padding:6px 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-size:.75rem">🗑️ حذف</button>';
+      html += '</div>';
+    });
+    html += '</div>';
+    document.getElementById('existingQuizzesList').innerHTML = html;
+  }).catch(function(){
+    document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>';
+  });
+}
+
+function deleteQuizFromPanel(quizId, quizTitle){
+  if(!confirm('آیا مطمئن هستید که می‌خواهید مسابقه «' + quizTitle + '» را حذف کنید؟\n\nاین عمل غیرقابل بازگشت است!')){
+    return;
+  }
+  document.getElementById('existingQuizzesList').innerHTML = '<div class="loader">در حال حذف...</div>';
+  fetch(URL + '?action=deleteQuiz&key=' + encodeURIComponent(ADMIN_KEY) + '&quizId=' + encodeURIComponent(quizId)).then(function(r){ return r.json(); }).then(function(d){
+    if(d.ok){
+      document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#22c55e;text-align:center;padding:10px">✅ مسابقه حذف شد</div>';
+      setTimeout(loadExistingQuizzes, 1500);
+    } else {
+      document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>';
+    }
+  }).catch(function(){
+    document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا در ارتباط با سرور</div>';
+  });
 }
 
 function addQuestion(){
