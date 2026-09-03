@@ -3189,9 +3189,122 @@ ldrSecT = setInterval(function() {
                 }
             }
         }
-
         // 🆕 ورود: بلافاصله صفحهٔ بارگذاری ظاهر می‌شود (بدون چرخش دکمه)
-                async function handleLogin() {
+        
+        // ===== تبدیل تاریخ امروز به شمسی با فرمت 14040612 =====
+        function getPersianToday() {
+            var d = new Date();
+            var fmt = new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            var p = fmt.formatToParts(d);
+            var y = '', m = '', dd = '';
+            p.forEach(function(x) {
+                if (x.type === 'year') y = x.value;
+                if (x.type === 'month') m = x.value.padStart(2, '0');
+                if (x.type === 'day') dd = x.value.padStart(2, '0');
+            });
+            return { year: y, month: m, day: dd, full: y + '/' + m + '/' + dd };
+        }
+
+        // ===== امتیاز ورود روزانه (یکبار در روز) =====
+        function awardDailyLogin(user) {
+            if (!user || !user.memberId) return;
+            var today = new Date().toISOString().split('T')[0];
+            fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('ورود روزانه') + '&points=1&uniqueKey=daily_' + today + '_' + user.memberId)
+                .then(function(r) { return r.json(); })
+                .then(function(d) { console.log('📥 ورود روزانه:', JSON.stringify(d)); })
+                .catch(function() {});
+        }
+
+        // ===== امتیاز تولد (یکبار در سال) =====
+                function awardBirthday(user, data) {
+            if (!user || !user.memberId || !data || !data.members) return;
+            var member = null;
+            for (var i = 0; i < data.members.length; i++) {
+                if (data.members[i].id === user.memberId) { member = data.members[i]; break; }
+            }
+            if (!member) {
+                console.log('🎂 عضو پیدا نشد برای:', user.memberId);
+                return;
+            }
+            console.log('🎂 بررسی تولد:', member.firstName, '| تاریخ تولد:', member.birthDateShamsi);
+            
+            if (!member.birthDateShamsi) {
+                console.log('🎂 تاریخ تولد خالی است');
+                return;
+            }
+            var bs = String(member.birthDateShamsi).replace(/[\s\-\/]/g, '');
+            if (bs.length !== 8) {
+                console.log('🎂 فرمت تاریخ نامعتبر:', member.birthDateShamsi);
+                return;
+            }
+            var bm = bs.substring(4, 6);
+            var bd = bs.substring(6, 8);
+            var t = getPersianToday();
+            console.log('🎂 تولد:', bm + '/' + bd, '| امروز:', t.month + '/' + t.day);
+            
+            if (bm + bd === t.month + t.day) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('🎂 تولدت مبارک!') + '&points=5&uniqueKey=birthday_' + t.year + '_' + user.memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { 
+                        console.log('🎂 پاسخ تولد:', d);
+                        if (d.ok) alert('🎂 تولدت مبارک! ۵ امتیاز هدیه گرفتی!'); 
+                    })
+                    .catch(function() {});
+            } else {
+                console.log('🎂 امروز تولد این کاربر نیست');
+            }
+        }
+
+        // ===== امتیازات ماهانه (مقرری، اقساط، موجودی، قسط معوقه) =====
+                function awardMonthlyPoints(user, data) {
+            if (!user || !user.memberId || !data || !data.members) return;
+            var member = null;
+            for (var i = 0; i < data.members.length; i++) {
+                if (data.members[i].id === user.memberId) { member = data.members[i]; break; }
+            }
+            if (!member) return;
+            
+            console.log('📊 بررسی امتیازات ماهانه برای:', member.firstName);
+            console.log('   💰 مقرری:', member.monthlySalary);
+            console.log('   💳 قسط ماهانه:', member.installmentAmount);
+            console.log('   ✅ اقساط پرداخت شده:', member.paidInstallments);
+            console.log('   🏦 موجودی کل:', member.balance);
+            console.log('   📅 موجودی ماه جاری:', member.currentMonthBalance);
+            console.log('   ⚠️ اقساط معوقه:', member.overdueInstallments);
+            
+            var t = getPersianToday();
+            var monthKey = t.year + '_' + t.month;
+            
+            if (member.monthlySalary > 0) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت مقرری ماهانه') + '&points=1&uniqueKey=salary_' + monthKey + '_' + user.memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { console.log('💰 مقرری:', d); })
+                    .catch(function() {});
+            }
+            
+            if (member.installmentAmount > 0 && member.paidInstallments > 0) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت اقساط ماهانه') + '&points=1&uniqueKey=installment_' + monthKey + '_' + user.memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { console.log('💳 اقساط:', d); })
+                    .catch(function() {});
+            }
+            
+            if (member.balance > member.currentMonthBalance) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('افزایش موجودی') + '&points=1&uniqueKey=balance_' + monthKey + '_' + user.memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { console.log('📈 موجودی:', d); })
+                    .catch(function() {});
+            }
+            
+            if (member.overdueInstallments === 0 && member.installmentAmount > 0) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('بدون قسط معوقه') + '&points=1&uniqueKey=nooverdue_' + monthKey + '_' + user.memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { console.log('✅ بدون معوقه:', d); })
+                    .catch(function() {});
+            }
+        }
+
+        async function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
             if (!username || !password) {
@@ -3202,8 +3315,6 @@ ldrSecT = setInterval(function() {
             loginDataReady = false;
             loginResult = null;
 
-                    
-
             document.getElementById('loginPage').style.display = 'none';
             showLoaderAnimation();
 
@@ -3213,6 +3324,11 @@ ldrSecT = setInterval(function() {
                 if (user) {
                     loginResult = { success: true, user: user, data: data, username: username, password: password };
                     logUserLogin(username, user.name || user.firstName || username);
+                    
+                    // ===== امتیازات =====
+                    awardDailyLogin(user);
+                    awardBirthday(user, data);
+                    awardMonthlyPoints(user, data);
                 } else {
                     loginResult = { success: false, error: 'نام کاربری یا رمز عبور اشتباه است' };
                 }
@@ -4052,7 +4168,26 @@ function checkGoldConditions(member) {
             alert('🎉 تبریک! همه کارت‌ها در ' + attempts + ' تلاش پیدا شد!\nامتیاز: ' + score + '\n🏆 +' + coins + ' سکه');
             addCoins(coins, 'بازی ' + gameName, 'امتیاز ' + score);
         }
-
+        // ===== امتیاز بازی سوالات =====
+        function awardQuizPoints(score, totalQuestions) {
+            if (!currentUser || !currentUser.memberId) return;
+            var memberId = currentUser.memberId;
+            var today = new Date().toISOString().split('T')[0];
+            
+            // ۱ امتیاز برای شرکت در بازی (یکبار در روز)
+            fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در بازی سوالات') + '&points=1&uniqueKey=quiz_play_' + today + '_' + memberId)
+                .then(function(r) { return r.json(); })
+                .then(function(d) { console.log('🎮 شرکت در سوالات:', JSON.stringify(d)); })
+                .catch(function() {});
+            
+            // امتیاز برای هر سوال صحیح
+            if (score > 0) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح سوالات (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=quiz_correct_' + today + '_' + memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { console.log('✅ پاسخ صحیح:', JSON.stringify(d)); })
+                    .catch(function() {});
+            }
+        }
         function playQuizGame(gameName) {
             const questions = [
                 { q: 'چه سالی صندوق اتحاد تأسیس شد؟', o: ['۱۳۵۰', '۱۳۶۰', '۱۳۷۰', '۱۳۸۰'], a: 0 },
@@ -4079,9 +4214,13 @@ function checkGoldConditions(member) {
             saveGameScores();
             const coins = Math.round(finalScore / 20);
             alert(`🏆 امتیاز: ${finalScore}%\n🏆 +${coins} سکه`);
-            if (coins > 0) addCoins(coins, 'بازی ' + gameName, 'امتیاز ' + finalScore + '%');
+                                    if (coins > 0) addCoins(coins, 'بازی ' + gameName, 'امتیاز ' + finalScore + '%');
+            awardQuizPoints(score, questions.length);
+            
+            // ===== امتیاز شرکت و پاسخ صحیح =====
+            awardQuizPoints(score, questions.length);
         }
-
+   
         function playSaveGame(gameName) {
             let saved = 0;
             let msg = `💰 بازی ${gameName}\nچقدر می‌خواهید پس‌انداز کنید؟\n(0 برای خروج)\n\nپس‌انداز فعلی: ${fmtNum(saved)}`;
@@ -11962,6 +12101,26 @@ function selectAnswer(optIdx) {
         finishQuiz();
     }
 }
+        // ===== امتیاز مسابقات =====
+        function awardCompetitionPoints(quizId, score) {
+            if (!currentUser || !currentUser.memberId) return;
+            var memberId = currentUser.memberId;
+            var today = new Date().toISOString().split('T')[0];
+            
+            // ۱ امتیاز برای شرکت در مسابقه (یکبار برای هر مسابقه)
+            fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در مسابقه') + '&points=1&uniqueKey=comp_participate_' + quizId + '_' + memberId)
+                .then(function(r) { return r.json(); })
+                .then(function(d) { console.log('🏆 شرکت در مسابقه:', JSON.stringify(d)); })
+                .catch(function() {});
+            
+            // امتیاز برای هر سوال صحیح
+            if (score > 0) {
+                fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح مسابقه (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=comp_correct_' + quizId + '_' + memberId)
+                    .then(function(r) { return r.json(); })
+                    .then(function(d) { console.log('✅ پاسخ صحیح مسابقه:', JSON.stringify(d)); })
+                    .catch(function() {});
+            }
+        }
 
 function finishQuiz() {
     var quiz = window.currentQuiz;
@@ -11978,6 +12137,8 @@ function finishQuiz() {
         
         // ذخیره در مرورگر برای جلوگیری از شرکت مجدد
         localStorage.setItem('quiz_done_' + quiz.id + '_' + currentUser.memberId, 'true');
+        // ===== امتیاز شرکت و پاسخ صحیح مسابقه =====
+        awardCompetitionPoints(quiz.id, score);
         
         var percent = Math.round((score / total) * 100);
         var emoji = percent >= 80 ? '🏆' : percent >= 60 ? '🎉' : percent >= 40 ? '👍' : '💪';
@@ -12764,14 +12925,46 @@ var ADMIN_URL = 'https://script.google.com/macros/s/AKfycbz44ROWMMPKtuc5hjYbfFMI
 
 async function checkMaintenance() {
   try {
+    // اگر در URL پارامتر admin باشد، به پنل مدیریت برو
+    if (window.location.search.includes('admin')) {
+      return true;
+    }
+    
     var r = await fetch(ADMIN_URL + '?action=status');
     var s = await r.json();
     if (s.enabled === false) {
-      document.body.innerHTML = '<div style="position:fixed;inset:0;background:linear-gradient(135deg,#0f0f23,#1a1a2e);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:tahoma;z-index:99999"><div style="font-size:5rem">⚙️</div><div style="margin-top:20px;font-size:1.5rem;font-weight:900;color:#ffd700">در حال به‌روزرسانی...</div><div style="margin-top:12px;text-align:center;color:rgba(255,255,255,.6);line-height:2">صندوق پس‌انداز موقتاً در دسترس نیست.<br>لطفاً دقایقی دیگر مراجعه فرمایید. 🙏</div></div>';
+      showMaintenancePage();
       return false;
     }
     return true;
   } catch (e) { return true; }
+}
+
+function showMaintenancePage() {
+  var html = '<div id="maintenancePage" style="position:fixed;inset:0;background:linear-gradient(135deg,#0f0f23,#1a1a2e);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:tahoma;z-index:99999">';
+  html += '<div style="font-size:5rem">⚙️</div>';
+  html += '<div style="margin-top:20px;font-size:1.5rem;font-weight:900;color:#ffd700">در حال به‌روزرسانی...</div>';
+  html += '<div style="margin-top:12px;text-align:center;color:rgba(255,255,255,.6);line-height:2">صندوق پس‌انداز موقتاً در دسترس نیست.<br>لطفاً دقایقی دیگر مراجعه فرمایید. 🙏</div>';
+  
+  // فرم ورود مدیر
+  html += '<div style="margin-top:30px;background:rgba(255,255,255,.05);border:1px solid rgba(255,215,0,.3);border-radius:16px;padding:24px;width:90%;max-width:350px;text-align:center">';
+  html += '<div style="color:#ffd700;font-size:1rem;font-weight:bold;margin-bottom:15px">🔐 ورود مدیر</div>';
+  html += '<input type="password" id="adminPassInput" placeholder="رمز عبور مدیر" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:1rem;text-align:center;margin-bottom:12px;box-sizing:border-box" onkeypress="if(event.key===\'Enter\')checkAdminPass()">';
+  html += '<button onclick="checkAdminPass()" style="width:100%;padding:12px;border-radius:10px;border:none;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:1rem;cursor:pointer;font-family:tahoma">ورود به پنل مدیریت</button>';
+  html += '</div>';
+  
+  html += '</div>';
+  document.body.innerHTML = html;
+}
+
+function checkAdminPass() {
+  var pass = document.getElementById('adminPassInput').value;
+  if (pass === 'admin12345') {
+    window.location.href = '?admin';
+  } else {
+    alert('❌ رمز عبور اشتباه است');
+    document.getElementById('adminPassInput').value = '';
+  }
 }
 
 function logUserLogin(user, name) {
