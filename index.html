@@ -13120,5 +13120,162 @@ setTimeout(function(){ checkMaintenance(); }, 50);
     if (e.key === 'Enter') checkAdminPass();
   });
 </script>
+<script>
+
+// ===== امتیازات و فروشگاه (بخش مستقل و ضدخرابی) =====
+var SHOP_URL = 'https://script.google.com/macros/s/AKfycbw77zTjB82LIOSL_naNf15NWs2UC31EwHZuckD47Bs9BhLIMtCo18qTJYu__T4CYl_K/exec';
+
+function getMe() {
+  try {
+    var lr = loginResult;
+    if (!lr || !lr.user) return null;
+    var uid = String(lr.user.memberId || lr.user.id || '');
+    var name = '';
+    try {
+      var ms = (lr.data && lr.data.members) || [];
+      for (var i = 0; i < ms.length; i++) if (String(ms[i].id) === uid) { name = ms[i].firstName || ''; break; }
+    } catch(e) {}
+    return { id: uid, name: name || String(lr.user.username) };
+  } catch(e) { return null; }
+}
+
+// ===== دکمه شناور =====
+setInterval(function(){
+  if (document.getElementById('ptsShopBtn')) return;
+  if (!getMe()) return;
+  var b = document.createElement('div');
+  b.id = 'ptsShopBtn';
+  b.innerHTML = '🛍️';
+  b.style.cssText = 'position:fixed;bottom:80px;left:14px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#ffd700,#ff9d00);display:flex;align-items:center;justify-content:center;font-size:1.7rem;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.45);z-index:9998;';
+  b.onclick = openPtsShop;
+}, 1500);
+
+function openPtsShop() {
+  if (document.getElementById('ptsShopModal')) return;
+  var m = document.createElement('div');
+  m.id = 'ptsShopModal';
+  m.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:#141428;z-index:9999;display:flex;flex-direction:column;';
+  m.innerHTML =
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e">' +
+      '<b style="font-size:1rem">🛍️ امتیازات و فروشگاه</b>' +
+      '<span onclick="closePtsShop()" style="font-size:1.4rem;cursor:pointer;font-weight:900">✕</span>' +
+    '</div>' +
+    '<div style="display:flex;gap:6px;padding:10px;background:rgba(255,255,255,.04)">' +
+      '<div id="ptab_shop" onclick="ptsTab(\'shop\')" style="flex:1;text-align:center;padding:9px 4px;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;font-size:.75rem;cursor:pointer">فروشگاه</div>' +
+      '<div id="ptab_purchases" onclick="ptsTab(\'purchases\')" style="flex:1;text-align:center;padding:9px 4px;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;font-size:.75rem;cursor:pointer">خریدها</div>' +
+      '<div id="ptab_history" onclick="ptsTab(\'history\')" style="flex:1;text-align:center;padding:9px 4px;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;font-size:.75rem;cursor:pointer">تاریخچه</div>' +
+      '<div id="ptab_mypts" onclick="ptsTab(\'mypts\')" style="flex:1;text-align:center;padding:9px 4px;border-radius:10px;background:rgba(255,255,255,.08);color:#fff;font-size:.75rem;cursor:pointer">امتیازات من</div>' +
+    '</div>' +
+    '<div id="ptsContent" style="flex:1;overflow-y:auto;padding:14px"></div>';
+  document.body.appendChild(m);
+  ptsTab('shop');
+}
+
+function closePtsShop() {
+  var m = document.getElementById('ptsShopModal');
+  if (m) m.parentNode.removeChild(m);
+}
+
+function ptsTab(t) {
+  ['shop','purchases','history','mypts'].forEach(function(x){
+    var el = document.getElementById('ptab_' + x);
+    if (!el) return;
+    if (x === t) { el.style.background = 'linear-gradient(135deg,#ffd700,#ff9d00)'; el.style.color = '#1a1a2e'; el.style.fontWeight = '800'; }
+    else { el.style.background = 'rgba(255,255,255,.08)'; el.style.color = '#fff'; el.style.fontWeight = '400'; }
+  });
+  if (t === 'shop') loadShop();
+  else if (t === 'purchases') loadPurchases();
+  else if (t === 'history') loadHistory();
+  else loadMyPoints();
+}
+
+function setC(html) { var el = document.getElementById('ptsContent'); if (el) el.innerHTML = html; }
+
+function loadShop() {
+  setC('<div style="text-align:center;padding:20px">⏳ بارگذاری...</div>');
+  fetch(SHOP_URL + '?action=getShopProducts').then(function(r){ return r.json(); }).then(function(d){
+    if (!d.ok) { setC('<div>❌ ' + (d.error||'خطا') + '</div>'); return; }
+    var ps = d.products || [];
+    if (!ps.length) { setC('<div>📭 محصولی نیست</div>'); return; }
+    var h = '';
+    ps.forEach(function(p){
+      var sn = (p.name||'').replace(/'/g,'');
+      h += '<div style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px;margin-bottom:10px">';
+      h += '<b style="color:#ffd700">🛍️ ' + p.name + '</b> - <span style="color:#22c55e;font-weight:800">' + p.price + '</span> امتیاز';
+      if (p.description) h += '<div style="font-size:.8rem;color:rgba(255,255,255,.6);margin-top:4px">' + p.description + '</div>';
+      h += '<div style="font-size:.75rem;color:rgba(255,255,255,.5)">موجودی: ' + p.stock + '</div>';
+      h += '<button onclick="serverBuy(\'' + p.shenaseh + '\',\'' + sn + '\',' + p.price + ')" style="width:100%;margin-top:8px;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:800;cursor:pointer">🛒 درخواست خرید</button>';
+      h += '</div>';
+    });
+    setC(h);
+  }).catch(function(e){ setC('<div>❌ ' + e.message + '</div>'); });
+}
+
+function loadPurchases() {
+  var me = getMe(); if (!me) { setC('<div>❌ وارد نشده</div>'); return; }
+  setC('<div style="text-align:center;padding:20px">⏳...</div>');
+  fetch(SHOP_URL + '?action=getMyPurchases&user=' + encodeURIComponent(me.id)).then(function(r){ return r.json(); }).then(function(d){
+    var ps = d.purchases || [];
+    if (!ps.length) { setC('<div>📭 خریدی نیست</div>'); return; }
+    var h = '';
+    ps.forEach(function(p){
+      var st = p.status==='pending'?'⏳ در انتظار':(p.status==='approved'?'✅ تحویل شده':'❌ لغو شده');
+      h += '<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:12px;margin-bottom:8px">';
+      h += '<b style="color:#ffd700">' + p.product + '</b> - ' + st;
+      h += '<div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-top:4px">💰 ' + p.price + ' امتیاز | ' + new Date(p.timestamp).toLocaleString('fa-IR') + '</div>';
+      h += '</div>';
+    });
+    setC(h);
+  }).catch(function(){ setC('<div>❌ خطا</div>'); });
+}
+
+function loadHistory() {
+  var me = getMe(); if (!me) { setC('<div>❌ وارد نشده</div>'); return; }
+  setC('<div style="text-align:center;padding:20px">⏳...</div>');
+  fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(me.id)).then(function(r){ return r.json(); }).then(function(d){
+    var hist = d.history || [];
+    if (!hist.length) { setC('<div>📭 تاریخچه‌ای نیست</div>'); return; }
+    var h = '';
+    hist.forEach(function(x){
+      var plus = x.points > 0;
+      h += '<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;gap:6px">';
+      h += '<div><div style="font-size:.85rem">' + (x.reason||'-') + '</div><div style="font-size:.7rem;color:rgba(255,255,255,.45)">' + new Date(x.timestamp).toLocaleString('fa-IR') + '</div></div>';
+      h += '<b style="color:' + (plus?'#22c55e':'#ff6b6b') + '">' + (plus?'+':'') + x.points + '</b></div>';
+    });
+    setC(h);
+  }).catch(function(){ setC('<div>❌ خطا</div>'); });
+}
+
+function loadMyPoints() {
+  var me = getMe(); if (!me) { setC('<div>❌ وارد نشده</div>'); return; }
+  setC('<div style="text-align:center;padding:20px">⏳...</div>');
+  fetch(SHOP_URL + '?action=getPoints').then(function(r){ return r.json(); }).then(function(d){
+    var my = 0; (d.points||[]).forEach(function(p){ if (String(p.user)===String(me.id)) my=p.points||0; });
+    setC('<div style="background:linear-gradient(135deg,#ffd700,#ff9d00);border-radius:16px;padding:22px;text-align:center;color:#1a1a2e">' +
+      '<div style="font-size:.9rem;font-weight:700">💰 امتیاز فعلی شما</div>' +
+      '<div style="font-size:2.4rem;font-weight:900">' + my + '</div></div>' +
+      '<div style="text-align:center;margin-top:10px;font-size:.8rem;color:rgba(255,255,255,.6)">برای دیدن جزئیات، تب «تاریخچه» را بزنید</div>');
+  }).catch(function(){ setC('<div>❌ خطا</div>'); });
+}
+
+function serverBuy(shenaseh, name, price) {
+  var me = getMe();
+  if (!me) { alert('❌ ابتدا وارد شوید'); return; }
+  if (!confirm('درخواست خرید «' + name + '» به قیمت ' + price + ' امتیاز؟')) return;
+  fetch(SHOP_URL + '?action=requestPurchase&user=' + encodeURIComponent(me.id) + '&name=' + encodeURIComponent(me.name) + '&shenaseh=' + encodeURIComponent(shenaseh))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      alert(d.msg || d.error || '❌ خطا');
+      if (d.ok) loadShop();
+    }).catch(function(){ alert('❌ خطا در اتصال'); });
+}
+
+// ===== باز شدن با دکمه اصلی امتیازات =====
+var _origRenderPage = window.renderPage;
+window.renderPage = function(page) {
+  if (page === 'club') { openPtsShop(); return; }
+  return _origRenderPage.apply(this, arguments);
+};
+</script>
 </body>
 </html>
