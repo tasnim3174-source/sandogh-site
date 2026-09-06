@@ -13234,14 +13234,84 @@ function loadHistory() {
   setC('<div style="text-align:center;padding:20px">⏳...</div>');
   fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(me.id)).then(function(r){ return r.json(); }).then(function(d){
     var hist = d.history || [];
-    if (!hist.length) { setC('<div>📭 تاریخچه‌ای نیست</div>'); return; }
+    if (!hist.length) { setC('<div style="text-align:center;padding:30px;color:rgba(255,255,255,.5)">📭 تاریخچه‌ای نیست</div>'); return; }
+    
+    // محاسبه آمار
+    var gained = 0, spent = 0;
+    hist.forEach(function(x){ if (x.points > 0) gained += x.points; else spent += Math.abs(x.points); });
+    
     var h = '';
-    hist.forEach(function(x){
+    
+    // کارت آمار
+    h += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">';
+    h += '<div style="background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:14px;padding:14px;text-align:center;color:#fff">';
+    h += '<div style="font-size:.7rem;font-weight:600;opacity:.9">🏆 کسب شده</div>';
+    h += '<div style="font-size:1.4rem;font-weight:900;margin-top:4px">+' + gained + '</div></div>';
+    h += '<div style="background:linear-gradient(135deg,#ef4444,#dc2626);border-radius:14px;padding:14px;text-align:center;color:#fff">';
+    h += '<div style="font-size:.7rem;font-weight:600;opacity:.9">🛍️ خرج شده</div>';
+    h += '<div style="font-size:1.4rem;font-weight:900;margin-top:4px">-' + spent + '</div></div>';
+    h += '</div>';
+    
+    // فیلترها
+    h += '<div style="display:flex;gap:6px;margin-bottom:12px">';
+    h += '<button onclick="filterHist(\'all\')" id="fAll" style="flex:1;padding:8px;border:none;border-radius:8px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:700;font-size:.75rem;cursor:pointer">همه</button>';
+    h += '<button onclick="filterHist(\'plus\')" id="fPlus" style="flex:1;padding:8px;border:none;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-weight:600;font-size:.75rem;cursor:pointer">کسب شده</button>';
+    h += '<button onclick="filterHist(\'minus\')" id="fMinus" style="flex:1;padding:8px;border:none;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-weight:600;font-size:.75rem;cursor:pointer">خرج شده</button>';
+    h += '</div>';
+    
+    // لیست تاریخچه
+    h += '<div id="histList">';
+    hist.forEach(function(x, idx){
       var plus = x.points > 0;
-      h += '<div style="background:rgba(255,255,255,.06);border-radius:12px;padding:10px;margin-bottom:8px;display:flex;justify-content:space-between;gap:6px">';
-      h += '<div><div style="font-size:.85rem">' + (x.reason||'-') + '</div><div style="font-size:.7rem;color:rgba(255,255,255,.45)">' + new Date(x.timestamp).toLocaleString('fa-IR') + '</div></div>';
-      h += '<b style="color:' + (plus?'#22c55e':'#ff6b6b') + '">' + (plus?'+':'') + x.points + '</b></div>';
+      var reason = (x.reason || 'بدون دلیل').trim();
+      
+      // تشخیص نوع دلیل و آیکون
+      var icon = '⭐', typeColor = '#ffd700';
+      var rLow = reason.toLowerCase();
+      if (reason.indexOf('🛍️') > -1 || reason.indexOf('خرید') > -1) { icon = '🛍️'; typeColor = '#60a5fa'; }
+      else if (reason.indexOf('↩️') > -1 || reason.indexOf('برگشت') > -1 || reason.indexOf('لغو') > -1) { icon = '↩️'; typeColor = '#f97316'; }
+      else if (reason.indexOf('مسابقه') > -1 || reason.indexOf('quiz') > -1) { icon = '🎯'; typeColor = '#a855f7'; }
+      else if (reason.indexOf('نظرسنجی') > -1 || reason.indexOf('survey') > -1) { icon = '📊'; typeColor = '#06b6d4'; }
+      else if (reason.indexOf('حضور') > -1 || reason.indexOf('جلسه') > -1) { icon = '✅'; typeColor = '#22c55e'; }
+      else if (reason.indexOf('مدیر') > -1 || reason.indexOf('admin') > -1) { icon = '👑'; typeColor = '#eab308'; }
+      
+      var date = new Date(x.timestamp);
+      var dateStr = date.toLocaleDateString('fa-IR') + ' - ' + date.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+      
+      h += '<div class="histItem" data-type="' + (plus?'plus':'minus') + '" style="background:rgba(255,255,255,.06);border-right:4px solid ' + typeColor + ';border-radius:12px;padding:12px;margin-bottom:8px">';
+      h += '<div style="display:flex;align-items:flex-start;gap:10px">';
+      h += '<div style="font-size:1.6rem;min-width:32px;text-align:center">' + icon + '</div>';
+      h += '<div style="flex:1">';
+      h += '<div style="font-size:.88rem;font-weight:700;color:#fff;line-height:1.4">' + reason + '</div>';
+      h += '<div style="font-size:.7rem;color:rgba(255,255,255,.5);margin-top:4px">📅 ' + dateStr + '</div>';
+      h += '</div>';
+      h += '<div style="text-align:center;min-width:55px">';
+      h += '<div style="font-size:.95rem;font-weight:900;color:' + (plus?'#22c55e':'#ef4444') + '">' + (plus?'+':'') + x.points + '</div>';
+      h += '<div style="font-size:.6rem;color:rgba(255,255,255,.5);margin-top:2px">امتیاز</div>';
+      h += '</div>';
+      h += '</div>';
+      h += '</div>';
     });
+    h += '</div>';
+    
+    h += '<script>';
+    h += 'function filterHist(type) {';
+    h += '  var items = document.querySelectorAll(".histItem");';
+    h += '  items.forEach(function(i){';
+    h += '    if (type === "all") i.style.display = "block";';
+    h += '    else if (type === "plus") i.style.display = i.dataset.type === "plus" ? "block" : "none";';
+    h += '    else i.style.display = i.dataset.type === "minus" ? "block" : "none";';
+    h += '  });';
+    h += '  ["fAll","fPlus","fMinus"].forEach(function(id){';
+    h += '    var b = document.getElementById(id);';
+    h += '    if (b) { b.style.background = "rgba(255,255,255,.08)"; b.style.color = "#fff"; b.style.fontWeight = "600"; }';
+    h += '  });';
+    h += '  var activeId = type === "all" ? "fAll" : (type === "plus" ? "fPlus" : "fMinus");';
+    h += '  var ab = document.getElementById(activeId);';
+    h += '  if (ab) { ab.style.background = "linear-gradient(135deg,#ffd700,#ff9d00)"; ab.style.color = "#1a1a2e"; ab.style.fontWeight = "700"; }';
+    h += '}';
+    h += '<\/script>';
+    
     setC(h);
   }).catch(function(){ setC('<div>❌ خطا</div>'); });
 }
@@ -13276,6 +13346,53 @@ window.renderPage = function(page) {
   if (page === 'club') { openPtsShop(); return; }
   return _origRenderPage.apply(this, arguments);
 };
+
+// ===== سبد امتیاز کنار خوش‌آمد =====
+var ptsCache = null;
+var lastFetch = 0;
+
+function fetchMyPoints(cb) {
+  var me = getMe(); if (!me) { if (cb) cb(0); return; }
+  fetch(SHOP_URL + '?action=getPoints').then(function(r){ return r.json(); }).then(function(d){
+    var my = 0; (d.points||[]).forEach(function(p){ if (String(p.user)===String(me.id)) my = p.points||0; });
+    ptsCache = my; if (cb) cb(my);
+  }).catch(function(){ if (cb) cb(ptsCache || 0); });
+}
+
+function findWelcomeEl() {
+  var nodes = document.querySelectorAll('div,span,h1,h2,h3,p,b,strong');
+  var best = null;
+  for (var i = 0; i < nodes.length; i++) {
+    var t = nodes[i].textContent || '';
+    if (t.indexOf('خوش آمد') > -1 && t.length < 60) {
+      if (!best || t.length < (best.textContent || '').length) best = nodes[i];
+    }
+  }
+  return best;
+}
+
+function injectPointsBadge() {
+  var el = findWelcomeEl();
+  if (!el) return;
+  var badge = document.getElementById('ptsBadge');
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.id = 'ptsBadge';
+    badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-radius:999px;padding:3px 12px;font-size:.78rem;font-weight:800;margin:0 8px;vertical-align:middle;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer;';
+    badge.onclick = openPtsShop;
+    el.parentNode.insertBefore(badge, el.nextSibling);
+  }
+  badge.innerHTML = '🪙 ' + (ptsCache === null ? 0 : ptsCache) + ' امتیاز';
+}
+
+setInterval(function(){
+  if (!getMe()) return;
+  if (findWelcomeEl()) {
+    var now = Date.now();
+    if (ptsCache === null || now - lastFetch > 15000) { lastFetch = now; fetchMyPoints(injectPointsBadge); }
+    else injectPointsBadge();
+  }
+}, 3000);
 </script>
 </body>
 </html>
