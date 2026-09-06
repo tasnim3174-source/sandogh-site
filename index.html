@@ -2341,7 +2341,7 @@ background: Wormy !important;
                     </svg>
                 </div>
             </div>
-            <h1 class="ttl" style="color:#fff;-webkit-text-fill-color:#fff;background:none;">سیستم حسابداری <span class="gr">صندوق اتحاد</span></h1>
+            <h1 id="secretTitle" class="ttl" style="color:#fff;-webkit-text-fill-color:#fff;background:none;cursor:default;">سیستم حسابداری <span class="gr">صندوق اتحاد</span></h1>
             <p class="wlc">به صندوق اتحاد خوش آمدید 🌟</p>
             <div class="pct"><span id="ldrPct">۰</span><span class="sg">٪</span></div>
             <div class="stt"><span id="ldrStx">آماده‌سازی</span><span class="dts"><i>.</i><i>.</i><i>.</i></span></div>
@@ -13045,6 +13045,80 @@ window.openAdminPanel = function(){
 // صفحه لاگین سریع نمایش داده شود، بعد وضعیت سایت چک شود
 setTimeout(function(){ checkMaintenance(); }, 50);
 </script>
-</body>
+
+<!-- ===== ورود مخفی مدیر ===== -->
+<div id="adminModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#1a1a2e;border:1px solid rgba(255,215,0,.3);border-radius:20px;padding:25px;max-width:320px;width:90%;text-align:center">
+    <div style="font-size:2rem">🔐</div>
+    <div style="color:#ffd700;font-weight:bold;margin:10px 0">ورود مدیر سیستم</div>
+    <input id="adminPass" type="password" placeholder="رمز مدیر را وارد کنید" style="width:100%;padding:12px;margin-bottom:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;text-align:center;outline:none;font-family:tahoma">
+    <div style="display:flex;gap:8px">
+      <button onclick="checkAdminPass()" style="flex:1;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;cursor:pointer;font-family:tahoma">ورود</button>
+      <button onclick="closeAdminModal()" style="flex:1;padding:12px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:tahoma">بستن</button>
+    </div>
+    <div id="adminErr" style="color:#ff6b6b;font-size:.8rem;margin-top:10px;display:none">❌ رمز اشتباه است!</div>
+  </div>
+</div>
+
+<script>
+    // ===== ورود مخفی مدیر (نسخه دیباگ) =====
+  var ADMIN_SECRET = 'admin12345';
+  var clickCount = 0;
+  var clickTimer = null;
+
+  document.addEventListener('click', function(e) {
+    var titles = document.querySelectorAll('h1, h2, .ttl, [class*="ttl"]');
+    var found = false;
+    for (var i = 0; i < titles.length; i++) {
+      var t = titles[i];
+      if (!t.textContent || t.textContent.indexOf('حسابداری') === -1) continue;
+      var r = t.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) continue;
+      if (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom) {
+        found = true;
+        clickCount++;
+        console.log('✅ کلیک روی عنوان! شمارنده:', clickCount);
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(function() { clickCount = 0; console.log('🔄 شمارنده صفر شد'); }, 2000);
+        if (clickCount >= 3) {
+          clickCount = 0;
+          console.log('🎉 ۳ کلیک! باز کردن Modal...');
+          openAdminModal();
+        }
+        break;
+      }
+    }
+    if (!found && clickCount > 0) {
+      console.log('❌ کلیک جای دیگر - شمارنده:', clickCount, '- صفر می‌شود');
+      clickCount = 0;
+    }
+  }, true);
+
+  function openAdminModal() {
+    var modal = document.getElementById('adminModal');
+    modal.style.display = 'flex';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('adminErr').style.display = 'none';
+    setTimeout(function() { document.getElementById('adminPass').focus(); }, 100);
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminModal').style.display = 'none';
+  }
+
+  function checkAdminPass() {
+    var pass = document.getElementById('adminPass').value;
+    if (pass === ADMIN_SECRET) {
+      closeAdminModal();
+      window.open('admin-final.html', '_blank');
+    } else {
+      document.getElementById('adminErr').style.display = 'block';
+    }
+  }
+
+  document.getElementById('adminPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkAdminPass();
+  });
+</script>
 </body>
 </html>
