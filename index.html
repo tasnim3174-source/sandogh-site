@@ -12958,14 +12958,50 @@ function showMaintenancePage() {
 }
 
 function checkAdminPass() {
-  var pass = document.getElementById('adminPassInput').value;
-  if (pass === 'admin12345') {
-    window.location.href = '?admin';
-  } else {
-    alert('❌ رمز عبور اشتباه است');
-    document.getElementById('adminPassInput').value = '';
+    var pass = document.getElementById('adminPass').value;
+    var err = document.getElementById('adminErr');
+    err.style.display = 'none';
+    err.style.color = '#ff6b6b';
+    if (pass === ADMIN_SECRET) {
+      closeAdminModal();
+      window.open('admin-final.html', '_blank');
+      return;
+    }
+    var me = null;
+    try {
+      var lr = loginResult;
+      if (lr && lr.user) {
+        var uid = String(lr.user.memberId || lr.user.id || '');
+        var karbari = uid;
+        try {
+          var ms = (lr.data && lr.data.members) || [];
+          for (var i = 0; i < ms.length; i++) if (String(ms[i].id) === uid) { karbari = String(ms[i].karbari || ms[i].accountNumber || uid); break; }
+        } catch(e) {}
+        me = { karbari: karbari };
+      }
+    } catch(e) {}
+    if (!me) { err.textContent = '❌ ابتدا وارد برنامه شوید'; err.style.display = 'block'; return; }
+    err.textContent = '⏳ در حال بررسی...';
+    err.style.color = '#fbbf24';
+    err.style.display = 'block';
+    fetch(SHOP_URL + '?action=councilLogin&user=' + encodeURIComponent(me.karbari) + '&pass=' + encodeURIComponent(pass))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.ok && d.isCouncil) {
+          closeAdminModal();
+          window.open('admin-final.html?ct=' + encodeURIComponent(d.token), '_blank');
+        } else if (d.ok) {
+          err.textContent = '❌ این حساب عضو شورا نیست';
+          err.style.display = 'block';
+        } else {
+          err.textContent = '❌ رمز اشتباه است';
+          err.style.display = 'block';
+        }
+      }).catch(function(){
+        err.textContent = '❌ خطا در اتصال';
+        err.style.display = 'block';
+      });
   }
-}
 
 function logUserLogin(user, name) {
   var device = navigator.userAgent.includes('Mobile') ? '📱 موبایل' : '💻 کامپیوتر';
@@ -13051,7 +13087,7 @@ setTimeout(function(){ checkMaintenance(); }, 50);
   <div style="background:#1a1a2e;border:1px solid rgba(255,215,0,.3);border-radius:20px;padding:25px;max-width:320px;width:90%;text-align:center">
     <div style="font-size:2rem">🔐</div>
     <div style="color:#ffd700;font-weight:bold;margin:10px 0">ورود مدیر سیستم</div>
-    <input id="adminPass" type="password" placeholder="رمز مدیر را وارد کنید" style="width:100%;padding:12px;margin-bottom:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;text-align:center;outline:none;font-family:tahoma">
+    <input id="adminPass" type="password" placeholder="رمز مدیر یا رمز شخصی خودتان" style="width:100%;padding:12px;margin-bottom:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:10px;color:#fff;text-align:center;outline:none;font-family:tahoma">
     <div style="display:flex;gap:8px">
       <button onclick="checkAdminPass()" style="flex:1;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;cursor:pointer;font-family:tahoma">ورود</button>
       <button onclick="closeAdminModal()" style="flex:1;padding:12px;border:none;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:tahoma">بستن</button>
@@ -13123,6 +13159,30 @@ setTimeout(function(){ checkMaintenance(); }, 50);
 <script>
 
 // ===== امتیازات و فروشگاه (بخش مستقل و ضدخرابی) =====
+// ===== مسدود کردن بازنویسی امتیاز سرور توسط سینک لوکال =====
+(function(){
+  var _origFetch = window.fetch;
+  window.fetch = function(url) {
+    if (typeof url === 'string' && url.indexOf('action=updatePoints') > -1) {
+      console.log('⛔ updatePoints مسدود شد');
+      return Promise.resolve(new Response(JSON.stringify({ ok: false, error: 'blocked' }), { headers: { 'Content-Type': 'application/json' } }));
+    }
+    return _origFetch.apply(this, arguments);
+  };
+})();
+// ===== باز شدن مستقیم پنل مدیر (بدون مودال واسط) =====
+window.openAdminModal = function(){ window.open('admin-final.html', '_blank'); };
+// ===== حذف پنجره رمز مدیر: رفتن مستقیم به پنل =====
+(function(){
+  var _origPrompt = window.prompt;
+  window.prompt = function(msg) {
+    if (typeof msg === 'string' && msg.indexOf('رمز مدیر') > -1) {
+      setTimeout(function(){ window.open('admin-final.html', '_blank'); }, 50);
+      return null;
+    }
+    return _origPrompt.apply(this, arguments);
+  };
+})();
 var SHOP_URL = 'https://script.google.com/macros/s/AKfycbw77zTjB82LIOSL_naNf15NWs2UC31EwHZuckD47Bs9BhLIMtCo18qTJYu__T4CYl_K/exec';
 
 function getMe() {
@@ -13319,11 +13379,14 @@ function loadHistory() {
 function loadMyPoints() {
   var me = getMe(); if (!me) { setC('<div>❌ وارد نشده</div>'); return; }
   setC('<div style="text-align:center;padding:20px">⏳...</div>');
-  fetch(SHOP_URL + '?action=getPoints').then(function(r){ return r.json(); }).then(function(d){
-    var my = 0; (d.points||[]).forEach(function(p){ if (String(p.user)===String(me.id)) my=p.points||0; });
+  fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(me.id)).then(function(r){ return r.json(); }).then(function(d){
+    var hist = d.history || [];
+    var my = 0;
+    hist.forEach(function(x){ my += (Number(x.points) || 0); });
     setC('<div style="background:linear-gradient(135deg,#ffd700,#ff9d00);border-radius:16px;padding:22px;text-align:center;color:#1a1a2e">' +
       '<div style="font-size:.9rem;font-weight:700">💰 امتیاز فعلی شما</div>' +
-      '<div style="font-size:2.4rem;font-weight:900">' + my + '</div></div>' +
+      '<div style="font-size:2.4rem;font-weight:900">' + my + '</div>' +
+      '<div style="font-size:.75rem;font-weight:600;margin-top:6px;opacity:.8">کسب شده − خرج شده</div></div>' +
       '<div style="text-align:center;margin-top:10px;font-size:.8rem;color:rgba(255,255,255,.6)">برای دیدن جزئیات، تب «تاریخچه» را بزنید</div>');
   }).catch(function(){ setC('<div>❌ خطا</div>'); });
 }
@@ -13336,7 +13399,7 @@ function serverBuy(shenaseh, name, price) {
     .then(function(r){ return r.json(); })
     .then(function(d){
       alert(d.msg || d.error || '❌ خطا');
-      if (d.ok) loadShop();
+      if (d.ok) { ptsCache = null; lastFetch = 0; loadShop(); }
     }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
 
@@ -13353,8 +13416,8 @@ var lastFetch = 0;
 
 function fetchMyPoints(cb) {
   var me = getMe(); if (!me) { if (cb) cb(0); return; }
-  fetch(SHOP_URL + '?action=getPoints').then(function(r){ return r.json(); }).then(function(d){
-    var my = 0; (d.points||[]).forEach(function(p){ if (String(p.user)===String(me.id)) my = p.points||0; });
+  fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(me.id)).then(function(r){ return r.json(); }).then(function(d){
+    var my = 0; (d.history || []).forEach(function(x){ my += (Number(x.points) || 0); });
     ptsCache = my; if (cb) cb(my);
   }).catch(function(){ if (cb) cb(ptsCache || 0); });
 }
@@ -13372,27 +13435,56 @@ function findWelcomeEl() {
 }
 
 function injectPointsBadge() {
-  var el = findWelcomeEl();
+  var el = findClubBtn();
   if (!el) return;
-  var badge = document.getElementById('ptsBadge');
+  relabelClub(el);
+  var olds = el.querySelectorAll('*');
+  for (var i = 0; i < olds.length; i++) {
+    var tt = (olds[i].textContent || '').trim();
+    if (tt === '0' && olds[i].children.length === 0 && olds[i].id !== 'clubPtsBadge') olds[i].style.display = 'none';
+  }
+  var badge = document.getElementById('clubPtsBadge');
   if (!badge) {
     badge = document.createElement('span');
-    badge.id = 'ptsBadge';
-    badge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-radius:999px;padding:3px 12px;font-size:.78rem;font-weight:800;margin:0 8px;vertical-align:middle;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer;';
-    badge.onclick = openPtsShop;
-    el.parentNode.insertBefore(badge, el.nextSibling);
+    badge.id = 'clubPtsBadge';
+    badge.style.cssText = 'position:absolute;top:-9px;left:-6px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-radius:999px;padding:2px 9px;font-size:.68rem;font-weight:900;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:5;';
+    badge.onclick = function(e){ e.stopPropagation(); openPtsShop(); };
+    if (getComputedStyle(el).position === 'static') el.style.position = 'relative';
+    el.appendChild(badge);
   }
-  badge.innerHTML = '🪙 ' + (ptsCache === null ? 0 : ptsCache) + ' امتیاز';
+  badge.innerHTML = '🛒 ' + (ptsCache === null ? '…' : ptsCache); + (ptsCache === null ? '…' : ptsCache);
 }
 
+function findClubBtn() {
+  var m = document.querySelector('[data-clubbtn="1"]');
+  if (m) return m;
+  var nodes = document.querySelectorAll('.grid-menu-item');
+  for (var i = 0; i < nodes.length; i++) {
+    var t = (nodes[i].textContent || '');
+    if (t.indexOf('امتیازات') > -1 && t.length < 60) { nodes[i].setAttribute('data-clubbtn', '1'); return nodes[i]; }
+  }
+  var lbls = document.querySelectorAll('.menu-label');
+  for (var j = 0; j < lbls.length; j++) {
+    if ((lbls[j].textContent || '').trim() === 'امتیازات') {
+      var host = lbls[j].closest ? (lbls[j].closest('.grid-menu-item') || lbls[j].parentElement) : lbls[j].parentElement;
+      if (host) { host.setAttribute('data-clubbtn', '1'); return host; }
+    }
+  }
+  return null;
+}
+
+function relabelClub(el) {
+  var lbl = el.querySelector('.menu-label');
+  if (lbl && lbl.textContent.trim() === 'امتیازات') lbl.textContent = 'امتیازات و فروشگاه';
+}
+
+// ===== تایمر مستقل حباب امتیاز =====
 setInterval(function(){
   if (!getMe()) return;
-  if (findWelcomeEl()) {
-    var now = Date.now();
-    if (ptsCache === null || now - lastFetch > 15000) { lastFetch = now; fetchMyPoints(injectPointsBadge); }
-    else injectPointsBadge();
-  }
-}, 3000);
+  var now2 = Date.now();
+  if (ptsCache === null || now2 - lastFetch > 15000) { lastFetch = now2; fetchMyPoints(injectPointsBadge); }
+  else injectPointsBadge();
+}, 1000);
 </script>
 </body>
 </html>
