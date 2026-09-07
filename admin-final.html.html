@@ -341,21 +341,58 @@ function showTab(n){
 function loadLogs(){
   fetch(URL + '?action=getLogs').then(r=>r.json()).then(d=>{ logs = d.logs || []; renderLogs(); });
 }
+function loadAdminNameCache(cb){
+  if (window.__adminNames) { if (cb) cb(); return; }
+  window.__adminNames = {};
+  var SRC = 'https://script.google.com/macros/s/AKfycbwUXsk95sJKMrAIAhGYVjaZ6x84pddGu4rNzyhKDWZRdybAyGmON4HH1M5TQxNEeKZl/exec';
+  fetch(SRC).then(function(r){ return r.json(); }).then(function(d){
+    var list = null;
+    if (d && Array.isArray(d.rows)) list = d.rows;
+    else if (Array.isArray(d)) list = d;
+    else if (d && Array.isArray(d.members)) list = d.members;
+    else if (d && d.data && Array.isArray(d.data.members)) list = d.data.members;
+    if (list) {
+      list.forEach(function(m){
+        var n = String(m.name || m.firstName || m.fullName || m['نام'] || '');
+        if (!n) return;
+        [m.ID, m.id, m.karbari, m['شماره حساب'], m.accountNumber, m.user, m.shenaseh, m['کاربری']].forEach(function(kk){
+          var key = String(kk || '').trim();
+          if (key) window.__adminNames[key] = n;
+        });
+      });
+    }
+    if (cb) cb();
+  }).catch(function(){ if (cb) cb(); });
+}
+
 function renderLogs(){
+  if (!window.__adminNames) { loadAdminNameCache(renderLogs); }
   var q = document.getElementById('q').value.toLowerCase();
   var todayStr = fmtDate(new Date());
   var tc = 0, users = {};
-  logs.forEach(function(l){ var d = new Date(l.timestamp); if(fmtDate(d) === todayStr) tc++; users[l.user] = 1; });
+  logs.forEach(function(l){
+    var d = new Date(l.timestamp);
+    if(fmtDate(d) === todayStr) tc++;
+    users[l.user] = 1;
+  });
   document.getElementById('sT').textContent = logs.length;
   document.getElementById('sD').textContent = tc;
   document.getElementById('sU').textContent = Object.keys(users).length;
-  if(logs.length === 0){ document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>'; return; }
+  
+  if(logs.length === 0){
+    document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>';
+    return;
+  }
   var h = '<table><tr><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
   logs.forEach(function(l){
     var row = (l.user + l.name).toLowerCase();
     if(q && row.indexOf(q) < 0) return;
     var d = new Date(l.timestamp);
-    h += '<tr><td>'+l.user+'</td><td>'+l.name+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
+    var displayName = l.name;
+    if (!displayName || displayName === l.user || /^\d+$/.test(displayName)) {
+      displayName = (window.__adminNames && window.__adminNames[l.user]) || l.user;
+    }
+    h += '<tr><td>'+l.user+'</td><td>'+displayName+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
   });
   document.getElementById('tw1').innerHTML = h + '</table>';
 }
