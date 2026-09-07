@@ -607,7 +607,7 @@ function loadPurchaseRequests(){
     
     requests.forEach(function(r){
       var tagClass = r.status==='pending' ? 'pending-tag' : (r.status==='approved' ? 'approved-tag' : 'rejected-tag');
-      var tagText = r.status==='pending' ? '⏳ در انتظار' : (r.status==='approved' ? '✅ تایید شده' : '❌ رد شده');
+      var tagText = r.status==='pending' ? '⏳ در انتظار' : (r.status==='approved' ? '✅ تایید شده' : '❌ رد / انصراف شده');
       var dt = new Date(r.timestamp);
       var dateStr = fmtFull(dt);
       
@@ -625,10 +625,14 @@ function loadPurchaseRequests(){
       html += '<div style="font-size:.7rem;color:rgba(255,255,255,.5)">📅 ' + dateStr + '</div></div>';
       html += '</div></div>';
       
-      if(r.status === 'pending'){
+           if(r.status === 'pending'){
         html += '<div class="req-actions">';
         html += '<button class="btn-approve" onclick="resolvePurchase(\'' + r.id + '\', \'approved\')">✅ تایید و تحویل</button>';
         html += '<button class="btn-reject" onclick="resolvePurchase(\'' + r.id + '\', \'rejected\')">❌ رد و برگشت امتیاز</button>';
+        html += '</div>';
+      } else if(r.status === 'approved'){
+        html += '<div class="req-actions">';
+        html += '<button class="btn-reject" onclick="cancelPurchase(\'' + r.id + '\')">↩️ انصراف و برگشت جایزه</button>';
         html += '</div>';
       }
       html += '</div>';
@@ -640,14 +644,14 @@ function loadPurchaseRequests(){
 }
 
 function resolvePurchase(id, status){
-  var actionText = status === 'approved' ? 'تایید و تحویل' : 'رد و برگشت امتیاز';
+  var actionText = status === 'approved' ? 'تایید و تحویل' : 'انصراف / رد و برگشت امتیاز و موجودی';
   if(!confirm('آیا از ' + actionText + ' این درخواست مطمئن هستید؟')) return;
   
   document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال پردازش...</div>';
   fetch(URL + '?action=resolvePurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status))
     .then(function(r){ return r.json(); }).then(function(d){
       if(d.ok){
-        alert('✅ درخواست با موفقیت ' + (status==='approved'?'تایید':'رد') + ' شد');
+        alert('✅ درخواست با موفقیت ' + (status==='approved'?'تایید':'رد / انصراف') + ' شد');
         loadPurchaseRequests();
         loadPoints();
       } else {
@@ -672,5 +676,14 @@ function resolvePurchase(id, status){
     }
   }).catch(function(){});
 })();
+function cancelPurchase(id){
+  if(!confirm('↩️ انصراف از خرید و برگشت جایزه؟\n\nامتیاز و موجودی محصول برگشت داده می‌شود.')) return;
+  document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال پردازش...</div>';
+  fetch(URL + '?action=cancelPurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id))
+    .then(function(r){ return r.json(); }).then(function(d){
+      if(d.ok){ alert(d.msg || '✅ انصراف ثبت و برگشت انجام شد'); loadPurchaseRequests(); loadPoints(); }
+      else { alert('❌ خطا: ' + (d.error || 'نامشخص')); loadPurchaseRequests(); }
+    }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
+}
 </script>
 </body></html>
