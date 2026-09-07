@@ -13486,5 +13486,60 @@ setInterval(function(){
   else injectPointsBadge();
 }, 1000);
 </script>
+<!-- ===== SHORA START ===== -->
+<script>
+var COUNCIL_URL = 'https://script.google.com/macros/s/AKfycbw77zTjB82LIOSL_naNf15NWs2UC31EwHZuckD47Bs9BhLIMtCo18qTJYu__T4CYl_K/exec';
+
+function getMyKarbari() {
+  try {
+    var lr = loginResult;
+    if (!lr || !lr.user) return null;
+    var uid = String(lr.user.memberId || lr.user.id || '');
+    var ms = (lr.data && lr.data.members) || [];
+    for (var i = 0; i < ms.length; i++) {
+      if (String(ms[i].id) === uid) return String(ms[i].karbari || ms[i].accountNumber || uid);
+    }
+    return uid;
+  } catch(e) { return null; }
+}
+
+function openCouncilPanel() {
+  var kb = getMyKarbari();
+  if (!kb) { alert('❌ ابتدا وارد شوید'); return; }
+  fetch(COUNCIL_URL + '?action=councilToken&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(dd){
+    if (dd.ok) window.open('admin-final.html?ct=' + encodeURIComponent(dd.token), '_blank');
+    else alert('❌ دسترسی شورا یافت نشد');
+  }).catch(function(){ alert('❌ خطا در اتصال'); });
+}
+
+setInterval(function(){
+  var kb = getMyKarbari();
+  if (!kb) return;
+  fetch(COUNCIL_URL + '?action=isCouncil&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
+    var existing = document.getElementById('councilPanelBtn');
+    var adminCard = null;
+    var items = document.querySelectorAll('.grid-menu-item');
+    for (var i = 0; i < items.length; i++) {
+      if ((items[i].textContent || '').indexOf('پنل مدیر سیستم') > -1) { adminCard = items[i]; break; }
+    }
+    if (d.ok && d.isCouncil && adminCard) {
+      if (!existing) {
+        var card = adminCard.cloneNode(true);
+        card.id = 'councilPanelBtn';
+        card.removeAttribute('onclick');
+        card.onclick = openCouncilPanel;
+        var lbl = card.querySelector('.menu-label');
+        if (lbl) lbl.textContent = 'دسترسی به پنل مدیر';
+        var ic = card.querySelector('i');
+        if (ic) ic.className = 'fas fa-user-shield';
+        adminCard.parentNode.insertBefore(card, adminCard.nextSibling);
+      }
+    } else if (existing && (!d.ok || !d.isCouncil)) {
+      existing.parentNode.removeChild(existing);
+    }
+  }).catch(function(){});
+}, 4000);
+</script>
+<!-- ===== SHORA END ===== -->
 </body>
 </html>
