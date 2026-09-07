@@ -18,8 +18,8 @@ body{min-height:100vh;background:linear-gradient(135deg,#0f0f23,#1a1a2e);padding
 .ctrl button{padding:8px 14px;border-radius:99px;border:none;cursor:pointer;font-weight:700;font-size:.8rem}
 .on{background:#22c55e;color:#fff}.off{background:#ef4444;color:#fff}
 .refresh{background:rgba(255,215,0,.08)!important;border:1px solid rgba(255,215,0,.4)!important;color:#ffd700!important}
-.tabs{display:flex;gap:6px;margin-bottom:12px}
-.tab{flex:1;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);cursor:pointer;font-weight:700;font-size:.78rem;text-align:center}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{flex:1;min-width:120px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);cursor:pointer;font-weight:700;font-size:.78rem;text-align:center}
 .tab.on{background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-color:transparent}
 .stats{display:flex;gap:8px;margin-bottom:12px}
 .stat{flex:1;background:rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center}
@@ -46,40 +46,73 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
 .avg{font-size:2rem;font-weight:900;color:#ffd700;text-align:center}
 .hearts{font-size:1.4rem;text-align:center;letter-spacing:4px;margin:6px 0}
 .cnt{text-align:center;color:rgba(255,255,255,.5);font-size:.8rem}
+.council-banner{background:linear-gradient(135deg,#3b82f6,#1e40af);padding:10px;border-radius:12px;text-align:center;margin-bottom:12px;font-weight:700}
+.req-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:14px;margin-bottom:10px}
+.req-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.req-actions{display:flex;gap:6px;margin-top:10px}
+.req-actions button{flex:1;padding:10px;border:none;border-radius:10px;font-weight:800;cursor:pointer;font-family:tahoma}
+.btn-approve{background:#22c55e;color:#fff}
+.btn-reject{background:#ef4444;color:#fff}
+.pending-tag{background:rgba(251,191,36,.15);color:#fbbf24;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
+.approved-tag{background:rgba(34,197,94,.15);color:#22c55e;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
+.rejected-tag{background:rgba(239,68,68,.15);color:#ef4444;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
 </style></head>
 <body>
 
 <div class="card" id="login">
-  <div class="logo">🛠️</div><h1>مدیر سیستم</h1>
-  <div class="sub">رمز مدیر را وارد کنید</div>
-  <input class="inp" type="password" id="pass" placeholder="رمز مدیر سیستم">
+  <div class="logo">🛠️</div><h1>پنل مدیریت</h1>
+  <div class="sub">رمز مدیر یا شورا را وارد کنید</div>
+<input class="inp" id="cuser" placeholder="شماره کاربری (فقط اعضای شورا)">
+  <input class="inp" type="password" id="pass" placeholder="رمز ورود" onkeypress="if(event.key==='Enter')check()">
   <button class="btn" onclick="check()">🔓 ورود</button>
   <div class="err" id="err">❌ رمز اشتباه است!</div>
+  <div style="margin-top:20px;font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.8">
+    💡 <b>مدیر:</b> رمز کامل<br>
+    <div style="margin-top:20px;font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.8">
+  🔑 <b>مدیر:</b> فقط رمز مدیر را وارد کنید<br>
+  👥 <b>اعضای شورا:</b> شماره کاربری + رمز خودتان (همان رمز برنامه اصلی)
+</div> <code style="background:rgba(255,215,0,.1);padding:2px 6px;border-radius:4px"></code>
+  </div>
 </div>
 
 <div class="dash" id="dash">
+  <div id="councilBanner" style="display:none" class="council-banner">
+    👥 ورود به عنوان <b>عضو شورا</b> — دسترسی محدود
+  </div>
+  
   <div class="head">
-    <h2>🛠️ پنل مدیر سیستم</h2>
-    <div class="ctrl">
-     <button class="refresh" onclick="refreshAll()">🔄 به‌روزرسانی</button>
-<button class="on" onclick="toggleSite(true)">✅ فعال</button>
-<button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
-<button class="off" onclick="resetAll()" style="background:#dc2626!important;margin-right:8px">🗑️ ریست همه</button>>
+    <h2 id="dashTitle">🛠️ پنل مدیر سیستم</h2>
+    <div class="ctrl" id="adminControls">
+      <button class="refresh" onclick="refreshAll()">🔄 به‌روزرسانی</button>
+      <button class="on" onclick="toggleSite(true)">✅ فعال</button>
+      <button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
+      <button class="off" onclick="resetAll()" style="background:#dc2626!important;margin-right:8px">🗑️ ریست همه</button>
     </div>
   </div>
-  <div style="text-align:center;margin-bottom:14px">
+  <div style="text-align:center;margin-bottom:14px" id="siteStatusRow">
     <span>وضعیت سایت: </span>
     <span class="status-badge" id="siteStatus">در حال بررسی...</span>
   </div>
 
-  <div class="tabs">
-    <div class="tab on" onclick="showTab(1)">📊 گزارش ورودها</div>
-        <div class="tab" onclick="showTab(2)">💛 نظرسنجی</div>
-        <div class="tab" onclick="showTab(3)">🏆 امتیازات</div>
-        <div class="tab" onclick="showTab(4)">📋 نتایج مسابقات</div>
-    <div class="tab" onclick="showTab(5)">🛡️ کنترل سایت</div>
-    <div class="tab" onclick="showTab(6)">🎯 ساخت مسابقه</div>
-    <div class="tab" onclick="showTab(7)">🛒 فروشگاه</div>
+  <div class="tabs" id="tabsContainer">
+    <div class="tab" data-tab="1" data-role="admin" onclick="showTab(1)">📊 گزارش ورودها</div>
+    <div class="tab" data-tab="2" data-role="all" onclick="showTab(2)">💛 نظرسنجی</div>
+    <div class="tab" data-tab="3" data-role="all" onclick="showTab(3)">🏆 امتیازات</div>
+    <div class="tab" data-tab="4" data-role="admin" onclick="showTab(4)">📋 نتایج مسابقات</div>
+    <div class="tab" data-tab="5" data-role="admin" onclick="showTab(5)">🛡️ کنترل سایت</div>
+    <div class="tab" data-tab="6" data-role="all" onclick="showTab(6)">🎯 ساخت مسابقه</div>
+    <div class="tab" data-tab="7" data-role="all" onclick="showTab(7)">🛒 فروشگاه</div>
+    <div class="tab" data-tab="8" data-role="all" onclick="showTab(8)">📥 درخواست‌های خرید</div>
+  </div>
+  
+  <div id="tab8" class="tab-content" style="display:none">
+    <div class="box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+        <h3 style="color:#ffd700">📥 درخواست‌های خرید اعضا</h3>
+        <button class="refresh" onclick="loadPurchaseRequests()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+      </div>
+      <div id="purchaseRequestsList"><div class="loader">در حال بارگذاری...</div></div>
+    </div>
   </div>
   
   <div id="tab7" class="tab-content" style="display:none">
@@ -98,11 +131,11 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     
     <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:20px">
       <h3 style="color:#ffd700;margin-bottom:15px">📋 لیست محصولات</h3>
-           <div id="shopProductsList"></div>
+      <div id="shopProductsList"></div>
     </div>
   </div>
 
-   <div id="sec1" style="display:none">
+  <div id="sec1" style="display:none">
     <div class="stats">
       <div class="stat"><b id="sT">0</b><span>کل ورودها</span></div>
       <div class="stat"><b id="sD">0</b><span>امروز</span></div>
@@ -167,7 +200,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         <button onclick="addQuestion()" style="padding:10px 16px;border-radius:10px;border:none;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700">➕ افزودن سوال</button>
         <button onclick="createQuizFromPanel()" style="padding:10px 16px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">✅ ساخت مسابقه</button>
       </div>
-            <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+      <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
         <h4 style="color:#ffd700;margin-bottom:10px">📋 مسابقات موجود</h4>
         <div id="existingQuizzesList"><div class="loader">در حال بارگذاری...</div></div>
       </div>
@@ -186,34 +219,80 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
 var URL = 'https://script.google.com/macros/s/AKfycbw77zTjB82LIOSL_naNf15NWs2UC31EwHZuckD47Bs9BhLIMtCo18qTJYu__T4CYl_K/exec';
 var ADMIN_URL = URL;
 var KEY = 'admin12345';
+var isCouncil = false;
 var logs = [], surveys = [];
 
 function fmtDate(d){
-  try {
-    return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric', month:'2-digit', day:'2-digit'}).format(d);
-  } catch(e) {
-    return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
-  }
+  try { return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric', month:'2-digit', day:'2-digit'}).format(d); }
+  catch(e) { return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate(); }
 }
-function fmtTime(d){
-  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
-}
-function fmtFull(d){
-  return fmtDate(d) + ' - ساعت ' + fmtTime(d);
-}
+function fmtTime(d){ return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+function fmtFull(d){ return fmtDate(d) + ' - ساعت ' + fmtTime(d); }
 
 function check(){
-  if(document.getElementById('pass').value === KEY){
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('dash').style.display = 'block';
+  var uname = document.getElementById('cuser').value.trim();
+  var pass = document.getElementById('pass').value;
+  var err = document.getElementById('err');
+  err.style.display = 'none';
+  err.style.color = '#ff6b6b';
+  
+  if(!uname && pass === KEY){
+    isCouncil = false;
+    enterDashboard();
+    return;
+  }
+  
+  if(!uname || !pass){
+    err.textContent = '❌ مدیر: فقط رمز مدیر | شورا: شماره کاربری + رمز';
+    err.style.display = 'block';
+    return;
+  }
+  
+  err.textContent = '⏳ در حال بررسی...';
+  err.style.color = '#fbbf24';
+  err.style.display = 'block';
+  
+  fetch(URL + '?action=councilLogin&user=' + encodeURIComponent(uname) + '&pass=' + encodeURIComponent(pass))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok && d.isCouncil){
+        isCouncil = true;
+        window.__councilUser = { id: d.id, name: d.name };
+        enterDashboard();
+      } else if(d.ok && !d.isCouncil){
+        err.textContent = '❌ این حساب عضو شورا نیست';
+        err.style.display = 'block';
+      } else {
+        err.textContent = '❌ شماره کاربری یا رمز اشتباه است';
+        err.style.display = 'block';
+      }
+    }).catch(function(){
+      err.textContent = '❌ خطا در ارتباط با سرور';
+      err.style.display = 'block';
+    });
+}
+
+function enterDashboard(){
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('dash').style.display = 'block';
+  
+  if(isCouncil){
+    document.getElementById('councilBanner').style.display = 'block';
+    document.getElementById('dashTitle').textContent = '👥 پنل عضو شورا' + (window.__councilUser ? ' — ' + window.__councilUser.name : '');
+    document.getElementById('adminControls').style.display = 'none';
+    document.getElementById('siteStatusRow').style.display = 'none';
+    // پنهان کردن تب‌های مخصوص مدیر
+    document.querySelectorAll('.tab[data-role="admin"]').forEach(function(t){ t.style.display = 'none'; });
+    showTab(8); // پیش‌فرض شورا: درخواست‌های خرید
+  } else {
     document.getElementById('sec1').style.display = 'block';
+    document.querySelector('.tab[data-tab="1"]').classList.add('on');
     checkStatus();
     refreshAll();
-  } else {
-    document.getElementById('err').style.display = 'block';
   }
 }
-function refreshAll(){ loadLogs(); loadSurvey(); loadPoints(); loadQuizResults(); }
+
+function refreshAll(){ loadLogs(); loadSurvey(); loadPoints(); loadQuizResults(); loadPurchaseRequests(); }
 
 function checkStatus(){
   fetch(URL + '?action=status').then(r=>r.json()).then(s=>{
@@ -225,93 +304,52 @@ function checkStatus(){
 
 function toggleSite(enable){
   var a = enable ? 'enable' : 'disable';
-  fetch(URL + '?action=' + a + '&key=' + KEY).then(r=>r.json()).then(d=>{
-    alert(d.msg || 'انجام شد');
-    checkStatus();
-  });
+  fetch(URL + '?action=' + a + '&key=' + KEY).then(r=>r.json()).then(d=>{ alert(d.msg || 'انجام شد'); checkStatus(); });
 }
 function resetAll(){
   if(!confirm('⚠️ آیا مطمئن هستید؟\n\nهمه گزارش ورودها و نظرسنجی‌ها پاک خواهد شد.\nاین عمل قابل برگشت نیست!')) return;
   if(!confirm('🔴 تایید نهایی: واقعاً می‌خواهید همه اطلاعات را پاک کنید؟')) return;
-  
   fetch(URL + '?action=resetAll&key=' + KEY).then(r=>r.json()).then(d=>{
-    if(d.ok){
-      alert(d.msg);
-      refreshAll();
-    } else {
-      alert('❌ خطا در پاک کردن اطلاعات');
-    }
-  }).catch(function(){
-    alert('❌ خطا در اتصال');
-  });
+    if(d.ok){ alert(d.msg); refreshAll(); } else { alert('❌ خطا در پاک کردن اطلاعات'); }
+  }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
 
-// ===== تابع showTab اصلاح شده با پشتیبانی از تب ۷ =====
 function showTab(n){
-  // مخفی کردن بخش‌های قدیمی sec1 تا sec6
-  for (var i = 1; i <= 6; i++) {
-    var sec = document.getElementById('sec' + i);
-    if (sec) sec.style.display = 'none';
-  }
+  for (var i = 1; i <= 6; i++) { var sec = document.getElementById('sec' + i); if (sec) sec.style.display = 'none'; }
+  var tab7El = document.getElementById('tab7'); if (tab7El) tab7El.style.display = 'none';
+  var tab8El = document.getElementById('tab8'); if (tab8El) tab8El.style.display = 'none';
   
-  // مخفی کردن tab7
-  var tab7El = document.getElementById('tab7');
-  if (tab7El) tab7El.style.display = 'none';
-  
-  // غیرفعال کردن همه تب‌ها
-  document.querySelectorAll('.tab').forEach(function(t) {
-    t.className = 'tab';
-  });
-  
-  // فعال کردن تب انتخابی
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('on'); });
   var tabs = document.querySelectorAll('.tab');
-  if (tabs[n - 1]) tabs[n - 1].className = 'tab on';
+  if (tabs[n - 1]) tabs[n - 1].classList.add('on');
   
-  // نمایش محتوای مناسب
-  if (n >= 1 && n <= 6) {
-    var sec = document.getElementById('sec' + n);
-    if (sec) sec.style.display = 'block';
-  } else if (n === 7) {
-    if (tab7El) tab7El.style.display = 'block';
-    loadShopProducts();
-  }
+  if (n >= 1 && n <= 6) { var sec = document.getElementById('sec' + n); if (sec) sec.style.display = 'block'; }
+  else if (n === 7) { if (tab7El) tab7El.style.display = 'block'; loadShopProducts(); }
+  else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   
-  // نمایش بخش جستجو فقط در تب گزارش ورود
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
   
-  // بارگذاری خودکار محتوا هنگام باز شدن هر تب
   if (n === 1) loadLogs();
   if (n === 2) loadSurvey();
   if (n === 3) loadPoints();
   if (n === 4) loadQuizResults();
   if (n === 6) loadQuizBuilder();
+  if (n === 8) loadPurchaseRequests();
 }
 
 function loadLogs(){
-  fetch(URL + '?action=getLogs').then(r=>r.json()).then(d=>{
-    logs = d.logs || [];
-    renderLogs();
-  });
+  fetch(URL + '?action=getLogs').then(r=>r.json()).then(d=>{ logs = d.logs || []; renderLogs(); });
 }
-
 function renderLogs(){
   var q = document.getElementById('q').value.toLowerCase();
   var todayStr = fmtDate(new Date());
   var tc = 0, users = {};
-  logs.forEach(function(l){
-    var d = new Date(l.timestamp);
-    if(fmtDate(d) === todayStr) tc++;
-    users[l.user] = 1;
-  });
+  logs.forEach(function(l){ var d = new Date(l.timestamp); if(fmtDate(d) === todayStr) tc++; users[l.user] = 1; });
   document.getElementById('sT').textContent = logs.length;
   document.getElementById('sD').textContent = tc;
   document.getElementById('sU').textContent = Object.keys(users).length;
-  
-  if(logs.length === 0){
-    document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>';
-    return;
-  }
+  if(logs.length === 0){ document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>'; return; }
   var h = '<table><tr><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
   logs.forEach(function(l){
     var row = (l.user + l.name).toLowerCase();
@@ -323,36 +361,25 @@ function renderLogs(){
 }
 
 function loadSurvey(){
-  fetch(URL + '?action=getSurvey').then(r=>r.json()).then(d=>{
-    surveys = d.responses || [];
-    renderSurvey();
-  }).catch(function(){
+  fetch(URL + '?action=getSurvey').then(r=>r.json()).then(d=>{ surveys = d.responses || []; renderSurvey(); }).catch(function(){
     document.getElementById('surveyBox').innerHTML = '<div class="loader">خطا در دریافت نظرات</div>';
   });
 }
-
 function renderSurvey(){
-  if(surveys.length === 0){
-    document.getElementById('surveyBox').innerHTML = '<div class="loader">هنوز هیچ نظری ثبت نشده 💛</div>';
-    return;
-  }
+  if(surveys.length === 0){ document.getElementById('surveyBox').innerHTML = '<div class="loader">هنوز هیچ نظری ثبت نشده 💛</div>'; return; }
   var sum = 0, rated = 0;
   surveys.forEach(function(r){ if(r.stars > 0){ sum += r.stars; rated++; } });
   var avg = rated ? (sum / rated).toFixed(1) : 0;
-  
   var h = '<div class="avg">' + avg + ' / ۵</div>';
   h += '<div class="hearts">' + '💛'.repeat(Math.round(avg)) + '🤍'.repeat(5 - Math.round(avg)) + '</div>';
   h += '<div class="cnt">تعداد کل آرا: ' + surveys.length + '</div>';
-  
   h += '<div style="margin-top:16px">';
   for (var st = 5; st >= 1; st--) {
-    var c = 0;
-    surveys.forEach(function(r){ if(r.stars === st) c++; });
+    var c = 0; surveys.forEach(function(r){ if(r.stars === st) c++; });
     var pct = Math.round((c / surveys.length) * 100);
     h += '<div class="bar-row"><div class="bar-lbl"><b>' + '💛'.repeat(st) + '</b><span>' + c + ' رأی (' + pct + '٪)</span></div><div class="bar"><i style="width:' + pct + '%"></i></div></div>';
   }
   h += '</div>';
-  
   h += '<div style="margin-top:16px"><div style="color:#fff;font-size:.85rem;font-weight:700;margin-bottom:10px">📋 جزئیات آرا:</div>';
   surveys.forEach(function(r){
     var dt = new Date(r.timestamp);
@@ -361,172 +388,104 @@ function renderSurvey(){
     h += '<div style="color:rgba(255,255,255,.35);font-size:.68rem;margin-top:4px">' + fmtFull(dt) + '</div></div>';
   });
   h += '</div>';
-  
   document.getElementById('surveyBox').innerHTML = h;
 }
 
-// ===== امتیازات =====
 function loadQuizResults(){
   fetch(URL + '?action=getQuizzes').then(function(r){ return r.json(); }).then(function(d){
     var quizzes = d.quizzes || [];
     var html = '<label style="color:#ffd700;display:block;margin-bottom:8px">انتخاب مسابقه:</label>';
     html += '<select id="quizSelect" onchange="showQuizResults(this.value)" style="width:100%;padding:10px;background:rgba(255,255,255,.08);border:1px solid rgba(255,215,0,.3);border-radius:10px;color:#fff;font-family:tahoma;font-size:.9rem">';
     html += '<option value="" style="background:#1a1a2e">-- یک مسابقه انتخاب کنید --</option>';
-    quizzes.forEach(function(q){
-      html += '<option value="' + q.id + '" style="background:#1a1a2e">' + q.title + ' (' + q.questions.length + ' سوال)</option>';
-    });
+    quizzes.forEach(function(q){ html += '<option value="' + q.id + '" style="background:#1a1a2e">' + q.title + ' (' + q.questions.length + ' سوال)</option>'; });
     html += '</select>';
     document.getElementById('quizSelect').innerHTML = html;
     document.getElementById('quizResults').innerHTML = '';
-  }).catch(function(){
-    document.getElementById('quizSelect').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>';
-  });
+  }).catch(function(){ document.getElementById('quizSelect').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>'; });
 }
-
 function showQuizResults(quizId){
-  if(!quizId){
-    document.getElementById('quizResults').innerHTML = '';
-    return;
-  }
+  if(!quizId){ document.getElementById('quizResults').innerHTML = ''; return; }
   document.getElementById('quizResults').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
   fetch(URL + '?action=getQuizResults&quizId=' + encodeURIComponent(quizId)).then(function(r){ return r.json(); }).then(function(d){
     var results = d.results || [];
-    if(results.length === 0){
-      document.getElementById('quizResults').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">هنوز کسی در این مسابقه شرکت نکرده</div>';
-      return;
-    }
-    
+    if(results.length === 0){ document.getElementById('quizResults').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">هنوز کسی در این مسابقه شرکت نکرده</div>'; return; }
     results.sort(function(a,b){ return (b.score||0) - (a.score||0); });
-    
     var html = '<div style="background:rgba(255,215,0,.08);border-radius:12px;padding:12px;margin-bottom:14px;text-align:center">';
-    html += '<b style="color:#ffd700">📊 آمار مسابقه</b><br>';
-    html += '<span style="font-size:.85rem;color:rgba(255,255,255,.7)">👥 ' + results.length + ' شرکت‌کننده</span></div>';
-    
+    html += '<b style="color:#ffd700">📊 آمار مسابقه</b><br><span style="font-size:.85rem;color:rgba(255,255,255,.7)">👥 ' + results.length + ' شرکت‌کننده</span></div>';
     html += '<table style="width:100%;border-collapse:collapse;font-size:.85rem">';
     html += '<tr style="background:rgba(255,215,0,.1)"><th style="padding:10px;color:#ffd700;text-align:right">رتبه</th><th style="padding:10px;color:#ffd700;text-align:right">نام/شماره</th><th style="padding:10px;color:#ffd700;text-align:center">امتیاز</th><th style="padding:10px;color:#ffd700;text-align:center">درصد</th><th style="padding:10px;color:#ffd700;text-align:right">تاریخ</th></tr>';
-    
     results.forEach(function(r, idx){
       var medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🏅';
       var displayName = (r.name && r.name.trim() && r.name.trim() !== 'عضو ') ? r.name : 'شماره ' + r.user;
       var percent = Math.round(((r.score||0) / (r.maxScore||1)) * 100);
       var dt = r.submittedAt ? new Date(r.submittedAt) : null;
       var ds = dt ? dt.toLocaleDateString('fa-IR') + ' ' + dt.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}) : '-';
-      
       html += '<tr style="border-bottom:1px solid rgba(255,255,255,.05)">';
-      html += '<td style="padding:10px">' + medal + '</td>';
-      html += '<td style="padding:10px">' + displayName + '</td>';
+      html += '<td style="padding:10px">' + medal + '</td><td style="padding:10px">' + displayName + '</td>';
       html += '<td style="padding:10px;text-align:center;color:#22c55e;font-weight:700">' + (r.score||0) + ' از ' + (r.maxScore||0) + '</td>';
-      html += '<td style="padding:10px;text-align:center">' + percent + '%</td>';
-      html += '<td style="padding:10px;font-size:.75rem;color:rgba(255,255,255,.6)">' + ds + '</td>';
-      html += '</tr>';
+      html += '<td style="padding:10px;text-align:center">' + percent + '%</td><td style="padding:10px;font-size:.75rem;color:rgba(255,255,255,.6)">' + ds + '</td></tr>';
     });
     html += '</table>';
-    
     document.getElementById('quizResults').innerHTML = html;
-  }).catch(function(){
-    document.getElementById('quizResults').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت نتایج</div>';
-  });
+  }).catch(function(){ document.getElementById('quizResults').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت نتایج</div>'; });
 }
 
-// ===== ساخت مسابقه در پنل مدیریت =====
 var quizQuestionCount = 0;
-
-function loadQuizBuilder(){
-  if(quizQuestionCount === 0){
-    addQuestion();
-  }
-  loadExistingQuizzes();
-}
-
+function loadQuizBuilder(){ if(quizQuestionCount === 0){ addQuestion(); } loadExistingQuizzes(); }
 function loadExistingQuizzes(){
   fetch(URL + '?action=getQuizzes').then(function(r){ return r.json(); }).then(function(d){
     var quizzes = d.quizzes || [];
-    if(quizzes.length === 0){
-      document.getElementById('existingQuizzesList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:10px;text-align:center">هیچ مسابقه‌ای وجود ندارد</div>';
-      return;
-    }
+    if(quizzes.length === 0){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:10px;text-align:center">هیچ مسابقه‌ای وجود ندارد</div>'; return; }
     var html = '<div style="display:flex;flex-direction:column;gap:8px">';
     quizzes.forEach(function(q){
       html += '<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,215,0,.1)">';
       html += '<div style="flex:1"><b style="color:#ffd700">' + q.title + '</b><br><span style="font-size:.75rem;color:rgba(255,255,255,.5)">' + (q.questions.length || 0) + ' سوال | ' + (q.startDate || '') + ' تا ' + (q.endDate || '') + '</span></div>';
-      html += '<button onclick="deleteQuizFromPanel(\'' + q.id + '\', \'' + q.title.replace(/'/g, "\\'") + '\')" style="padding:6px 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-size:.75rem">🗑️ حذف</button>';
-      html += '</div>';
+      html += '<button onclick="deleteQuizFromPanel(\'' + q.id + '\', \'' + q.title.replace(/'/g, "\\'") + '\')" style="padding:6px 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-size:.75rem">🗑️ حذف</button></div>';
     });
     html += '</div>';
     document.getElementById('existingQuizzesList').innerHTML = html;
-  }).catch(function(){
-    document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>';
-  });
+  }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>'; });
 }
-
 function deleteQuizFromPanel(quizId, quizTitle){
-  if(!confirm('آیا مطمئن هستید که می‌خواهید مسابقه «' + quizTitle + '» را حذف کنید؟\n\nاین عمل غیرقابل بازگشت است!')){
-    return;
-  }
+  if(!confirm('آیا مطمئن هستید که می‌خواهید مسابقه «' + quizTitle + '» را حذف کنید؟')) return;
   document.getElementById('existingQuizzesList').innerHTML = '<div class="loader">در حال حذف...</div>';
   fetch(URL + '?action=deleteQuiz&key=' + encodeURIComponent(KEY) + '&quizId=' + encodeURIComponent(quizId)).then(function(r){ return r.json(); }).then(function(d){
-    if(d.ok){
-      document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#22c55e;text-align:center;padding:10px">✅ مسابقه حذف شد</div>';
-      setTimeout(loadExistingQuizzes, 1500);
-    } else {
-      document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>';
-    }
-  }).catch(function(){
-    document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا در ارتباط با سرور</div>';
-  });
+    if(d.ok){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#22c55e;text-align:center;padding:10px">✅ مسابقه حذف شد</div>'; setTimeout(loadExistingQuizzes, 1500); }
+    else { document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>'; }
+  }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا در ارتباط با سرور</div>'; });
 }
-
 function addQuestion(){
   quizQuestionCount++;
   var qNum = quizQuestionCount;
   var html = '<div class="question-box" id="questionBox' + qNum + '" style="background:rgba(255,255,255,.05);border-radius:12px;padding:14px;margin-bottom:14px;border:1px solid rgba(255,215,0,.2)">';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">';
   html += '<b style="color:#ffd700">سوال ' + qNum + '</b>';
-  html += '<button onclick="removeQuestion(' + qNum + ')" style="padding:4px 10px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer">🗑️</button>';
-  html += '</div>';
+  html += '<button onclick="removeQuestion(' + qNum + ')" style="padding:4px 10px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer">🗑️</button></div>';
   html += '<input id="q' + qNum + '_text" placeholder="متن سوال" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;margin-bottom:10px">';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">';
   for(var i=1;i<=4;i++){
     html += '<div style="display:flex;align-items:center;gap:6px">';
     html += '<input id="q' + qNum + '_opt' + i + '" placeholder="گزینه ' + i + '" style="flex:1;padding:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;outline:none">';
-    html += '<button onclick="setCorrectAnswer(' + qNum + ',' + (i-1) + ')" id="q' + qNum + '_correctBtn' + i + '" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;cursor:pointer">✓</button>';
-    html += '</div>';
+    html += '<button onclick="setCorrectAnswer(' + qNum + ',' + (i-1) + ')" id="q' + qNum + '_correctBtn' + i + '" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;cursor:pointer">✓</button></div>';
   }
-  html += '</div>';
-  html += '<input type="hidden" id="q' + qNum + '_correct" value="0">';
-  html += '<p style="color:rgba(255,255,255,.5);font-size:.75rem;margin-top:8px">💡 روی دکمه ✓ گزینه صحیح کلیک کنید (سبز می‌شود)</p>';
-  html += '</div>';
+  html += '</div><input type="hidden" id="q' + qNum + '_correct" value="0">';
+  html += '<p style="color:rgba(255,255,255,.5);font-size:.75rem;margin-top:8px">💡 روی دکمه ✓ گزینه صحیح کلیک کنید (سبز می‌شود)</p></div>';
   document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
 }
-
-function removeQuestion(qNum){
-  var box = document.getElementById('questionBox' + qNum);
-  if(box) box.remove();
-}
-
+function removeQuestion(qNum){ var box = document.getElementById('questionBox' + qNum); if(box) box.remove(); }
 function setCorrectAnswer(qNum, optIdx){
   document.getElementById('q' + qNum + '_correct').value = optIdx;
   for(var j=1;j<=4;j++){
     var btn = document.getElementById('q' + qNum + '_correctBtn' + j);
-    if(btn){
-      btn.style.background = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.05)';
-      btn.style.borderColor = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.2)';
-    }
+    if(btn){ btn.style.background = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.05)'; btn.style.borderColor = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.2)'; }
   }
 }
-
 function createQuizFromPanel(){
   var title = document.getElementById('quizTitle').value.trim();
   var startDate = document.getElementById('quizStart').value;
   var endDate = document.getElementById('quizEnd').value;
-  
-  if(!title){
-    document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ عنوان مسابقه را وارد کنید</div>';
-    return;
-  }
-  
+  if(!title){ document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ عنوان مسابقه را وارد کنید</div>'; return; }
   var params = 'action=createQuiz&key=' + encodeURIComponent(KEY) + '&title=' + encodeURIComponent(title) + '&startDate=' + startDate + '&endDate=' + endDate;
-  
   var questionCount = 0;
   for(var i=1;i<=quizQuestionCount;i++){
     var qText = document.getElementById('q' + i + '_text');
@@ -534,7 +493,6 @@ function createQuizFromPanel(){
     var qTextVal = qText.value.trim();
     var qOpt1 = document.getElementById('q' + i + '_opt1').value.trim();
     var qOpt2 = document.getElementById('q' + i + '_opt2').value.trim();
-    
     if(qTextVal && qOpt1 && qOpt2){
       questionCount++;
       params += '&q' + questionCount + '_text=' + encodeURIComponent(qTextVal);
@@ -545,64 +503,33 @@ function createQuizFromPanel(){
       params += '&q' + questionCount + '_correct=' + document.getElementById('q' + i + '_correct').value;
     }
   }
-  
-  if(questionCount === 0){
-    document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ حداقل یک سوال با دو گزینه لازم است</div>';
-    return;
-  }
-  
+  if(questionCount === 0){ document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ حداقل یک سوال با دو گزینه لازم است</div>'; return; }
   document.getElementById('quizBuilderMsg').innerHTML = '<div class="loader">در حال ساخت مسابقه...</div>';
-  
   fetch(URL + '?' + params).then(function(r){ return r.json(); }).then(function(d){
     if(d.ok){
       document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#22c55e">✅ مسابقه «' + title + '» با موفقیت ساخته شد!</div>';
-      document.getElementById('quizTitle').value = '';
-      document.getElementById('quizStart').value = '';
-      document.getElementById('quizEnd').value = '';
-      document.getElementById('questionsContainer').innerHTML = '';
-      quizQuestionCount = 0;
-      addQuestion();
+      document.getElementById('quizTitle').value = ''; document.getElementById('quizStart').value = ''; document.getElementById('quizEnd').value = '';
+      document.getElementById('questionsContainer').innerHTML = ''; quizQuestionCount = 0; addQuestion();
       if(typeof loadQuizResults === 'function') loadQuizResults();
-    } else {
-      document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>';
-    }
-  }).catch(function(){
-    document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا در ارتباط با سرور</div>';
-  });
+    } else { document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>'; }
+  }).catch(function(){ document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا در ارتباط با سرور</div>'; });
 }
 
 function loadPoints(){
-  fetch(URL + '?action=getAllMembersWithPoints').then(r=>r.json()).then(d=>{
-    renderPoints(d.members || []);
-  }).catch(function(){
+  fetch(URL + '?action=getAllMembersWithPoints').then(r=>r.json()).then(d=>{ renderPoints(d.members || []); }).catch(function(){
     document.getElementById('pointsList').innerHTML = '<div class="loader">خطا در دریافت</div>';
   });
 }
 function renderPoints(arr){
-  if(arr.length === 0){
-    document.getElementById('pointsList').innerHTML = '<div class="loader">هیچ عضوی پیدا نشد</div>';
-    return;
-  }
+  if(arr.length === 0){ document.getElementById('pointsList').innerHTML = '<div class="loader">هیچ عضوی پیدا نشد</div>'; return; }
   arr.sort(function(a,b){ return (b.points||0) - (a.points||0); });
-  var totalPoints = 0;
-  arr.forEach(function(p){ totalPoints += (p.points||0); });
-  
+  var totalPoints = 0; arr.forEach(function(p){ totalPoints += (p.points||0); });
   var h = '<div style="background:rgba(255,215,0,.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">';
-  h += '<b style="color:#ffd700">📊 آمار کلی</b><br>';
-  h += '<span style="font-size:.85rem">👥 ' + arr.length + ' عضو | ⭐ ' + totalPoints + ' امتیاز کل</span></div>';
-  
+  h += '<b style="color:#ffd700">📊 آمار کلی</b><br><span style="font-size:.85rem">👥 ' + arr.length + ' عضو | ⭐ ' + totalPoints + ' امتیاز کل</span></div>';
   h += '<table><tr><th>رتبه</th><th>عضو</th><th>شماره</th><th>امتیاز</th><th>آخرین به‌روزرسانی</th></tr>';
-  
-  var rank = 1;
   arr.forEach(function(p, idx){
     var medal = '🏅';
-    if ((p.points||0) > 0) {
-      if (idx === 0) medal = '🥇';
-      else if (idx === 1) medal = '🥈';
-      else if (idx === 2) medal = '🥉';
-    } else {
-      medal = '⚪';
-    }
+    if ((p.points||0) > 0) { if (idx === 0) medal = '🥇'; else if (idx === 1) medal = '🥈'; else if (idx === 2) medal = '🥉'; } else { medal = '⚪'; }
     var dt = p.lastUpdate ? new Date(p.lastUpdate) : null;
     var ds = dt ? fmtDate(dt) + ' ' + fmtTime(dt) : '-';
     var ptsColor = (p.points||0) > 0 ? '#22c55e' : 'rgba(255,255,255,.3)';
@@ -614,106 +541,136 @@ function adminUpdatePoints(type){
   var uid = document.getElementById('ptUser').value.trim();
   var uname = document.getElementById('ptName').value.trim();
   var upts = document.getElementById('ptPts').value.trim();
-  
   if(!uid){ alert('❌ شماره عضو را وارد کن'); return; }
   if(!upts){ alert('❌ مقدار امتیاز را وارد کن'); return; }
-  
-  fetch(URL + '?action=updatePoints&user=' + encodeURIComponent(uid) +
-        '&name=' + encodeURIComponent(uname) +
-        '&points=' + encodeURIComponent(upts) +
-        '&type=' + type).then(r=>r.json()).then(d=>{
-    if(d.ok){
-      alert('✅ ثبت شد');
-      loadPoints();
-      document.getElementById('ptUser').value = '';
-      document.getElementById('ptName').value = '';
-      document.getElementById('ptPts').value = '';
-    } else {
-      alert('❌ خطا: ' + (d.error || 'نامشخص'));
+  fetch(URL + '?action=updatePoints&user=' + encodeURIComponent(uid) + '&name=' + encodeURIComponent(uname) + '&points=' + encodeURIComponent(upts) + '&type=' + type).then(r=>r.json()).then(d=>{
+    if(d.ok){ alert('✅ ثبت شد'); loadPoints(); document.getElementById('ptUser').value = ''; document.getElementById('ptName').value = ''; document.getElementById('ptPts').value = ''; }
+    else { alert('❌ خطا: ' + (d.error || 'نامشخص')); }
+  }).catch(function(){ alert('❌ خطا در اتصال'); });
+}
+
+function loadShopProducts(){
+  fetch(ADMIN_URL + '?action=getShopProducts').then(function(r){ return r.json(); }).then(function(d){
+    var products = d.products || [];
+    var html = '';
+    if (products.length === 0) { html = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">🛒 هنوز محصولی اضافه نشده</div>'; }
+    else {
+      html = '<table style="width:100%;border-collapse:collapse">';
+      html += '<tr style="background:rgba(255,215,0,.1)"><th style="padding:10px;text-align:right;color:#ffd700">نام</th><th style="padding:10px;text-align:right;color:#ffd700">توضیحات</th><th style="padding:10px;text-align:right;color:#ffd700">قیمت</th><th style="padding:10px;text-align:right;color:#ffd700">موجودی</th><th style="padding:10px;text-align:right;color:#ffd700">عملیات</th></tr>';
+      products.forEach(function(p){
+        html += '<tr style="border-bottom:1px solid rgba(255,255,255,.1)">';
+        html += '<td style="padding:10px">' + p.name + '</td><td style="padding:10px">' + (p.description || '-') + '</td>';
+        html += '<td style="padding:10px">' + p.price + ' امتیاز</td><td style="padding:10px">' + p.stock + '</td>';
+        html += '<td style="padding:10px"><button onclick="deleteShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer;font-family:tahoma">🗑️ حذف</button></td></tr>';
+      });
+      html += '</table>';
     }
-  }).catch(function(){
-    alert('❌ خطا در اتصال');
-  });
+    document.getElementById('shopProductsList').innerHTML = html;
+  }).catch(function(){ document.getElementById('shopProductsList').innerHTML = '<div style="color:#ff6b6b;padding:20px">❌ خطا در دریافت محصولات</div>'; });
 }
-
-// ===== فروشگاه =====
-function loadShopProducts() {
-  fetch(ADMIN_URL + '?action=getShopProducts')
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      var products = d.products || [];
-      var html = '';
-      if (products.length === 0) {
-        html = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">🛒 هنوز محصولی اضافه نشده</div>';
-      } else {
-        html = '<table style="width:100%;border-collapse:collapse">';
-        html += '<tr style="background:rgba(255,215,0,.1)"><th style="padding:10px;text-align:right;color:#ffd700">نام</th><th style="padding:10px;text-align:right;color:#ffd700">توضیحات</th><th style="padding:10px;text-align:right;color:#ffd700">قیمت</th><th style="padding:10px;text-align:right;color:#ffd700">موجودی</th><th style="padding:10px;text-align:right;color:#ffd700">عملیات</th></tr>';
-        products.forEach(function(p) {
-          html += '<tr style="border-bottom:1px solid rgba(255,255,255,.1)">';
-          html += '<td style="padding:10px">' + p.name + '</td>';
-          html += '<td style="padding:10px">' + (p.description || '-') + '</td>';
-          html += '<td style="padding:10px">' + p.price + ' امتیاز</td>';
-          html += '<td style="padding:10px">' + p.stock + '</td>';
-          html += '<td style="padding:10px"><button onclick="deleteShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer;font-family:tahoma">🗑️ حذف</button></td>';
-          html += '</tr>';
-        });
-        html += '</table>';
-      }
-      document.getElementById('shopProductsList').innerHTML = html;
-    })
-    .catch(function() {
-      document.getElementById('shopProductsList').innerHTML = '<div style="color:#ff6b6b;padding:20px">❌ خطا در دریافت محصولات</div>';
-    });
-}
-
-function addShopProduct() {
+function addShopProduct(){
   var name = document.getElementById('shopName').value.trim();
   var desc = document.getElementById('shopDesc').value.trim();
   var price = parseInt(document.getElementById('shopPrice').value) || 0;
   var stock = parseInt(document.getElementById('shopStock').value) || 0;
-  
-  if (!name || price <= 0) {
-    alert('⚠️ نام و قیمت محصول الزامی است');
-    return;
-  }
-  
+  if (!name || price <= 0) { alert('⚠️ نام و قیمت محصول الزامی است'); return; }
   var shenaseh = 'PRD-' + Date.now().toString().slice(-6);
-  
   fetch(ADMIN_URL + '?action=addShopProduct&shenaseh=' + encodeURIComponent(shenaseh) + '&name=' + encodeURIComponent(name) + '&description=' + encodeURIComponent(desc) + '&price=' + price + '&stock=' + stock)
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.ok) {
-        alert('✅ محصول "' + name + '" با موفقیت اضافه شد');
-        document.getElementById('shopName').value = '';
-        document.getElementById('shopDesc').value = '';
-        document.getElementById('shopPrice').value = '';
-        document.getElementById('shopStock').value = '';
-        loadShopProducts();
-      } else {
-        alert('❌ خطا در افزودن محصول: ' + (d.error || 'نامشخص'));
-      }
-    })
-    .catch(function() {
-      alert('❌ خطا در اتصال');
-    });
+    .then(function(r){ return r.json(); }).then(function(d){
+      if (d.ok) { alert('✅ محصول "' + name + '" با موفقیت اضافه شد'); document.getElementById('shopName').value = ''; document.getElementById('shopDesc').value = ''; document.getElementById('shopPrice').value = ''; document.getElementById('shopStock').value = ''; loadShopProducts(); }
+      else { alert('❌ خطا در افزودن محصول: ' + (d.error || 'نامشخص')); }
+    }).catch(function(){ alert('❌ خطا در اتصال'); });
+}
+function deleteShopProduct(shenaseh){
+  if (!confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
+  fetch(ADMIN_URL + '?action=deleteShopProduct&shenaseh=' + encodeURIComponent(shenaseh)).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) { alert('✅ محصول حذف شد'); loadShopProducts(); } else { alert('❌ خطا در حذف محصول'); }
+  }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
 
-function deleteShopProduct(shenaseh) {
-  if (!confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
-  
-  fetch(ADMIN_URL + '?action=deleteShopProduct&shenaseh=' + encodeURIComponent(shenaseh))
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      if (d.ok) {
-        alert('✅ محصول حذف شد');
-        loadShopProducts();
-      } else {
-        alert('❌ خطا در حذف محصول');
+// ===== درخواست‌های خرید =====
+function loadPurchaseRequests(){
+  document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+  fetch(URL + '?action=getPurchaseRequests').then(function(r){ return r.json(); }).then(function(d){
+    var requests = d.requests || [];
+    if(requests.length === 0){
+      document.getElementById('purchaseRequestsList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 هنوز درخواست خریدی ثبت نشده</div>';
+      return;
+    }
+    var html = '<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">';
+    var pendingCount = 0, approvedCount = 0, rejectedCount = 0;
+    requests.forEach(function(r){ if(r.status==='pending') pendingCount++; else if(r.status==='approved') approvedCount++; else rejectedCount++; });
+    html += '<div class="stat" style="flex:1;min-width:100px"><b>' + pendingCount + '</b><span>⏳ در انتظار</span></div>';
+    html += '<div class="stat" style="flex:1;min-width:100px"><b>' + approvedCount + '</b><span>✅ تایید شده</span></div>';
+    html += '<div class="stat" style="flex:1;min-width:100px"><b>' + rejectedCount + '</b><span>❌ رد شده</span></div>';
+    html += '</div>';
+    
+    requests.forEach(function(r){
+      var tagClass = r.status==='pending' ? 'pending-tag' : (r.status==='approved' ? 'approved-tag' : 'rejected-tag');
+      var tagText = r.status==='pending' ? '⏳ در انتظار' : (r.status==='approved' ? '✅ تایید شده' : '❌ رد شده');
+      var dt = new Date(r.timestamp);
+      var dateStr = fmtFull(dt);
+      
+      html += '<div class="req-card">';
+      html += '<div class="req-head">';
+      html += '<div><b style="color:#ffd700;font-size:1rem">👤 ' + (r.name || 'شماره ' + r.user) + '</b>';
+      html += '<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">شماره عضو: ' + r.user + '</div></div>';
+      html += '<span class="' + tagClass + '">' + tagText + '</span>';
+      html += '</div>';
+      html += '<div style="background:rgba(255,215,0,.05);padding:10px;border-radius:8px;margin-bottom:8px">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">';
+      html += '<div><b style="color:#fff">🛍️ ' + r.product + '</b>';
+      html += '<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">شناسه: ' + r.shenaseh + '</div></div>';
+      html += '<div style="text-align:left"><div style="color:#ffd700;font-weight:900;font-size:1.1rem">' + r.price + ' امتیاز</div>';
+      html += '<div style="font-size:.7rem;color:rgba(255,255,255,.5)">📅 ' + dateStr + '</div></div>';
+      html += '</div></div>';
+      
+      if(r.status === 'pending'){
+        html += '<div class="req-actions">';
+        html += '<button class="btn-approve" onclick="resolvePurchase(\'' + r.id + '\', \'approved\')">✅ تایید و تحویل</button>';
+        html += '<button class="btn-reject" onclick="resolvePurchase(\'' + r.id + '\', \'rejected\')">❌ رد و برگشت امتیاز</button>';
+        html += '</div>';
       }
-    })
-    .catch(function() {
-      alert('❌ خطا در اتصال');
+      html += '</div>';
+    });
+    document.getElementById('purchaseRequestsList').innerHTML = html;
+  }).catch(function(){
+    document.getElementById('purchaseRequestsList').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت درخواست‌ها</div>';
+  });
+}
+
+function resolvePurchase(id, status){
+  var actionText = status === 'approved' ? 'تایید و تحویل' : 'رد و برگشت امتیاز';
+  if(!confirm('آیا از ' + actionText + ' این درخواست مطمئن هستید؟')) return;
+  
+  document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال پردازش...</div>';
+  fetch(URL + '?action=resolvePurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status))
+    .then(function(r){ return r.json(); }).then(function(d){
+      if(d.ok){
+        alert('✅ درخواست با موفقیت ' + (status==='approved'?'تایید':'رد') + ' شد');
+        loadPurchaseRequests();
+        loadPoints();
+      } else {
+        alert('❌ خطا: ' + (d.error || 'مشکل ناشناخته'));
+        loadPurchaseRequests();
+      }
+    }).catch(function(){
+      alert('❌ خطا در ارتباط با سرور');
+      loadPurchaseRequests();
     });
 }
+// ===== ورود خودکار شورا با توکن =====
+(function(){
+  var m = location.search.match(/[?&]ct=([^&]+)/);
+  if (!m) return;
+  var token = decodeURIComponent(m[1]);
+  fetch(URL + '?action=verifyCouncilToken&token=' + encodeURIComponent(token)).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) {
+      isCouncil = true;
+      window.__councilUser = { id: d.id, name: d.name };
+      enterDashboard();
+    }
+  }).catch(function(){});
+})();
 </script>
 </body></html>
