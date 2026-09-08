@@ -13541,5 +13541,100 @@ setInterval(function(){
 }, 4000);
 </script>
 <!-- ===== SHORA END ===== -->
+<!-- ===== EMAILFORM START ===== -->
+<script>
+var EMAIL_API = 'https://script.google.com/macros/s/AKfycbwQGM0WY_dMTGDZXttu0uiHYjZvgdcbnFs7DlzpNAdwVNGRRQoh_yEAeA_IRkSuhRI/exec';
+function getMyKarbari2() {
+  try {
+    var lr = loginResult;
+    if (!lr || !lr.user) return null;
+    var uid = String(lr.user.memberId || lr.user.id || '');
+    var ms = (lr.data && lr.data.members) || [];
+    for (var i = 0; i < ms.length; i++) if (String(ms[i].id) === uid) return String(ms[i].karbari || ms[i].accountNumber || uid);
+    return uid;
+  } catch(e) { return null; }
+}
+function getMyName2() {
+  try {
+    var lr = loginResult;
+    if (!lr || !lr.user) return '';
+    var uid = String(lr.user.memberId || lr.user.id || '');
+    var ms = (lr.data && lr.data.members) || [];
+    for (var i = 0; i < ms.length; i++) if (String(ms[i].id) === uid) return String(ms[i].firstName || '');
+    return String(lr.user.username || '');
+  } catch(e) { return ''; }
+}
+function openEmailForm() {
+  var kb = getMyKarbari2();
+  if (!kb) { alert('❌ ابتدا وارد شوید'); return; }
+  var old = document.getElementById('emailFormOverlay');
+  if (old) old.parentNode.removeChild(old);
+  var ov = document.createElement('div');
+  ov.id = 'emailFormOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:tahoma;';
+  ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:22px;width:92%;max-width:420px;color:#fff;direction:rtl">' +
+    '<div style="font-weight:800;margin-bottom:4px">📬 اطلاع‌رسانی صورتحساب</div>' +
+    '<div style="font-size:.78rem;color:#ffd700;margin-bottom:16px">اطلاع‌رسانی صورتحساب از کدام طریق انجام شود؟</div>' +
+    '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+      '<input type="checkbox" id="chkSms" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+      '<span style="font-size:.9rem">📱 از طریق پیامک</span>' +
+    '</label>' +
+    '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+      '<input type="checkbox" id="chkEmail" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+      '<span style="font-size:.9rem">📧 از طریق ایمیل</span>' +
+    '</label>' +
+    '<div id="emailBox" style="display:none;margin-bottom:12px">' +
+      '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">آدرس ایمیل خود را وارد کنید:</div>' +
+      '<input id="stmtEmailInput" type="email" dir="ltr" placeholder="example@gmail.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
+    '</div>' +
+    '<div style="display:flex;gap:8px">' +
+    '<button id="stmtEmailSave" style="flex:1;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer">💾 ثبت</button>' +
+    '<button id="stmtEmailClose" style="background:#333;color:#fff;border:none;border-radius:10px;padding:11px 16px;cursor:pointer">بستن</button>' +
+    '</div></div>';
+  document.body.appendChild(ov);
+  var chkE = document.getElementById('chkEmail');
+  var box = document.getElementById('emailBox');
+  chkE.onchange = function(){ box.style.display = chkE.checked ? 'block' : 'none'; };
+  fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
+    if (!d.ok) return;
+    document.getElementById('chkSms').checked = !!d.wantSms;
+    chkE.checked = !!d.wantEmail;
+    box.style.display = chkE.checked ? 'block' : 'none';
+    if (d.email) document.getElementById('stmtEmailInput').value = d.email;
+  }).catch(function(){});
+  document.getElementById('stmtEmailSave').onclick = function(){
+    var we = chkE.checked ? 1 : 0;
+    var ws = document.getElementById('chkSms').checked ? 1 : 0;
+    var em = document.getElementById('stmtEmailInput').value.trim();
+    if (we === 1 && (em.indexOf('@') < 1)) { alert('❌ لطفاً آدرس ایمیل معتبر وارد کنید'); return; }
+    fetch(EMAIL_API + '?action=setStatementEmail&user=' + encodeURIComponent(kb) + '&name=' + encodeURIComponent(getMyName2()) + '&email=' + encodeURIComponent(em) + '&wantEmail=' + we + '&wantSms=' + ws).then(function(r){ return r.json(); }).then(function(d){
+      alert(d.ok ? '✅ تنظیمات اطلاع‌رسانی ثبت شد!' : '❌ خطا: ' + (d.error || ''));
+      if (d.ok) ov.parentNode.removeChild(ov);
+    }).catch(function(){ alert('❌ خطا در اتصال'); });
+  };
+  document.getElementById('stmtEmailClose').onclick = function(){ ov.parentNode.removeChild(ov); };
+}
+setInterval(function(){
+  if (!getMyKarbari2()) return;
+  if (document.getElementById('emailFormCard')) return;
+    var adminCard = null;
+  var items = document.querySelectorAll('.grid-menu-item');
+  for (var i = 0; i < items.length; i++) {
+    var tt = (items[i].textContent || '');
+    if (tt.indexOf('برنامه های کاربردی') > -1 || tt.indexOf('برنامه‌های کاربردی') > -1) { adminCard = items[i]; break; }
+  }
+  if (!adminCard) return;
+  var card = adminCard.cloneNode(true);
+  card.id = 'emailFormCard';
+  card.removeAttribute('onclick');
+  card.onclick = openEmailForm;
+  var lbl = card.querySelector('.menu-label');
+    if (lbl) lbl.textContent = 'ثبت نحوه ارسال صورتحساب';
+  var ic = card.querySelector('i');
+  if (ic) ic.className = 'fas fa-envelope';
+  adminCard.parentNode.insertBefore(card, adminCard.nextSibling);
+}, 4000);
+</script>
+<!-- ===== EMAILFORM END ===== -->
 </body>
 </html>
