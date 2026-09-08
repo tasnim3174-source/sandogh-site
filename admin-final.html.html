@@ -216,7 +216,9 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   </div>
 
 <script>
-var URL = 'https://script.google.com/macros/s/AKfycbw77zTjB82LIOSL_naNf15NWs2UC31EwHZuckD47Bs9BhLIMtCo18qTJYu__T4CYl_K/exec';
+// ✅ URL اصلی سرور — همه‌چیز از این رشته استفاده می‌کند
+var URL = 'https://script.google.com/macros/s/AKfycbxyLGSm69L56_vKdInOz8rE-I0NKRDrYmxilJ-l9HSWMUApIri2LxEqdN0ZaC2el7xj/exec';
+var STMT_API = URL;
 var ADMIN_URL = URL;
 var KEY = 'admin12345';
 var isCouncil = false;
@@ -283,6 +285,8 @@ function enterDashboard(){
     document.getElementById('siteStatusRow').style.display = 'none';
     // پنهان کردن تب‌های مخصوص مدیر
     document.querySelectorAll('.tab[data-role="admin"]').forEach(function(t){ t.style.display = 'none'; });
+    // نمایش تب‌های مشترک (شورا + مدیر)
+    document.querySelectorAll('.tab[data-role="all"]').forEach(function(t){ t.style.display = 'block'; });
     showTab(8); // پیش‌فرض شورا: درخواست‌های خرید
   } else {
     document.getElementById('sec1').style.display = 'block';
@@ -344,8 +348,7 @@ function loadLogs(){
 function loadAdminNameCache(cb){
   if (window.__adminNames) { if (cb) cb(); return; }
   window.__adminNames = {};
-  var SRC = 'https://script.google.com/macros/s/AKfycbwUXsk95sJKMrAIAhGYVjaZ6x84pddGu4rNzyhKDWZRdybAyGmON4HH1M5TQxNEeKZl/exec';
-  fetch(SRC).then(function(r){ return r.json(); }).then(function(d){
+  fetch(STMT_API + '?action=getStatementEmailList&key=admin12345').then(function(r){ return r.json(); }).then(function(d){
     var list = null;
     if (d && Array.isArray(d.rows)) list = d.rows;
     else if (Array.isArray(d)) list = d;
@@ -366,7 +369,7 @@ function loadAdminNameCache(cb){
 }
 
 function renderLogs(){
-  if (!window.__adminNames) { loadAdminNameCache(renderLogs); }
+  if (!window.__adminNames) { loadAdminNameCache(renderLogs); return; }
   var q = document.getElementById('q').value.toLowerCase();
   var todayStr = fmtDate(new Date());
   var tc = 0, users = {};
@@ -625,7 +628,6 @@ function deleteShopProduct(shenaseh){
   }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
 
-// ===== درخواست‌های خرید =====
 function loadPurchaseRequests(){
   document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
   fetch(URL + '?action=getPurchaseRequests').then(function(r){ return r.json(); }).then(function(d){
@@ -662,7 +664,7 @@ function loadPurchaseRequests(){
       html += '<div style="font-size:.7rem;color:rgba(255,255,255,.5)">📅 ' + dateStr + '</div></div>';
       html += '</div></div>';
       
-           if(r.status === 'pending'){
+      if(r.status === 'pending'){
         html += '<div class="req-actions">';
         html += '<button class="btn-approve" onclick="resolvePurchase(\'' + r.id + '\', \'approved\')">✅ تایید و تحویل</button>';
         html += '<button class="btn-reject" onclick="resolvePurchase(\'' + r.id + '\', \'rejected\')">❌ رد و برگشت امتیاز</button>';
@@ -700,7 +702,7 @@ function resolvePurchase(id, status){
       loadPurchaseRequests();
     });
 }
-// ===== ورود خودکار شورا با توکن =====
+
 (function(){
   var m = location.search.match(/[?&]ct=([^&]+)/);
   if (!m) return;
@@ -713,6 +715,7 @@ function resolvePurchase(id, status){
     }
   }).catch(function(){});
 })();
+
 function cancelPurchase(id){
   if(!confirm('↩️ انصراف از خرید و برگشت جایزه؟\n\nامتیاز و موجودی محصول برگشت داده می‌شود.')) return;
   document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال پردازش...</div>';
@@ -722,5 +725,152 @@ function cancelPurchase(id){
       else { alert('❌ خطا: ' + (d.error || 'نامشخص')); loadPurchaseRequests(); }
     }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
 }
+</script>
+<!-- ===== STMT TAB START ===== -->
+<script>
+function openStmtList() {
+  var old = document.getElementById('stmtListOverlay');
+  if (old) old.parentNode.removeChild(old);
+  var ov = document.createElement('div');
+  ov.id = 'stmtListOverlay';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;font-family:tahoma;padding:12px;';
+  ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:20px;width:100%;max-width:900px;max-height:92vh;overflow:auto;color:#fff;direction:rtl">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
+      '<div style="font-weight:800;font-size:1.05rem">📬 تنظیمات اطلاع‌رسانی صورتحساب</div>' +
+      '<button id="stmtListClose" style="background:#5a1e1e;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer">✕</button>' +
+    '</div>' +
+    '<div id="stmtStats" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px"></div>' +
+    '<div style="display:flex;gap:8px;margin-bottom:12px">' +
+      '<input id="stmtSearch" type="text" placeholder="🔍 جستجو (نام یا کد)" style="flex:1;padding:9px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.85rem" />' +
+      '<select id="stmtFilter" style="padding:9px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.85rem">' +
+        '<option value="all">همه</option>' +
+        '<option value="email">فقط ایمیل</option>' +
+        '<option value="sms">فقط پیامک</option>' +
+        '<option value="both">هر دو</option>' +
+      '</select>' +
+    '</div>' +
+    '<div style="overflow-x:auto;border-radius:12px;border:1px solid #333">' +
+      '<table style="width:100%;border-collapse:collapse;font-size:.82rem">' +
+        '<thead style="background:#2a2a44">' +
+          '<tr>' +
+            '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">#</th>' +
+            '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">نام</th>' +
+            '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">کد کاربری</th>' +
+            '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">ایمیل</th>' +
+            '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">📧</th>' +
+            '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">📱</th>' +
+            '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">ثبت</th>' +
+          '</tr>' +
+        '</thead>' +
+        '<tbody id="stmtListBody"><tr><td colspan="7" style="padding:20px;text-align:center;color:#888">در حال بارگذاری...</td></tr></tbody>' +
+      '</table>' +
+    '</div>' +
+    '<div style="margin-top:12px;font-size:.72rem;color:#888;text-align:center">💡 این اطلاعات توسط خود اعضا در سایت ثبت شده است</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  document.getElementById('stmtListClose').onclick = function(){ ov.parentNode.removeChild(ov); };
+  var allRows = [];
+  function render() {
+    var q = (document.getElementById('stmtSearch').value || '').trim().toLowerCase();
+    var f = document.getElementById('stmtFilter').value;
+    var tbody = document.getElementById('stmtListBody');
+    var filtered = allRows.filter(function(r) {
+      if (q && String(r.name + ' ' + r.user).toLowerCase().indexOf(q) < 0) return false;
+      if (f === 'email' && !r.wantEmail) return false;
+      if (f === 'sms' && !r.wantSms) return false;
+      if (f === 'both' && !(r.wantEmail && r.wantSms)) return false;
+      return true;
+    });
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="7" style="padding:20px;text-align:center;color:#888">عضوی یافت نشد</td></tr>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < filtered.length; i++) {
+      var r = filtered[i];
+      var dt = r.ts ? new Date(r.ts).toLocaleDateString('fa-IR') : '—';
+      html += '<tr style="border-bottom:1px solid #2a2a44">' +
+        '<td style="padding:8px;color:#888">' + (i + 1) + '</td>' +
+        '<td style="padding:8px">' + (r.name || '—') + '</td>' +
+        '<td style="padding:8px;font-family:monospace;color:#ffd700">' + r.user + '</td>' +
+        '<td style="padding:8px;font-size:.75rem;direction:ltr;text-align:right;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (r.email || '') + '">' + (r.email || '—') + '</td>' +
+        '<td style="padding:8px;text-align:center">' + (r.wantEmail ? '<span style="color:#4ade80">✅</span>' : '<span style="color:#666">—</span>') + '</td>' +
+        '<td style="padding:8px;text-align:center">' + (r.wantSms ? '<span style="color:#4ade80">✅</span>' : '<span style="color:#666">—</span>') + '</td>' +
+        '<td style="padding:8px;text-align:center;font-size:.7rem;color:#aaa">' + dt + '</td>' +
+      '</tr>';
+    }
+    tbody.innerHTML = html;
+  }
+  fetch(STMT_API + '?action=getStatementEmailList&key=admin12345').then(function(r){ return r.json(); }).then(function(d){
+    if (!d.ok) { document.getElementById('stmtListBody').innerHTML = '<tr><td colspan="7" style="padding:20px;text-align:center;color:#f87171">❌ خطا در دریافت</td></tr>'; return; }
+    allRows = d.rows || [];
+    var st = d.stats || { total: 0, email: 0, sms: 0, both: 0, none: 0 };
+    var items = [
+      { label: 'کل', value: st.total, color: '#ffd700' },
+      { label: 'ایمیل', value: st.email, color: '#4ade80' },
+      { label: 'پیامک', value: st.sms, color: '#60a5fa' },
+      { label: 'هر دو', value: st.both, color: '#f472b6' },
+      { label: 'هیچکدام', value: st.none, color: '#888' }
+    ];
+    document.getElementById('stmtStats').innerHTML = items.map(function(x) {
+      return '<div style="background:#111;border:1px solid #333;border-radius:10px;padding:10px;text-align:center">' +
+        '<div style="font-size:1.4rem;font-weight:800;color:' + x.color + '">' + x.value + '</div>' +
+        '<div style="font-size:.72rem;color:#bbb;margin-top:3px">' + x.label + '</div>' +
+      '</div>';
+    }).join('');
+    render();
+  }).catch(function(){ document.getElementById('stmtListBody').innerHTML = '<tr><td colspan="7" style="padding:20px;text-align:center;color:#f87171">❌ خطا در اتصال</td></tr>'; });
+  document.getElementById('stmtSearch').oninput = render;
+  document.getElementById('stmtFilter').onchange = render;
+}
+var stmtTick = 0;
+setInterval(function(){
+  stmtTick++;
+  if (!document.getElementById('stmtTabBtn')) {
+    var nodes = document.querySelectorAll('button, a, div, span');
+    var target = null;
+    for (var i = 0; i < nodes.length; i++) {
+      var txt = (nodes[i].textContent || '').replace(/\s+/g, ' ').trim();
+      if (txt.indexOf('گزارش') > -1 && txt.indexOf('ورود') > -1 && txt.length < 25) { target = nodes[i]; break; }
+    }
+    if (target) {
+      var tabEl = target;
+      for (var up = 0; up < 4 && tabEl.parentElement; up++) {
+        if (tabEl.onclick || (tabEl.className && String(tabEl.className).length > 2)) break;
+        tabEl = tabEl.parentElement;
+      }
+      var btn = tabEl.cloneNode(true);
+      btn.id = 'stmtTabBtn';
+      btn.onclick = function(e){ e.stopPropagation(); openStmtList(); };
+      btn.innerHTML = '📬 اطلاع‌رسانی';
+      tabEl.parentElement.insertBefore(btn, tabEl.nextSibling);
+      var fab0 = document.getElementById('stmtFabBtn');
+      if (fab0) fab0.parentNode.removeChild(fab0);
+    }
+  }
+  if (stmtTick > 8 && !document.getElementById('stmtTabBtn') && !document.getElementById('stmtFabBtn')) {
+    var b = document.createElement('button');
+    b.id = 'stmtFabBtn';
+    b.textContent = '📬 اطلاع‌رسانی';
+    b.style.cssText = 'position:fixed;bottom:18px;left:18px;z-index:9997;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);font-family:tahoma;font-size:.9rem';
+    b.onclick = openStmtList;
+    document.body.appendChild(b);
+  }
+}, 1500);
+</script>
+<!-- ===== STMT TAB END ===== -->
+<script>
+setInterval(function(){
+  if (document.querySelector('.tab[data-tab="9"]')) return;
+  var container = document.getElementById('tabsContainer');
+  if (!container) return;
+  var d = document.createElement('div');
+  d.className = 'tab';
+  d.setAttribute('data-tab', '9');
+  d.setAttribute('data-role', 'all');
+  d.onclick = function(){ openStmtList(); };
+  d.innerHTML = '📬 اطلاع‌رسانی';
+  container.appendChild(d);
+}, 1000);
 </script>
 </body></html>
