@@ -2834,7 +2834,7 @@ ldrSecT = setInterval(function() {
         // بخش ۱: متغیرهای سراسری
         // ============================================================
                 const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
-        const DATA_URL_1 = 'https://script.google.com/macros/s/AKfycbwUXsk95sJKMrAIAhGYVjaZ6x84pddGu4rNzyhKDWZRdybAyGmON4HH1M5TQxNEeKZl/exec';
+        const DATA_URL_1 = 'https://script.google.com/macros/s/AKfycbwXTUOlyPYRnxiFaeAvMgM_2vGwxOSWG1p05gc-N6yQVGyJ9xYswjcQRXs7DD9phqfl/exec
         const DATA_URL_1_FALLBACK = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data1.xlsx';
         const FEATURES = { showMyFund: true };
 
@@ -13636,5 +13636,30 @@ setInterval(function(){
 }, 4000);
 </script>
 <!-- ===== EMAILFORM END ===== -->
+            <!-- ===== STMT REMINDER START ===== -->
+<script>
+function checkStmtReminder() {
+  try {
+    var kb = getMyKarbari2();
+    if (!kb) return;
+    fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
+      var existing = document.getElementById('stmtReminderBar');
+      if (!d.ok || d.found) { if (existing) existing.parentNode.removeChild(existing); return; }
+      if (existing) return;
+      if (sessionStorage.getItem('stmtReminderHidden')) return;
+      var bar = document.createElement('div');
+      bar.id = 'stmtReminderBar';
+      bar.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:92%;max-width:430px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a2e;border-radius:14px;padding:12px 16px;z-index:9990;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);font-family:tahoma;font-size:.83rem;font-weight:700';
+      bar.innerHTML = '<span style="flex:1;line-height:1.8">📬 هنوز نحوه دریافت صورتحساب را انتخاب نکرده‌اید — ثبت‌نام کنید</span><span id="stmtReminderClose" style="font-size:1.05rem;padding:4px 6px">✕</span>';
+      document.body.appendChild(bar);
+      bar.onclick = function(){ openEmailForm(); };
+      document.getElementById('stmtReminderClose').onclick = function(e){ e.stopPropagation(); bar.parentNode.removeChild(bar); sessionStorage.setItem('stmtReminderHidden','1'); };
+    }).catch(function(){});
+  } catch(e) {}
+}
+setInterval(checkStmtReminder, 15000);
+setTimeout(checkStmtReminder, 4000);
+</script>
+<!-- ===== STMT REMINDER END ===== -->
 </body>
 </html>
