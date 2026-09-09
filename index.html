@@ -3303,7 +3303,6 @@ ldrSecT = setInterval(function() {
                     .catch(function() {});
             }
         }
-
         async function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
@@ -3319,16 +3318,24 @@ ldrSecT = setInterval(function() {
             showLoaderAnimation();
 
             try {
-                const data = await loadMainDataWithCache(true);
+                // ✅ اصلاح: forceRefresh=false → از کش استفاده کن اگر تازه است
+                const data = await loadMainDataWithCache(false);
                 const user = data.users.find(u => u.username === username && u.password === password);
                 if (user) {
                     loginResult = { success: true, user: user, data: data, username: username, password: password };
                     logUserLogin(username, user.name || user.firstName || username);
                     
-                    // ===== امتیازات =====
-                    awardDailyLogin(user);
-                    awardBirthday(user, data);
-                    awardMonthlyPoints(user, data);
+                    // ✅ اصلاح: سه تابع امتیازدهی به صورت موازی (Promise.all)
+                    Promise.all([
+                        Promise.resolve(awardDailyLogin(user)),
+                        Promise.resolve(awardBirthday(user, data)),
+                        Promise.resolve(awardMonthlyPoints(user, data))
+                    ]).catch(function() {});
+                    
+                    // ✅ بروزرسانی کش در پس‌زمینه (بعد از ورود موفق)
+                    setTimeout(function() {
+                        loadMainDataWithCache(true).catch(function() {});
+                    }, 2000);
                 } else {
                     loginResult = { success: false, error: 'نام کاربری یا رمز عبور اشتباه است' };
                 }
@@ -3337,13 +3344,12 @@ ldrSecT = setInterval(function() {
             }
             loginDataReady = true;
         }
-        function startKeepAlive() {
+                function startKeepAlive() {
             if (keepAliveInterval) clearInterval(keepAliveInterval);
             keepAliveInterval = setInterval(function() {
-                fetch(DATA_URL, { method: 'HEAD', cache: 'no-cache' }).catch(function() {});
+                fetch(ADMIN_URL + '?action=ping', { method: 'GET', cache: 'no-cache' }).catch(function() {});
             }, 30000);
         }
-
         function stopKeepAlive() {
             if (keepAliveInterval) {
                 clearInterval(keepAliveInterval);
@@ -4888,7 +4894,7 @@ function checkGoldConditions(member) {
                     const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
                     if (cached && cachedTime) {
                         const age = Date.now() - parseInt(cachedTime);
-                        if (age < 15 * 60 * 1000) return JSON.parse(cached);
+                                                if (age < 60 * 60 * 1000) return JSON.parse(cached);
                     }
                 } catch (e) { localStorage.removeItem(CACHE_KEY); localStorage.removeItem(CACHE_TIME_KEY); }
             }
