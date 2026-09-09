@@ -2341,8 +2341,8 @@ background: Wormy !important;
                     </svg>
                 </div>
             </div>
-            <h1 id="secretTitle" class="ttl" style="color:#fff;-webkit-text-fill-color:#fff;background:none;cursor:default;">سیستم حسابداری <span class="gr">صندوق اتحاد</span></h1>
-            <p class="wlc">به صندوق اتحاد خوش آمدید 🌟</p>
+            <h1 id="secretTitle" class="ttl" style="display:none;color:#fff;-webkit-text-fill-color:#fff;background:none;cursor:default;">سیستم حسابداری <span class="gr">صندوق اتحاد</span></h1>
+            <p class="wlc" style="font-weight:900;font-size:1.3rem;">به سیستم حسابداری صندوق اتحاد خوش آمدید 🌟</p>
             <div class="pct"><span id="ldrPct">۰</span><span class="sg">٪</span></div>
             <div class="stt"><span id="ldrStx">آماده‌سازی</span><span class="dts"><i>.</i><i>.</i><i>.</i></span></div>
             <div class="barw"><div class="bar"><div class="fill" id="ldrFill"></div></div></div>
@@ -2352,10 +2352,24 @@ background: Wormy !important;
                 <div class="stp" id="ldrS2"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>همگام‌سازی</div>
                 <div class="stp" id="ldrS3"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>داشبورد مالی</div>
             </div>
-            <div class="fact" id="ldrFact">💡 حسابداری به «زبان کسب‌وکار» معروف است</div>
-<div class="tip" id="ldrTip">📌 راهنما: در بخش کلیدهای کاربردی می‌توانید زکات و خمس خود را محاسبه کنید</div>
+            <div class="fact" id="ldrFact" style="display:none"></div>
+<div class="tip" id="ldrTip" style="display:none"></div>
         </div>
-        <div class="loaderBot"><span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span></div>
+       <div style="display:flex;align-items:center;justify-content:center;padding:16px 0 10px;">
+      <div style="display:flex;align-items:flex-end;gap:9px;height:90px;">
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.3s ease-in-out infinite;animation-delay:0s"></i>
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.6s ease-in-out infinite;animation-delay:.18s"></i>
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.2s ease-in-out infinite;animation-delay:.36s"></i>
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.7s ease-in-out infinite;animation-delay:.54s"></i>
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.4s ease-in-out infinite;animation-delay:.72s"></i>
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.6s ease-in-out infinite;animation-delay:.9s"></i>
+        <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.3s ease-in-out infinite;animation-delay:1.08s"></i>
+      </div>
+    </div>
+    <style>
+    @keyframes ldrEq{0%,100%{transform:scaleY(.25);opacity:.75}50%{transform:scaleY(1);opacity:1}}
+    </style>    
+ <div class="loaderBot"><span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span></div>
     </div>
 
     <!-- 🆕 مودال موفقیت -->
