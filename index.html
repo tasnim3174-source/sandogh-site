@@ -2848,7 +2848,7 @@ ldrSecT = setInterval(function() {
         // بخش ۱: متغیرهای سراسری
         // ============================================================
         const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
-        const DATA_URL_1 = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
+        const DATA_URL_1 = "https://script.google.com/macros/s/AKfycbwXTUOlyPYRnxiFaeAvMgM_2vGwxOSWG1p05gc-N6yQVGyJ9xYswjcQRXs7DD9phqfl/exec";
         const DATA_URL_1_FALLBACK = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data1.xlsx';
         const FEATURES = { showMyFund: true };
 
@@ -3317,7 +3317,7 @@ ldrSecT = setInterval(function() {
                     .catch(function() {});
             }
         }
-                async function handleLogin() {
+        async function handleLogin() {
             const username = document.getElementById('loginUsername').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
             if (!username || !password) {
@@ -3332,24 +3332,21 @@ ldrSecT = setInterval(function() {
             showLoaderAnimation();
 
             try {
-                // ۱) اول از کش (سریع)
-                let data = await loadMainDataWithCache(false);
-                let user = data.users.find(u => u.username === username && u.password === password);
-                // ۲) اگر پیدا نشد → کش کهنه است → یک بار اجباری تازه بگیر
-                if (!user) {
-                    data = await loadMainDataWithCache(true);
-                    user = data.users.find(u => u.username === username && u.password === password);
-                }
+                // ✅ اصلاح: forceRefresh=false → از کش استفاده کن اگر تازه است
+                const data = await loadMainDataWithCache(false);
+                const user = data.users.find(u => u.username === username && u.password === password);
                 if (user) {
                     loginResult = { success: true, user: user, data: data, username: username, password: password };
                     logUserLogin(username, user.name || user.firstName || username);
                     
+                    // ✅ اصلاح: سه تابع امتیازدهی به صورت موازی (Promise.all)
                     Promise.all([
                         Promise.resolve(awardDailyLogin(user)),
                         Promise.resolve(awardBirthday(user, data)),
                         Promise.resolve(awardMonthlyPoints(user, data))
                     ]).catch(function() {});
                     
+                    // ✅ بروزرسانی کش در پس‌زمینه (بعد از ورود موفق)
                     setTimeout(function() {
                         loadMainDataWithCache(true).catch(function() {});
                     }, 2000);
