@@ -260,6 +260,34 @@
         #loaderOk.show path { transition: stroke-dashoffset .4s ease .6s; stroke-dashoffset: 0; }
         .okc h2 { font-size: 21px; font-weight: 900; margin-top: 12px; color: #fff; }
         .okc p { color: #cdd8ec; font-size: 13px; margin-top: 6px; }
+/* ===== انیمیشن‌های سرگرم‌کننده لودر (رندوم) ===== */
+.faSlot { display:none !important; align-items:center; justify-content:center; }
+#newLoader:not([data-anim]) .fa-pole,
+#newLoader[data-anim="1"] .fa-pole { display:flex !important; }
+#newLoader[data-anim="2"] .fa-dots { display:flex !important; }
+#newLoader[data-anim="3"] .fa-dna  { display:block !important; }
+.fa-dots { gap:12px; align-items:flex-end; height:56px; }
+.fa-dots span {
+  width:18px; height:18px; border-radius:50%;
+  background:linear-gradient(135deg,#ffc94d,#ffe08a);
+  box-shadow:0 0 14px rgba(255,201,77,.7);
+  animation:faBounce 1s ease-in-out infinite;
+}
+.fa-dots span:nth-child(2){ animation-delay:.15s; background:linear-gradient(135deg,#3ee6a8,#7ff5c8); box-shadow:0 0 14px rgba(62,230,168,.7); }
+.fa-dots span:nth-child(3){ animation-delay:.3s; }
+@keyframes faBounce { 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-34px);} }
+
+.fa-dna { position:relative; width:120px; height:80px; }
+.fa-dna i { position:absolute; width:12px; height:12px; border-radius:50%; animation:faDna 1.6s ease-in-out infinite; }
+.fa-dna i.a { background:#ffc94d; box-shadow:0 0 12px #ffc94d; }
+.fa-dna i.b { background:#3ee6a8; box-shadow:0 0 12px #3ee6a8; animation-delay:.8s; }
+@keyframes faDna {
+  0%{ left:0;    transform:scale(1);  z-index:2; }
+  25%{ left:50%; transform:scale(.6); }
+  50%{ left:100%;transform:scale(1);  z-index:1; }
+  75%{ left:50%; transform:scale(.6); }
+  100%{ left:0;   transform:scale(1);  z-index:2; }
+}
 
         /* ============================================
                    CSS اصلی برنامه
@@ -2323,6 +2351,7 @@ background: Wormy !important;
             <div class="badge"><span class="dot"></span> رمزنگاری AES-256</div>
         </div>
         <div class="loaderCenter">
+
             <div class="emb">
                 <svg class="ring" id="ldrRing" viewBox="0 0 150 150">
                     <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc94d"/><stop offset="1" stop-color="#3ee6a8"/></linearGradient></defs>
@@ -2355,8 +2384,10 @@ background: Wormy !important;
             <div class="fact" id="ldrFact" style="display:none"></div>
 <div class="tip" id="ldrTip" style="display:none"></div>
         </div>
-       <div style="display:flex;align-items:center;justify-content:center;padding:16px 0 10px;">
-      <div style="display:flex;align-items:flex-end;gap:9px;height:90px;">
+       <div style="display:flex;align-items:center;justify-content:center;padding:16px 0 10px;min-height:116px;">
+      <div class="faSlot fa-dots"><span></span><span></span><span></span></div>
+      <div class="faSlot fa-dna"><i class="a"></i><i class="b"></i></div>
+      <div class="faSlot fa-pole" style="display:flex;align-items:flex-end;gap:9px;height:90px;">
         <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.3s ease-in-out infinite;animation-delay:0s"></i>
         <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.6s ease-in-out infinite;animation-delay:.18s"></i>
         <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.2s ease-in-out infinite;animation-delay:.36s"></i>
@@ -2368,6 +2399,7 @@ background: Wormy !important;
     </div>
     <style>
     @keyframes ldrEq{0%,100%{transform:scaleY(.25);opacity:.75}50%{transform:scaleY(1);opacity:1}}
+    </style>
     </style>    
  <div class="loaderBot"><span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span></div>
     </div>
@@ -13681,5 +13713,21 @@ setInterval(function(){
 }, 4000);
 </script>
 <!-- ===== EMAILFORM END ===== -->
+<script>
+(function(){
+  function pickFun(){
+    var l = document.getElementById('newLoader');
+    if(!l) return;
+    l.setAttribute('data-anim', String(1 + Math.floor(Math.random()*3)));
+  }
+  var l = document.getElementById('newLoader');
+  if(l){
+    new MutationObserver(function(){
+      if(l.classList.contains('active')) pickFun();
+    }).observe(l, { attributes:true, attributeFilter:['class'] });
+  }
+  pickFun();
+})();
+</script>
 </body>
 </html>
