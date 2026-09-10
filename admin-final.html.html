@@ -722,14 +722,13 @@ function cancelPurchase(id){
   fetch(URL + '?action=cancelPurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id))
     .then(function(r){ return r.json(); }).then(function(d){
       if(d.ok){ alert(d.msg || '✅ انصراف ثبت و برگشت انجام شد'); loadPurchaseRequests(); loadPoints(); }
-      else { alert('❌ خطا: ' + (d.error || 'نامشخص')); loadPurchaseRequests(); }
-    }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
+          }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
 }
 </script>
+
 <!-- ===== STMT TAB START ===== -->
 <script>
-<!-- ===== STMT TAB START ===== -->
-<script>
+var STMT_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
 function openStmtList() {
   var old = document.getElementById('stmtListOverlay');
   if (old) old.parentNode.removeChild(old);
