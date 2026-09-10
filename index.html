@@ -4521,8 +4521,9 @@ function checkGoldConditions(member) {
         // 🆕 تابع کمکی: خواندن JSON از Apps Script
         async function parseOneExcelFromAppsScript(url) {
             try {
-                const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel';
-           const response = await fetch(fullUrl, { cache: 'no-cache' });
+                
+           const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel';
+const response = await fetch(fullUrl, { cache: 'no-cache' });
                 const json = await response.json();
                 
                 if (json.error) {
@@ -13593,42 +13594,87 @@ function openEmailForm() {
   var ov = document.createElement('div');
   ov.id = 'emailFormOverlay';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;font-family:tahoma;';
-  ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:22px;width:92%;max-width:420px;color:#fff;direction:rtl">' +
+  ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:22px;width:92%;max-width:420px;color:#fff;direction:rtl;max-height:90vh;overflow-y:auto">' +
     '<div style="font-weight:800;margin-bottom:4px">📬 اطلاع‌رسانی صورتحساب</div>' +
-    '<div style="font-size:.78rem;color:#ffd700;margin-bottom:16px">اطلاع‌رسانی صورتحساب از کدام طریق انجام شود؟</div>' +
+    '<div style="font-size:.78rem;color:#ffd700;margin-bottom:16px">از کدام طریق صورتحساب را دریافت کنید؟</div>' +
+
     '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
       '<input type="checkbox" id="chkSms" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
-      '<span style="font-size:.9rem">📱 از طریق پیامک</span>' +
+      '<span style="font-size:.9rem">📱 پیامک</span>' +
     '</label>' +
+
     '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
       '<input type="checkbox" id="chkEmail" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
-      '<span style="font-size:.9rem">📧 از طریق ایمیل</span>' +
+      '<span style="font-size:.9rem">📧 ایمیل (جیمیل)</span>' +
     '</label>' +
+
+    '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+      '<input type="checkbox" id="chkIta" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+      '<span style="font-size:.9rem">💬 ایتا</span>' +
+    '</label>' +
+
+    '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+      '<input type="checkbox" id="chkSite" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+      '<span style="font-size:.9rem">🌐 داخل همین سایت (نمایش هنگام ورود)</span>' +
+    '</label>' +
+
     '<div id="emailBox" style="display:none;margin-bottom:12px">' +
-      '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">آدرس ایمیل خود را وارد کنید:</div>' +
+      '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">📧 آدرس ایمیل:</div>' +
       '<input id="stmtEmailInput" type="email" dir="ltr" placeholder="example@gmail.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
     '</div>' +
-    '<div style="display:flex;gap:8px">' +
+
+    '<div id="itaBox" style="display:none;margin-bottom:12px">' +
+      '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">💬 شماره موبایل یا آیدی ایتا:</div>' +
+      '<input id="stmtItaInput" type="text" dir="ltr" placeholder="09xxxxxxxxx" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
+    '</div>' +
+
+    '<div style="display:flex;gap:8px;margin-top:6px">' +
     '<button id="stmtEmailSave" style="flex:1;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer">💾 ثبت</button>' +
     '<button id="stmtEmailClose" style="background:#333;color:#fff;border:none;border-radius:10px;padding:11px 16px;cursor:pointer">بستن</button>' +
     '</div></div>';
   document.body.appendChild(ov);
+
   var chkE = document.getElementById('chkEmail');
-  var box = document.getElementById('emailBox');
-  chkE.onchange = function(){ box.style.display = chkE.checked ? 'block' : 'none'; };
+  var chkI = document.getElementById('chkIta');
+  var boxE = document.getElementById('emailBox');
+  var boxI = document.getElementById('itaBox');
+
+  chkE.onchange = function(){ boxE.style.display = chkE.checked ? 'block' : 'none'; };
+  chkI.onchange = function(){ boxI.style.display = chkI.checked ? 'block' : 'none'; };
+
   fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
     if (!d.ok) return;
     document.getElementById('chkSms').checked = !!d.wantSms;
     chkE.checked = !!d.wantEmail;
-    box.style.display = chkE.checked ? 'block' : 'none';
+    chkI.checked = !!d.wantIta;
+    document.getElementById('chkSite').checked = !!d.wantSite;
+    boxE.style.display = chkE.checked ? 'block' : 'none';
+    boxI.style.display = chkI.checked ? 'block' : 'none';
     if (d.email) document.getElementById('stmtEmailInput').value = d.email;
+    if (d.itaId) document.getElementById('stmtItaInput').value = d.itaId;
   }).catch(function(){});
+
   document.getElementById('stmtEmailSave').onclick = function(){
     var we = chkE.checked ? 1 : 0;
     var ws = document.getElementById('chkSms').checked ? 1 : 0;
+    var wi = chkI.checked ? 1 : 0;
+    var wsi = document.getElementById('chkSite').checked ? 1 : 0;
     var em = document.getElementById('stmtEmailInput').value.trim();
+    var ita = document.getElementById('stmtItaInput').value.trim();
+
     if (we === 1 && (em.indexOf('@') < 1)) { alert('❌ لطفاً آدرس ایمیل معتبر وارد کنید'); return; }
-    fetch(EMAIL_API + '?action=setStatementEmail&user=' + encodeURIComponent(kb) + '&name=' + encodeURIComponent(getMyName2()) + '&email=' + encodeURIComponent(em) + '&wantEmail=' + we + '&wantSms=' + ws).then(function(r){ return r.json(); }).then(function(d){
+    if (wi === 1 && ita.length < 5) { alert('❌ لطفاً شماره موبایل یا آیدی ایتا را وارد کنید'); return; }
+    if (we + ws + wi + wsi === 0) { alert('⚠️ حداقل یک روش را انتخاب کنید'); return; }
+
+    fetch(EMAIL_API + '?action=setStatementEmail&user=' + encodeURIComponent(kb) +
+      '&name=' + encodeURIComponent(getMyName2()) +
+      '&email=' + encodeURIComponent(em) +
+      '&itaId=' + encodeURIComponent(ita) +
+      '&wantEmail=' + we +
+      '&wantSms=' + ws +
+      '&wantIta=' + wi +
+      '&wantSite=' + wsi
+    ).then(function(r){ return r.json(); }).then(function(d){
       alert(d.ok ? '✅ تنظیمات اطلاع‌رسانی ثبت شد!' : '❌ خطا: ' + (d.error || ''));
       if (d.ok) ov.parentNode.removeChild(ov);
     }).catch(function(){ alert('❌ خطا در اتصال'); });
@@ -13638,7 +13684,7 @@ function openEmailForm() {
 setInterval(function(){
   if (!getMyKarbari2()) return;
   if (document.getElementById('emailFormCard')) return;
-    var adminCard = null;
+  var adminCard = null;
   var items = document.querySelectorAll('.grid-menu-item');
   for (var i = 0; i < items.length; i++) {
     var tt = (items[i].textContent || '');
@@ -13650,37 +13696,12 @@ setInterval(function(){
   card.removeAttribute('onclick');
   card.onclick = openEmailForm;
   var lbl = card.querySelector('.menu-label');
-    if (lbl) lbl.textContent = 'ثبت نحوه ارسال صورتحساب';
+  if (lbl) lbl.textContent = 'ثبت نحوه ارسال صورتحساب';
   var ic = card.querySelector('i');
   if (ic) ic.className = 'fas fa-envelope';
   adminCard.parentNode.insertBefore(card, adminCard.nextSibling);
 }, 4000);
 </script>
 <!-- ===== EMAILFORM END ===== -->
-            <!-- ===== STMT REMINDER START ===== -->
-<script>
-function checkStmtReminder() {
-  try {
-    var kb = getMyKarbari2();
-    if (!kb) return;
-    fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
-      var existing = document.getElementById('stmtReminderBar');
-      if (!d.ok || d.found) { if (existing) existing.parentNode.removeChild(existing); return; }
-      if (existing) return;
-      if (sessionStorage.getItem('stmtReminderHidden')) return;
-      var bar = document.createElement('div');
-      bar.id = 'stmtReminderBar';
-      bar.style.cssText = 'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);width:92%;max-width:430px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1a1a2e;border-radius:14px;padding:12px 16px;z-index:9990;display:flex;align-items:center;gap:10px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);font-family:tahoma;font-size:.83rem;font-weight:700';
-      bar.innerHTML = '<span style="flex:1;line-height:1.8">📬 هنوز نحوه دریافت صورتحساب را انتخاب نکرده‌اید — ثبت‌نام کنید</span><span id="stmtReminderClose" style="font-size:1.05rem;padding:4px 6px">✕</span>';
-      document.body.appendChild(bar);
-      bar.onclick = function(){ openEmailForm(); };
-      document.getElementById('stmtReminderClose').onclick = function(e){ e.stopPropagation(); bar.parentNode.removeChild(bar); sessionStorage.setItem('stmtReminderHidden','1'); };
-    }).catch(function(){});
-  } catch(e) {}
-}
-setInterval(checkStmtReminder, 15000);
-setTimeout(checkStmtReminder, 4000);
-</script>
-<!-- ===== STMT REMINDER END ===== -->
 </body>
 </html>
