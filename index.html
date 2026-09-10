@@ -4716,7 +4716,7 @@ function checkGoldConditions(member) {
             console.log('🔍 در حال تلاش برای خواندن از Apps Script...');
             
             try {
-                const result1 = await parseOneExcelFromAppsScript(DATA_URL_1);
+                const result1 = await parseOneExcelFromAppsScript('https://script.google.com/macros/s/AKfycbwXTUOlyPYRnxiFaeAvMgM_2vGwxOSWG1p05gc-N6yQVGyJ9xYswjcQRXs7DD9phqfl/exec?action=readExcel');
                 if (result1 && result1.members && result1.members.length > 0) {
                     console.log('✅ موفق! داده‌ها از Apps Script خوانده شدند.');
                     return { source: 'Apps Script', data: result1 };
