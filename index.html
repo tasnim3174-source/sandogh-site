@@ -4522,8 +4522,7 @@ function checkGoldConditions(member) {
         async function parseOneExcelFromAppsScript(url) {
             try {
                 const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel';
-           const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel';
-const response = await fetch(fullUrl, { cache: 'no-cache' });
+           const response = await fetch(fullUrl, { cache: 'no-cache' });
                 const json = await response.json();
                 
                 if (json.error) {
