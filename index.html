@@ -4521,7 +4521,8 @@ function checkGoldConditions(member) {
         // 🆕 تابع کمکی: خواندن JSON از Apps Script
         async function parseOneExcelFromAppsScript(url) {
             try {
-                const response = await fetch(url, { cache: 'no-cache' });
+                const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel';
+            const response = await fetch(fullUrl, { cache: 'no-cache' });
                 const json = await response.json();
                 
                 if (json.error) {
