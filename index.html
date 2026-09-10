@@ -13609,11 +13609,6 @@ function openEmailForm() {
     '</label>' +
 
     '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
-      '<input type="checkbox" id="chkIta" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
-      '<span style="font-size:.9rem">💬 ایتا</span>' +
-    '</label>' +
-
-    '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
       '<input type="checkbox" id="chkSite" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
       '<span style="font-size:.9rem">🌐 داخل همین سایت (نمایش هنگام ورود)</span>' +
     '</label>' +
@@ -13623,11 +13618,6 @@ function openEmailForm() {
       '<input id="stmtEmailInput" type="email" dir="ltr" placeholder="example@gmail.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
     '</div>' +
 
-    '<div id="itaBox" style="display:none;margin-bottom:12px">' +
-      '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">💬 شماره موبایل یا آیدی ایتا:</div>' +
-      '<input id="stmtItaInput" type="text" dir="ltr" placeholder="09xxxxxxxxx" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
-    '</div>' +
-
     '<div style="display:flex;gap:8px;margin-top:6px">' +
     '<button id="stmtEmailSave" style="flex:1;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer">💾 ثبت</button>' +
     '<button id="stmtEmailClose" style="background:#333;color:#fff;border:none;border-radius:10px;padding:11px 16px;cursor:pointer">بستن</button>' +
@@ -13635,44 +13625,32 @@ function openEmailForm() {
   document.body.appendChild(ov);
 
   var chkE = document.getElementById('chkEmail');
-  var chkI = document.getElementById('chkIta');
   var boxE = document.getElementById('emailBox');
-  var boxI = document.getElementById('itaBox');
-
   chkE.onchange = function(){ boxE.style.display = chkE.checked ? 'block' : 'none'; };
-  chkI.onchange = function(){ boxI.style.display = chkI.checked ? 'block' : 'none'; };
 
   fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
     if (!d.ok) return;
     document.getElementById('chkSms').checked = !!d.wantSms;
     chkE.checked = !!d.wantEmail;
-    chkI.checked = !!d.wantIta;
     document.getElementById('chkSite').checked = !!d.wantSite;
     boxE.style.display = chkE.checked ? 'block' : 'none';
-    boxI.style.display = chkI.checked ? 'block' : 'none';
     if (d.email) document.getElementById('stmtEmailInput').value = d.email;
-    if (d.itaId) document.getElementById('stmtItaInput').value = d.itaId;
   }).catch(function(){});
 
   document.getElementById('stmtEmailSave').onclick = function(){
     var we = chkE.checked ? 1 : 0;
     var ws = document.getElementById('chkSms').checked ? 1 : 0;
-    var wi = chkI.checked ? 1 : 0;
     var wsi = document.getElementById('chkSite').checked ? 1 : 0;
     var em = document.getElementById('stmtEmailInput').value.trim();
-    var ita = document.getElementById('stmtItaInput').value.trim();
 
     if (we === 1 && (em.indexOf('@') < 1)) { alert('❌ لطفاً آدرس ایمیل معتبر وارد کنید'); return; }
-    if (wi === 1 && ita.length < 5) { alert('❌ لطفاً شماره موبایل یا آیدی ایتا را وارد کنید'); return; }
-    if (we + ws + wi + wsi === 0) { alert('⚠️ حداقل یک روش را انتخاب کنید'); return; }
+    if (we + ws + wsi === 0) { alert('⚠️ حداقل یک روش را انتخاب کنید'); return; }
 
     fetch(EMAIL_API + '?action=setStatementEmail&user=' + encodeURIComponent(kb) +
       '&name=' + encodeURIComponent(getMyName2()) +
       '&email=' + encodeURIComponent(em) +
-      '&itaId=' + encodeURIComponent(ita) +
       '&wantEmail=' + we +
       '&wantSms=' + ws +
-      '&wantIta=' + wi +
       '&wantSite=' + wsi
     ).then(function(r){ return r.json(); }).then(function(d){
       alert(d.ok ? '✅ تنظیمات اطلاع‌رسانی ثبت شد!' : '❌ خطا: ' + (d.error || ''));
