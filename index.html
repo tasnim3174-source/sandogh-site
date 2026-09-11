@@ -13729,5 +13729,93 @@ setInterval(function(){
   pickFun();
 })();
 </script>
+  <!-- ===== تور راهنمای صندوق اتحاد ===== -->
+<style>
+  #gtFab { position:fixed; bottom:16px; right:16px; z-index:9000; background:linear-gradient(135deg,#b8860b,#ffd700); color:#1a1a2e; border:none; border-radius:50px; padding:12px 18px; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.4); font-family:Tahoma; }
+  #gtDim { position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9100; display:none; }
+  #gtDim.show { display:block; }
+  .gt-hl { border-color:#ffd700 !important; box-shadow:0 0 0 4px rgba(255,215,0,.35), 0 0 24px rgba(255,215,0,.5) !important; transform:scale(1.04); position:relative; z-index:9150; }
+  #gtCard { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); width:92%; max-width:400px; background:#1a1a2e; border:2px solid #ffd700; border-radius:16px; padding:16px; z-index:9200; display:none; box-shadow:0 8px 30px rgba(0,0,0,.6); font-family:Tahoma; color:#fff; }
+  #gtCard.show { display:block; }
+  #gtCard .t { font-weight:800; color:#ffd700; font-size:1rem; margin-bottom:8px; }
+  #gtCard .d { font-size:.85rem; line-height:1.9; color:#eee; margin-bottom:12px; }
+  #gtCard .btns { display:flex; gap:8px; }
+  #gtCard button { flex:1; border:none; border-radius:10px; padding:10px; font-weight:700; cursor:pointer; font-family:Tahoma; }
+  #gtNext { background:linear-gradient(135deg,#b8860b,#ffd700); color:#1a1a2e; }
+  #gtPrev { background:#333; color:#fff; }
+  #gtSkip { background:transparent; color:#888; flex:.5; }
+</style>
+
+<button id="gtFab">❓ راهنما</button>
+<div id="gtDim"></div>
+<div id="gtCard">
+  <div class="t" id="gtTitle"></div>
+  <div class="d" id="gtDesc"></div>
+  <div class="btns">
+    <button id="gtSkip">رد کن</button>
+    <button id="gtPrev">قبلی</button>
+    <button id="gtNext">بعدی ←</button>
+  </div>
+</div>
+
+<script>
+var GT_TOUR = [
+  { w:'صفحه اصلی',      em:'🏠', t:'صفحه اصلی',        d:'اینجا وضعیت کلی حساب شما را می‌بینید: موجودی، مانده وام و آخرین واریزی‌ها.' },
+  { w:'صورتحساب',        em:'📄', t:'صورتحساب',          d:'جزئیات کامل ماهانه: جمع واریزی‌ها، اقساط پرداخت‌شده و معوقه‌ها.' },
+  { w:'اطلاع',           em:'📬', t:'اطلاع‌رسانی',       d:'انتخاب می‌کنید صورتحساب برایتان ایمیل شود، پیامک شود یا داخل همین سایت ببینید.' },
+  { w:'فروشگاه',         em:'🛍️', t:'امتیازات و فروشگاه', d:'با ورود روزانه و شرکت در نظرسنجی امتیاز جمع کنید و از فروشگاه جایزه بگیرید.' },
+  { w:'نظرسنجی',         em:'📊', t:'نظرسنجی و مسابقات',  d:'در نظرسنجی‌ها و مسابقات شرکت کنید تا امتیاز ویژه بگیرید.' },
+  { w:'پروفایل',         em:'👤', t:'پروفایل',           d:'اطلاعات شخصی شما و تنظیمات حساب‌تان اینجاست.' }
+];
+var gtI = 0;
+
+function gtFind(word){
+  var els = document.querySelectorAll('button, a, [onclick], .card, .tile, .menuItem, .sec');
+  for (var i=0;i<els.length;i++){
+    var tx = (els[i].textContent||'').trim();
+    if (tx && tx.length < 30 && tx.indexOf(word) > -1) return els[i];
+  }
+  return null;
+}
+function gtClear(){
+  var o = document.querySelectorAll('.gt-hl');
+  for (var k=0;k<o.length;k++) o[k].classList.remove('gt-hl');
+}
+function gtShow(i){
+  gtI = i; gtClear();
+  if (i >= GT_TOUR.length) { gtEnd(true); return; }
+  var el = gtFind(GT_TOUR[i].w);
+  if (el) { el.classList.add('gt-hl'); try{ el.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){} }
+  document.getElementById('gtTitle').innerHTML = GT_TOUR[i].em + ' ' + GT_TOUR[i].t + '  <span style="color:#888;font-size:.75rem">(' + (i+1) + '/' + GT_TOUR.length + ')</span>';
+  document.getElementById('gtDesc').textContent = GT_TOUR[i].d;
+  document.getElementById('gtPrev').style.visibility = (i===0)?'hidden':'visible';
+  document.getElementById('gtNext').textContent = (i===GT_TOUR.length-1)?'✅ پایان':'بعدی ←';
+  document.getElementById('gtCard').classList.add('show');
+  document.getElementById('gtDim').classList.add('show');
+}
+function gtEnd(seen){
+  gtClear();
+  document.getElementById('gtCard').classList.remove('show');
+  document.getElementById('gtDim').classList.remove('show');
+  if (seen) { try{ localStorage.setItem('gtSeen','1'); }catch(e){} }
+}
+function gtStart(){ gtShow(0); }
+
+document.getElementById('gtNext').onclick = function(){ gtShow(gtI+1); };
+document.getElementById('gtPrev').onclick = function(){ gtShow(gtI-1); };
+document.getElementById('gtSkip').onclick = function(){ gtEnd(true); };
+document.getElementById('gtFab').onclick = gtStart;
+
+// شروع خودکار فقط یک بار، بعد از ورود کاربر
+setInterval(function(){
+  try{
+    if (localStorage.getItem('gtSeen')) return;
+    if (!(window.loginResult && (loginResult.user || loginResult.id))) return;
+    if (document.getElementById('gtCard').classList.contains('show')) return;
+    gtStart();
+  }catch(e){}
+}, 1500);
+</script>
+<!-- ===== پایان تور راهنما ===== -->          
 </body>
 </html>
