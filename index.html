@@ -13867,20 +13867,16 @@ setInterval(function(){
     if(!shop) return false;
     var b=shop.cloneNode(false);
     b.id='rwHomeBtn';
+    b.removeAttribute('onclick');
+    b.removeAttribute('href');
     b.innerHTML='<span style="font-size:1.6rem;display:block;margin-bottom:6px">🎰</span>پاداش روزانه';
-    b.onclick=openRW;
+    b.addEventListener('click', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      openRW();
+    });
     shop.parentNode.insertBefore(b, shop.nextSibling);
     return true;
   }
-
-  // شروع: بعد از ورود، کلید را اضافه و امتیاز روزانه را ثبت کن
-  var rwBoot=false;
-  setInterval(function(){
-    var u=me(); if(!u) return;
-    if (injectHomeButton() && !rwBoot){ rwBoot=true; dailyLogin(); }
-  },1500);
-})();
-</script>
-<!-- ===== پایان پاداش روزانه ===== -->
 </body>
 </html>
