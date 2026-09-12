@@ -13731,9 +13731,45 @@ setInterval(function(){
 </script>
 <!-- ===== پاداش روزانه: گردونه شانس + تقویم ورود ===== -->
 <style>
-  #rwOverlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:9500; display:none; align-items:center; justify-content:center; font-family:Tahoma; padding:12px; }
+  /* ===== دکمه شناور طلایی درخشان ===== */
+  #rwHomeBtn {
+    position:fixed !important;
+    bottom:88px !important;
+    left:16px !important;
+    z-index:99999 !important;
+    background:linear-gradient(135deg,#ffed4e 0%,#ffd700 30%,#b8860b 60%,#ffd700 100%) !important;
+    background-size:200% 200% !important;
+    color:#1a1a2e !important;
+    border:2px solid #fff5b8 !important;
+    border-radius:50px !important;
+    padding:10px 20px !important;
+    font-weight:900 !important;
+    font-size:.85rem !important;
+    cursor:pointer !important;
+    font-family:Tahoma !important;
+    box-shadow:
+      0 0 20px rgba(255,215,0,.7),
+      0 0 40px rgba(255,215,0,.4),
+      0 4px 14px rgba(0,0,0,.4),
+      inset 0 1px 2px rgba(255,255,255,.5) !important;
+    animation: rwPulse 2.2s ease-in-out infinite, rwShimmer 3s linear infinite !important;
+    text-shadow:0 1px 2px rgba(255,255,255,.6) !important;
+  }
+  @keyframes rwPulse {
+    0%,100% { box-shadow: 0 0 20px rgba(255,215,0,.7), 0 0 40px rgba(255,215,0,.4), 0 4px 14px rgba(0,0,0,.4), inset 0 1px 2px rgba(255,255,255,.5); transform:scale(1); }
+    50% { box-shadow: 0 0 30px rgba(255,215,0,.95), 0 0 60px rgba(255,215,0,.6), 0 6px 20px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.7); transform:scale(1.04); }
+  }
+  @keyframes rwShimmer {
+    0% { background-position:0% 50%; }
+    100% { background-position:200% 50%; }
+  }
+  #rwHomeBtn:hover { transform:scale(1.08) !important; }
+  #rwHomeBtn span { font-size:1.4rem; display:inline-block; vertical-align:-3px; margin-left:6px; filter:drop-shadow(0 0 6px rgba(255,215,0,.8)); }
+
+  /* ===== پنجره گردونه ===== */
+  #rwOverlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:99998; display:none; align-items:center; justify-content:center; font-family:Tahoma; padding:12px; }
   #rwOverlay.show { display:flex; }
-  #rwBox { background:#1a1a2e; border:2px solid #ffd700; border-radius:20px; padding:18px; width:100%; max-width:420px; max-height:92vh; overflow-y:auto; color:#fff; text-align:center; }
+  #rwBox { background:#1a1a2e; border:2px solid #ffd700; border-radius:20px; padding:18px; width:100%; max-width:420px; max-height:92vh; overflow-y:auto; color:#fff; text-align:center; box-shadow:0 0 40px rgba(255,215,0,.35); }
   #rwBox h2 { color:#ffd700; font-size:1rem; margin-bottom:4px; }
   #rwPts { font-size:.8rem; color:#3ee6a8; margin-bottom:12px; }
   #rwClose { background:#333; color:#fff; border:none; border-radius:8px; padding:6px 14px; cursor:pointer; margin-bottom:10px; }
@@ -13750,7 +13786,7 @@ setInterval(function(){
   #rwCal .d { aspect-ratio:1; border-radius:7px; background:#22223c; border:1px solid #333; display:grid; place-items:center; font-size:.65rem; color:#888; }
   #rwCal .d.on { background:linear-gradient(135deg,#0f7a4f,#3ee6a8); border-color:#3ee6a8; color:#06281a; font-weight:800; }
   #rwCal .d.today { outline:2px solid #ffd700; }
-  #rwToast { position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px); background:#1a1a2e; border:2px solid #ffd700; color:#fff; border-radius:14px; padding:12px 20px; font-weight:800; z-index:9900; transition:transform .4s; max-width:90%; text-align:center; font-family:Tahoma; }
+  #rwToast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(80px); background:#1a1a2e; border:2px solid #ffd700; color:#fff; border-radius:14px; padding:12px 20px; font-weight:800; z-index:99999; transition:transform .4s; max-width:90%; text-align:center; font-family:Tahoma; box-shadow:0 0 20px rgba(255,215,0,.5); }
   #rwToast.show { transform:translateX(-50%) translateY(0); }
 </style>
 
@@ -13859,20 +13895,11 @@ setInterval(function(){
       var tx=(els[i].textContent||'').trim();
       if (tx && tx.length<30 && tx.indexOf('فروشگاه')>-1){ shop=els[i]; break; }
     }
-    var b;
-    if (shop) {
-      b=shop.cloneNode(false);
-      b.removeAttribute('onclick');
-      b.removeAttribute('href');
-      shop.parentNode.insertBefore(b, shop.nextSibling);
-    } else {
-      b=document.createElement('button');
-      b.style.cssText='position:fixed;bottom:16px;left:16px;z-index:9000;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:50px;padding:12px 18px;font-weight:800;cursor:pointer;font-family:Tahoma;box-shadow:0 4px 14px rgba(0,0,0,.4)';
-      document.body.appendChild(b);
-    }
+    var b=document.createElement('button');
     b.id='rwHomeBtn';
-    b.innerHTML='<span style="font-size:1.6rem;display:block;margin-bottom:6px">🎰</span>پاداش روزانه';
+    b.innerHTML='<span>🎰</span>پاداش روزانه';
     b.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openRW(); });
+    document.body.appendChild(b);
     return true;
   }
 
