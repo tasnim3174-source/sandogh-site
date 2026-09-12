@@ -13778,7 +13778,7 @@ function rwToast(m){
 
   function ensureUI(){
     if(!document.getElementById('rwStyle')){ var st=el('style','rwStyle'); st.textContent=RW_CSS; document.head.appendChild(st); }
-    if(!document.getElementById('rwToast')){ document.body.appendChild(el('div','rwToast')); }
+    var lg=document.getElementById('rwToast'); if(lg&&lg.parentNode) lg.parentNode.removeChild(lg);
     var ov=document.getElementById('rwOverlay');
     if(!ov){
       ov=el('div','rwOverlay');
