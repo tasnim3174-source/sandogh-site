@@ -13715,6 +13715,7 @@ setInterval(function(){
 <!-- ===== EMAILFORM END ===== -->
 <script>
 (function(){
+  // ===== انیمیشن رندوم لودر =====
   function pickFun(){
     var l = document.getElementById('newLoader');
     if(!l) return;
@@ -13727,9 +13728,8 @@ setInterval(function(){
     }).observe(l, { attributes:true, attributeFilter:['class'] });
   }
   pickFun();
-})();
-<script>
-(function(){
+
+  // ===== پاداش روزانه (گردونه + تقویم) =====
   var RW_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
   var PRIZES = [
     { label:'۱', pts:1, msg:'🎉 آفرین! ۱ امتیاز بردی' },
@@ -13758,11 +13758,11 @@ setInterval(function(){
 
   var rwHistory = [];
   function loadHistory(cb){
-    var u = me(); if(!u){ cb&&cb(); return; }
+    var u = me(); if(!u){ if(cb)cb(); return; }
     fetch(RW_API+'?action=getPointsHistory&user='+encodeURIComponent(u.id))
       .then(function(r){ return r.json(); })
-      .then(function(d){ rwHistory = d.history||[]; cb&&cb(); })
-      .catch(function(){ cb&&cb(); });
+      .then(function(d){ rwHistory = d.history||[]; if(cb)cb(); })
+      .catch(function(){ if(cb)cb(); });
   }
   function myPoints(){ var t=0; for(var i=0;i<rwHistory.length;i++) t+=Number(rwHistory[i].points)||0; return t; }
   function hasKey(prefix, day){ for(var i=0;i<rwHistory.length;i++){ if(String(rwHistory[i].uniqueKey||'').indexOf(prefix+day)===0) return true; } return false; }
@@ -13819,7 +13819,6 @@ setInterval(function(){
   var closeBtn = document.getElementById('rwClose');
   if (closeBtn) closeBtn.onclick=function(){ document.getElementById('rwOverlay').classList.remove('show'); };
 
-  // ===== ساخت دکمه فقط وقتی لازم است =====
   function makeButton(){
     if (document.getElementById('rwHomeBtn')) return;
     var b=document.createElement('button');
@@ -13832,7 +13831,7 @@ setInterval(function(){
   }
   function removeButton(){
     var b=document.getElementById('rwHomeBtn');
-    if(b) b.parentNode.removeChild(b);
+    if(b && b.parentNode) b.parentNode.removeChild(b);
   }
 
   setInterval(function(){
