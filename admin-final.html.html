@@ -592,6 +592,7 @@ function adminUpdatePoints(type){
 function loadShopProducts(){
   fetch(ADMIN_URL + '?action=getShopProducts').then(function(r){ return r.json(); }).then(function(d){
     var products = d.products || [];
+    window._shopProducts = products;
     var html = '';
     if (products.length === 0) { html = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">🛒 هنوز محصولی اضافه نشده</div>'; }
     else {
@@ -601,7 +602,10 @@ function loadShopProducts(){
         html += '<tr style="border-bottom:1px solid rgba(255,255,255,.1)">';
         html += '<td style="padding:10px">' + p.name + '</td><td style="padding:10px">' + (p.description || '-') + '</td>';
         html += '<td style="padding:10px">' + p.price + ' امتیاز</td><td style="padding:10px">' + p.stock + '</td>';
-        html += '<td style="padding:10px"><button onclick="deleteShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer;font-family:tahoma">🗑️ حذف</button></td></tr>';
+        html += '<td style="padding:10px"><div style="display:flex;gap:6px;flex-wrap:wrap">';
+        html += '<button onclick="editShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ffd700;color:#1a1a2e;cursor:pointer;font-family:tahoma;font-weight:700">✏️ ویرایش</button>';
+        html += '<button onclick="deleteShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer;font-family:tahoma">🗑️ حذف</button>';
+        html += '</div></td></tr>';
       });
       html += '</table>';
     }
@@ -626,6 +630,30 @@ function deleteShopProduct(shenaseh){
   fetch(ADMIN_URL + '?action=deleteShopProduct&shenaseh=' + encodeURIComponent(shenaseh)).then(function(r){ return r.json(); }).then(function(d){
     if (d.ok) { alert('✅ محصول حذف شد'); loadShopProducts(); } else { alert('❌ خطا در حذف محصول'); }
   }).catch(function(){ alert('❌ خطا در اتصال'); });
+}
+function editShopProduct(shenaseh){
+  var list = window._shopProducts || [];
+  var p = null;
+  for (var i=0;i<list.length;i++){ if(String(list[i].shenaseh)===String(shenaseh)){ p=list[i]; break; } }
+  if(!p){ alert('❌ محصول پیدا نشد'); return; }
+  var name = prompt('✏️ نام محصول:', p.name || '');
+  if (name === null) return;
+  name = name.trim();
+  if (!name) { alert('⚠️ نام محصول نمی‌تواند خالی باشد'); return; }
+  var desc = prompt('📝 توضیحات:', p.description || '');
+  if (desc === null) return;
+  var price = prompt('💰 قیمت (امتیاز):', p.price || 0);
+  if (price === null) return;
+  price = parseInt(price) || 0;
+  if (price <= 0) { alert('⚠️ قیمت باید بزرگ‌تر از صفر باشد'); return; }
+  var stock = prompt('📦 موجودی:', p.stock || 0);
+  if (stock === null) return;
+  stock = parseInt(stock) || 0;
+  fetch(ADMIN_URL + '?action=updateShopProduct&shenaseh=' + encodeURIComponent(shenaseh) + '&name=' + encodeURIComponent(name) + '&description=' + encodeURIComponent(desc) + '&price=' + price + '&stock=' + stock)
+    .then(function(r){ return r.json(); }).then(function(d){
+      if (d.ok) { alert('✅ محصول با موفقیت ویرایش شد'); loadShopProducts(); }
+      else { alert('❌ خطا در ویرایش: ' + (d.error || 'نامشخص')); }
+    }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
 
 function loadPurchaseRequests(){
@@ -702,7 +730,6 @@ function resolvePurchase(id, status){
       loadPurchaseRequests();
     });
 }
-
 (function(){
   var m = location.search.match(/[?&]ct=([^&]+)/);
   if (!m) return;
