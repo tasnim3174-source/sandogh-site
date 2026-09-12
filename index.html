@@ -13731,40 +13731,34 @@ setInterval(function(){
 </script>
 <!-- ===== پاداش روزانه: گردونه شانس + تقویم ورود ===== -->
 <style>
-  /* ===== دکمه شناور طلایی درخشان ===== */
+  /* ===== دکمه شناور ساده و زیبا ===== */
   #rwHomeBtn {
-    position:fixed !important;
-    bottom:88px !important;
-    left:16px !important;
-    z-index:99999 !important;
-    background:linear-gradient(135deg,#ffed4e 0%,#ffd700 30%,#b8860b 60%,#ffd700 100%) !important;
-    background-size:200% 200% !important;
-    color:#1a1a2e !important;
-    border:2px solid #fff5b8 !important;
-    border-radius:50px !important;
-    padding:10px 20px !important;
-    font-weight:900 !important;
-    font-size:.85rem !important;
-    cursor:pointer !important;
-    font-family:Tahoma !important;
-    box-shadow:
-      0 0 20px rgba(255,215,0,.7),
-      0 0 40px rgba(255,215,0,.4),
-      0 4px 14px rgba(0,0,0,.4),
-      inset 0 1px 2px rgba(255,255,255,.5) !important;
-    animation: rwPulse 2.2s ease-in-out infinite, rwShimmer 3s linear infinite !important;
-    text-shadow:0 1px 2px rgba(255,255,255,.6) !important;
+    position:fixed;
+    bottom:80px;
+    left:16px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ffd700,#ffed4e);
+    border:3px solid #fff;
+    box-shadow:0 4px 20px rgba(255,215,0,.6), 0 0 30px rgba(255,215,0,.4);
+    cursor:pointer;
+    z-index:99999;
+    font-size:28px;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    animation:rwFloat 2s ease-in-out infinite;
   }
-  @keyframes rwPulse {
-    0%,100% { box-shadow: 0 0 20px rgba(255,215,0,.7), 0 0 40px rgba(255,215,0,.4), 0 4px 14px rgba(0,0,0,.4), inset 0 1px 2px rgba(255,255,255,.5); transform:scale(1); }
-    50% { box-shadow: 0 0 30px rgba(255,215,0,.95), 0 0 60px rgba(255,215,0,.6), 0 6px 20px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.7); transform:scale(1.04); }
+  #rwHomeBtn.show { display:flex; }
+  @keyframes rwFloat {
+    0%,100% { transform:translateY(0); box-shadow:0 4px 20px rgba(255,215,0,.6), 0 0 30px rgba(255,215,0,.4); }
+    50% { transform:translateY(-6px); box-shadow:0 8px 25px rgba(255,215,0,.7), 0 0 40px rgba(255,215,0,.5); }
   }
-  @keyframes rwShimmer {
-    0% { background-position:0% 50%; }
-    100% { background-position:200% 50%; }
+  #rwHomeBtn::after {
+    content:"🎰";
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.3));
   }
-  #rwHomeBtn:hover { transform:scale(1.08) !important; }
-  #rwHomeBtn span { font-size:1.4rem; display:inline-block; vertical-align:-3px; margin-left:6px; filter:drop-shadow(0 0 6px rgba(255,215,0,.8)); }
 
   /* ===== پنجره گردونه ===== */
   #rwOverlay { position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:99998; display:none; align-items:center; justify-content:center; font-family:Tahoma; padding:12px; }
@@ -13789,6 +13783,8 @@ setInterval(function(){
   #rwToast { position:fixed; bottom:100px; left:50%; transform:translateX(-50%) translateY(80px); background:#1a1a2e; border:2px solid #ffd700; color:#fff; border-radius:14px; padding:12px 20px; font-weight:800; z-index:99999; transition:transform .4s; max-width:90%; text-align:center; font-family:Tahoma; box-shadow:0 0 20px rgba(255,215,0,.5); }
   #rwToast.show { transform:translateX(-50%) translateY(0); }
 </style>
+
+<button id="rwHomeBtn" aria-label="پاداش روزانه"></button>
 
 <div id="rwOverlay">
   <div id="rwBox">
@@ -13886,27 +13882,19 @@ setInterval(function(){
 
   function openRW(){ document.getElementById('rwOverlay').classList.add('show'); loadHistory(refreshUI); }
   document.getElementById('rwClose').onclick=function(){ document.getElementById('rwOverlay').classList.remove('show'); };
+  document.getElementById('rwHomeBtn').onclick=function(e){ e.preventDefault(); e.stopPropagation(); openRW(); };
 
-  function injectHomeButton(){
-    if (document.getElementById('rwHomeBtn')) return true;
-    var els=document.querySelectorAll('button, a, [onclick], .card, .tile, .menuItem, .sec');
-    var shop=null;
-    for(var i=0;i<els.length;i++){
-      var tx=(els[i].textContent||'').trim();
-      if (tx && tx.length<30 && tx.indexOf('فروشگاه')>-1){ shop=els[i]; break; }
-    }
-    var b=document.createElement('button');
-    b.id='rwHomeBtn';
-    b.innerHTML='<span>🎰</span>پاداش روزانه';
-    b.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openRW(); });
-    document.body.appendChild(b);
-    return true;
-  }
-
+  // فقط بعد از ورود دکمه را نمایش بده
   var rwBoot=false;
   setInterval(function(){
-    var u=me(); if(!u) return;
-    if (injectHomeButton() && !rwBoot){ rwBoot=true; dailyLogin(); }
+    var u=me();
+    var btn=document.getElementById('rwHomeBtn');
+    if(!u){
+      if(btn) btn.classList.remove('show');
+      return;
+    }
+    if(btn) btn.classList.add('show');
+    if(!rwBoot){ rwBoot=true; dailyLogin(); }
   },1500);
 })();
 </script>
