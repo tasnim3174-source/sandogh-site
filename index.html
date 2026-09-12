@@ -13785,7 +13785,6 @@ setInterval(function(){
   function me(){ try{ return (window.loginResult && (loginResult.user||loginResult.id)) ? { id:String(loginResult.user||loginResult.id), name:loginResult.name||'' } : null; }catch(e){ return null; } }
   function rwToast(m){ var t=document.getElementById('rwToast'); t.textContent=m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },3200); }
 
-  // برچسب‌های گردونه
   var wheel = document.getElementById('rwWheel');
   for (var i=0;i<8;i++){
     var s=document.createElement('span');
@@ -13824,14 +13823,12 @@ setInterval(function(){
     renderCal();
   }
 
-  // امتیاز ورود روزانه (خودکار، یک بار در روز)
   function dailyLogin(){
     var u=me(); if(!u) return;
     fetch(RW_API+'?action=addPoints&user='+encodeURIComponent(u.id)+'&name='+encodeURIComponent(u.name)+'&reason='+encodeURIComponent('📅 ورود روزانه')+'&points=2&uniqueKey='+encodeURIComponent('login_'+iso()))
       .then(function(r){ return r.json(); }).catch(function(){});
   }
 
-  // چرخش
   document.getElementById('rwSpin').onclick=function(){
     var u=me(); if(!u){ rwToast('❌ ابتدا وارد شوید'); return; }
     if (hasKey('spin_', iso())) return;
@@ -13851,11 +13848,9 @@ setInterval(function(){
     },4200);
   };
 
-  // باز/بستن پنجره
   function openRW(){ document.getElementById('rwOverlay').classList.add('show'); loadHistory(refreshUI); }
   document.getElementById('rwClose').onclick=function(){ document.getElementById('rwOverlay').classList.remove('show'); };
 
-  // اضافه کردن کلید «🎰 پاداش روزانه» کنار کلید فروشگاه
   function injectHomeButton(){
     if (document.getElementById('rwHomeBtn')) return true;
     var els=document.querySelectorAll('button, a, [onclick], .card, .tile, .menuItem, .sec');
@@ -13864,19 +13859,30 @@ setInterval(function(){
       var tx=(els[i].textContent||'').trim();
       if (tx && tx.length<30 && tx.indexOf('فروشگاه')>-1){ shop=els[i]; break; }
     }
-    if(!shop) return false;
-    var b=shop.cloneNode(false);
+    var b;
+    if (shop) {
+      b=shop.cloneNode(false);
+      b.removeAttribute('onclick');
+      b.removeAttribute('href');
+      shop.parentNode.insertBefore(b, shop.nextSibling);
+    } else {
+      b=document.createElement('button');
+      b.style.cssText='position:fixed;bottom:16px;left:16px;z-index:9000;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:50px;padding:12px 18px;font-weight:800;cursor:pointer;font-family:Tahoma;box-shadow:0 4px 14px rgba(0,0,0,.4)';
+      document.body.appendChild(b);
+    }
     b.id='rwHomeBtn';
-    b.removeAttribute('onclick');
-    b.removeAttribute('href');
     b.innerHTML='<span style="font-size:1.6rem;display:block;margin-bottom:6px">🎰</span>پاداش روزانه';
-    b.addEventListener('click', function(e){
-      e.preventDefault();
-      e.stopPropagation();
-      openRW();
-    });
-    shop.parentNode.insertBefore(b, shop.nextSibling);
+    b.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openRW(); });
     return true;
   }
+
+  var rwBoot=false;
+  setInterval(function(){
+    var u=me(); if(!u) return;
+    if (injectHomeButton() && !rwBoot){ rwBoot=true; dailyLogin(); }
+  },1500);
+})();
+</script>
+<!-- ===== پایان پاداش روزانه ===== -->
 </body>
 </html>
