@@ -13738,8 +13738,17 @@ setInterval(function(){
   function iso(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
   function me(){ try{ return (window.loginResult&&(loginResult.user||loginResult.id))?{id:String(loginResult.user||loginResult.id),name:loginResult.name||''}:null; }catch(e){ return null; } }
   function el(tag,id,txt){ var d=document.createElement(tag); if(id)d.id=id; if(txt)d.textContent=txt; return d; }
-  function rwToast(m){ var t=document.getElementById('rwToast'); if(!t)return; t.textContent=m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },10000); }
-
+  
+function rwToast(m){
+    var old=document.getElementById('rwToastDyn');
+    if(old&&old.parentNode) old.parentNode.removeChild(old);
+    var t=document.createElement('div');
+    t.id='rwToastDyn';
+    t.textContent=m;
+    t.style.cssText='position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:2px solid #ffd700;color:#fff;border-radius:14px;padding:10px 18px;font-weight:800;font-size:.85rem;z-index:2147483647;max-width:85%;text-align:center;font-family:Tahoma;box-shadow:0 0 20px rgba(255,215,0,.5);pointer-events:none';
+    document.body.appendChild(t);
+    setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); },10000);
+  }
   var rwHistory=[];
   function loadHistory(cb){ var u=me(); if(!u){ if(cb)cb(); return; } fetch(RW_API+'?action=getPointsHistory&user='+encodeURIComponent(u.id)).then(function(r){return r.json();}).then(function(d){ rwHistory=d.history||[]; if(cb)cb(); }).catch(function(){ if(cb)cb(); }); }
   function myPoints(){ var t=0; for(var i=0;i<rwHistory.length;i++) t+=Number(rwHistory[i].points)||0; return t; }
