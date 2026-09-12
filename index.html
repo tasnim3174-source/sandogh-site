@@ -13738,7 +13738,7 @@ setInterval(function(){
   function iso(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
   function me(){ try{ return (window.loginResult&&(loginResult.user||loginResult.id))?{id:String(loginResult.user||loginResult.id),name:loginResult.name||''}:null; }catch(e){ return null; } }
   function el(tag,id,txt){ var d=document.createElement(tag); if(id)d.id=id; if(txt)d.textContent=txt; return d; }
-  function rwToast(m){ var t=document.getElementById('rwToast'); if(!t)return; t.textContent=m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },3200); }
+  function rwToast(m){ var t=document.getElementById('rwToast'); if(!t)return; t.textContent=m; t.classList.add('show'); setTimeout(function(){ t.classList.remove('show'); },10000); }
 
   var rwHistory=[];
   function loadHistory(cb){ var u=me(); if(!u){ if(cb)cb(); return; } fetch(RW_API+'?action=getPointsHistory&user='+encodeURIComponent(u.id)).then(function(r){return r.json();}).then(function(d){ rwHistory=d.history||[]; if(cb)cb(); }).catch(function(){ if(cb)cb(); }); }
