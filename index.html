@@ -13736,18 +13736,19 @@ setInterval(function(){
 
   function fa(n){ try{ return Number(n).toLocaleString('fa-IR'); }catch(e){ return n; } }
   function iso(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
-   function me(){
+     function me(){
     try{
-      var lr=window.loginResult; if(!lr) return null;
-      var id=null, name='';
-      if (lr.user && typeof lr.user==='object'){ id=lr.user.id||lr.user.shenaseh||lr.user.code||lr.user.user||lr.user.karbari; name=lr.user.name||''; }
-      else if (lr.user!==undefined && lr.user!==null){ id=lr.user; }
-      if (!id) id=lr.id||lr.shenaseh||lr.code||lr.karbari||lr.memberId;
-      if (!name) name=lr.name||'';
-      if (id===undefined||id===null||String(id).indexOf('object')>-1) return null;
-      return { id:String(id), name:String(name) };
+      var lr=window.loginResult; if(!lr||!lr.user) return null;
+      var id=lr.user.memberId||lr.user.id;
+      if(id===undefined||id===null) return null;
+      var name='';
+      try{
+        var ms=(lr.data&&lr.data.members)||[];
+        for(var i=0;i<ms.length;i++){ if(Number(ms[i].id)===Number(id)){ name=ms[i].firstName||''; break; } }
+      }catch(e){}
+      return { id:String(id), name:name };
     }catch(e){ return null; }
-  }loginResult.id))?{id:String(loginResult.user||loginResult.id),name:loginResult.name||''}:null; }catch(e){ return null; } }
+  }
   function el(tag,id,txt){ var d=document.createElement(tag); if(id)d.id=id; if(txt)d.textContent=txt; return d; }
   
 function rwToast(m){
