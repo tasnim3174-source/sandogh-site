@@ -1,29 +1,103 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl"><head><meta charset="UTF-8">
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>🛠️ پنل مدیر</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:tahoma}
-body{min-height:100vh;background:linear-gradient(135deg,#0f0f23,#1a1a2e);padding:20px;color:#fff}
+body{min-height:100vh;background:linear-gradient(135deg,#0f0f23,#1a1a2e);color:#fff;overflow-x:hidden}
+
+/* ===== LOGIN ===== */
 .card{max-width:420px;margin:60px auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.2);border-radius:24px;padding:30px;text-align:center}
-.logo{font-size:3rem}h1{color:#ffd700;font-size:1.4rem;margin:12px 0 5px}
+.logo{font-size:3rem}
+h1{color:#ffd700;font-size:1.4rem;margin:12px 0 5px}
 .sub{color:rgba(255,255,255,.5);font-size:.85rem;margin-bottom:22px}
 .inp{width:100%;padding:13px;margin-bottom:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;text-align:center;outline:none}
 .btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:900;cursor:pointer}
 .err{color:#ff6b6b;font-size:.85rem;margin-top:10px;display:none}
-.dash{display:none;max-width:800px;margin:0 auto}
+
+/* ===== DASHBOARD LAYOUT ===== */
+.dash{display:none;min-height:100vh}
+.sidebar{
+  position:fixed;
+  right:0;top:0;
+  width:220px;
+  height:100vh;
+  background:rgba(15,15,35,.95);
+  border-left:1px solid rgba(255,215,0,.2);
+  padding:20px 12px;
+  overflow-y:auto;
+  z-index:100;
+  transition:transform .3s ease;
+}
+.sidebar-title{
+  color:#ffd700;
+  font-size:.9rem;
+  font-weight:700;
+  text-align:center;
+  padding:10px;
+  margin-bottom:10px;
+  border-bottom:1px solid rgba(255,215,0,.2);
+}
+.menu-item{
+  display:block;
+  width:100%;
+  padding:12px 14px;
+  margin-bottom:6px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;
+  color:rgba(255,255,255,.7);
+  cursor:pointer;
+  font-weight:700;
+  font-size:.82rem;
+  text-align:right;
+  transition:all .2s;
+}
+.menu-item:hover{background:rgba(255,215,0,.1);color:#fff}
+.menu-item.active{background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-color:transparent}
+
+.main-content{
+  margin-right:220px;
+  padding:20px;
+  min-height:100vh;
+}
 .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
 .head h2{color:#ffd700;font-size:1.2rem}
-.ctrl{display:flex;gap:6px}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap}
 .ctrl button{padding:8px 14px;border-radius:99px;border:none;cursor:pointer;font-weight:700;font-size:.8rem}
-.on{background:#22c55e;color:#fff}.off{background:#ef4444;color:#fff}
+.on{background:#22c55e;color:#fff}
+.off{background:#ef4444;color:#fff}
 .refresh{background:rgba(255,215,0,.08)!important;border:1px solid rgba(255,215,0,.4)!important;color:#ffd700!important}
-.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
-.tab{flex:1;min-width:120px;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.6);cursor:pointer;font-weight:700;font-size:.78rem;text-align:center}
-.tab.on{background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border-color:transparent}
-.stats{display:flex;gap:8px;margin-bottom:12px}
-.stat{flex:1;background:rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center}
-.stat b{display:block;color:#ffd700;font-size:1.4rem}.stat span{color:rgba(255,255,255,.5);font-size:.72rem}
+
+/* ===== HAMBURGER (Mobile) ===== */
+.hamburger{
+  display:none;
+  position:fixed;
+  top:15px;right:15px;
+  width:44px;height:44px;
+  background:linear-gradient(135deg,#ffd700,#ff9d00);
+  border:none;border-radius:12px;
+  cursor:pointer;
+  z-index:101;
+  font-size:1.5rem;
+  color:#1a1a2e;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);
+}
+.overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  z-index:99;
+}
+
+/* ===== CONTENT COMPONENTS ===== */
+.stats{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.stat{flex:1;min-width:100px;background:rgba(255,255,255,.06);border-radius:12px;padding:14px;text-align:center}
+.stat b{display:block;color:#ffd700;font-size:1.4rem}
+.stat span{color:rgba(255,255,255,.5);font-size:.72rem}
 .search{width:100%;padding:11px;margin-bottom:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none}
 .tw{max-height:500px;overflow:auto;border-radius:14px;border:1px solid rgba(255,255,255,.1)}
 table{width:100%;border-collapse:collapse;font-size:.8rem;min-width:600px}
@@ -36,7 +110,8 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
 .loader{text-align:center;padding:30px;color:rgba(255,255,255,.5)}
 .bar-row{margin-bottom:10px}
 .bar-lbl{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:4px}
-.bar-lbl b{color:#fff}.bar-lbl span{color:rgba(255,255,255,.5)}
+.bar-lbl b{color:#fff}
+.bar-lbl span{color:rgba(255,255,255,.5)}
 .bar{height:8px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd700,#ff9d00);border-radius:99px}
 .opinion{background:rgba(255,215,0,.06);border:1px solid rgba(255,215,0,.15);border-radius:12px;padding:10px;margin-bottom:8px;font-size:.82rem}
@@ -56,180 +131,226 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
 .pending-tag{background:rgba(251,191,36,.15);color:#fbbf24;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
 .approved-tag{background:rgba(34,197,94,.15);color:#22c55e;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
 .rejected-tag{background:rgba(239,68,68,.15);color:#ef4444;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700}
-</style></head>
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media(max-width:768px){
+  .sidebar{transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)}
+  .overlay.open{display:block}
+  .hamburger{display:block}
+  .main-content{margin-right:0;padding:15px;padding-top:70px}
+  table{min-width:500px}
+}
+</style>
+</head>
 <body>
 
+<!-- ===== LOGIN ===== -->
 <div class="card" id="login">
-  <div class="logo">🛠️</div><h1>پنل مدیریت</h1>
+  <div class="logo">🛠️</div>
+  <h1>پنل مدیریت</h1>
   <div class="sub">رمز مدیر یا شورا را وارد کنید</div>
-<input class="inp" id="cuser" placeholder="شماره کاربری (فقط اعضای شورا)">
+  <input class="inp" id="cuser" placeholder="شماره کاربری (فقط اعضای شورا)">
   <input class="inp" type="password" id="pass" placeholder="رمز ورود" onkeypress="if(event.key==='Enter')check()">
   <button class="btn" onclick="check()">🔓 ورود</button>
   <div class="err" id="err">❌ رمز اشتباه است!</div>
   <div style="margin-top:20px;font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.8">
-    💡 <b>مدیر:</b> رمز کامل<br>
-    <div style="margin-top:20px;font-size:.75rem;color:rgba(255,255,255,.4);line-height:1.8">
-  🔑 <b>مدیر:</b> فقط رمز مدیر را وارد کنید<br>
-  👥 <b>اعضای شورا:</b> شماره کاربری + رمز خودتان (همان رمز برنامه اصلی)
-</div> <code style="background:rgba(255,215,0,.1);padding:2px 6px;border-radius:4px"></code>
+    🔑 <b>مدیر:</b> فقط رمز مدیر را وارد کنید<br>
+    👥 <b>اعضای شورا:</b> شماره کاربری + رمز خودتان
   </div>
 </div>
 
+<!-- ===== DASHBOARD ===== -->
 <div class="dash" id="dash">
-  <div id="councilBanner" style="display:none" class="council-banner">
-    👥 ورود به عنوان <b>عضو شورا</b> — دسترسی محدود
+  <!-- Hamburger Button (Mobile) -->
+  <button class="hamburger" id="hamburger" onclick="toggleSidebar()">☰</button>
+  
+  <!-- Overlay (Mobile) -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+  
+  <!-- Sidebar Menu -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-title">🛠️ منوی مدیریت</div>
+    <div class="menu-item" data-tab="1" data-role="admin" onclick="showTab(1)">📊 گزارش ورودها</div>
+    <div class="menu-item" data-tab="2" data-role="all" onclick="showTab(2)">💛 نظرسنجی</div>
+    <div class="menu-item" data-tab="3" data-role="all" onclick="showTab(3)">🏆 امتیازات</div>
+    <div class="menu-item" data-tab="4" data-role="admin" onclick="showTab(4)">📋 نتایج مسابقات</div>
+    <div class="menu-item" data-tab="5" data-role="admin" onclick="showTab(5)">🛡️ کنترل سایت</div>
+    <div class="menu-item" data-tab="6" data-role="all" onclick="showTab(6)">🎯 ساخت مسابقه</div>
+    <div class="menu-item" data-tab="7" data-role="all" onclick="showTab(7)">🛒 فروشگاه</div>
+    <div class="menu-item" data-tab="8" data-role="all" onclick="showTab(8)">📥 درخواست‌های خرید</div>
+    <div class="menu-item" data-tab="9" data-role="all" onclick="showTab(9)">📬 اطلاع‌رسانی</div>
   </div>
   
-  <div class="head">
-    <h2 id="dashTitle">🛠️ پنل مدیر سیستم</h2>
-    <div class="ctrl" id="adminControls">
-      <button class="refresh" onclick="refreshAll()">🔄 به‌روزرسانی</button>
-      <button class="on" onclick="toggleSite(true)">✅ فعال</button>
-      <button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
-      <button class="off" onclick="resetAll()" style="background:#dc2626!important;margin-right:8px">🗑️ ریست همه</button>
+  <!-- Main Content -->
+  <div class="main-content">
+    <div id="councilBanner" style="display:none" class="council-banner">
+      👥 ورود به عنوان <b>عضو شورا</b> — دسترسی محدود
     </div>
-  </div>
-  <div style="text-align:center;margin-bottom:14px" id="siteStatusRow">
-    <span>وضعیت سایت: </span>
-    <span class="status-badge" id="siteStatus">در حال بررسی...</span>
-  </div>
-
-  <div class="tabs" id="tabsContainer">
-
-    <div class="tab" data-tab="1" data-role="admin" onclick="showTab(1)">📊 گزارش ورودها</div>
-    <div class="tab" data-tab="2" data-role="all" onclick="showTab(2)">💛 نظرسنجی</div>
-    <div class="tab" data-tab="3" data-role="all" onclick="showTab(3)">🏆 امتیازات</div>
-    <div class="tab" data-tab="4" data-role="admin" onclick="showTab(4)">📋 نتایج مسابقات</div>
-    <div class="tab" data-tab="5" data-role="admin" onclick="showTab(5)">🛡️ کنترل سایت</div>
-    <div class="tab" data-tab="6" data-role="all" onclick="showTab(6)">🎯 ساخت مسابقه</div>
-    <div class="tab" data-tab="7" data-role="all" onclick="showTab(7)">🛒 فروشگاه</div>
-    <div class="tab" data-tab="8" data-role="all" onclick="showTab(8)">📥 درخواست‌های خرید</div>
-  </div>
-  
-  <div id="tab8" class="tab-content" style="display:none">
-    <div class="box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <h3 style="color:#ffd700">📥 درخواست‌های خرید اعضا</h3>
-        <button class="refresh" onclick="loadPurchaseRequests()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
-      </div>
-      <div id="purchaseRequestsList"><div class="loader">در حال بارگذاری...</div></div>
-    </div>
-  </div>
-  
-  <div id="tab7" class="tab-content" style="display:none">
-    <h2 style="color:#ffd700;margin-bottom:20px">🛒 مدیریت فروشگاه</h2>
     
-    <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:20px;margin-bottom:20px">
-      <h3 style="color:#ffd700;margin-bottom:15px">➕ افزودن محصول جدید</h3>
-      <div style="display:grid;gap:10px">
-        <input type="text" id="shopName" placeholder="نام محصول" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
-        <input type="text" id="shopDesc" placeholder="توضیحات محصول" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
-        <input type="number" id="shopPrice" placeholder="قیمت (امتیاز)" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
-        <input type="number" id="shopStock" placeholder="موجودی (تعداد)" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
-        <button onclick="addShopProduct()" style="padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:1rem;cursor:pointer;font-family:tahoma">➕ افزودن محصول</button>
+    <div class="head">
+      <h2 id="dashTitle">🛠️ پنل مدیر سیستم</h2>
+      <div class="ctrl" id="adminControls">
+        <button class="refresh" onclick="refreshAll()">🔄 به‌روزرسانی</button>
+        <button class="on" onclick="toggleSite(true)">✅ فعال</button>
+        <button class="off" onclick="toggleSite(false)">⛔ غیرفعال</button>
+        <button class="off" onclick="resetAll()" style="background:#dc2626!important">🗑️ ریست</button>
       </div>
     </div>
     
-    <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:20px">
-      <h3 style="color:#ffd700;margin-bottom:15px">📋 لیست محصولات</h3>
-      <div id="shopProductsList"></div>
+    <div style="text-align:center;margin-bottom:14px" id="siteStatusRow">
+      <span>وضعیت سایت: </span>
+      <span class="status-badge" id="siteStatus">در حال بررسی...</span>
+    </div>
+
+    <!-- Tab 1: Logs -->
+    <div id="sec1" style="display:none">
+      <div class="stats">
+        <div class="stat"><b id="sT">0</b><span>کل ورودها</span></div>
+        <div class="stat"><b id="sD">0</b><span>امروز</span></div>
+        <div class="stat"><b id="sU">0</b><span>کاربر فعال</span></div>
+      </div>
+      <input class="search" id="q" oninput="renderLogs()" placeholder="🔍 جستجوی نام یا شماره...">
+      <div style="display:flex;gap:10px;margin-bottom:12px;align-items:center">
+        <button id="deleteSelectedLogsBtn" onclick="deleteSelectedLogs()" disabled
+          style="padding:8px 16px;background:#dc2626;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold">
+          🗑️ حذف موارد انتخاب‌شده (<span id="selectedCount">0</span>)
+        </button>
+      </div>
+      <div class="tw" id="tw1"></div>
+    </div>
+
+    <!-- Tab 2: Survey -->
+    <div id="sec2" style="display:none">
+      <div class="box" id="surveyBox"><div class="loader">در حال بارگذاری...</div></div>
+    </div>
+
+    <!-- Tab 3: Points -->
+    <div id="sec3" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700">🏆 امتیازات اعضا</h3>
+          <button class="refresh" onclick="loadPoints()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <input id="ptUser" placeholder="شماره عضو" style="flex:1;min-width:120px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+          <input id="ptName" placeholder="نام نمایشی" style="flex:1;min-width:120px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+          <input id="ptPts" type="number" placeholder="امتیاز" style="width:90px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+          <button onclick="adminUpdatePoints('add')" style="padding:10px 14px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">➕</button>
+          <button onclick="adminUpdatePoints('subtract')" style="padding:10px 14px;border-radius:10px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-weight:700">➖</button>
+          <button onclick="adminUpdatePoints('set')" style="padding:10px 14px;border-radius:10px;border:none;background:#ffd700;color:#1a1a2e;cursor:pointer;font-weight:700">🎯</button>
+        </div>
+        <div id="pointsList"><div class="loader">در حال بارگذاری...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Quiz Results -->
+    <div id="sec4" style="display:none">
+      <div class="box">
+        <h3 style="color:#ffd700;margin-bottom:14px">📋 نتایج مسابقات</h3>
+        <div id="quizSelect"><div class="loader">در حال بارگذاری...</div></div>
+        <div id="quizResults" style="margin-top:14px"></div>
+      </div>
+    </div>
+
+    <!-- Tab 5: Site Control -->
+    <div id="sec5" style="display:none">
+      <div class="box" style="text-align:center">
+        <h3 style="color:#ffd700;margin-bottom:15px">🛡️ کنترل وضعیت سایت</h3>
+        <p style="color:rgba(255,255,255,.7);margin-bottom:10px;line-height:2">با دکمه‌های بالا می‌توانی سایت را موقتاً غیرفعال کنی.<br>وقتی سایت غیرفعال باشد، کاربران صفحه «در حال به‌روزرسانی» را می‌بینند.</p>
+        <p style="color:#ffd700;font-size:.85rem">💡 همه تغییرات در اکانت دوم ذخیره می‌شود و فایل اصلی دست‌نخورده می‌ماند.</p>
+      </div>
+    </div>
+
+    <!-- Tab 6: Quiz Builder -->
+    <div id="sec6" style="display:none">
+      <div class="box">
+        <h3 style="color:#ffd700;margin-bottom:14px">🎯 ساخت مسابقه جدید</h3>
+        <div style="margin-bottom:14px">
+          <label style="color:#ffd700;display:block;margin-bottom:6px">📋 عنوان مسابقه:</label>
+          <input id="quizTitle" placeholder="مثلاً: مسابقه هفتگی" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+        </div>
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:150px">
+            <label style="color:#ffd700;display:block;margin-bottom:6px">📅 تاریخ شروع:</label>
+            <input id="quizStart" type="date" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+          </div>
+          <div style="flex:1;min-width:150px">
+            <label style="color:#ffd700;display:block;margin-bottom:6px">📅 تاریخ پایان:</label>
+            <input id="quizEnd" type="date" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
+          </div>
+        </div>
+        <div id="questionsContainer"></div>
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
+          <button onclick="addQuestion()" style="padding:10px 16px;border-radius:10px;border:none;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700">➕ افزودن سوال</button>
+          <button onclick="createQuizFromPanel()" style="padding:10px 16px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">✅ ساخت مسابقه</button>
+        </div>
+        <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+          <h4 style="color:#ffd700;margin-bottom:10px">📋 مسابقات موجود</h4>
+          <div id="existingQuizzesList"><div class="loader">در حال بارگذاری...</div></div>
+        </div>
+        <div id="quizBuilderMsg" style="margin-top:14px;text-align:center"></div>
+      </div>
+    </div>
+
+    <!-- Tab 7: Shop -->
+    <div id="tab7" style="display:none">
+      <h2 style="color:#ffd700;margin-bottom:20px">🛒 مدیریت فروشگاه</h2>
+      <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:20px;margin-bottom:20px">
+        <h3 style="color:#ffd700;margin-bottom:15px">➕ افزودن محصول جدید</h3>
+        <div style="display:grid;gap:10px">
+          <input type="text" id="shopName" placeholder="نام محصول" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
+          <input type="text" id="shopDesc" placeholder="توضیحات محصول" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
+          <input type="number" id="shopPrice" placeholder="قیمت (امتیاز)" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
+          <input type="number" id="shopStock" placeholder="موجودی (تعداد)" style="padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-family:tahoma">
+          <button onclick="addShopProduct()" style="padding:12px;border:none;border-radius:8px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:1rem;cursor:pointer;font-family:tahoma">➕ افزودن محصول</button>
+        </div>
+      </div>
+      <div style="background:rgba(255,255,255,.05);border-radius:12px;padding:20px">
+        <h3 style="color:#ffd700;margin-bottom:15px">📋 لیست محصولات</h3>
+        <div id="shopProductsList"></div>
+      </div>
+    </div>
+
+    <!-- Tab 8: Purchase Requests -->
+    <div id="tab8" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700">📥 درخواست‌های خرید اعضا</h3>
+          <button class="refresh" onclick="loadPurchaseRequests()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        <div id="purchaseRequestsList"><div class="loader">در حال بارگذاری...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab 9: Statement (Monthly Report) -->
+    <div id="sec9" style="display:none">
+      <div style="margin:20px 0;padding:16px;background:rgba(255,215,0,.08);border-radius:12px;border:1px solid rgba(255,215,0,.3)">
+        <h3 style="color:#ffd700;margin:0 0 10px">📊 گزارش ماهانه شورای صندوق</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button onclick="testMonthlyReport()" style="padding:10px 18px;background:#ffd700;color:#1a1a2e;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-family:tahoma">📤 ارسال تست گزارش</button>
+          <button onclick="setupMonthlyReport()" style="padding:10px 18px;background:#3ee6a8;color:#06281a;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-family:tahoma">⏰ فعال‌سازی خودکار</button>
+          <button onclick="openStmtList()" style="padding:10px 18px;background:#a855f7;color:#fff;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-family:tahoma">📬 تنظیمات اطلاع‌رسانی</button>
+        </div>
+        <div id="monthlyReportResult" style="margin-top:10px;font-size:.8rem;color:rgba(255,255,255,.7);white-space:pre-wrap"></div>
+      </div>
     </div>
   </div>
-
-  <div id="sec1" style="display:none">
-    <div class="stats">
-      <div class="stat"><b id="sT">0</b><span>کل ورودها</span></div>
-      <div class="stat"><b id="sD">0</b><span>امروز</span></div>
-      <div class="stat"><b id="sU">0</b><span>کاربر فعال</span></div>
-    </div>
-    <input class="search" id="q" oninput="renderLogs()" placeholder="🔍 جستجوی نام یا شماره...">
-<div style="display:flex;gap:10px;margin-bottom:12px;align-items:center;">
-  <button id="deleteSelectedLogsBtn" onclick="deleteSelectedLogs()" disabled
-    style="padding:8px 16px;background:#dc2626;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">
-    🗑️ حذف موارد انتخاب‌شده (<span id="selectedCount">0</span>)
-  </button>
 </div>
-    <div class="tw" id="tw1"></div>
-  </div>
-
-  <div id="sec2" style="display:none">
-    <div class="box" id="surveyBox"><div class="loader">در حال بارگذاری...</div></div>
-  </div>
-
-  <div id="sec3" style="display:none">
-    <div class="box">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-        <h3 style="color:#ffd700">🏆 امتیازات اعضا</h3>
-        <button class="refresh" onclick="loadPoints()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-        <input id="ptUser" placeholder="شماره عضو" style="flex:1;min-width:120px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
-        <input id="ptName" placeholder="نام نمایشی" style="flex:1;min-width:120px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
-        <input id="ptPts" type="number" placeholder="امتیاز" style="width:90px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
-        <button onclick="adminUpdatePoints('add')" style="padding:10px 14px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">➕</button>
-        <button onclick="adminUpdatePoints('subtract')" style="padding:10px 14px;border-radius:10px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-weight:700">➖</button>
-        <button onclick="adminUpdatePoints('set')" style="padding:10px 14px;border-radius:10px;border:none;background:#ffd700;color:#1a1a2e;cursor:pointer;font-weight:700">🎯</button>
-      </div>
-      <div id="pointsList"><div class="loader">در حال بارگذاری...</div></div>
-    </div>
-  </div>
-
-  <div id="sec4" style="display:none">
-    <div class="box">
-      <h3 style="color:#ffd700;margin-bottom:14px">📋 نتایج مسابقات</h3>
-      <div id="quizSelect"><div class="loader">در حال بارگذاری...</div></div>
-      <div id="quizResults" style="margin-top:14px"></div>
-    </div>
-  </div>
-  <div id="sec6" style="display:none">
-    <div class="box">
-      <h3 style="color:#ffd700;margin-bottom:14px">🎯 ساخت مسابقه جدید</h3>
-      
-      <div style="margin-bottom:14px">
-        <label style="color:#ffd700;display:block;margin-bottom:6px">📋 عنوان مسابقه:</label>
-        <input id="quizTitle" placeholder="مثلاً: مسابقه هفتگی" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
-      </div>
-      
-      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-        <div style="flex:1;min-width:150px">
-          <label style="color:#ffd700;display:block;margin-bottom:6px">📅 تاریخ شروع:</label>
-          <input id="quizStart" type="date" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
-        </div>
-        <div style="flex:1;min-width:150px">
-          <label style="color:#ffd700;display:block;margin-bottom:6px">📅 تاریخ پایان:</label>
-          <input id="quizEnd" type="date" style="width:100%;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none">
-        </div>
-      </div>
-      
-      <div id="questionsContainer"></div>
-      
-      <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap">
-        <button onclick="addQuestion()" style="padding:10px 16px;border-radius:10px;border:none;background:#3b82f6;color:#fff;cursor:pointer;font-weight:700">➕ افزودن سوال</button>
-        <button onclick="createQuizFromPanel()" style="padding:10px 16px;border-radius:10px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">✅ ساخت مسابقه</button>
-      </div>
-      <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
-        <h4 style="color:#ffd700;margin-bottom:10px">📋 مسابقات موجود</h4>
-        <div id="existingQuizzesList"><div class="loader">در حال بارگذاری...</div></div>
-      </div>
-      <div id="quizBuilderMsg" style="margin-top:14px;text-align:center"></div>
-    </div>
-  </div>
-  <div id="sec5" style="display:none">
-    <div class="box" style="text-align:center">
-      <h3 style="color:#ffd700;margin-bottom:15px">🛡️ کنترل وضعیت سایت</h3>
-      <p style="color:rgba(255,255,255,.7);margin-bottom:10px;line-height:2">با دکمه‌های بالا می‌توانی سایت را موقتاً غیرفعال کنی.<br>وقتی سایت غیرفعال باشد، کاربران صفحه «در حال به‌روزرسانی» را می‌بینند.</p>
-      <p style="color:#ffd700;font-size:.85rem">💡 همه تغییرات در اکانت دوم ذخیره می‌شود و فایل اصلی دست‌نخورده می‌ماند.</p>
-    </div>
-  </div>
 
 <script>
-// ✅ URL اصلی سرور — همه‌چیز از این رشته استفاده می‌کند
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
 var ADMIN_URL = URL;
 var KEY = 'admin12345';
 var isCouncil = false;
 var logs = [], surveys = [];
+var selectedLogTimestamps = {};
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
 
 function fmtDate(d){
   try { return new Intl.DateTimeFormat('fa-IR-u-ca-persian', {year:'numeric', month:'2-digit', day:'2-digit'}).format(d); }
@@ -290,14 +411,12 @@ function enterDashboard(){
     document.getElementById('dashTitle').textContent = '👥 پنل عضو شورا' + (window.__councilUser ? ' — ' + window.__councilUser.name : '');
     document.getElementById('adminControls').style.display = 'none';
     document.getElementById('siteStatusRow').style.display = 'none';
-    // پنهان کردن تب‌های مخصوص مدیر
-    document.querySelectorAll('.tab[data-role="admin"]').forEach(function(t){ t.style.display = 'none'; });
-    // نمایش تب‌های مشترک (شورا + مدیر)
-    document.querySelectorAll('.tab[data-role="all"]').forEach(function(t){ t.style.display = 'block'; });
-    showTab(8); // پیش‌فرض شورا: درخواست‌های خرید
+    document.querySelectorAll('.menu-item[data-role="admin"]').forEach(function(t){ t.style.display = 'none'; });
+    document.querySelectorAll('.menu-item[data-role="all"]').forEach(function(t){ t.style.display = 'block'; });
+    showTab(8);
   } else {
     document.getElementById('sec1').style.display = 'block';
-    document.querySelector('.tab[data-tab="1"]').classList.add('on');
+    document.querySelector('.menu-item[data-tab="1"]').classList.add('active');
     checkStatus();
     refreshAll();
   }
@@ -317,6 +436,7 @@ function toggleSite(enable){
   var a = enable ? 'enable' : 'disable';
   fetch(URL + '?action=' + a + '&key=' + KEY).then(r=>r.json()).then(d=>{ alert(d.msg || 'انجام شد'); checkStatus(); });
 }
+
 function resetAll(){
   if(!confirm('⚠️ آیا مطمئن هستید؟\n\nهمه گزارش ورودها و نظرسنجی‌ها پاک خواهد شد.\nاین عمل قابل برگشت نیست!')) return;
   if(!confirm('🔴 تایید نهایی: واقعاً می‌خواهید همه اطلاعات را پاک کنید؟')) return;
@@ -329,14 +449,18 @@ function showTab(n){
   for (var i = 1; i <= 6; i++) { var sec = document.getElementById('sec' + i); if (sec) sec.style.display = 'none'; }
   var tab7El = document.getElementById('tab7'); if (tab7El) tab7El.style.display = 'none';
   var tab8El = document.getElementById('tab8'); if (tab8El) tab8El.style.display = 'none';
+  var sec9 = document.getElementById('sec9'); if (sec9) sec9.style.display = 'none';
   
-  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('on'); });
-  var tabs = document.querySelectorAll('.tab');
-  if (tabs[n - 1]) tabs[n - 1].classList.add('on');
+  document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
+  var items = document.querySelectorAll('.menu-item');
+  items.forEach(function(item){
+    if(item.getAttribute('data-tab') === String(n)) item.classList.add('active');
+  });
   
   if (n >= 1 && n <= 6) { var sec = document.getElementById('sec' + n); if (sec) sec.style.display = 'block'; }
   else if (n === 7) { if (tab7El) tab7El.style.display = 'block'; loadShopProducts(); }
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
+  else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
   
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
@@ -347,11 +471,18 @@ function showTab(n){
   if (n === 4) loadQuizResults();
   if (n === 6) loadQuizBuilder();
   if (n === 8) loadPurchaseRequests();
+  
+  // Close sidebar on mobile
+  if(window.innerWidth <= 768){
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
 }
 
 function loadLogs(){
   fetch(URL + '?action=getLogs').then(r=>r.json()).then(d=>{ logs = d.logs || []; renderLogs(); });
 }
+
 function loadAdminNameCache(cb){
   if (window.__adminNames) { if (cb) cb(); return; }
   window.__adminNames = {};
@@ -393,7 +524,7 @@ function renderLogs(){
     document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>';
     return;
   }
-  var h = '<table><tr><th style="width:40px;text-align:center;"><input type="checkbox" id="selectAllLogs" onchange="toggleAllLogs(this.checked)" title="انتخاب همه"></th><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
+  var h = '<table><tr><th style="width:40px;text-align:center"><input type="checkbox" id="selectAllLogs" onchange="toggleAllLogs(this.checked)" title="انتخاب همه"></th><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
   logs.forEach(function(l){
     var row = (l.user + l.name).toLowerCase();
     if(q && row.indexOf(q) < 0) return;
@@ -402,15 +533,62 @@ function renderLogs(){
     if (!displayName || displayName === l.user || /^\d+$/.test(displayName)) {
       displayName = (window.__adminNames && window.__adminNames[l.user]) || l.user;
     }
-    h += '<tr><td style="text-align:center;"><input type="checkbox" class="log-checkbox" data-timestamp="'+l.timestamp+'" onchange="toggleLogSelection(this,\''+l.timestamp+'\')"></td><td>'+l.user+'</td><td>'+displayName+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
+    h += '<tr><td style="text-align:center"><input type="checkbox" class="log-checkbox" data-timestamp="'+l.timestamp+'" onchange="toggleLogSelection(this,\''+l.timestamp+'\')"></td><td>'+l.user+'</td><td>'+displayName+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
   });
   document.getElementById('tw1').innerHTML = h + '</table>';
 }
+
+function toggleLogSelection(checkbox, timestamp) {
+  if (checkbox.checked) {
+    selectedLogTimestamps[timestamp] = true;
+  } else {
+    delete selectedLogTimestamps[timestamp];
+  }
+  updateSelectedCount();
+}
+
+function toggleAllLogs(checked) {
+  var boxes = document.querySelectorAll('.log-checkbox');
+  boxes.forEach(function(cb) {
+    cb.checked = checked;
+    var ts = cb.getAttribute('data-timestamp');
+    if (checked) {
+      selectedLogTimestamps[ts] = true;
+    } else {
+      delete selectedLogTimestamps[ts];
+    }
+  });
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  var count = Object.keys(selectedLogTimestamps).length;
+  document.getElementById('selectedCount').textContent = count;
+  document.getElementById('deleteSelectedLogsBtn').disabled = count === 0;
+}
+
+function deleteSelectedLogs() {
+  var timestamps = Object.keys(selectedLogTimestamps);
+  if (!timestamps.length) return;
+  if (!confirm('آیا از حذف ' + timestamps.length + ' ورود مطمئن هستید؟')) return;
+  
+  fetch(URL + '?action=deleteSelectedLogs&key=' + KEY + '&timestamps=' + encodeURIComponent(JSON.stringify(timestamps)))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      alert(d.msg || d.error);
+      selectedLogTimestamps = {};
+      updateSelectedCount();
+      loadLogs();
+    })
+    .catch(function(e){ alert('خطا: ' + e); });
+}
+
 function loadSurvey(){
   fetch(URL + '?action=getSurvey').then(r=>r.json()).then(d=>{ surveys = d.responses || []; renderSurvey(); }).catch(function(){
     document.getElementById('surveyBox').innerHTML = '<div class="loader">خطا در دریافت نظرات</div>';
   });
 }
+
 function renderSurvey(){
   if(surveys.length === 0){ document.getElementById('surveyBox').innerHTML = '<div class="loader">هنوز هیچ نظری ثبت نشده 💛</div>'; return; }
   var sum = 0, rated = 0;
@@ -449,6 +627,7 @@ function loadQuizResults(){
     document.getElementById('quizResults').innerHTML = '';
   }).catch(function(){ document.getElementById('quizSelect').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>'; });
 }
+
 function showQuizResults(quizId){
   if(!quizId){ document.getElementById('quizResults').innerHTML = ''; return; }
   document.getElementById('quizResults').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
@@ -478,6 +657,7 @@ function showQuizResults(quizId){
 
 var quizQuestionCount = 0;
 function loadQuizBuilder(){ if(quizQuestionCount === 0){ addQuestion(); } loadExistingQuizzes(); }
+
 function loadExistingQuizzes(){
   fetch(URL + '?action=getQuizzes').then(function(r){ return r.json(); }).then(function(d){
     var quizzes = d.quizzes || [];
@@ -492,6 +672,7 @@ function loadExistingQuizzes(){
     document.getElementById('existingQuizzesList').innerHTML = html;
   }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>'; });
 }
+
 function deleteQuizFromPanel(quizId, quizTitle){
   if(!confirm('آیا مطمئن هستید که می‌خواهید مسابقه «' + quizTitle + '» را حذف کنید؟')) return;
   document.getElementById('existingQuizzesList').innerHTML = '<div class="loader">در حال حذف...</div>';
@@ -500,6 +681,7 @@ function deleteQuizFromPanel(quizId, quizTitle){
     else { document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>'; }
   }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا در ارتباط با سرور</div>'; });
 }
+
 function addQuestion(){
   quizQuestionCount++;
   var qNum = quizQuestionCount;
@@ -518,7 +700,9 @@ function addQuestion(){
   html += '<p style="color:rgba(255,255,255,.5);font-size:.75rem;margin-top:8px">💡 روی دکمه ✓ گزینه صحیح کلیک کنید (سبز می‌شود)</p></div>';
   document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
 }
+
 function removeQuestion(qNum){ var box = document.getElementById('questionBox' + qNum); if(box) box.remove(); }
+
 function setCorrectAnswer(qNum, optIdx){
   document.getElementById('q' + qNum + '_correct').value = optIdx;
   for(var j=1;j<=4;j++){
@@ -526,6 +710,7 @@ function setCorrectAnswer(qNum, optIdx){
     if(btn){ btn.style.background = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.05)'; btn.style.borderColor = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.2)'; }
   }
 }
+
 function createQuizFromPanel(){
   var title = document.getElementById('quizTitle').value.trim();
   var startDate = document.getElementById('quizStart').value;
@@ -566,6 +751,7 @@ function loadPoints(){
     document.getElementById('pointsList').innerHTML = '<div class="loader">خطا در دریافت</div>';
   });
 }
+
 function renderPoints(arr){
   if(arr.length === 0){ document.getElementById('pointsList').innerHTML = '<div class="loader">هیچ عضوی پیدا نشد</div>'; return; }
   arr.sort(function(a,b){ return (b.points||0) - (a.points||0); });
@@ -583,6 +769,7 @@ function renderPoints(arr){
   });
   document.getElementById('pointsList').innerHTML = h + '</table>';
 }
+
 function adminUpdatePoints(type){
   var uid = document.getElementById('ptUser').value.trim();
   var uname = document.getElementById('ptName').value.trim();
@@ -618,6 +805,7 @@ function loadShopProducts(){
     document.getElementById('shopProductsList').innerHTML = html;
   }).catch(function(){ document.getElementById('shopProductsList').innerHTML = '<div style="color:#ff6b6b;padding:20px">❌ خطا در دریافت محصولات</div>'; });
 }
+
 function addShopProduct(){
   var name = document.getElementById('shopName').value.trim();
   var desc = document.getElementById('shopDesc').value.trim();
@@ -631,12 +819,14 @@ function addShopProduct(){
       else { alert('❌ خطا در افزودن محصول: ' + (d.error || 'نامشخص')); }
     }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
+
 function deleteShopProduct(shenaseh){
   if (!confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
   fetch(ADMIN_URL + '?action=deleteShopProduct&shenaseh=' + encodeURIComponent(shenaseh)).then(function(r){ return r.json(); }).then(function(d){
     if (d.ok) { alert('✅ محصول حذف شد'); loadShopProducts(); } else { alert('❌ خطا در حذف محصول'); }
   }).catch(function(){ alert('❌ خطا در اتصال'); });
 }
+
 function editShopProduct(shenaseh){
   var list = window._shopProducts || [];
   var p = null;
@@ -736,18 +926,6 @@ function resolvePurchase(id, status){
       loadPurchaseRequests();
     });
 }
-(function(){
-  var m = location.search.match(/[?&]ct=([^&]+)/);
-  if (!m) return;
-  var token = decodeURIComponent(m[1]);
-  fetch(URL + '?action=verifyCouncilToken&token=' + encodeURIComponent(token)).then(function(r){ return r.json(); }).then(function(d){
-    if (d.ok) {
-      isCouncil = true;
-      window.__councilUser = { id: d.id, name: d.name };
-      enterDashboard();
-    }
-  }).catch(function(){});
-})();
 
 function cancelPurchase(id){
   if(!confirm('↩️ انصراف از خرید و برگشت جایزه؟\n\nامتیاز و موجودی محصول برگشت داده می‌شود.')) return;
@@ -755,19 +933,36 @@ function cancelPurchase(id){
   fetch(URL + '?action=cancelPurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id))
     .then(function(r){ return r.json(); }).then(function(d){
       if(d.ok){ alert(d.msg || '✅ انصراف ثبت و برگشت انجام شد'); loadPurchaseRequests(); loadPoints(); }
-          }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
+      else { alert('❌ خطا: ' + (d.error || 'مشکل ناشناخته')); loadPurchaseRequests(); }
+    }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
 }
-</script>
 
-<!-- ===== STMT TAB START ===== -->
-<script>
-var STMT_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+function testMonthlyReport(){
+  if(!confirm('گزارش ماه قبل همین حالا به گروه شورای صندوق ارسال شود؟')) return;
+  document.getElementById('monthlyReportResult').textContent='در حال ارسال...';
+  fetch(ADMIN_URL + '?action=sendMonthlyReport&key=' + encodeURIComponent(KEY))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d.ok){ alert('✅ ' + (d.msg||'ارسال شد')); document.getElementById('monthlyReportResult').textContent = d.preview || ''; }
+      else { alert('❌ ' + (d.error||d.msg||'خطا')); document.getElementById('monthlyReportResult').textContent = JSON.stringify(d); }
+    })
+    .catch(function(){ alert('❌ خطا در ارتباط'); });
+}
+
+function setupMonthlyReport(){
+  if(!confirm('از این به بعد، اول هر ماه ساعت ۹ صبح گزارش ماه قبل به‌صورت خودکار به گروه شورا ارسال شود؟')) return;
+  fetch(ADMIN_URL + '?action=setupMonthlyReport&key=' + encodeURIComponent(KEY))
+    .then(function(r){ return r.json(); })
+    .then(function(d){ alert(d.ok ? d.msg : '❌ ' + (d.error||d.msg)); })
+    .catch(function(){ alert('❌ خطا در ارتباط'); });
+}
+
 function openStmtList() {
   var old = document.getElementById('stmtListOverlay');
   if (old) old.parentNode.removeChild(old);
   var ov = document.createElement('div');
   ov.id = 'stmtListOverlay';
-  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;font-family:tahoma;padding:12px;';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;font-family:tahoma;padding:12px';
   ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:20px;width:100%;max-width:1100px;max-height:92vh;overflow:auto;color:#fff;direction:rtl">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
       '<div style="font-weight:800;font-size:1.05rem">📬 تنظیمات اطلاع‌رسانی صورتحساب</div>' +
@@ -869,176 +1064,19 @@ function openStmtList() {
   document.getElementById('stmtSearch').oninput = render;
   document.getElementById('stmtFilter').onchange = render;
 }
-var stmtTick = 0;
-setInterval(function(){
-  stmtTick++;
-  if (!document.getElementById('stmtTabBtn')) {
-    var nodes = document.querySelectorAll('button, a, div, span');
-    var target = null;
-    for (var i = 0; i < nodes.length; i++) {
-      var txt = (nodes[i].textContent || '').replace(/\s+/g, ' ').trim();
-      if (txt.indexOf('گزارش') > -1 && txt.indexOf('ورود') > -1 && txt.length < 25) { target = nodes[i]; break; }
+
+(function(){
+  var m = location.search.match(/[?&]ct=([^&]+)/);
+  if (!m) return;
+  var token = decodeURIComponent(m[1]);
+  fetch(URL + '?action=verifyCouncilToken&token=' + encodeURIComponent(token)).then(function(r){ return r.json(); }).then(function(d){
+    if (d.ok) {
+      isCouncil = true;
+      window.__councilUser = { id: d.id, name: d.name };
+      enterDashboard();
     }
-    if (target) {
-      var tabEl = target;
-      for (var up = 0; up < 4 && tabEl.parentElement; up++) {
-        if (tabEl.onclick || (tabEl.className && String(tabEl.className).length > 2)) break;
-        tabEl = tabEl.parentElement;
-      }
-      var btn = tabEl.cloneNode(true);
-      btn.id = 'stmtTabBtn';
-      btn.onclick = function(e){ e.stopPropagation(); openStmtList(); };
-      btn.innerHTML = '📬 اطلاع‌رسانی';
-      tabEl.parentElement.insertBefore(btn, tabEl.nextSibling);
-      var fab0 = document.getElementById('stmtFabBtn');
-      if (fab0) fab0.parentNode.removeChild(fab0);
-    }
-  }
-  if (stmtTick > 8 && !document.getElementById('stmtTabBtn') && !document.getElementById('stmtFabBtn')) {
-    var b = document.createElement('button');
-    b.id = 'stmtFabBtn';
-    b.textContent = '📬 اطلاع‌رسانی';
-    b.style.cssText = 'position:fixed;bottom:18px;left:18px;z-index:9997;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.4);font-family:tahoma;font-size:.9rem';
-    b.onclick = openStmtList;
-    document.body.appendChild(b);
-  }
-}, 1500);
+  }).catch(function(){});
+})();
 </script>
-<!-- ===== STMT TAB END ===== -->
-<script>
-setInterval(function(){
-  if (document.querySelector('.tab[data-tab="9"]')) return;
-  var container = document.getElementById('tabsContainer');
-  if (!container) return;
-  var d = document.createElement('div');
-  d.className = 'tab';
-  d.setAttribute('data-tab', '9');
-  d.setAttribute('data-role', 'all');
-  d.onclick = function(){ openStmtList(); };
-  d.innerHTML = '📬 اطلاع‌رسانی';
-  container.appendChild(d);
-}, 1000);
-</script>
-<div style="margin:20px;padding:16px;background:rgba(255,215,0,.08);border-radius:12px;border:1px solid rgba(255,215,0,.3)">
-  <h3 style="color:#ffd700;margin:0 0 10px">📊 گزارش ماهانه شورای صندوق</h3>
-  <div style="display:flex;gap:10px;flex-wrap:wrap">
-    <button onclick="testMonthlyReport()" style="padding:10px 18px;background:#ffd700;color:#1a1a2e;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-family:tahoma">📤 ارسال تست گزارش به گروه شورا</button>
-    <button onclick="setupMonthlyReport()" style="padding:10px 18px;background:#3ee6a8;color:#06281a;border:none;border-radius:8px;font-weight:800;cursor:pointer;font-family:tahoma">⏰ فعال‌سازی ارسال خودکار ماهانه</button>
-  </div>
-  <div id="monthlyReportResult" style="margin-top:10px;font-size:.8rem;color:rgba(255,255,255,.7);white-space:pre-wrap"></div>
-</div>
-<script>
-function testMonthlyReport(){
-  if(!confirm('گزارش ماه قبل همین حالا به گروه شورای صندوق ارسال شود؟')) return;
-  document.getElementById('monthlyReportResult').textContent='در حال ارسال...';
-  fetch(ADMIN_URL + '?action=sendMonthlyReport&key=' + encodeURIComponent(KEY))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.ok){ alert('✅ ' + (d.msg||'ارسال شد')); document.getElementById('monthlyReportResult').textContent = d.preview || ''; }
-      else { alert('❌ ' + (d.error||d.msg||'خطا')); document.getElementById('monthlyReportResult').textContent = JSON.stringify(d); }
-    })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
-}
-function setupMonthlyReport(){
-  if(!confirm('از این به بعد، اول هر ماه ساعت ۹ صبح گزارش ماه قبل به‌صورت خودکار به گروه شورا ارسال شود؟')) return;
-  fetch(ADMIN_URL + '?action=setupMonthlyReport&key=' + encodeURIComponent(KEY))
-    .then(function(r){ return r.json(); })
-    .then(function(d){ alert(d.ok ? d.msg : '❌ ' + (d.error||d.msg)); })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
-}
-var selectedLogTimestamps = {};
-
-function toggleLogSelection(checkbox, timestamp) {
-  if (checkbox.checked) {
-    selectedLogTimestamps[timestamp] = true;
-  } else {
-    delete selectedLogTimestamps[timestamp];
-  }
-  updateSelectedCount();
-}
-
-function toggleAllLogs(checked) {
-  var boxes = document.querySelectorAll('.log-checkbox');
-  boxes.forEach(function(cb) {
-    cb.checked = checked;
-    var ts = cb.getAttribute('data-timestamp');
-    if (checked) {
-      selectedLogTimestamps[ts] = true;
-    } else {
-      delete selectedLogTimestamps[ts];
-    }
-  });
-  updateSelectedCount();
-}
-
-function updateSelectedCount() {
-  var count = Object.keys(selectedLogTimestamps).length;
-  document.getElementById('selectedCount').textContent = count;
-  document.getElementById('deleteSelectedLogsBtn').disabled = count === 0;
-}
-
-function deleteSelectedLogs() {
-  var timestamps = Object.keys(selectedLogTimestamps);
-  if (!timestamps.length) return;
-  if (!confirm('آیا از حذف ' + timestamps.length + ' ورود مطمئن هستید؟')) return;
-  
-  fetch(ADMIN_URL + '?action=deleteSelectedLogs&key=' + KEY + '&timestamps=' + encodeURIComponent(JSON.stringify(timestamps)))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      alert(d.msg || d.error);
-      selectedLogTimestamps = {};
-      updateSelectedCount();
-      // بارگذاری مجدد جدول ورودها
-      if (typeof loadLogs === 'function') loadLogs();
-      else location.reload();
-    })
-    .catch(function(e){ alert('خطا: ' + e); });
-}
-var selectedLogTimestamps = {};
-
-function toggleLogSelection(checkbox, timestamp) {
-  if (checkbox.checked) {
-    selectedLogTimestamps[timestamp] = true;
-  } else {
-    delete selectedLogTimestamps[timestamp];
-  }
-  updateSelectedCount();
-}
-
-function toggleAllLogs(checked) {
-  var boxes = document.querySelectorAll('.log-checkbox');
-  boxes.forEach(function(cb) {
-    cb.checked = checked;
-    var ts = cb.getAttribute('data-timestamp');
-    if (checked) {
-      selectedLogTimestamps[ts] = true;
-    } else {
-      delete selectedLogTimestamps[ts];
-    }
-  });
-  updateSelectedCount();
-}
-
-function updateSelectedCount() {
-  var count = Object.keys(selectedLogTimestamps).length;
-  document.getElementById('selectedCount').textContent = count;
-  document.getElementById('deleteSelectedLogsBtn').disabled = count === 0;
-}
-
-function deleteSelectedLogs() {
-  var timestamps = Object.keys(selectedLogTimestamps);
-  if (!timestamps.length) return;
-  if (!confirm('آیا از حذف ' + timestamps.length + ' ورود مطمئن هستید؟')) return;
-  
-  fetch(URL + '?action=deleteSelectedLogs&key=' + KEY + '&timestamps=' + encodeURIComponent(JSON.stringify(timestamps)))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      alert(d.msg || d.error);
-      selectedLogTimestamps = {};
-      updateSelectedCount();
-      loadLogs();
-    })
-    .catch(function(e){ alert('خطا: ' + e); });
-}
-</script>
-</body></html>
+</body>
+</html>
