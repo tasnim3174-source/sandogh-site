@@ -95,6 +95,16 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   </div>
 
   <div class="tabs" id="tabsContainer">
+<div style="display:flex;gap:10px;margin-bottom:12px;align-items:center;">
+  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:8px 12px;background:#f3f4f6;border-radius:8px;">
+    <input type="checkbox" id="selectAllLogs" onchange="toggleAllLogs(this.checked)">
+    <span>انتخاب همه</span>
+  </label>
+  <button id="deleteSelectedLogsBtn" onclick="deleteSelectedLogs()" disabled
+    style="padding:8px 16px;background:#dc2626;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">
+    🗑️ حذف موارد انتخاب‌شده (<span id="selectedCount">0</span>)
+  </button>
+</div>
     <div class="tab" data-tab="1" data-role="admin" onclick="showTab(1)">📊 گزارش ورودها</div>
     <div class="tab" data-tab="2" data-role="all" onclick="showTab(2)">💛 نظرسنجی</div>
     <div class="tab" data-tab="3" data-role="all" onclick="showTab(3)">🏆 امتیازات</div>
@@ -142,6 +152,12 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       <div class="stat"><b id="sU">0</b><span>کاربر فعال</span></div>
     </div>
     <input class="search" id="q" oninput="renderLogs()" placeholder="🔍 جستجوی نام یا شماره...">
+<div style="display:flex;gap:10px;margin-bottom:12px;align-items:center;">
+  <button id="deleteSelectedLogsBtn" onclick="deleteSelectedLogs()" disabled
+    style="padding:8px 16px;background:#dc2626;color:white;border:none;border-radius:8px;cursor:pointer;font-weight:bold;">
+    🗑️ حذف موارد انتخاب‌شده (<span id="selectedCount">0</span>)
+  </button>
+</div>
     <div class="tw" id="tw1"></div>
   </div>
 
@@ -386,7 +402,7 @@ function renderLogs(){
     document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>';
     return;
   }
-  var h = '<table><tr><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
+  var h = '<table><tr><th style="width:40px;text-align:center;"><input type="checkbox" id="selectAllLogs" onchange="toggleAllLogs(this.checked)" title="انتخاب همه"></th><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
   logs.forEach(function(l){
     var row = (l.user + l.name).toLowerCase();
     if(q && row.indexOf(q) < 0) return;
@@ -395,11 +411,10 @@ function renderLogs(){
     if (!displayName || displayName === l.user || /^\d+$/.test(displayName)) {
       displayName = (window.__adminNames && window.__adminNames[l.user]) || l.user;
     }
-    h += '<tr><td>'+l.user+'</td><td>'+displayName+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
+    h += '<tr><td style="text-align:center;"><input type="checkbox" class="log-checkbox" data-timestamp="'+l.timestamp+'" onchange="toggleLogSelection(this,\''+l.timestamp+'\')"></td><td>'+l.user+'</td><td>'+displayName+'</td><td>'+fmtDate(d)+'</td><td>'+fmtTime(d)+'</td><td>'+l.device+'</td><td>'+l.browser+'</td></tr>';
   });
   document.getElementById('tw1').innerHTML = h + '</table>';
 }
-
 function loadSurvey(){
   fetch(URL + '?action=getSurvey').then(r=>r.json()).then(d=>{ surveys = d.responses || []; renderSurvey(); }).catch(function(){
     document.getElementById('surveyBox').innerHTML = '<div class="loader">خطا در دریافت نظرات</div>';
@@ -939,6 +954,100 @@ function setupMonthlyReport(){
     .then(function(r){ return r.json(); })
     .then(function(d){ alert(d.ok ? d.msg : '❌ ' + (d.error||d.msg)); })
     .catch(function(){ alert('❌ خطا در ارتباط'); });
+}
+var selectedLogTimestamps = {};
+
+function toggleLogSelection(checkbox, timestamp) {
+  if (checkbox.checked) {
+    selectedLogTimestamps[timestamp] = true;
+  } else {
+    delete selectedLogTimestamps[timestamp];
+  }
+  updateSelectedCount();
+}
+
+function toggleAllLogs(checked) {
+  var boxes = document.querySelectorAll('.log-checkbox');
+  boxes.forEach(function(cb) {
+    cb.checked = checked;
+    var ts = cb.getAttribute('data-timestamp');
+    if (checked) {
+      selectedLogTimestamps[ts] = true;
+    } else {
+      delete selectedLogTimestamps[ts];
+    }
+  });
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  var count = Object.keys(selectedLogTimestamps).length;
+  document.getElementById('selectedCount').textContent = count;
+  document.getElementById('deleteSelectedLogsBtn').disabled = count === 0;
+}
+
+function deleteSelectedLogs() {
+  var timestamps = Object.keys(selectedLogTimestamps);
+  if (!timestamps.length) return;
+  if (!confirm('آیا از حذف ' + timestamps.length + ' ورود مطمئن هستید؟')) return;
+  
+  fetch(ADMIN_URL + '?action=deleteSelectedLogs&key=' + KEY + '&timestamps=' + encodeURIComponent(JSON.stringify(timestamps)))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      alert(d.msg || d.error);
+      selectedLogTimestamps = {};
+      updateSelectedCount();
+      // بارگذاری مجدد جدول ورودها
+      if (typeof loadLogs === 'function') loadLogs();
+      else location.reload();
+    })
+    .catch(function(e){ alert('خطا: ' + e); });
+}
+var selectedLogTimestamps = {};
+
+function toggleLogSelection(checkbox, timestamp) {
+  if (checkbox.checked) {
+    selectedLogTimestamps[timestamp] = true;
+  } else {
+    delete selectedLogTimestamps[timestamp];
+  }
+  updateSelectedCount();
+}
+
+function toggleAllLogs(checked) {
+  var boxes = document.querySelectorAll('.log-checkbox');
+  boxes.forEach(function(cb) {
+    cb.checked = checked;
+    var ts = cb.getAttribute('data-timestamp');
+    if (checked) {
+      selectedLogTimestamps[ts] = true;
+    } else {
+      delete selectedLogTimestamps[ts];
+    }
+  });
+  updateSelectedCount();
+}
+
+function updateSelectedCount() {
+  var count = Object.keys(selectedLogTimestamps).length;
+  document.getElementById('selectedCount').textContent = count;
+  document.getElementById('deleteSelectedLogsBtn').disabled = count === 0;
+}
+
+function deleteSelectedLogs() {
+  var timestamps = Object.keys(selectedLogTimestamps);
+  if (!timestamps.length) return;
+  if (!confirm('آیا از حذف ' + timestamps.length + ' ورود مطمئن هستید؟')) return;
+  
+  fetch(URL + '?action=deleteSelectedLogs&key=' + KEY + '&timestamps=' + encodeURIComponent(JSON.stringify(timestamps)))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      alert(d.msg || d.error);
+      selectedLogTimestamps = {};
+      updateSelectedCount();
+      loadLogs();
+    })
+    .catch(function(e){ alert('خطا: ' + e); });
 }
 </script>
 </body></html>
