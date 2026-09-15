@@ -14106,101 +14106,92 @@ function rwToast(m){
 })();
 /* ===== پایان لایه کش ===== */
 </script>
-          <script>
-// ===== نمایش پاسخ شورا به عضو بعد از ورود =====
-(function(){
-  var checkInterval = null;
-  var shownIds = {};
+<script>
+// ===== نمایش پاسخ شورا به عضو (نسخه ساده و تضمینی) =====
+window.addEventListener('load', function() {
+  var checkCount = 0;
+  var maxChecks = 15;
   
-  function tryShowReply() {
-    // صبر می‌کنیم تا currentUser پر شود
-    var u = '';
-    try { 
-      if (typeof currentUser !== 'undefined' && currentUser) {
-        u = currentUser.username || currentUser.user || currentUser.id || '';
-      }
-    } catch(e) {}
-    if (!u) return;
+  function checkForReplies() {
+    checkCount++;
     
-    // فقط یک بار بعد از ورود
-    if (shownIds['__checked_' + u]) return;
-    shownIds['__checked_' + u] = true;
+    // بررسی currentUser
+    if (typeof currentUser === 'undefined' || !currentUser) {
+      if (checkCount < maxChecks) setTimeout(checkForReplies, 2000);
+      return;
+    }
     
-    var url = (typeof ADMIN_URL !== 'undefined' ? ADMIN_URL : '') + 
-              '?action=getMyReplies&user=' + encodeURIComponent(u);
-    if (!ADMIN_URL) return;
+    var userCode = currentUser.username || currentUser.user || currentUser.id || '';
+    if (!userCode) return;
     
-    fetch(url)
+    // جلوگیری از تکرار در همان نشست
+    var checkKey = 'repliesChecked_' + userCode;
+    if (sessionStorage.getItem(checkKey)) return;
+    sessionStorage.setItem(checkKey, '1');
+    
+    // درخواست به سرور
+    fetch(ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(userCode))
       .then(function(r){ return r.json(); })
       .then(function(d){
         if (!d || !d.ok || !d.replies || !d.replies.length) return;
-        var unseen = d.replies.filter(function(x){ return !x.seen; });
-        if (!unseen.length) return;
-        showReplyModal(unseen[0], u);
+        
+        // پیدا کردن پاسخ‌های دیده‌نشده
+        for (var i = 0; i < d.replies.length; i++) {
+          var reply = d.replies[i];
+          if (reply.seen) continue;
+          
+          var shownKey = 'replyShown_' + reply.id;
+          if (sessionStorage.getItem(shownKey)) continue;
+          
+          showReply(reply, userCode, shownKey);
+          break; // فقط اولین را نشان بده
+        }
       })
-      .catch(function(){});
+      .catch(function(e){
+        console.log('خطا در دریافت پاسخ‌ها:', e);
+      });
   }
   
-  function showReplyModal(reply, userCode) {
-    // جلوگیری از نمایش تکراری در همان نشست
-    var key = 'replyShown_' + reply.id;
-    try { if (sessionStorage.getItem(key)) return; sessionStorage.setItem(key, '1'); } catch(e){}
-    
-    var overlay = document.createElement('div');
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:999999;display:flex;align-items:center;justify-content:center;padding:15px;animation:fadeIn .3s';
-    
-    var modal = document.createElement('div');
-    modal.style.cssText = 'background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid rgba(255,215,0,.5);border-radius:22px;padding:24px;max-width:420px;width:100%;color:#fff;font-family:tahoma;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5);animation:slideUp .4s';
+  function showReply(reply, userCode, shownKey) {
+    sessionStorage.setItem(shownKey, '1');
     
     var replyDate = '';
-    try {
-      if (reply.replyAt) replyDate = new Date(reply.replyAt).toLocaleString('fa-IR');
-    } catch(e){}
+    try { replyDate = new Date(reply.replyAt).toLocaleString('fa-IR'); } catch(e){}
+    
+    var overlay = document.createElement('div');
+    overlay.id = 'replyOverlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px';
+    
+    var modal = document.createElement('div');
+    modal.style.cssText = 'background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #ffd700;border-radius:20px;padding:25px;max-width:400px;width:100%;color:#fff;font-family:tahoma;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)';
     
     modal.innerHTML = 
-      '<div style="font-size:3rem;margin-bottom:10px">📨</div>' +
-      '<h3 style="color:#ffd700;margin:0 0 8px;font-size:1.15rem">پاسخ شورای صندوق اتحاد</h3>' +
-      '<div style="color:rgba(255,255,255,.6);font-size:.75rem;margin-bottom:16px">' + replyDate + '</div>' +
-      
-      '<div style="background:rgba(255,255,255,.05);border-radius:12px;padding:12px;margin-bottom:12px;text-align:right">' +
-        '<div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:6px">💬 پیام شما:</div>' +
-        '<div style="font-size:.85rem;line-height:1.8">' + String(reply.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>' +
+      '<div style="font-size:3.5rem;margin-bottom:15px">📨</div>' +
+      '<h3 style="color:#ffd700;margin:0 0 10px;font-size:1.2rem">پاسخ شورای صندوق اتحاد</h3>' +
+      (replyDate ? '<div style="color:rgba(255,255,255,.6);font-size:.75rem;margin-bottom:15px">' + replyDate + '</div>' : '') +
+      '<div style="background:rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:right">' +
+        '<div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-bottom:6px">💬 پیام شما:</div>' +
+        '<div style="font-size:.88rem;line-height:1.8">' + String(reply.message || '').replace(/</g, '&lt;') + '</div>' +
       '</div>' +
-      
-      '<div style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:14px;margin-bottom:18px;text-align:right">' +
-        '<div style="color:#ffd700;font-size:.75rem;margin-bottom:8px;font-weight:700">✨ پاسخ شورا:</div>' +
-        '<div style="font-size:.9rem;line-height:1.9">' + String(reply.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>' +
+      '<div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);border-radius:12px;padding:14px;margin-bottom:18px;text-align:right">' +
+        '<div style="color:#ffd700;font-size:.78rem;margin-bottom:8px;font-weight:bold">✨ پاسخ شورا:</div>' +
+        '<div style="font-size:.92rem;line-height:1.9">' + String(reply.reply || '').replace(/</g, '&lt;') + '</div>' +
       '</div>' +
-      
-      '<button id="replySeenBtn" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:900;font-size:.95rem;cursor:pointer;font-family:tahoma;box-shadow:0 4px 15px rgba(255,215,0,.3)">✅ متوجه شدم</button>';
+      '<button id="closeReplyBtn" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:.95rem;cursor:pointer;font-family:tahoma">✅ متوجه شدم</button>';
     
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
     
-    document.getElementById('replySeenBtn').onclick = function() {
-      overlay.style.opacity = '0';
-      overlay.style.transition = 'opacity .3s';
-      setTimeout(function(){
-        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
-        fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
-      }, 300);
+    document.getElementById('closeReplyBtn').onclick = function() {
+      overlay.remove();
+      // علامت‌گذاری به‌عنوان دیده‌شده در سرور
+      fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
     };
   }
   
-  // شروع چک: هر ۳ ثانیه تا ۳۰ ثانیه بعد از بارگذاری
-  var attempts = 0;
-  checkInterval = setInterval(function(){
-    attempts++;
-    tryShowReply();
-    if (attempts >= 10 || (typeof currentUser !== 'undefined' && currentUser && shownIds['__checked_' + (currentUser.username || currentUser.user || currentUser.id || '')])) {
-      clearInterval(checkInterval);
-    }
-  }, 3000);
-})();
+  // شروع چک بعد از ۳ ثانیه
+  setTimeout(checkForReplies, 3000);
+});
 </script>
-<style>
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-</style>  
 </body>
 </html>
