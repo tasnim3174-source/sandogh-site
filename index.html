@@ -14332,10 +14332,20 @@ function rwToast(m){
   }, 1000);
 })();
 </script>
-            <!-- دکمه پیام‌های من (در پروفایل) -->
-<button onclick="openMyMessages()" style="position:fixed;bottom:80px;right:20px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border:none;border-radius:50px;padding:12px 20px;font-weight:bold;font-family:tahoma;box-shadow:0 4px 15px rgba(255,215,0,.4);cursor:pointer;z-index:9999">📨 پیام‌های من</button>
+           <!-- دکمه پیام‌های من (فقط بعد از ورود) -->
+<button id="myMessagesBtn" onclick="openMyMessages()" style="position:fixed;bottom:80px;right:20px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border:none;border-radius:50px;padding:12px 20px;font-weight:bold;font-family:tahoma;box-shadow:0 4px 15px rgba(255,215,0,.4);cursor:pointer;z-index:9999;display:none">📨 پیام‌های من</button>
 
 <script>
+// ===== نمایش دکمه فقط وقتی کاربر وارد شده =====
+setInterval(function(){
+  var btn = document.getElementById('myMessagesBtn');
+  if (!btn) return;
+  var logged = false;
+  try { logged = !!(typeof currentUser !== 'undefined' && currentUser); } catch(e){}
+  btn.style.display = logged ? 'block' : 'none';
+}, 1000);
+
+// ===== باز کردن تاریخچه پیام‌های عضو =====
 function openMyMessages(){
   if (typeof currentUser === 'undefined' || !currentUser) {
     alert('⚠️ لطفاً ابتدا وارد شوید');
@@ -14362,7 +14372,9 @@ function openMyMessages(){
       var loading = document.getElementById('messagesLoading');
       var list = document.getElementById('messagesList');
       
-      if (!d.ok || !d.messages || !d.messages.length) {
+      if (!loading) return;
+      
+      if (!d || !d.ok || !d.messages || !d.messages.length) {
         loading.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.6)">📭 هنوز پیامی ارسال نکرده‌اید</div>';
         return;
       }
@@ -14374,7 +14386,7 @@ function openMyMessages(){
         try { date = new Date(msg.timestamp).toLocaleString('fa-IR'); } catch(e){}
         
         var replyDate = '';
-        if (msg.replyAt) try { replyDate = new Date(msg.replyAt).toLocaleString('fa-IR'); } catch(e){}
+        if (msg.replyAt) { try { replyDate = new Date(msg.replyAt).toLocaleString('fa-IR'); } catch(e){} }
         
         var card = document.createElement('div');
         card.style.cssText = 'background:rgba(255,255,255,.05);border-radius:12px;padding:15px;margin-bottom:15px';
@@ -14398,9 +14410,21 @@ function openMyMessages(){
       });
     })
     .catch(function(e){
-      document.getElementById('messagesLoading').innerHTML = '<div style="color:#ff6b6b">❌ خطا در بارگذاری</div>';
+      var l = document.getElementById('messagesLoading');
+      if (l) l.innerHTML = '<div style="color:#ff6b6b;text-align:center">❌ خطا در بارگذاری</div>';
     });
 }
+</script>
+<button id="myMessagesBtn" onclick="openMyMessages()" style="position:fixed;bottom:80px;right:20px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border:none;border-radius:50px;padding:12px 20px;font-weight:bold;font-family:tahoma;box-shadow:0 4px 15px rgba(255,215,0,.4);cursor:pointer;z-index:9999;display:none">📨 پیام‌های من</button>
+
+<script>
+setInterval(function(){
+  var btn = document.getElementById('myMessagesBtn');
+  if (!btn) return;
+  var logged = false;
+  try { logged = !!(typeof currentUser !== 'undefined' && currentUser); } catch(e){}
+  btn.style.display = logged ? 'block' : 'none';
+}, 1000);
 </script>
 </body>
 </html>
