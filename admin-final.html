@@ -180,6 +180,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="7" data-role="all" onclick="showTab(7)">🛒 فروشگاه</div>
     <div class="menu-item" data-tab="8" data-role="all" onclick="showTab(8)">📥 درخواست‌های خرید</div>
     <div class="menu-item" data-tab="9" data-role="all" onclick="showTab(9)">📬 اطلاع‌رسانی</div>
+        <div class="menu-item" data-tab="10" data-role="admin" onclick="showTab(10)">💬 پیام‌ها و پاسخ‌ها</div>
   </div>
   
   <!-- Main Content -->
@@ -337,7 +338,21 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     </div>
   </div>
 </div>
-
+    <!-- Tab 10: پیام‌ها و پاسخ‌ها -->
+    <div id="sec10" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700">💬 سیستم پیام و پاسخ اعضا</h3>
+          <button class="refresh" onclick="loadCouncilMessages()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <button onclick="filterMsgs('pending')" style="padding:8px 14px;border-radius:99px;border:1px solid rgba(251,191,36,.4);background:rgba(251,191,36,.1);color:#fbbf24;cursor:pointer;font-weight:700;font-family:tahoma">⏳ بی‌پاسخ</button>
+          <button onclick="filterMsgs('answered')" style="padding:8px 14px;border-radius:99px;border:1px solid rgba(34,197,94,.4);background:rgba(34,197,94,.1);color:#22c55e;cursor:pointer;font-weight:700;font-family:tahoma">✅ پاسخ‌داده‌شده</button>
+          <button onclick="filterMsgs('all')" style="padding:8px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);cursor:pointer;font-weight:700;font-family:tahoma">📋 همه</button>
+        </div>
+        <div id="councilMessagesList"><div class="loader">در حال بارگذاری...</div></div>
+      </div>
+    </div>
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
@@ -450,6 +465,7 @@ function showTab(n){
   var tab7El = document.getElementById('tab7'); if (tab7El) tab7El.style.display = 'none';
   var tab8El = document.getElementById('tab8'); if (tab8El) tab8El.style.display = 'none';
   var sec9 = document.getElementById('sec9'); if (sec9) sec9.style.display = 'none';
+    var sec10 = document.getElementById('sec10'); if (sec10) sec10.style.display = 'none';
   
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
@@ -461,6 +477,7 @@ function showTab(n){
   else if (n === 7) { if (tab7El) tab7El.style.display = 'block'; loadShopProducts(); }
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
+    else if (n === 10) { if (sec10) sec10.style.display = 'block'; loadCouncilMessages(); }
   
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
@@ -1077,6 +1094,69 @@ function openStmtList() {
     }
   }).catch(function(){});
 })();
+</script>
+  <script>
+var allCouncilMsgs = [];
+var msgFilter = 'pending';
+
+function loadCouncilMessages(){
+  document.getElementById('councilMessagesList').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+  fetch(ADMIN_URL + '?action=getCouncilMessages&key=' + encodeURIComponent(KEY))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      allCouncilMsgs = d.messages || [];
+      renderCouncilMessages();
+    })
+    .catch(function(){ document.getElementById('councilMessagesList').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت پیام‌ها</div>'; });
+}
+
+function filterMsgs(f){
+  msgFilter = f;
+  renderCouncilMessages();
+}
+
+function renderCouncilMessages(){
+  var list = allCouncilMsgs.filter(function(m){
+    if (msgFilter === 'all') return true;
+    return m.status === msgFilter;
+  });
+  if (!list.length) {
+    document.getElementById('councilMessagesList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">📭 پیامی در این دسته نیست</div>';
+    return;
+  }
+  var html = '';
+  list.forEach(function(m){
+    var dt = m.timestamp ? new Date(m.timestamp) : null;
+    var ds = dt ? fmtFull(dt) : '-';
+    var tag = m.status === 'answered' ? '<span class="approved-tag">✅ پاسخ داده شد</span>' : '<span class="pending-tag">⏳ بی‌پاسخ</span>';
+    html += '<div class="req-card">';
+    html += '<div class="req-head"><div><b style="color:#ffd700">👤 ' + (m.name || 'نامشخص') + '</b><div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">کد: ' + m.user + ' | 📅 ' + ds + '</div></div>' + tag + '</div>';
+    html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin-bottom:8px;line-height:1.9;font-size:.85rem">' + String(m.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
+    if (m.status === 'answered') {
+      html += '<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:8px;line-height:1.9;font-size:.85rem"><b style="color:#22c55e">💬 پاسخ:</b><br>' + String(m.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
+    } else {
+      html += '<textarea id="reply_' + m.id + '" maxlength="500" placeholder="✍️ پاسخ شورا را بنویسید..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none;margin-bottom:8px"></textarea>';
+      html += '<button onclick="sendMemberReply(\'' + m.id + '\')" style="width:100%;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer;font-family:tahoma">📨 ثبت و ارسال پاسخ به عضو</button>';
+    }
+    html += '</div>';
+  });
+  document.getElementById('councilMessagesList').innerHTML = html;
+}
+
+function sendMemberReply(mid){
+  var ta = document.getElementById('reply_' + mid);
+  if (!ta) return;
+  var text = ta.value.trim();
+  if (text.length < 3) { alert('⚠️ متن پاسخ را بنویسید'); return; }
+  if (!confirm('پاسخ ثبت و برای عضو ارسال شود؟')) return;
+  fetch(ADMIN_URL + '?action=replyToMember&key=' + encodeURIComponent(KEY) + '&messageId=' + encodeURIComponent(mid) + '&reply=' + encodeURIComponent(text))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      alert(d.ok ? ('✅ ' + (d.msg || 'پاسخ ثبت شد')) : ('❌ ' + (d.error || 'خطا')));
+      loadCouncilMessages();
+    })
+    .catch(function(){ alert('❌ خطا در ارتباط'); });
+}
 </script>
 </body>
 </html>
