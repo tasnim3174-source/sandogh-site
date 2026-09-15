@@ -7,8 +7,52 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>صندوق اتحاد</title>
+<script>
+<script>
+/* ===== لایه کش هوشمند v2 ===== */
+(function(){
+  var TTL_SMALL = 5 * 60 * 1000;
+  var TTL_MEM   = 5 * 60 * 1000;
+  var SMALL  = ['isCouncil','status'];                        // کش ۵ دقیقه‌ای
+  var MEM    = ['readExcel'];                                  // کش حافظه‌ای (سنگین)
+  var DEDUPE = ['addPoints','getPointsHistory','getAllMembersWithPoints','updatePoints']; // فقط جلوگیری همزمان
+  var memCache = {};
+  var inflight = {};
+  var origFetch = window.fetch ? window.fetch.bind(window) : null;
+  if (!origFetch) return;
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  function resp(data){ return new Response(JSON.stringify(data), {status:200, headers:{'Content-Type':'application/json'}}); }
+  function sGet(url){ try{ var r=sessionStorage.getItem('fc_'+url); if(!r) return null; var o=JSON.parse(r); if(Date.now()-o.t<TTL_SMALL) return o.d; sessionStorage.removeItem('fc_'+url);}catch(e){} return null; }
+  function sSet(url,d){ try{ sessionStorage.setItem('fc_'+url, JSON.stringify({t:Date.now(),d:d})); }catch(e){} }
+  function which(url, list){ for(var i=0;i<list.length;i++){ if(url.indexOf('action='+list[i])>-1) return list[i]; } return null; }
+
+  window.fetch = function(input, init){
+    var url = (typeof input==='string') ? input : ((input && input.url) || '');
+    var m = which(url, SMALL) || which(url, MEM);
+    var d = which(url, DEDUPE);
+    if (!m && !d) return origFetch(input, init);
+
+    if (m) {
+      if (SMALL.indexOf(m) > -1) { var cs = sGet(url); if (cs !== null) return Promise.resolve(resp(cs)); }
+      else { var cm = memCache[url]; if (cm && Date.now()-cm.t < TTL_MEM) return Promise.resolve(resp(cm.d)); }
+    }
+    if (inflight[url]) return inflight[url].then(function(x){ return resp(x); });
+
+    inflight[url] = origFetch(input, init)
+      .then(function(r){ return r.json(); })
+      .then(function(x){
+        if (m) { if (SMALL.indexOf(m) > -1) sSet(url,x); else memCache[url] = {t:Date.now(), d:x}; }
+        delete inflight[url];
+        return x;
+      })
+      .catch(function(e){ delete inflight[url]; throw e; });
+
+    return inflight[url].then(function(x){ return resp(x); });
+  };
+})();
+/* ===== پایان لایه کش ===== */
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -8362,8 +8406,16 @@ function showBirthdayInfo() {
                     else backBtn.classList.remove('show');
                 });
             }
-            // 🎯 تنظیم پویای فاصله محتوا از هدر برای همه دستگاه‌ها
-function adjustContentPadding() {
+// 🎯 تنظیم پویای فاصله محتوا از هدر برای همه دستگاه‌ها
+(function(){
+  var lastRun = 0;
+  var THROTTLE = 500; // فقط هر ۵۰۰ میلی‌ثانیه یک بار
+
+  window.adjustContentPadding = function() {
+    var now = Date.now();
+    if (now - lastRun < THROTTLE) return;  // 🛡️ جلوگیری از اجرای بیش از حد
+    lastRun = now;
+
     const header = document.querySelector('.hdr') || document.querySelector('.app-header') || document.querySelector('header') || document.querySelector('.header') || document.querySelector('[class*="header"]');
     const content = document.querySelector('.main-content') || document.querySelector('#main-content') || document.querySelector('main') || document.querySelector('body > div:not(.hdr):not(.bottom-nav)');
     
@@ -8372,15 +8424,14 @@ function adjustContentPadding() {
         const computedStyle = window.getComputedStyle(header);
         const position = computedStyle.position;
         
-        // فقط اگر هدر ثابت است (fixed یا sticky)
         if (position === 'fixed' || position === 'sticky') {
-            // اضافه کردن 20px فاصله اضافی برای اطمینان
             const paddingValue = (headerHeight + 20) + 'px';
             content.style.paddingTop = paddingValue;
-            console.log('✅ فاصله محتوا تنظیم شد:', paddingValue);
+            // console.log حذف شد چون در production لازم نیست
         }
     }
-}
+  };
+})();
             
             // اجرا در بارگذاری اولیه
             adjustContentPadding();
@@ -13857,6 +13908,107 @@ function rwToast(m){
     if(u&&!lv){ makeButton(); dailyLogin(); } else { removeButton(); }
   },800);
 })();
+</script>
+<script>
+/* ===== لایه کش هوشمند v7 ===== */
+(function(){
+  var TTL_FAST = 30 * 1000;
+  var TTL_SLOW = 5 * 60 * 1000;
+  var MAX_CONCURRENT = 3;
+  var SLOW = ['readExcel','getPointsHistory','getAllMembersWithPoints','getQuizzes','getShopProducts','getPurchaseRequests','getSurvey'];
+  var COLLAPSE = ['addPoints','readExcel','getPointsHistory','isCouncil','status','getAllMembersWithPoints',
+    'getQuizzes','getShopProducts','getPurchaseRequests','getSurvey','logLogin','getStatementEmailList',
+    'councilLogin','verifyCouncilToken'];
+  var MUTATE = ['addPoints','updatePoints','resolvePurchase','cancelPurchase','logLogin',
+    'deleteSelectedLogs','resetAll','enable','disable','sendMonthlyReport','setupMonthlyReport',
+    'createQuiz','deleteQuiz','addShopProduct','deleteShopProduct','updateShopProduct',
+    'setupHourlyGroupMessage','setupEvery30MinGroupMessage','setupDailyStatement',
+    'sendStatementsNow','setShoraChatId','sendGroupAnnouncement','sendThursdayGuideNow',
+    'resetThursdayGuide'];
+  var ONCE_SESSION = ['logLogin'];
+  var mem = {}, inflight = {}, failCache = {};
+  var active = 0, queue = [];
+  var origFetch = window.fetch ? window.fetch.bind(window) : null;
+  if (!origFetch) return;
+
+  function resp(d){ return new Response(JSON.stringify(d), {status:200, headers:{'Content-Type':'application/json'}}); }
+  function has(url,list){ for(var i=0;i<list.length;i++){ if(url.indexOf('action='+list[i])>-1) return true; } return false; }
+  function day(){ var n=new Date(); return n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate(); }
+  function ssGet(k){ try{ var r=sessionStorage.getItem(k); if(r) return JSON.parse(r); }catch(e){} return null; }
+  function ssSet(k,v){ try{ sessionStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function lsGet(k){ try{ var r=localStorage.getItem(k); if(!r) return null; var o=JSON.parse(r); if(o.d===day()) return o.r; localStorage.removeItem(k); }catch(e){} return null; }
+  function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify({d:day(), r:v})); }catch(e){} }
+  function param(url,name){ var m=url.match(new RegExp('[?&]'+name+'=([^&]*)')); return m?m[1]:''; }
+  function actionOf(url){ var m=url.match(/[?&]action=([^&]+)/); return m?m[1]:''; }
+  function collapseKey(url){
+    var a = actionOf(url);
+    if (a === 'addPoints') return 'ck|addPoints|u='+param(url,'user')+'|p='+param(url,'points')+'|t='+param(url,'type');
+    if (COLLAPSE.indexOf(a) > -1) return 'ck|'+a+'|u='+param(url,'user');
+    return url;
+  }
+  function isDataFile(url){ return url.indexOf('data1.xlsx')>-1 || url.indexOf('data.xlsx')>-1; }
+  function clearFinancialCache(){
+    Object.keys(mem).forEach(function(k){
+      if (k.indexOf('ck|getPointsHistory')===0 || k.indexOf('ck|getAllMembersWithPoints')===0 ||
+          k.indexOf('ck|getShopProducts')===0 || k.indexOf('ck|getPurchaseRequests')===0) delete mem[k];
+    });
+  }
+  /* محدودکننده همزمانی */
+  function limited(task){
+    return new Promise(function(res, rej){
+      queue.push(function(){
+        task().then(function(v){ active--; pump(); res(v); },
+                    function(e){ active--; pump(); rej(e); });
+      });
+      pump();
+    });
+  }
+  function pump(){
+    while (queue.length && active < MAX_CONCURRENT) {
+      var job = queue.shift(); active++; job();
+    }
+  }
+
+  window.fetch = function(input, init){
+    var url = (typeof input==='string') ? input : ((input && input.url) || '');
+
+    if (isDataFile(url)) {
+      var f = failCache[url];
+      if (f && Date.now()-f.t < 5*60*1000) return Promise.resolve(new Response('', {status:f.s}));
+      return origFetch(input, init).then(function(r){
+        if (r.status >= 400) failCache[url] = {t:Date.now(), s:r.status};
+        return r;
+      });
+    }
+
+    if (url.indexOf('action=') === -1) return origFetch(input, init);
+    var a = actionOf(url);
+    var mutate = has(url, MUTATE);
+    var os = has(url, ONCE_SESSION);
+    var ak = (a === 'addPoints') ? ('odk_addpts|u='+param(url,'user')+'|p='+param(url,'points')+'|t='+param(url,'type')+'|n='+param(url,'name')) : null;
+    var ik = ak || collapseKey(url);
+    var ttl = (SLOW.indexOf(a) > -1) ? TTL_SLOW : TTL_FAST;
+
+    if (ak) { var ca = lsGet(ak); if (ca !== null) return Promise.resolve(resp(ca)); }
+    if (os) { var cs = ssGet('os_'+a+'_'+param(url,'user')); if (cs !== null) return Promise.resolve(resp(cs)); }
+    if (!mutate) { var c = mem[ik]; if (c && Date.now()-c.t < ttl) return Promise.resolve(resp(c.d)); }
+    if (inflight[ik]) return inflight[ik].then(function(x){ return resp(x); });
+
+    inflight[ik] = limited(function(){ return origFetch(input, init); })
+      .then(function(r){ return r.json(); })
+      .then(function(x){
+        if (ak) lsSet(ak, x);
+        if (os) ssSet('os_'+a+'_'+param(url,'user'), x);
+        if (mutate) clearFinancialCache(); else mem[ik] = {t: Date.now(), d: x};
+        delete inflight[ik];
+        return x;
+      })
+      .catch(function(e){ delete inflight[ik]; throw e; });
+
+    return inflight[ik].then(function(x){ return resp(x); });
+  };
+})();
+/* ===== پایان لایه کش ===== */
 </script>
 </body>
 </html>
