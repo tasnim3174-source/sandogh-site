@@ -14112,88 +14112,94 @@ function rwToast(m){
 })();
 /* ===== پایان لایه کش ===== */
 </script>
- <script>       
-// ===== نمایش پاسخ شورا به عضو (نسخه نهایی با تشخیص بهتر) =====
-window.addEventListener('load', function() {
-  var checkCount = 0;
-  var maxChecks = 20;
-  var userCode = '';
+<script>
+// ===== سیستم نمایش پاسخ شورا - نسخه تضمینی =====
+(function(){
+  var shown = false;
   
-  function checkForReplies() {
-    checkCount++;
+  function checkAndShow() {
+    if (shown) return;
     
     // بررسی currentUser
-    if (typeof currentUser === 'undefined' || !currentUser) {
-      if (checkCount < maxChecks) setTimeout(checkForReplies, 2000);
-      return;
-    }
+    if (typeof currentUser === 'undefined' || !currentUser) return;
     
-    userCode = currentUser.username || currentUser.user || currentUser.id || '';
+    var userCode = currentUser.username || currentUser.user || currentUser.id || '';
     if (!userCode) return;
     
-    // درخواست به سرور
+    console.log('[Reply] شروع چک برای کاربر:', userCode);
+    
     fetch(ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(userCode))
       .then(function(r){ return r.json(); })
       .then(function(d){
+        console.log('[Reply] پاسخ سرور:', d);
+        
         if (!d || !d.ok || !d.replies || !d.replies.length) return;
         
-        // پیدا کردن پاسخ‌های دیده‌نشده
+        // پیدا کردن اولین پاسخ unseen
+        var reply = null;
         for (var i = 0; i < d.replies.length; i++) {
-          var reply = d.replies[i];
-          if (reply.seen) continue;
-          
-          var shownKey = 'replyShown_' + reply.id;
-          if (sessionStorage.getItem(shownKey)) continue;
-          
-          // اگر رسیدیم اینجا، یعنی پاسخ unseen داریم
-          showReply(reply, userCode, shownKey);
-          return; // فقط اولین را نشان بده و خارج شو
+          if (!d.replies[i].seen) {
+            reply = d.replies[i];
+            break;
+          }
         }
+        
+        if (!reply) {
+          console.log('[Reply] همه پاسخ‌ها دیده شده‌اند');
+          return;
+        }
+        
+        shown = true;
+        console.log('[Reply] نمایش پاسخ:', reply.id);
+        
+        // ساخت پنجره
+        var overlay = document.createElement('div');
+        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:center;justify-content:center;padding:20px';
+        
+        var modal = document.createElement('div');
+        modal.style.cssText = 'background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #ffd700;border-radius:20px;padding:25px;max-width:420px;width:100%;color:#fff;font-family:tahoma;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5)';
+        
+        var replyDate = '';
+        try { replyDate = new Date(reply.replyAt).toLocaleString('fa-IR'); } catch(e){}
+        
+        modal.innerHTML = 
+          '<div style="font-size:3.5rem;margin-bottom:15px">📨</div>' +
+          '<h3 style="color:#ffd700;margin:0 0 10px;font-size:1.2rem">پاسخ شورای صندوق اتحاد</h3>' +
+          (replyDate ? '<div style="color:rgba(255,255,255,0.6);font-size:0.75rem;margin-bottom:15px">' + replyDate + '</div>' : '') +
+          '<div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:right">' +
+            '<div style="color:rgba(255,255,255,0.5);font-size:0.72rem;margin-bottom:6px">💬 پیام شما:</div>' +
+            '<div style="font-size:0.88rem;line-height:1.8">' + String(reply.message || '').replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>' +
+          '</div>' +
+          '<div style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);border-radius:12px;padding:14px;margin-bottom:18px;text-align:right">' +
+            '<div style="color:#ffd700;font-size:0.78rem;margin-bottom:8px;font-weight:bold">✨ پاسخ شورا:</div>' +
+            '<div style="font-size:0.92rem;line-height:1.9">' + String(reply.reply || '').replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>' +
+          '</div>' +
+          '<button id="closeReplyBtn" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:0.95rem;cursor:pointer">✅ متوجه شدم</button>';
+        
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
+        
+        // دکمه بستن
+        document.getElementById('closeReplyBtn').onclick = function(){
+          overlay.remove();
+          fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
+        };
       })
       .catch(function(e){
-        console.log('خطا در دریافت پاسخ‌ها:', e);
+        console.log('[Reply] خطا:', e);
       });
   }
   
-  function showReply(reply, userCode, shownKey) {
-    sessionStorage.setItem(shownKey, '1');
-    
-    var replyDate = '';
-    try { replyDate = new Date(reply.replyAt).toLocaleString('fa-IR'); } catch(e){}
-    
-    var overlay = document.createElement('div');
-    overlay.id = 'replyOverlay';
-    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:999999;display:flex;align-items:center;justify-content:center;padding:20px';
-    
-    var modal = document.createElement('div');
-    modal.style.cssText = 'background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #ffd700;border-radius:20px;padding:25px;max-width:400px;width:100%;color:#fff;font-family:tahoma;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.5)';
-    
-    modal.innerHTML = 
-      '<div style="font-size:3.5rem;margin-bottom:15px">📨</div>' +
-      '<h3 style="color:#ffd700;margin:0 0 10px;font-size:1.2rem">پاسخ شورای صندوق اتحاد</h3>' +
-      (replyDate ? '<div style="color:rgba(255,255,255,.6);font-size:.75rem;margin-bottom:15px">' + replyDate + '</div>' : '') +
-      '<div style="background:rgba(255,255,255,.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:right">' +
-        '<div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-bottom:6px">💬 پیام شما:</div>' +
-        '<div style="font-size:.88rem;line-height:1.8">' + String(reply.message || '').replace(/</g, '&lt;') + '</div>' +
-      '</div>' +
-      '<div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.4);border-radius:12px;padding:14px;margin-bottom:18px;text-align:right">' +
-        '<div style="color:#ffd700;font-size:.78rem;margin-bottom:8px;font-weight:bold">✨ پاسخ شورا:</div>' +
-        '<div style="font-size:.92rem;line-height:1.9">' + String(reply.reply || '').replace(/</g, '&lt;') + '</div>' +
-      '</div>' +
-      '<button id="closeReplyBtn" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:.95rem;cursor:pointer;font-family:tahoma">✅ متوجه شدم</button>';
-    
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-    
-    document.getElementById('closeReplyBtn').onclick = function() {
-      overlay.remove();
-      fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
-    };
-  }
+  // چک هر ۳ ثانیه تا ۱۰ بار
+  var count = 0;
+  var timer = setInterval(function(){
+    count++;
+    checkAndShow();
+    if (count >= 10 || shown) clearInterval(timer);
+  }, 3000);
   
-  // شروع چک بعد از ۳ ثانیه
-  setTimeout(checkForReplies, 3000);
-});
+  console.log('[Reply] سیستم نمایش پاسخ فعال شد');
+})();
 </script>
 </body>
 </html>
