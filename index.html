@@ -13117,12 +13117,16 @@ function logUserLogin(user, name) {
 // ===== نظرسنجی هنگام خروج =====
 (function(){
   var st = document.createElement('style');
-  st.textContent = '#surveyOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:99999;padding:15px}#surveyModal{background:linear-gradient(160deg,#1e1e35,#151528);border:1px solid rgba(255,215,0,.3);border-radius:22px;padding:24px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;text-align:center;font-family:tahoma;color:#fff}#surveyModal h2{color:#ffd700;font-size:1.05rem;margin-bottom:6px}.msub{color:rgba(255,255,255,.55);font-size:.78rem;margin-bottom:16px}#surveyStars{font-size:clamp(2.8rem, 9vw, 4.5rem);cursor:pointer;user-select:none}#surveyStars span{transition:transform .15s}#surveyStars span:hover{transform:scale(1.2)}.s-hint{color:rgba(255,255,255,.4);font-size:.72rem;margin:4px 0 14px}#surveyText{width:100%;min-height:75px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;padding:10px;font-family:tahoma;font-size:.83rem;resize:vertical;outline:none;margin-bottom:10px}.msg-section{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:12px;margin-bottom:14px}.msg-section h3{color:#ffd700;font-size:.85rem;margin-bottom:8px}#msgText{width:100%;min-height:80px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none}.s-btns{display:flex;flex-direction:column;gap:8px}.s-btns button{padding:13px;border:none;border-radius:12px;font-weight:900;font-size:.88rem;cursor:pointer;font-family:tahoma}#sSend{background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e}#sSendMsg{background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff}#sSkip{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15)}';
+  st.textContent = '#surveyOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:99999;padding:15px}#surveyModal{background:linear-gradient(160deg,#1e1e35,#151528);border:1px solid rgba(255,215,0,.3);border-radius:22px;padding:24px;width:100%;max-width:420px;max-height:88vh;overflow-y:auto;text-align:center;font-family:tahoma;color:#fff;position:relative}#surveyModal h2{color:#ffd700;font-size:1.05rem;margin-bottom:6px}.msub{color:rgba(255,255,255,.55);font-size:.78rem;margin-bottom:16px}#surveyStars{font-size:clamp(2.8rem, 9vw, 4.5rem);cursor:pointer;user-select:none}#surveyStars span{transition:transform .15s}#surveyStars span:hover{transform:scale(1.2)}.s-hint{color:rgba(255,255,255,.4);font-size:.72rem;margin:4px 0 14px}#surveyText{width:100%;min-height:75px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;color:#fff;padding:10px;font-family:tahoma;font-size:.83rem;resize:vertical;outline:none;margin-bottom:10px}.msg-section{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);border-radius:12px;padding:12px;margin-bottom:14px}.msg-section h3{color:#ffd700;font-size:.85rem;margin-bottom:8px}#msgText{width:100%;min-height:80px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none}.s-btns{display:flex;flex-direction:column;gap:8px}.s-btns button{padding:13px;border:none;border-radius:12px;font-weight:900;font-size:.88rem;cursor:pointer;font-family:tahoma;transition:opacity .2s}.s-btns button:disabled{opacity:.5;cursor:not-allowed}#sSend{background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e}#sSendMsg{background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff}#sSkip{background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15)}#loadingOverlay{position:absolute;inset:0;background:rgba(30,30,53,.95);border-radius:22px;display:none;align-items:center;justify-content:center;flex-direction:column;z-index:10}#loadingOverlay.show{display:flex}.spinner{width:50px;height:50px;border:4px solid rgba(255,215,0,.2);border-top:4px solid #ffd700;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:16px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}#loadingText{color:#ffd700;font-size:.95rem;font-weight:700}';
   document.head.appendChild(st);
 
   var ov = document.createElement('div');
   ov.id = 'surveyOverlay';
   ov.innerHTML = '<div id="surveyModal">' +
+    '<div id="loadingOverlay">' +
+      '<div class="spinner"></div>' +
+      '<div id="loadingText">⏳ لطفاً صبر کنید...</div>' +
+    '</div>' +
     '<h2>💛 میزان رضایت از برنامه و سایت صندوق</h2>' +
     '<div class="msub">لطفاً امتیاز بده و نظرت را بنویس (اختیاری)</div>' +
     '<div id="surveyStars"></div>' +
@@ -13159,9 +13163,24 @@ function logUserLogin(user, name) {
     rating = 0; drawS();
     document.getElementById('surveyText').value = '';
     document.getElementById('msgText').value = '';
+    hideLoading();
     ov.style.display = 'flex';
   }
   function closeS(){ ov.style.display = 'none'; }
+
+  function showLoading(text){
+    document.getElementById('loadingText').textContent = text || '⏳ لطفاً صبر کنید...';
+    document.getElementById('loadingOverlay').classList.add('show');
+    // غیرفعال کردن همه دکمه‌ها
+    var btns = document.querySelectorAll('.s-btns button');
+    btns.forEach(function(btn){ btn.disabled = true; });
+  }
+  function hideLoading(){
+    document.getElementById('loadingOverlay').classList.remove('show');
+    // فعال کردن همه دکمه‌ها
+    var btns = document.querySelectorAll('.s-btns button');
+    btns.forEach(function(btn){ btn.disabled = false; });
+  }
 
   function realLogout(){
     try { currentUser = null; } catch(e){}
@@ -13189,11 +13208,15 @@ function logUserLogin(user, name) {
 
   // دکمه ۱: فقط نظر + خروج
   document.getElementById('sSend').onclick = function(){
+    showLoading('💛 در حال ثبت نظر شما...');
     var text = document.getElementById('surveyText').value.trim();
     var info = getUserInfo();
     fetch(ADMIN_URL + '?action=submitSurvey&user=' + encodeURIComponent(info.uname) + '&name=' + encodeURIComponent(info.udisplay) + '&stars=' + rating + '&text=' + encodeURIComponent(text))
       .catch(function(){})
-      .then(function(){ closeS(); realLogout(); });
+      .then(function(){ 
+        closeS(); 
+        realLogout(); 
+      });
   };
 
   // دکمه ۲: نظر + پیام به شورا/مدیر + خروج
@@ -13207,6 +13230,8 @@ function logUserLogin(user, name) {
       return;
     }
     
+    showLoading('📨 در حال ارسال پیام به شورا و مدیر...');
+    
     // ابتدا نظر را ثبت کن
     fetch(ADMIN_URL + '?action=submitSurvey&user=' + encodeURIComponent(info.uname) + '&name=' + encodeURIComponent(info.udisplay) + '&stars=' + rating + '&text=' + encodeURIComponent(text))
       .catch(function(){})
@@ -13217,12 +13242,18 @@ function logUserLogin(user, name) {
       .then(function(r){ return r.json(); })
       .then(function(d){
         if (d.ok) {
-          alert('✅ پیام شما با موفقیت به مدیر و شورای صندوق ارسال شد');
+          showLoading('✅ پیام ارسال شد! در حال خروج...');
+          setTimeout(function(){
+            closeS();
+            realLogout();
+          }, 800);
+        } else {
+          hideLoading();
+          alert('❌ خطا در ارسال پیام');
         }
-        closeS();
-        realLogout();
       })
       .catch(function(){
+        hideLoading();
         closeS();
         realLogout();
       });
@@ -13230,8 +13261,11 @@ function logUserLogin(user, name) {
 
   // دکمه ۳: فقط خروج (بدون نظر و پیام)
   document.getElementById('sSkip').onclick = function(){
-    closeS();
-    realLogout();
+    showLoading('👋 در حال خروج...');
+    setTimeout(function(){
+      closeS();
+      realLogout();
+    }, 300);
   };
 
   window.doLogout = function(){ openS(); };
