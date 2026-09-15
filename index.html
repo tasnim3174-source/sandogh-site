@@ -14106,11 +14106,11 @@ function rwToast(m){
 })();
 /* ===== پایان لایه کش ===== */
 </script>
-<script>
-// ===== نمایش پاسخ شورا به عضو (نسخه ساده و تضمینی) =====
+// ===== نمایش پاسخ شورا به عضو (نسخه نهایی با تشخیص بهتر) =====
 window.addEventListener('load', function() {
   var checkCount = 0;
-  var maxChecks = 15;
+  var maxChecks = 20;
+  var userCode = '';
   
   function checkForReplies() {
     checkCount++;
@@ -14121,13 +14121,8 @@ window.addEventListener('load', function() {
       return;
     }
     
-    var userCode = currentUser.username || currentUser.user || currentUser.id || '';
+    userCode = currentUser.username || currentUser.user || currentUser.id || '';
     if (!userCode) return;
-    
-    // جلوگیری از تکرار در همان نشست
-    var checkKey = 'repliesChecked_' + userCode;
-    if (sessionStorage.getItem(checkKey)) return;
-    sessionStorage.setItem(checkKey, '1');
     
     // درخواست به سرور
     fetch(ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(userCode))
@@ -14143,8 +14138,9 @@ window.addEventListener('load', function() {
           var shownKey = 'replyShown_' + reply.id;
           if (sessionStorage.getItem(shownKey)) continue;
           
+          // اگر رسیدیم اینجا، یعنی پاسخ unseen داریم
           showReply(reply, userCode, shownKey);
-          break; // فقط اولین را نشان بده
+          return; // فقط اولین را نشان بده و خارج شو
         }
       })
       .catch(function(e){
@@ -14184,7 +14180,6 @@ window.addEventListener('load', function() {
     
     document.getElementById('closeReplyBtn').onclick = function() {
       overlay.remove();
-      // علامت‌گذاری به‌عنوان دیده‌شده در سرور
       fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
     };
   }
