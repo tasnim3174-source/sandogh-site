@@ -13219,7 +13219,7 @@ function logUserLogin(user, name) {
       });
   };
 
-  // دکمه ۲: نظر + پیام به شورا/مدیر + خروج
+   // دکمه ۲: نظر + پیام به شورا/مدیر + خروج
   document.getElementById('sSendMsg').onclick = function(){
     var text = document.getElementById('surveyText').value.trim();
     var msg = document.getElementById('msgText').value.trim();
@@ -13242,23 +13242,29 @@ function logUserLogin(user, name) {
       .then(function(r){ return r.json(); })
       .then(function(d){
         if (d.ok) {
-          showLoading('✅ پیام ارسال شد! در حال خروج...');
+          // نمایش پیام تشکر و راهنما
+          document.getElementById('loadingText').innerHTML = 
+            '✅ <b style="color:#22c55e">پیام شما با موفقیت ارسال شد</b><br><br>' +
+            '<div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:12px;padding:15px;margin:10px 0;font-size:.9rem;line-height:2">' +
+              '💛 <b>باتشکر از پیام شما</b><br>' +
+              'شما می‌توانید پاسخ پیام خود را در چند روز آینده در همین سایت ببینید.' +
+            '</div>';
+          
+          // صبر ۵ ثانیه تا کاربر پیام را بخواند، سپس خروج
           setTimeout(function(){
             closeS();
             realLogout();
-          }, 800);
+          }, 5000);
         } else {
-          hideLoading();
-          alert('❌ خطا در ارسال پیام');
+          showLoading('❌ خطا در ارسال پیام. لطفاً دوباره تلاش کنید.');
+          setTimeout(hideLoading, 2000);
         }
       })
       .catch(function(){
-        hideLoading();
-        closeS();
-        realLogout();
+        showLoading('❌ خطا در ارتباط. لطفاً دوباره تلاش کنید.');
+        setTimeout(hideLoading, 2000);
       });
   };
-
   // دکمه ۳: فقط خروج (بدون نظر و پیام)
   document.getElementById('sSkip').onclick = function(){
     showLoading('👋 در حال خروج...');
