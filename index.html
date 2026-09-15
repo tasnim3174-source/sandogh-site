@@ -14285,5 +14285,52 @@ function rwToast(m){
 
 })();
 </script>
+            <script>
+// ===== بستن همه‌کاره پنجره پاسخ (نسخه نهایی) =====
+(function(){
+  var openSince = 0;
+
+  function findReplyModals(){
+    var out = [];
+    var divs = document.querySelectorAll('div');
+    for (var i = 0; i < divs.length; i++) {
+      var d = divs[i];
+      if (d.style && d.style.position === 'fixed' && d.textContent.indexOf('پاسخ شورای صندوق') >= 0) out.push(d);
+    }
+    return out;
+  }
+
+  function closeAll(){
+    var mods = findReplyModals();
+    for (var i = 0; i < mods.length; i++) mods[i].remove();
+    var u = '';
+    try { u = currentUser.username || currentUser.user || currentUser.id || ''; } catch(e){}
+    if (u) fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(u)).catch(function(){});
+    openSince = 0;
+  }
+
+  // هر کلیک anywhere در صفحه → بستن
+  document.addEventListener('pointerdown', function(){
+    if (findReplyModals().length) {
+      console.log('[ReplyFix2] کلیک گرفته شد → بسته شد');
+      closeAll();
+    }
+  }, true);
+
+  // بررسی هر ثانیه: اگر پنجره باز شد، بعد از ۱۲ ثانیه خودکار ببند
+  setInterval(function(){
+    var mods = findReplyModals();
+    if (mods.length) {
+      if (!openSince) openSince = Date.now();
+      if (Date.now() - openSince > 12000) {
+        console.log('[ReplyFix2] بستن خودکار بعد از ۱۲ ثانیه');
+        closeAll();
+      }
+    } else {
+      openSince = 0;
+    }
+  }, 1000);
+})();
+</script>
 </body>
 </html>
