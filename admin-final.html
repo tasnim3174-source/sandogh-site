@@ -477,7 +477,14 @@ function showTab(n){
   else if (n === 7) { if (tab7El) tab7El.style.display = 'block'; loadShopProducts(); }
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
-    else if (n === 10) { if (sec10) sec10.style.display = 'block'; loadCouncilMessages(); }
+   else if (n === 10) {
+    if (sec10) {
+      var mainEl = document.querySelector('.main-content');
+      if (mainEl && sec10.parentElement !== mainEl) mainEl.appendChild(sec10);
+      sec10.style.display = 'block';
+    }
+    loadCouncilMessages();
+  }
   
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
