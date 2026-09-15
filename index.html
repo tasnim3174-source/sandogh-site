@@ -14201,5 +14201,33 @@ function rwToast(m){
   console.log('[Reply] سیستم نمایش پاسخ فعال شد');
 })();
 </script>
+            <script>
+// ===== تعمیرکار دکمه پاسخ (بدون حذف هیچ کدی) =====
+(function(){
+  function fixButtons(){
+    var btns = document.querySelectorAll('button');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      if (b.textContent.indexOf('متوجه شدم') >= 0 && !b.getAttribute('data-fixed')) {
+        b.setAttribute('data-fixed', '1');
+        b.addEventListener('click', function(){
+          // حذف همه پنجره‌های پاسخ (هر نسخه‌ای که باشد)
+          var ovs = document.querySelectorAll('#replyOverlay');
+          for (var k = 0; k < ovs.length; k++) ovs[k].remove();
+          var all = document.querySelectorAll('div[style*="position:fixed"]');
+          for (var m = 0; m < all.length; m++) {
+            if (all[m].textContent.indexOf('پاسخ شورای صندوق') >= 0) all[m].remove();
+          }
+          // علامت‌گذاری به‌عنوان دیده‌شده
+          var u = '';
+          try { u = currentUser.username || currentUser.user || currentUser.id || ''; } catch(e){}
+          if (u) fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(u)).catch(function(){});
+        }, true);
+      }
+    }
+  }
+  setInterval(fixButtons, 800);
+})();
+</script>
 </body>
 </html>
