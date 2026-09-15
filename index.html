@@ -14229,5 +14229,61 @@ function rwToast(m){
   setInterval(fixButtons, 800);
 })();
 </script>
+            <script>
+// ===== جارو و تعمیرکار پنجره پاسخ (نسخه نهایی) =====
+(function(){
+
+  // ۱) جارو: اگر چند پنجره پاسخ روی هم است، فقط آخری بماند
+  setInterval(function(){
+    var ovs = document.querySelectorAll('[id^="replyOverlay"]');
+    for (var i = 0; i < ovs.length - 1; i++) ovs[i].remove();
+  }, 800);
+
+  // ۲) خنثی‌کننده لایه‌های نامرئیِ روی دکمه
+  setInterval(function(){
+    var btns = document.querySelectorAll('button');
+    for (var i = 0; i < btns.length; i++) {
+      var b = btns[i];
+      if (String(b.textContent).indexOf('متوجه شدم') < 0) continue;
+      var r = b.getBoundingClientRect();
+      if (!r.width) continue;
+      var el = document.elementFromPoint(r.left + r.width/2, r.top + r.height/2);
+      if (el && el !== b && !b.contains(el)) {
+        var p = el;
+        while (p && p !== document.body) {
+          p.style.pointerEvents = 'none';
+          p = p.parentElement;
+        }
+        console.log('[ReplyFix] لایه مسدودکننده خنثی شد');
+      }
+    }
+  }, 1000);
+
+  // ۳) گیرنده کلیک سراسری: هر دکمه «متوجه شدم» از هر لایه‌ای
+  document.addEventListener('click', function(e){
+    var t = e.target;
+    var btn = (t && t.closest) ? t.closest('button') : null;
+    if (!btn) return;
+    if (String(btn.textContent).indexOf('متوجه شدم') < 0) return;
+    console.log('[ReplyFix] کلیک گرفته شد → بستن همه پنجره‌ها');
+    closeAllReplies();
+  }, true);
+
+  function closeAllReplies(){
+    var ovs = document.querySelectorAll('[id^="replyOverlay"]');
+    for (var i = 0; i < ovs.length; i++) ovs[i].remove();
+    var divs = document.querySelectorAll('div');
+    for (var j = 0; j < divs.length; j++) {
+      var d = divs[j];
+      if (d.style && d.style.position === 'fixed' && d.textContent.indexOf('پاسخ شورای صندوق') >= 0) d.remove();
+    }
+    var u = '';
+    try { u = currentUser.username || currentUser.user || currentUser.id || ''; } catch(e){}
+    if (u) fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(u)).catch(function(){});
+  }
+  window.closeAllReplies = closeAllReplies;
+
+})();
+</script>
 </body>
 </html>
