@@ -180,7 +180,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="7" data-role="all" onclick="showTab(7)">🛒 فروشگاه</div>
     <div class="menu-item" data-tab="8" data-role="all" onclick="showTab(8)">📥 درخواست‌های خرید</div>
     <div class="menu-item" data-tab="9" data-role="all" onclick="showTab(9)">📬 اطلاع‌رسانی</div>
-        <div class="menu-item" data-tab="10" data-role="admin" onclick="showTab(10)">💬 پیام‌ها و پاسخ‌ها</div>
+    <div class="menu-item" data-tab="10" data-role="all" onclick="showTab(10)">💬 پیام‌ها و پاسخ‌ها</div>
   </div>
   
   <!-- Main Content -->
@@ -336,8 +336,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         <div id="monthlyReportResult" style="margin-top:10px;font-size:.8rem;color:rgba(255,255,255,.7);white-space:pre-wrap"></div>
       </div>
     </div>
-  </div>
-</div>
+
     <!-- Tab 10: پیام‌ها و پاسخ‌ها -->
     <div id="sec10" style="display:none">
       <div class="box">
@@ -353,6 +352,9 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         <div id="councilMessagesList"><div class="loader">در حال بارگذاری...</div></div>
       </div>
     </div>
+  </div>
+</div>
+
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
@@ -428,7 +430,7 @@ function enterDashboard(){
     document.getElementById('siteStatusRow').style.display = 'none';
     document.querySelectorAll('.menu-item[data-role="admin"]').forEach(function(t){ t.style.display = 'none'; });
     document.querySelectorAll('.menu-item[data-role="all"]').forEach(function(t){ t.style.display = 'block'; });
-    showTab(8);
+    showTab(10);
   } else {
     document.getElementById('sec1').style.display = 'block';
     document.querySelector('.menu-item[data-tab="1"]').classList.add('active');
@@ -465,7 +467,7 @@ function showTab(n){
   var tab7El = document.getElementById('tab7'); if (tab7El) tab7El.style.display = 'none';
   var tab8El = document.getElementById('tab8'); if (tab8El) tab8El.style.display = 'none';
   var sec9 = document.getElementById('sec9'); if (sec9) sec9.style.display = 'none';
-    var sec10 = document.getElementById('sec10'); if (sec10) sec10.style.display = 'none';
+  var sec10 = document.getElementById('sec10'); if (sec10) sec10.style.display = 'none';
   
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
@@ -477,14 +479,7 @@ function showTab(n){
   else if (n === 7) { if (tab7El) tab7El.style.display = 'block'; loadShopProducts(); }
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
-   else if (n === 10) {
-    if (sec10) {
-      var mainEl = document.querySelector('.main-content');
-      if (mainEl && sec10.parentElement !== mainEl) mainEl.appendChild(sec10);
-      sec10.style.display = 'block';
-    }
-    loadCouncilMessages();
-  }
+  else if (n === 10) { if (sec10) sec10.style.display = 'block'; loadCouncilMessages(); }
   
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
@@ -496,7 +491,6 @@ function showTab(n){
   if (n === 6) loadQuizBuilder();
   if (n === 8) loadPurchaseRequests();
   
-  // Close sidebar on mobile
   if(window.innerWidth <= 768){
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('overlay').classList.remove('open');
@@ -1102,7 +1096,8 @@ function openStmtList() {
   }).catch(function(){});
 })();
 </script>
-  <script>
+
+<script>
 var allCouncilMsgs = [];
 var msgFilter = 'pending';
 
@@ -1178,7 +1173,6 @@ function renderCouncilMessages(){
   document.getElementById('councilMessagesList').innerHTML = html;
 }
 
-// باز/بسته کردن حالت ویرایش
 function toggleEdit(mid, type){
   var viewEl = document.getElementById((type === 'message' ? 'msgView_' : 'replyView_') + mid);
   var editEl = document.getElementById((type === 'message' ? 'msgEdit_' : 'replyEdit_') + mid);
@@ -1188,7 +1182,6 @@ function toggleEdit(mid, type){
   }
 }
 
-// لغو ویرایش
 function cancelEdit(mid, type){
   var viewEl = document.getElementById((type === 'message' ? 'msgView_' : 'replyView_') + mid);
   var editEl = document.getElementById((type === 'message' ? 'msgEdit_' : 'replyEdit_') + mid);
@@ -1198,7 +1191,7 @@ function cancelEdit(mid, type){
   }
 }
 
-// ذخیره ویرایش
+// ذخیره ویرایش با POST (بدون CORS)
 function saveEdit(mid, type){
   var ta = document.getElementById((type === 'message' ? 'msgTA_' : 'replyTA_') + mid);
   if (!ta) return;
@@ -1206,40 +1199,67 @@ function saveEdit(mid, type){
   if (text.length < 3) { alert('⚠️ متن خیلی کوتاه است'); return; }
   if (!confirm('تغییرات ذخیره شود؟')) return;
   
-  var params = '?action=editCouncilMessage&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(mid);
+  var body = {
+    action: 'editCouncilMessage',
+    key: KEY,
+    id: mid
+  };
   if (type === 'message') {
-    params += '&message=' + encodeURIComponent(text);
+    body.message = text;
   } else {
-    params += '&reply=' + encodeURIComponent(text);
+    body.reply = text;
   }
   
-  fetch(ADMIN_URL + params)
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d.ok) {
-        alert('✅ تغییرات ذخیره شد');
-        loadCouncilMessages();
-      } else {
-        alert('❌ ' + (d.error || 'خطا در ذخیره'));
+  fetch(ADMIN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(body)
+  })
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      try {
+        var d = JSON.parse(t);
+        if (d.ok) {
+          alert('✅ تغییرات ذخیره شد');
+          loadCouncilMessages();
+        } else {
+          alert('❌ ' + (d.error || 'خطا در ذخیره'));
+        }
+      } catch(e) {
+        alert('❌ پاسخ سرور معتبر نیست');
       }
     })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
+    .catch(function(e){ alert('❌ خطا: ' + e.message); });
 }
 
-// حذف پیام
+// حذف پیام با POST
 function deleteCouncilMsg(mid){
   if (!confirm('آیا از حذف کامل این پیام مطمئن هستید؟\nاین عمل قابل بازگشت نیست.')) return;
-  fetch(ADMIN_URL + '?action=deleteCouncilMessage&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(mid))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if (d.ok) {
-        alert('✅ پیام حذف شد');
-        loadCouncilMessages();
-      } else {
-        alert('❌ ' + (d.error || 'خطا در حذف'));
+  
+  fetch(ADMIN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({
+      action: 'deleteCouncilMessage',
+      key: KEY,
+      id: mid
+    })
+  })
+    .then(function(r){ return r.text(); })
+    .then(function(t){
+      try {
+        var d = JSON.parse(t);
+        if (d.ok) {
+          alert('✅ پیام حذف شد');
+          loadCouncilMessages();
+        } else {
+          alert('❌ ' + (d.error || 'خطا در حذف'));
+        }
+      } catch(e) {
+        alert('❌ پاسخ سرور معتبر نیست');
       }
     })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
+    .catch(function(e){ alert('❌ خطا: ' + e.message); });
 }
 
 function sendMemberReply(mid){
