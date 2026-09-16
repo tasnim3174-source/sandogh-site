@@ -1136,11 +1136,39 @@ function renderCouncilMessages(){
     var dt = m.timestamp ? new Date(m.timestamp) : null;
     var ds = dt ? fmtFull(dt) : '-';
     var tag = m.status === 'answered' ? '<span class="approved-tag">✅ پاسخ داده شد</span>' : '<span class="pending-tag">⏳ بی‌پاسخ</span>';
-    html += '<div class="req-card">';
+    
+    html += '<div class="req-card" id="card_' + m.id + '">';
     html += '<div class="req-head"><div><b style="color:#ffd700">👤 ' + (m.name || 'نامشخص') + '</b><div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">کد: ' + m.user + ' | 📅 ' + ds + '</div></div>' + tag + '</div>';
-    html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin-bottom:8px;line-height:1.9;font-size:.85rem">' + String(m.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
+    
+    // دکمه‌های ویرایش و حذف
+    html += '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">';
+    html += '<button onclick="toggleEdit(\'' + m.id + '\', \'message\')" style="flex:1;min-width:90px;padding:7px;border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:#60a5fa;border-radius:8px;cursor:pointer;font-family:tahoma;font-size:.78rem">✏️ ویرایش پیام</button>';
     if (m.status === 'answered') {
-      html += '<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:8px;line-height:1.9;font-size:.85rem"><b style="color:#22c55e">💬 پاسخ:</b><br>' + String(m.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
+      html += '<button onclick="toggleEdit(\'' + m.id + '\', \'reply\')" style="flex:1;min-width:90px;padding:7px;border:1px solid rgba(168,85,247,.4);background:rgba(168,85,247,.1);color:#c084fc;border-radius:8px;cursor:pointer;font-family:tahoma;font-size:.78rem">✏️ ویرایش پاسخ</button>';
+    }
+    html += '<button onclick="deleteCouncilMsg(\'' + m.id + '\')" style="flex:1;min-width:90px;padding:7px;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.1);color:#f87171;border-radius:8px;cursor:pointer;font-family:tahoma;font-size:.78rem">🗑️ حذف کامل</button>';
+    html += '</div>';
+    
+    // پیام عضو (نمایش)
+    html += '<div id="msgView_' + m.id + '" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin-bottom:8px;line-height:1.9;font-size:.85rem">' + String(m.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
+    // پیام عضو (ویرایش)
+    html += '<div id="msgEdit_' + m.id + '" style="display:none;margin-bottom:8px">';
+    html += '<textarea id="msgTA_' + m.id + '" maxlength="500" style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(59,130,246,.3);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none">' + String(m.message||'').replace(/</g,'&lt;') + '</textarea>';
+    html += '<div style="display:flex;gap:6px;margin-top:6px">';
+    html += '<button onclick="saveEdit(\'' + m.id + '\', \'message\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:#22c55e;color:#fff;font-weight:700;cursor:pointer;font-family:tahoma">✅ ذخیره</button>';
+    html += '<button onclick="cancelEdit(\'' + m.id + '\', \'message\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:tahoma">❌ لغو</button>';
+    html += '</div></div>';
+    
+    if (m.status === 'answered') {
+      // پاسخ شورا (نمایش)
+      html += '<div id="replyView_' + m.id + '" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:8px;line-height:1.9;font-size:.85rem;margin-top:8px"><b style="color:#22c55e">💬 پاسخ:</b><br>' + String(m.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
+      // پاسخ شورا (ویرایش)
+      html += '<div id="replyEdit_' + m.id + '" style="display:none;margin-top:8px">';
+      html += '<textarea id="replyTA_' + m.id + '" maxlength="500" style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(168,85,247,.3);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none">' + String(m.reply||'').replace(/</g,'&lt;') + '</textarea>';
+      html += '<div style="display:flex;gap:6px;margin-top:6px">';
+      html += '<button onclick="saveEdit(\'' + m.id + '\', \'reply\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:#22c55e;color:#fff;font-weight:700;cursor:pointer;font-family:tahoma">✅ ذخیره</button>';
+      html += '<button onclick="cancelEdit(\'' + m.id + '\', \'reply\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:tahoma">❌ لغو</button>';
+      html += '</div></div>';
     } else {
       html += '<textarea id="reply_' + m.id + '" maxlength="500" placeholder="✍️ پاسخ شورا را بنویسید..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none;margin-bottom:8px"></textarea>';
       html += '<button onclick="sendMemberReply(\'' + m.id + '\')" style="width:100%;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer;font-family:tahoma">📨 ثبت و ارسال پاسخ به عضو</button>';
@@ -1148,6 +1176,70 @@ function renderCouncilMessages(){
     html += '</div>';
   });
   document.getElementById('councilMessagesList').innerHTML = html;
+}
+
+// باز/بسته کردن حالت ویرایش
+function toggleEdit(mid, type){
+  var viewEl = document.getElementById((type === 'message' ? 'msgView_' : 'replyView_') + mid);
+  var editEl = document.getElementById((type === 'message' ? 'msgEdit_' : 'replyEdit_') + mid);
+  if (viewEl && editEl) {
+    viewEl.style.display = 'none';
+    editEl.style.display = 'block';
+  }
+}
+
+// لغو ویرایش
+function cancelEdit(mid, type){
+  var viewEl = document.getElementById((type === 'message' ? 'msgView_' : 'replyView_') + mid);
+  var editEl = document.getElementById((type === 'message' ? 'msgEdit_' : 'replyEdit_') + mid);
+  if (viewEl && editEl) {
+    viewEl.style.display = 'block';
+    editEl.style.display = 'none';
+  }
+}
+
+// ذخیره ویرایش
+function saveEdit(mid, type){
+  var ta = document.getElementById((type === 'message' ? 'msgTA_' : 'replyTA_') + mid);
+  if (!ta) return;
+  var text = ta.value.trim();
+  if (text.length < 3) { alert('⚠️ متن خیلی کوتاه است'); return; }
+  if (!confirm('تغییرات ذخیره شود؟')) return;
+  
+  var params = '?action=editCouncilMessage&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(mid);
+  if (type === 'message') {
+    params += '&message=' + encodeURIComponent(text);
+  } else {
+    params += '&reply=' + encodeURIComponent(text);
+  }
+  
+  fetch(ADMIN_URL + params)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        alert('✅ تغییرات ذخیره شد');
+        loadCouncilMessages();
+      } else {
+        alert('❌ ' + (d.error || 'خطا در ذخیره'));
+      }
+    })
+    .catch(function(){ alert('❌ خطا در ارتباط'); });
+}
+
+// حذف پیام
+function deleteCouncilMsg(mid){
+  if (!confirm('آیا از حذف کامل این پیام مطمئن هستید؟\nاین عمل قابل بازگشت نیست.')) return;
+  fetch(ADMIN_URL + '?action=deleteCouncilMessage&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(mid))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok) {
+        alert('✅ پیام حذف شد');
+        loadCouncilMessages();
+      } else {
+        alert('❌ ' + (d.error || 'خطا در حذف'));
+      }
+    })
+    .catch(function(){ alert('❌ خطا در ارتباط'); });
 }
 
 function sendMemberReply(mid){
