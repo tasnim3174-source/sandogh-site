@@ -14428,6 +14428,76 @@ setInterval(function(){
 </script>
 
 <script src="messaging.js"></script>
+<script>
+// ===== نوتیفیکیشن پایین صفحه (toast) =====
+(function(){
+  var started = false;
 
+  function ensureContainer(){
+    var c = document.getElementById('toastContainer');
+    if (!c) {
+      c = document.createElement('div');
+      c.id = 'toastContainer';
+      c.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999999;display:flex;flex-direction:column;gap:10px;width:420px;max-width:92%;pointer-events:none';
+      document.body.appendChild(c);
+    }
+    return c;
+  }
+
+  function showToast(a){
+    var c = ensureContainer();
+    var t = document.createElement('div');
+    t.style.cssText = 'pointer-events:auto;background:linear-gradient(135deg,#1e1e35,#151528);border:2px solid ' + (a.borderColor || '#ffd700') + ';border-radius:14px;padding:14px 16px;color:#fff;font-family:tahoma;box-shadow:0 10px 30px rgba(0,0,0,.5);animation:toastUp .4s ease';
+    t.innerHTML =
+      '<div style="display:flex;gap:10px;align-items:flex-start">' +
+        '<div style="font-size:1.3rem">' + (a.icon || '⚠️') + '</div>' +
+        '<div style="flex:1">' +
+          '<div style="font-weight:bold;color:' + (a.titleColor || '#ffd700') + ';margin-bottom:4px;font-size:.9rem">' + (a.title || '') + '</div>' +
+          '<div style="font-size:.82rem;line-height:1.7;color:rgba(255,255,255,.85)">' + (a.message || '') + '</div>' +
+        '</div>' +
+      '</div>';
+    c.appendChild(t);
+    // حذف خودکار بعد از ۸ ثانیه
+    setTimeout(function(){
+      t.style.animation = 'toastDown .3s ease';
+      setTimeout(function(){ if (t.parentElement) t.remove(); }, 300);
+    }, 8000);
+  }
+
+  function checkAlerts(){
+    if (typeof currentUser === 'undefined' || !currentUser) return;
+    var userCode = currentUser.username || currentUser.user || currentUser.id || '';
+    if (!userCode) return;
+    fetch(ADMIN_URL + '?action=getUserAlerts&user=' + encodeURIComponent(userCode))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d || !d.ok || !d.alerts || !d.alerts.length) return;
+        d.alerts.forEach(function(a, i){
+          setTimeout(function(){ showToast(a); }, i * 1200);
+        });
+      })
+      .catch(function(){});
+  }
+
+  // شروع: ۳ ثانیه بعد از ورود، فقط یکبار در هر نشست
+  setInterval(function(){
+    if (started) return;
+    if (typeof currentUser !== 'undefined' && currentUser) {
+      started = true;
+      setTimeout(checkAlerts, 3000);
+    }
+  }, 1000);
+
+  // انیمیشن‌ها
+  if (!document.getElementById('toastAnimStyle')) {
+    var s = document.createElement('style');
+    s.id = 'toastAnimStyle';
+    s.textContent =
+      '@keyframes toastUp { from { transform: translateY(80px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }' +
+      '@keyframes toastDown { from { transform: translateY(0); opacity: 1; } to { transform: translateY(80px); opacity: 0; } }';
+    document.head.appendChild(s);
+  }
+})();
+</script>
 </body>
 </html>
