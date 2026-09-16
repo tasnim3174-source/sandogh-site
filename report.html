@@ -84,10 +84,9 @@ function start(){
   loadAll();
 }
 
-// ===== ابزارها =====
 function faD(s){ return String(s==null?'':s).replace(/[۰-۹]/g,function(d){ return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); }); }
 function num(v){ var n = Number(faD(v).replace(/[,،]/g,'')); return isNaN(n)?0:n; }
-function fa(n){ try { return Math.round(Number(n)).toLocaleString('fa-IR'); } catch(e){ return String(n); } }}
+function fa(n){ try { return Math.round(Number(n)).toLocaleString('fa-IR'); } catch(e){ return String(n); } }
 function pYM(v){
   var s = faD(v).trim().replace(/\//g,'-');
   if (/^\d{8}$/.test(s)) return { y:+s.substr(0,4), m:+s.substr(4,2) };
@@ -134,7 +133,6 @@ function render(){
   var MN = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
   document.getElementById('period').textContent = '📅 دوره گزارش: ' + MN[ym.m-1] + ' ' + fa(ym.y) + ' | تهیه‌شده در ' + new Date().toLocaleString('fa-IR');
 
-  // اعضا (بدون تکرار)
   var seen = {}, members = [];
   R.rows.forEach(function(r){
     var id = faD(col(r,['ID','کد'])).trim() || String(col(r,['karbari']));
@@ -143,7 +141,6 @@ function render(){
     members.push(r);
   });
 
-  // مالی
   var f = { magh:0, tra:0, ghest:0, jam:0, bal:0, loan:0, fee:0, loans:0, tx:0 };
   var overdue = [], lowBal = [], births = [], newMem = [];
   members.forEach(function(r){
@@ -158,7 +155,7 @@ function render(){
     var b = num(col(r,['mojodi ta in lahzeh','موجودی']));
     if (b < LOW) lowBal.push({ n: col(r,['name','نام']), b: b });
     var bd = pYM(col(r,['date birth','تاریخ تولد']));
-    if (bd && bd.m === ym.m) births.push({ n: col(r,['name','نام']), d: bd });
+    if (bd && bd.m === ym.m) births.push({ n: col(r,['name','نام']) });
     var oz = pYM(col(r,['date ozviyat','تاریخ عضویت']));
     if (oz && oz.y === ym.y && oz.m === ym.m) newMem.push(col(r,['name','نام']));
     var tx = pYM(col(r,['تاریخ تراکنش']));
@@ -167,7 +164,6 @@ function render(){
     if (vm && vm.y === ym.y && vm.m === ym.m) { f.loans++; f.fee += num(col(r,['mablagh karmozd','کارمزد'])); }
   });
 
-  // پیام‌ها
   var mTot = R.msgs.length, mPend = 0, mAns = 0, hrs = 0, hrsN = 0;
   R.msgs.forEach(function(m){
     if (m.status === 'answered') { mAns++;
@@ -176,7 +172,6 @@ function render(){
   });
   var avgH = hrsN ? Math.round(hrs/hrsN) : 0;
 
-  // فعالیت ۳۰ روز
   var cut = Date.now() - 30*86400000, log30 = 0, users30 = {}, logToday = 0;
   var today = new Date().toLocaleDateString('fa-IR');
   R.logs.forEach(function(l){
@@ -187,20 +182,19 @@ function render(){
 
   var svSum = 0, svN = 0;
   R.survey.forEach(function(s){ if (s.stars > 0) { svSum += s.stars; svN++; } });
-  var svAvg = svN ? (svSum/svN).toFixed(1) : 0;
+  var svAvg = svN ? (svSum/svN).toFixed(1) : '0';
 
-  var bPend = 0, bOk = 0;
-  R.buys.forEach(function(b){ if (b.status === 'pending') bPend++; else bOk++; });
+  var bPend = 0;
+  R.buys.forEach(function(b){ if (b.status === 'pending') bPend++; });
   var lowStock = R.shop.filter(function(p){ return (p.stock||0) < 5; });
 
-  // ===== ساخت HTML =====
   var h = '';
   h += '<div class="cards">';
   h += card(fa(members.length), '👥 کل اعضا');
   h += card(fa(f.jam), '💵 جمع کل واریزی‌ها (ریال)');
   h += card(fa(f.bal), '💰 جمع موجودی (ریال)');
   h += card(fa(f.loan), '🏦 مانده کل وام‌ها (ریال)');
-  h += card(fa(f.tx), ' تراکنش‌های این ماه');
+  h += card(fa(f.tx), '🔄 تراکنش‌های این ماه');
   h += card(fa(f.loans), '🏧 وام‌های این ماه');
   h += card(fa(mTot), '📬 کل پیام‌ها');
   h += card(fa(log30), '📈 ورودها (۳۰ روز)');
@@ -242,7 +236,7 @@ function render(){
     row('کاربران فعال ۳۰ روز', fa(Object.keys(users30).length)) +
     row('مسابقات ساخته‌شده', fa(R.quizzes.length)) +
     row('درخواست‌های خرید (کل / در انتظار)', fa(R.buys.length) + ' / ' + fa(bPend)) +
-        row('میانگین رضایت از سایت', svAvg + ' از ۵ 💛') +
+    row('میانگین رضایت از سایت', svAvg + ' از ۵ 💛') +
     row('محصولات کم‌موجودی فروشگاه', lowStock.length ? lowStock.map(function(p){ return p.name; }).join('، ') : '—'));
 
   document.getElementById('content').innerHTML = h;
@@ -252,24 +246,35 @@ function card(v, l){ return '<div class="card"><b>' + v + '</b><span>' + l + '</
 function sec(t, body){ return '<div class="sec"><h2>' + t + '</h2>' + body + '</div>'; }
 function row(a, b){ return '<div class="row"><span>' + a + '</span><b>' + b + '</b></div>'; }
 
-// ===== ارسال خلاصه به گروه شورا =====
+// ===== ارسال به گروه شورا (با chat_id صحیح از سرور) =====
 function sendToShora(){
   if (!confirm('خلاصه گزارش به گروه شورا در ایتا ارسال شود؟')) return;
-  var ym = nowYM();
-  var MN = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
-  var t = '📊 *خلاصه گزارش شورای صندوق*\n';
-  t += '📅 ' + MN[ym.m-1] + ' ' + fa(ym.y) + '\n━━━━━━━━━━\n';
-  var cards = document.querySelectorAll('.card');
-  cards.forEach(function(c){
-    t += '• ' + c.querySelector('span').textContent + ': ' + c.querySelector('b').textContent + '\n';
-  });
-  t += '━━━━━━━━━━\n💛 صندوق اتحاد';
-  fetch(ADMIN_URL + '?action=eitaaDirect&key=' + KEY + '&chat=9223948&text=' + encodeURIComponent(t))
+  fetch(ADMIN_URL + '?action=sendMonthlyReport&key=' + KEY + '&noSend=1')
     .then(function(r){ return r.json(); })
-    .then(function(d){ alert(d.ok ? '✅ خلاصه گزارش به گروه شورا ارسال شد' : '❌ خطا: ' + (d.msg || d.error)); })
+    .then(function(d){
+      var chat = d.chatId || '';
+      if (!chat) { alert('❌ chat_id گروه شورا در سرور ثبت نشده است'); return; }
+
+      var ym = nowYM();
+      var MN = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+      var t = '📊 *خلاصه گزارش شورای صندوق*\n';
+      t += '📅 ' + MN[ym.m-1] + ' ' + fa(ym.y) + '\n━━━━━━━━━━\n';
+      var cards = document.querySelectorAll('.card');
+      cards.forEach(function(c){
+        t += '• ' + c.querySelector('span').textContent + ': ' + c.querySelector('b').textContent + '\n';
+      });
+      t += '━━━━━━━━━━\n💛 صندوق اتحاد';
+
+      return fetch(ADMIN_URL + '?action=eitaaDirect&key=' + KEY + '&chat=' + encodeURIComponent(chat) + '&text=' + encodeURIComponent(t))
+        .then(function(r2){ return r2.json(); })
+        .then(function(d2){
+          alert(d2.ok ? '✅ خلاصه گزارش به گروه شورا ارسال شد' : '❌ خطا: ' + (d2.msg || d2.error));
+        });
+    })
     .catch(function(){ alert('❌ خطا در ارسال'); });
 }
-  // اگر داخل پنل مدیریت باز شده (embed)، بدون لاگین شروع کن
+
+// ===== حالت embed: داخل پنل مدیریت بدون رمز باز شود =====
 if (location.search.indexOf('embed=1') > -1) {
   start();
 }
