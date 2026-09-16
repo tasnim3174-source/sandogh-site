@@ -181,6 +181,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="8" data-role="all" onclick="showTab(8)">📥 درخواست‌های خرید</div>
     <div class="menu-item" data-tab="9" data-role="all" onclick="showTab(9)">📬 اطلاع‌رسانی</div>
     <div class="menu-item" data-tab="10" data-role="all" onclick="showTab(10)">💬 پیام‌ها و پاسخ‌ها</div>
+    <div class="menu-item" data-tab="11" data-role="all" onclick="showTab(11)">📊 گزارش‌گیری</div>
   </div>
   
   <!-- Main Content -->
@@ -352,7 +353,13 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         <div id="councilMessagesList"><div class="loader">در حال بارگذاری...</div></div>
       </div>
     </div>
+
+    <!-- Tab 11: گزارش‌گیری -->
+    <div id="sec11" style="display:none">
+      <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
+    </div>
   </div>
+  
 </div>
 
 <script>
@@ -468,7 +475,7 @@ function showTab(n){
   var tab8El = document.getElementById('tab8'); if (tab8El) tab8El.style.display = 'none';
   var sec9 = document.getElementById('sec9'); if (sec9) sec9.style.display = 'none';
   var sec10 = document.getElementById('sec10'); if (sec10) sec10.style.display = 'none';
-  
+    var sec11 = document.getElementById('sec11'); if (sec11) sec11.style.display = 'none';
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
   items.forEach(function(item){
@@ -480,7 +487,13 @@ function showTab(n){
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
   else if (n === 10) { if (sec10) sec10.style.display = 'block'; loadCouncilMessages(); }
-  
+    else if (n === 11) {
+    if (sec11) {
+      sec11.style.display = 'block';
+      var fr = document.getElementById('reportFrame');
+      if (fr && fr.getAttribute('src') === 'about:blank') fr.src = 'report.html?embed=1';
+    }
+  }
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
   
