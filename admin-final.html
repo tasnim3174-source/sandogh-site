@@ -491,7 +491,7 @@ function showTab(n){
     if (sec11) {
       sec11.style.display = 'block';
       var fr = document.getElementById('reportFrame');
-      if (fr && fr.getAttribute('src') === 'about:blank') fr.src = 'report.html?embed=1';
+       if (fr && fr.getAttribute('src') === 'about:blank') fr.src = 'report.html?embed=1&v=' + Date.now();
     }
   }
   var qEl = document.getElementById('q');
