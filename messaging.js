@@ -20,6 +20,16 @@ function openMessagingMenu(){
 function openMyMessagesHistory(){
   if (typeof currentUser === 'undefined' || !currentUser) { alert('⚠️ لطفاً ابتدا وارد شوید'); return; }
   var userCode = currentUser.username || currentUser.user || currentUser.id || '';
+  
+  // علامت‌گذاری همه به‌عنوان دیده‌شده (جداگانه، خارج از زنجیره)
+  fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
+  
+  // مخفی کردن badge
+  setTimeout(function(){
+    var badge = document.getElementById('messagingBadge');
+    if (badge) { badge.style.display = 'none'; }
+  }, 500);
+  
   var overlay = document.createElement('div');
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999999;display:flex;align-items:center;justify-content:center;padding:20px';
   var modal = document.createElement('div');
@@ -29,14 +39,9 @@ function openMyMessagesHistory(){
   document.body.appendChild(overlay);
   document.getElementById('btnCloseHistory').onclick = function(){ overlay.remove(); };
   overlay.onclick = function(e){ if (e.target === overlay) overlay.remove(); };
+  
+  // زنجیره صحیح fetch
   fetch(ADMIN_URL + '?action=getMyMessageHistory&user=' + encodeURIComponent(userCode))
-      // علامت‌گذاری همه به‌عنوان دیده‌شده
-  fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
-  lastCount = 0; // badge را صفر کن
-  setTimeout(function(){
-    var badge = document.getElementById('messagingBadge');
-    if (badge) { badge.style.display = 'none'; }
-  }, 500);
     .then(function(r){ return r.json(); })
     .then(function(d){
       var loading = document.getElementById('messagesLoading');
@@ -66,6 +71,7 @@ setInterval(function(){
   var b = document.getElementById('myMessagesBtn');
   if (b) b.style.display = 'none';
 }, 1000);
+
 // ===== چک‌کننده زنده پیام‌های خوانده‌نشده =====
 (function(){
   var lastCount = -1;
@@ -91,17 +97,13 @@ setInterval(function(){
         } else {
           badge.style.display = 'inline-block';
           badge.textContent = '📨 ' + count;
-          // اگر پیام جدید است (رنگ قرمز برای هشدار)
-          if (count > 0) {
-            badge.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
-            badge.style.animation = 'pulseBadge 1.5s infinite';
-          }
+          badge.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+          badge.style.animation = 'pulseBadge 1.5s infinite';
         }
       })
       .catch(function(){});
   }
 
-  // بعد از ساخت منو، چک کن
   var observer = new MutationObserver(function(){
     if (document.getElementById('messagingBadge')) {
       updateBadge();
@@ -109,7 +111,6 @@ setInterval(function(){
   });
   observer.observe(document.body, { childList: true, subtree: true });
 
-  // هر ۳۰ ثانیه هم چک کن
   setInterval(updateBadge, 30000);
   setTimeout(updateBadge, 2000);
 })();
