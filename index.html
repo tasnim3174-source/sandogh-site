@@ -5306,9 +5306,9 @@ function shamsiToContDays(jy, jm, jd) {
                 } else if (item.tab === 'quizzes') {
                     clickHandler = 'openQuizzes()';
                     badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🏆 جدید</span>';
-                               } else if (item.tab === 'messaging') {
+                                              } else if (item.tab === 'messaging') {
                     clickHandler = "openMessagingMenu()";
-                    badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">📨 فعال</span>';
+                    badgeHtml = '<span id="messagingBadge" style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;display:none">📨 0</span>';
                 } else if (item.tab === 'survey') {
                     clickHandler = "showComingSoon('نظرسنجی')";
                     badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ec4899,#db2777);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">📊 بزودی</span>';
