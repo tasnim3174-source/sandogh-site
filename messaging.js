@@ -30,6 +30,13 @@ function openMyMessagesHistory(){
   document.getElementById('btnCloseHistory').onclick = function(){ overlay.remove(); };
   overlay.onclick = function(e){ if (e.target === overlay) overlay.remove(); };
   fetch(ADMIN_URL + '?action=getMyMessageHistory&user=' + encodeURIComponent(userCode))
+      // علامت‌گذاری همه به‌عنوان دیده‌شده
+  fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
+  lastCount = 0; // badge را صفر کن
+  setTimeout(function(){
+    var badge = document.getElementById('messagingBadge');
+    if (badge) { badge.style.display = 'none'; }
+  }, 500);
     .then(function(r){ return r.json(); })
     .then(function(d){
       var loading = document.getElementById('messagesLoading');
@@ -59,3 +66,58 @@ setInterval(function(){
   var b = document.getElementById('myMessagesBtn');
   if (b) b.style.display = 'none';
 }, 1000);
+// ===== چک‌کننده زنده پیام‌های خوانده‌نشده =====
+(function(){
+  var lastCount = -1;
+
+  function updateBadge(){
+    if (typeof currentUser === 'undefined' || !currentUser) return;
+    var userCode = currentUser.username || currentUser.user || currentUser.id || '';
+    if (!userCode) return;
+
+    fetch(ADMIN_URL + '?action=getUnreadCount&user=' + encodeURIComponent(userCode))
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d || !d.ok) return;
+        var badge = document.getElementById('messagingBadge');
+        if (!badge) return;
+
+        var count = d.count || 0;
+        if (count === lastCount) return;
+        lastCount = count;
+
+        if (count === 0) {
+          badge.style.display = 'none';
+        } else {
+          badge.style.display = 'inline-block';
+          badge.textContent = '📨 ' + count;
+          // اگر پیام جدید است (رنگ قرمز برای هشدار)
+          if (count > 0) {
+            badge.style.background = 'linear-gradient(135deg,#ef4444,#dc2626)';
+            badge.style.animation = 'pulseBadge 1.5s infinite';
+          }
+        }
+      })
+      .catch(function(){});
+  }
+
+  // بعد از ساخت منو، چک کن
+  var observer = new MutationObserver(function(){
+    if (document.getElementById('messagingBadge')) {
+      updateBadge();
+    }
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
+
+  // هر ۳۰ ثانیه هم چک کن
+  setInterval(updateBadge, 30000);
+  setTimeout(updateBadge, 2000);
+})();
+
+// ===== انیمیشن pulse برای badge =====
+if (!document.getElementById('badgeAnimationStyle')) {
+  var s = document.createElement('style');
+  s.id = 'badgeAnimationStyle';
+  s.textContent = '@keyframes pulseBadge { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }';
+  document.head.appendChild(s);
+}
