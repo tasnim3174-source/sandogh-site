@@ -269,6 +269,10 @@ function sendToShora(){
     .then(function(d){ alert(d.ok ? '✅ خلاصه گزارش به گروه شورا ارسال شد' : '❌ خطا: ' + (d.msg || d.error)); })
     .catch(function(){ alert('❌ خطا در ارسال'); });
 }
+  // اگر داخل پنل مدیریت باز شده (embed)، بدون لاگین شروع کن
+if (location.search.indexOf('embed=1') > -1) {
+  start();
+}
 </script>
 </body>
 </html>
