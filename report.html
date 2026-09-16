@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>📊 گزارش‌گیری شورا</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:tahoma}
+body{background:linear-gradient(135deg,#0f0f23,#1a1a2e);color:#fff;min-height:100vh;padding:16px}
+.login{max-width:380px;margin:60px auto;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,0,.25);border-radius:20px;padding:26px;text-align:center}
+.login input{width:100%;padding:12px;margin-bottom:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;text-align:center;outline:none}
+.login button{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:800;cursor:pointer}
+.wrap{max-width:1000px;margin:0 auto;display:none}
+.head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.head h1{color:#ffd700;font-size:1.2rem}
+.head button{padding:9px 14px;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-family:tahoma}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:14px;text-align:center}
+.card b{display:block;font-size:1.25rem;color:#ffd700;margin-bottom:4px}
+.card span{font-size:.72rem;color:rgba(255,255,255,.55)}
+.sec{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;margin-bottom:14px}
+.sec h2{color:#ffd700;font-size:1rem;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.06);font-size:.85rem}
+.row:last-child{border-bottom:none}
+.row b{color:#fff}
+.tag{padding:3px 10px;border-radius:99px;font-size:.72rem;font-weight:700}
+.red{background:rgba(239,68,68,.15);color:#f87171}
+.org{background:rgba(245,158,11,.15);color:#fbbf24}
+.grn{background:rgba(34,197,94,.15);color:#22c55e}
+.blu{background:rgba(59,130,246,.15);color:#60a5fa}
+.loader{text-align:center;padding:40px;color:rgba(255,255,255,.5)}
+@media print{body{background:#fff;color:#000}.sec,.card{border-color:#ccc;background:#fff}.card b,.sec h2{color:#b8860b}.row b{color:#000}.row{color:#333}.head button{display:none}}
+</style>
+</head>
+<body>
+
+<div class="login" id="loginBox">
+  <div style="font-size:2.5rem">📊</div>
+  <h1 style="color:#ffd700;font-size:1.1rem;margin:10px 0">گزارش‌گیری شورای صندوق</h1>
+  <input id="lu" placeholder="شماره کاربری (شورا) یا خالی (مدیر)">
+  <input id="lp" type="password" placeholder="رمز ورود">
+  <button onclick="doLogin()">🔓 ورود</button>
+  <div id="lerr" style="color:#ff6b6b;font-size:.8rem;margin-top:8px"></div>
+</div>
+
+<div class="wrap" id="wrap">
+  <div class="head">
+    <h1>📊 گزارش جامع شورای صندوق</h1>
+    <div>
+      <button style="background:#22c55e;color:#fff" onclick="sendToShora()">📤 ارسال به گروه شورا</button>
+      <button style="background:#3b82f6;color:#fff" onclick="window.print()">🖨️ چاپ / PDF</button>
+      <button style="background:rgba(255,255,255,.1);color:#fff" onclick="loadAll()">🔄 به‌روزرسانی</button>
+    </div>
+  </div>
+  <div id="period" style="text-align:center;color:rgba(255,255,255,.6);font-size:.85rem;margin-bottom:14px"></div>
+  <div id="content"><div class="loader">در حال تهیه گزارش...</div></div>
+</div>
+
+<script>
+var ADMIN_URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
+var KEY = 'admin12345';
+var LOW = 35338016;
+var R = {};
+
+function doLogin(){
+  var u = document.getElementById('lu').value.trim();
+  var p = document.getElementById('lp').value;
+  var err = document.getElementById('lerr');
+  err.textContent = '';
+  if (!u && p === KEY) { start(); return; }
+  if (!u || !p) { err.textContent = '❌ مدیر: فقط رمز | شورا: شماره کاربری + رمز'; return; }
+  fetch(ADMIN_URL + '?action=councilLogin&user=' + encodeURIComponent(u) + '&pass=' + encodeURIComponent(p))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.ok && d.isCouncil) start();
+      else err.textContent = '❌ ورود ناموفق (فقط اعضای شورا یا مدیر)';
+    })
+    .catch(function(){ err.textContent = '❌ خطا در ارتباط'; });
+}
+
+function start(){
+  document.getElementById('loginBox').style.display = 'none';
+  document.getElementById('wrap').style.display = 'block';
+  loadAll();
+}
+
+// ===== ابزارها =====
+function faD(s){ return String(s==null?'':s).replace(/[۰-۹]/g,function(d){ return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); }); }
+function num(v){ var n = Number(faD(v).replace(/[,،]/g,'')); return isNaN(n)?0:n; }
+function fa(n){ try { return Number(n).toLocaleString('fa-IR'); } catch(e){ return String(n); } }
+function pYM(v){
+  var s = faD(v).trim().replace(/\//g,'-');
+  if (/^\d{8}$/.test(s)) return { y:+s.substr(0,4), m:+s.substr(4,2) };
+  var p = s.split('-');
+  if (p.length >= 2 && p[0].length === 4) return { y:+p[0], m:+p[1] };
+  return null;
+}
+function nowYM(){
+  var s = faD(new Intl.DateTimeFormat('fa-IR-u-ca-persian',{year:'numeric',month:'numeric'}).format(new Date()));
+  var p = s.split('/');
+  return { y:+p[0], m:+p[1] };
+}
+function col(row, names){
+  for (var i=0;i<names.length;i++){ if (row.hasOwnProperty(names[i])) return row[names[i]]; }
+  return '';
+}
+
+function loadAll(){
+  document.getElementById('content').innerHTML = '<div class="loader">در حال تهیه گزارش...</div>';
+  Promise.all([
+    fetch(ADMIN_URL + '?action=readExcel').then(function(r){ return r.json(); }),
+    fetch(ADMIN_URL + '?action=getCouncilMessages&key=' + KEY).then(function(r){ return r.json(); }),
+    fetch(ADMIN_URL + '?action=getLogs').then(function(r){ return r.json(); }),
+    fetch(ADMIN_URL + '?action=getSurvey').then(function(r){ return r.json(); }),
+    fetch(ADMIN_URL + '?action=getPurchaseRequests').then(function(r){ return r.json(); }),
+    fetch(ADMIN_URL + '?action=getQuizzes').then(function(r){ return r.json(); }),
+    fetch(ADMIN_URL + '?action=getShopProducts').then(function(r){ return r.json(); })
+  ]).then(function(res){
+    R.rows = res[0].rows || [];
+    R.msgs = res[1].messages || [];
+    R.logs = res[2].logs || [];
+    R.survey = res[3].responses || [];
+    R.buys = res[4].requests || [];
+    R.quizzes = res[5].quizzes || [];
+    R.shop = res[6].products || [];
+    render();
+  }).catch(function(e){
+    document.getElementById('content').innerHTML = '<div class="loader">❌ خطا در دریافت داده‌ها</div>';
+  });
+}
+
+function render(){
+  var ym = nowYM();
+  var MN = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+  document.getElementById('period').textContent = '📅 دوره گزارش: ' + MN[ym.m-1] + ' ' + fa(ym.y) + ' | تهیه‌شده در ' + new Date().toLocaleString('fa-IR');
+
+  // اعضا (بدون تکرار)
+  var seen = {}, members = [];
+  R.rows.forEach(function(r){
+    var id = faD(col(r,['ID','کد'])).trim() || String(col(r,['karbari']));
+    if (!id || seen[id]) return;
+    seen[id] = 1;
+    members.push(r);
+  });
+
+  // مالی
+  var f = { magh:0, tra:0, ghest:0, jam:0, bal:0, loan:0, fee:0, loans:0, tx:0 };
+  var overdue = [], lowBal = [], births = [], newMem = [];
+  members.forEach(function(r){
+    f.magh += num(col(r,['مقرری ماهانه']));
+    f.tra += num(col(r,['مبلغ تراکنش']));
+    f.ghest += num(col(r,['مبلغ قسط واریزی']));
+    f.jam += num(col(r,['جمع واریزی']));
+    f.bal += num(col(r,['mojodi ta in lahzeh','موجودی']));
+    f.loan += Math.abs(num(col(r,['مانده وام'])));
+    var ov = num(col(r,['تعداد قسط معوقه']));
+    if (ov > 0) overdue.push({ n: col(r,['name','نام']), c: ov });
+    var b = num(col(r,['mojodi ta in lahzeh','موجودی']));
+    if (b < LOW) lowBal.push({ n: col(r,['name','نام']), b: b });
+    var bd = pYM(col(r,['date birth','تاریخ تولد']));
+    if (bd && bd.m === ym.m) births.push({ n: col(r,['name','نام']), d: bd });
+    var oz = pYM(col(r,['date ozviyat','تاریخ عضویت']));
+    if (oz && oz.y === ym.y && oz.m === ym.m) newMem.push(col(r,['name','نام']));
+    var tx = pYM(col(r,['تاریخ تراکنش']));
+    if (tx && tx.y === ym.y && tx.m === ym.m) f.tx++;
+    var vm = pYM(col(r,['date vam','تاریخ وام']));
+    if (vm && vm.y === ym.y && vm.m === ym.m) { f.loans++; f.fee += num(col(r,['mablagh karmozd','کارمزد'])); }
+  });
+
+  // پیام‌ها
+  var mTot = R.msgs.length, mPend = 0, mAns = 0, hrs = 0, hrsN = 0;
+  R.msgs.forEach(function(m){
+    if (m.status === 'answered') { mAns++;
+      if (m.timestamp && m.replyAt) { hrs += (new Date(m.replyAt) - new Date(m.timestamp))/3600000; hrsN++; }
+    } else mPend++;
+  });
+  var avgH = hrsN ? Math.round(hrs/hrsN) : 0;
+
+  // فعالیت ۳۰ روز
+  var cut = Date.now() - 30*86400000, log30 = 0, users30 = {}, logToday = 0;
+  var today = new Date().toLocaleDateString('fa-IR');
+  R.logs.forEach(function(l){
+    var t = new Date(l.timestamp).getTime();
+    if (t > cut) { log30++; users30[l.user] = 1; }
+    if (new Date(l.timestamp).toLocaleDateString('fa-IR') === today) logToday++;
+  });
+
+  var svSum = 0, svN = 0;
+  R.survey.forEach(function(s){ if (s.stars > 0) { svSum += s.stars; svN++; } });
+  var svAvg = svN ? (svSum/svN).toFixed(1) : 0;
+
+  var bPend = 0, bOk = 0;
+  R.buys.forEach(function(b){ if (b.status === 'pending') bPend++; else bOk++; });
+  var lowStock = R.shop.filter(function(p){ return (p.stock||0) < 5; });
+
+  // ===== ساخت HTML =====
+  var h = '';
+  h += '<div class="cards">';
+  h += card(fa(members.length), '👥 کل اعضا');
+  h += card(fa(f.jam), '💵 جمع کل واریزی‌ها (ریال)');
+  h += card(fa(f.bal), '💰 جمع موجودی (ریال)');
+  h += card(fa(f.loan), '🏦 مانده کل وام‌ها (ریال)');
+  h += card(fa(f.tx), ' تراکنش‌های این ماه');
+  h += card(fa(f.loans), '🏧 وام‌های این ماه');
+  h += card(fa(mTot), '📬 کل پیام‌ها');
+  h += card(fa(log30), '📈 ورودها (۳۰ روز)');
+  h += '</div>';
+
+  h += sec('💰 گزارش مالی این ماه',
+    row('جمع مقرری ماهانه', fa(f.magh) + ' ریال') +
+    row('جمع مبلغ تراکنش‌ها', fa(f.tra) + ' ریال') +
+    row('جمع اقساط واریزی', fa(f.ghest) + ' ریال') +
+    row('جمع کارمزد وام‌های این ماه', fa(f.fee) + ' ریال') +
+    row('میانگین موجودی هر عضو', fa(Math.floor(f.bal/Math.max(1,members.length))) + ' ریال'));
+
+  h += sec('👥 گزارش اعضا',
+    row('اعضای جدید این ماه', newMem.length ? newMem.join('، ') : '—') +
+    row('تولدهای این ماه', births.length ? births.map(function(b){ return b.n; }).join('، ') : '—') +
+    row('دارای قسط معوقه', '<span class="tag red">' + fa(overdue.length) + ' نفر</span>') +
+    row('موجودی زیر حد نصاب', '<span class="tag org">' + fa(lowBal.length) + ' نفر</span>'));
+
+  if (overdue.length) {
+    h += sec('⚠️ لیست معوقه‌دارها', overdue.sort(function(a,b){ return b.c-a.c; }).map(function(o){
+      return row(o.n, '<span class="tag red">' + fa(o.c) + ' قسط</span>');
+    }).join(''));
+  }
+  if (lowBal.length) {
+    h += sec('💰 لیست موجودی کم', lowBal.sort(function(a,b){ return a.b-b.b; }).map(function(o){
+      return row(o.n, '<span class="tag org">' + fa(o.b) + ' ریال</span>');
+    }).join(''));
+  }
+
+  h += sec('📬 گزارش پیام‌ها و پاسخ‌ها',
+    row('کل پیام‌های دریافتی', fa(mTot)) +
+    row('پاسخ داده‌شده', '<span class="tag grn">' + fa(mAns) + '</span>') +
+    row('بی‌پاسخ', '<span class="tag red">' + fa(mPend) + '</span>') +
+    row('میانگین زمان پاسخ‌گویی', avgH < 24 ? fa(avgH) + ' ساعت' : fa(Math.round(avgH/24)) + ' روز'));
+
+  h += sec('📈 گزارش فعالیت سایت',
+    row('ورودهای امروز', fa(logToday)) +
+    row('ورودهای ۳۰ روز', fa(log30)) +
+    row('کاربران فعال ۳۰ روز', fa(Object.keys(users30).length)) +
+    row('مسابقات ساخته‌شده', fa(R.quizzes.length)) +
+    row('درخواست‌های خرید (کل / در انتظار)', fa(R.buys.length) + ' / ' + fa(bPend)) +
+    row('میانگین رضایت از سایت', fa(svAvg) + ' از ۵ 💛') +
+    row('محصولات کم‌موجودی فروشگاه', lowStock.length ? lowStock.map(function(p){ return p.name; }).join('، ') : '—'));
+
+  document.getElementById('content').innerHTML = h;
+}
+
+function card(v, l){ return '<div class="card"><b>' + v + '</b><span>' + l + '</span></div>'; }
+function sec(t, body){ return '<div class="sec"><h2>' + t + '</h2>' + body + '</div>'; }
+function row(a, b){ return '<div class="row"><span>' + a + '</span><b>' + b + '</b></div>'; }
+
+// ===== ارسال خلاصه به گروه شورا =====
+function sendToShora(){
+  if (!confirm('خلاصه گزارش به گروه شورا در ایتا ارسال شود؟')) return;
+  var ym = nowYM();
+  var MN = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+  var t = '📊 *خلاصه گزارش شورای صندوق*\n';
+  t += '📅 ' + MN[ym.m-1] + ' ' + fa(ym.y) + '\n━━━━━━━━━━\n';
+  var cards = document.querySelectorAll('.card');
+  cards.forEach(function(c){
+    t += '• ' + c.querySelector('span').textContent + ': ' + c.querySelector('b').textContent + '\n';
+  });
+  t += '━━━━━━━━━━\n💛 صندوق اتحاد';
+  fetch(ADMIN_URL + '?action=eitaaDirect&key=' + KEY + '&chat=9223948&text=' + encodeURIComponent(t))
+    .then(function(r){ return r.json(); })
+    .then(function(d){ alert(d.ok ? '✅ خلاصه گزارش به گروه شورا ارسال شد' : '❌ خطا: ' + (d.msg || d.error)); })
+    .catch(function(){ alert('❌ خطا در ارسال'); });
+}
+</script>
+</body>
+</html>
