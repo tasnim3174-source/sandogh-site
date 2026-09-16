@@ -87,7 +87,7 @@ function start(){
 // ===== ابزارها =====
 function faD(s){ return String(s==null?'':s).replace(/[۰-۹]/g,function(d){ return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); }); }
 function num(v){ var n = Number(faD(v).replace(/[,،]/g,'')); return isNaN(n)?0:n; }
-function fa(n){ try { return Number(n).toLocaleString('fa-IR'); } catch(e){ return String(n); } }
+function fa(n){ try { return Math.round(Number(n)).toLocaleString('fa-IR'); } catch(e){ return String(n); } }
 function pYM(v){
   var s = faD(v).trim().replace(/\//g,'-');
   if (/^\d{8}$/.test(s)) return { y:+s.substr(0,4), m:+s.substr(4,2) };
@@ -242,7 +242,7 @@ function render(){
     row('کاربران فعال ۳۰ روز', fa(Object.keys(users30).length)) +
     row('مسابقات ساخته‌شده', fa(R.quizzes.length)) +
     row('درخواست‌های خرید (کل / در انتظار)', fa(R.buys.length) + ' / ' + fa(bPend)) +
-    row('میانگین رضایت از سایت', fa(svAvg) + ' از ۵ 💛') +
+        row('میانگین رضایت از سایت', svAvg + ' از ۵ 💛') +
     row('محصولات کم‌موجودی فروشگاه', lowStock.length ? lowStock.map(function(p){ return p.name; }).join('، ') : '—'));
 
   document.getElementById('content').innerHTML = h;
