@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>✨ قابلیت‌های جدید - صندوق اتحاد</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-primary: #f0f4ff;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f8fafc;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --text-muted: #8888aa;
+            --border-color: #e0e7ff;
+            --gradient-start: #667eea;
+            --gradient-end: #764ba2;
+            --card-bg: #ffffff;
+            --gold-color: #f59e0b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --purple-color: #8b5cf6;
+            --blue-color: #4facfe;
+            --pink-color: #ec4899;
+            --teal-color: #14b8a6;
+            --shadow-sm: 0 2px 8px rgba(102, 126, 234, 0.08);
+            --shadow-md: 0 4px 16px rgba(102, 126, 234, 0.12);
+            --shadow-lg: 0 8px 32px rgba(102, 126, 234, 0.16);
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #141428;
+            --bg-tertiary: #1a1a35;
+            --text-primary: #f0e6d0;
+            --text-secondary: #b0a8c8;
+            --text-muted: #6a6288;
+            --border-color: #2a2a4a;
+            --gradient-start: #f59e0b;
+            --gradient-end: #d97706;
+            --card-bg: #1a1a35;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', Tahoma, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        [data-theme="dark"] body::before {
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(217, 119, 6, 0.08) 0%, transparent 50%);
+        }
+        
+        /* ===== هدر ===== */
+        .demo-header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: #fff;
+            padding: 14px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .demo-header-title {
+            font-size: 1rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .demo-header-title span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .demo-header-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            border: 1px solid rgba(255,255,255,0.3);
+            flex-shrink: 0;
+        }
+        
+        .theme-toggle {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(180deg) scale(1.1);
+        }
+        
+        /* ===== منوی قابلیت‌ها ===== */
+        .features-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            animation: fadeInUp 0.5s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(102, 126, 234, 0.05));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .feature-card:hover::before { opacity: 1; }
+        
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .feature-card:active { transform: scale(0.96); }
+        
+        .feature-card.active {
+            border-color: var(--gradient-start);
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: #fff;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-card.active::before { opacity: 0; }
+        
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 1.4rem;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        
+        .feature-label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+        
+        /* ===== محتوای قابلیت ===== */
+        .feature-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 15px;
+            animation: contentFadeIn 0.4s ease;
+        }
+        
+        @keyframes contentFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .content-card:hover { box-shadow: var(--shadow-md); }
+        
+        .content-card-title {
+            font-size: 1rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+        
+        /* ===== Top List ===== */
+        .top-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .top-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            border-right: 4px solid var(--gold-color);
+            transition: all 0.3s ease;
+        }
+        
+        .top-item:hover {
+            transform: translateX(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .top-rank {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.85rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .top-rank.gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: #333; }
+        .top-rank.silver { background: linear-gradient(135deg, #C0C0C0, #A9A9A9); color: #333; }
+        .top-rank.bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); color: #fff; }
+        .top-rank.normal { background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); }
+        
+        .top-info { flex: 1; min-width: 0; }
+        .top-name { font-weight: 800; font-size: 0.85rem; }
+        .top-detail { font-size: 0.65rem; color: var(--text-secondary); margin-top: 2px; }
+        .top-value { font-weight: 900; color: var(--gold-color); font-size: 0.9rem; flex-shrink: 0; }
+        
+        /* ===== منوی پایین ===== */
+        .bottom-nav-demo {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 0;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            backdrop-filter: blur(12px);
+        }
+        
+        .bottom-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.68rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-family: inherit;
+            font-weight: 600;
+        }
+        
+        .bottom-nav-btn i {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .bottom-nav-btn:hover i { transform: translateY(-2px); }
+        .bottom-nav-btn:active { transform: scale(0.95); }
+        .bottom-nav-btn.active { color: var(--gradient-start); }
+        
+        /* ===== نشان پیش‌نمایش ===== */
+        .preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+        
+        /* ===== Toggle Switch ===== */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: var(--border-color);
+            border-radius: 99px;
+            transition: 0.3s;
+        }
+        
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        input:checked + .toggle-slider {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        }
+        
+        input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+        
+        /* ===== ریسپانسیو ===== */
+        @media (max-width: 500px) {
+            .features-menu {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                padding: 12px;
+            }
+            
+            .demo-header-title { font-size: 0.82rem; }
+            .demo-header-badge { display: none; }
+            
+            .feature-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 1.2rem;
+            }
+            
+            .feature-label { font-size: 0.65rem; }
+            .content-card { padding: 14px; border-radius: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== هدر ===== -->
+<header class="demo-header">
+    <div class="demo-header-title">
+        <i class="fas fa-flask"></i>
+        <span>قابلیت‌های جدید</span>
+    </div>
+    <span class="demo-header-badge">نسخه ۱.۰</span>
+    <button class="theme-toggle" onclick="toggleTheme()" title="تغییر تم" aria-label="تغییر تم">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+</header>
+
+<!-- ===== منوی قابلیت‌ها (۵ تا) ===== -->
+<nav class="features-menu">
+    <div class="feature-card active" data-feature="notifications" onclick="showFeature('notifications')">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="feature-label">اعلان‌ها</div>
+    </div>
+    
+    <div class="feature-card" data-feature="messaging" onclick="showFeature('messaging')">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+            <i class="fas fa-comments"></i>
+        </div>
+        <div class="feature-label">پیام‌رسانی</div>
+    </div>
+    
+    <div class="feature-card" data-feature="pwa" onclick="showFeature('pwa')">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+            <i class="fas fa-mobile-alt"></i>
+        </div>
+        <div class="feature-label">اپلیکیشن PWA</div>
+    </div>
+    
+    <div class="feature-card" data-feature="games" onclick="showFeature('games')">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">
+            <i class="fas fa-gamepad"></i>
+        </div>
+        <div class="feature-label">بازی‌ها</div>
+    </div>
+    
+    <div class="feature-card" data-feature="social" onclick="showFeature('social')">
+        <div class="feature-icon" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+            <i class="fas fa-users"></i>
+        </div>
+        <div class="feature-label">شبکه اجتماعی</div>
+    </div>
+</nav>
+
+<!-- ===== محتوای قابلیت‌ها ===== -->
+<main class="feature-content" id="featureContent"></main>
+
+<!-- ===== منوی پایین ===== -->
+<nav class="bottom-nav-demo">
+    <button class="bottom-nav-btn active" onclick="showFeature('notifications')">
+        <i class="fas fa-bell"></i>
+        <span>اعلان‌ها</span>
+    </button>
+    <button class="bottom-nav-btn" onclick="showFeature('messaging')">
+        <i class="fas fa-comments"></i>
+        <span>پیام‌ها</span>
+    </button>
+    <button class="bottom-nav-btn" onclick="showFeature('games')">
+        <i class="fas fa-gamepad"></i>
+        <span>بازی‌ها</span>
+    </button>
+    <button class="bottom-nav-btn" onclick="toggleTheme()">
+        <i class="fas fa-palette"></i>
+        <span>تم</span>
+    </button>
+</nav>
+
+<script>
+// ============================================================
+// 🎨 مدیریت تم
+// ============================================================
+function toggleTheme() {
+    const html = document.documentElement;
+    const current = html.getAttribute('data-theme');
+    const newTheme = current === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', newTheme);
+    
+    const icon = document.getElementById('themeIcon');
+    if (icon) {
+        icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+    }
+    
+    try { localStorage.setItem('demo_theme', newTheme); } catch(e) {}
+}
+
+// بارگذاری تم ذخیره‌شده
+(function() {
+    try {
+        const saved = localStorage.getItem('demo_theme');
+        if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+            const icon = document.getElementById('themeIcon');
+            if (icon && saved === 'dark') {
+                icon.className = 'fas fa-sun';
+            }
+        }
+    } catch(e) {}
+})();
+
+// ============================================================
+// 🗂️ متغیرها
+// ============================================================
+let currentFeature = 'notifications';
+const charts = {};
+
+// ============================================================
+// 🎯 نمایش قابلیت
+// ============================================================
+function showFeature(feature) {
+    currentFeature = feature;
+    
+    // فعال کردن کارت
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.feature === feature);
+    });
+    
+    // فعال کردن منوی پایین
+    document.querySelectorAll('.bottom-nav-btn').forEach((btn, i) => {
+        const map = ['notifications', 'messaging', 'games', null];
+        btn.classList.toggle('active', map[i] === feature);
+    });
+    
+    // رندر محتوا
+    const renderers = {
+        notifications: renderNotifications,
+        messaging: renderMessaging,
+        pwa: renderPWA,
+        games: renderGames,
+        social: renderSocial
+    };
+    
+    if (renderers[feature]) {
+        renderers[feature]();
+    }
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ============================================================
+// ۱️⃣ اعلان‌های پیشرفته
+// ============================================================
+function renderNotifications() {
+    const content = document.getElementById('featureContent');
+    
+    const notifications = [
+        { id: 1, type: 'financial', icon: '💰', title: 'قسط شما نزدیک است', text: 'قسط بعدی شما ۳ روز دیگر سررسید می‌شود', time: '۵ دقیقه پیش', read: false, color: '#f59e0b' },
+        { id: 2, type: 'success', icon: '✅', title: 'امتیاز جدید دریافت کردید', text: '+۵ امتیاز برای پرداخت به موقع قسط', time: '۱ ساعت پیش', read: false, color: '#10b981' },
+        { id: 3, type: 'social', icon: '🎂', title: 'تولد عضو صندوق', text: 'امروز تولد آقای احمدی است. تبریک بگویید!', time: '۲ ساعت پیش', read: false, color: '#ec4899' },
+        { id: 4, type: 'financial', icon: '📊', title: 'گزارش ماهانه', text: 'گزارش مالی ماهانه شما آماده است', time: 'دیروز', read: true, color: '#667eea' },
+        { id: 5, type: 'admin', icon: '📢', title: 'اعلامیه شورا', text: 'جلسه شورا پنجشنبه ساعت ۱۸ برگزار می‌شود', time: '۲ روز پیش', read: true, color: '#8b5cf6' }
+    ];
+    
+    content.innerHTML = `
+        <div class="content-card">
+            <span class="preview-badge"><i class="fas fa-check-circle"></i> پیش‌نمایش فعال</span>
+            <div class="content-card-title">
+                <i class="fas fa-bell" style="color: var(--gold-color);"></i>
+                اعلان‌های پیشرفته
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                سیستم اعلان هوشمند با دسته‌بندی و اولویت‌بندی
+            </p>
+            
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 15px;">
+                <button class="notif-filter active" onclick="filterNotif('all', this)" style="padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border-color); background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: #fff; font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit;">
+                    همه (۵)
+                </button>
+                <button class="notif-filter" onclick="filterNotif('financial', this)" style="padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit;">
+                    💰 مالی
+                </button>
+                <button class="notif-filter" onclick="filterNotif('social', this)" style="padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit;">
+                    🎉 اجتماعی
+                </button>
+                <button class="notif-filter" onclick="filterNotif('admin', this)" style="padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 0.75rem; font-weight: 700; cursor: pointer; font-family: inherit;">
+                    📢 اداری
+                </button>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div id="notifList">
+                ${notifications.map(n => `
+                    <div class="notif-item" data-type="${n.type}" onclick="markNotifRead(${n.id}, this)" style="
+                        display: flex;
+                        gap: 12px;
+                        padding: 14px;
+                        margin-bottom: 10px;
+                        background: ${n.read ? 'var(--bg-tertiary)' : 'rgba(102, 126, 234, 0.08)'};
+                        border-radius: 12px;
+                        border-right: 4px solid ${n.color};
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        ${!n.read ? 'box-shadow: var(--shadow-md);' : ''}
+                    ">
+                        <div style="font-size: 1.6rem; flex-shrink: 0;">${n.icon}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; gap: 8px; align-items: start;">
+                                <div style="font-weight: 800; font-size: 0.85rem; color: var(--text-primary);">
+                                    ${n.title}
+                                    ${!n.read ? '<span style="display: inline-block; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; margin-right: 6px;"></span>' : ''}
+                                </div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); white-space: nowrap;">${n.time}</div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; line-height: 1.6;">${n.text}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <button onclick="markAllNotifRead()" style="
+                width: 100%;
+                padding: 12px;
+                margin-top: 10px;
+                background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+                color: #fff;
+                border: none;
+                border-radius: 12px;
+                font-weight: 800;
+                font-size: 0.85rem;
+                cursor: pointer;
+                font-family: inherit;
+            ">
+                <i class="fas fa-check-double"></i> علامت‌گذاری همه به عنوان خوانده‌شده
+            </button>
+        </div>
+        
+        <div class="content-card">
+            <div class="content-card-title">
+                <i class="fas fa-cog" style="color: var(--text-secondary);"></i>
+                تنظیمات اعلان
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 10px;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">🔔 اعلان صوتی</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">صدای اعلان برای رویدادهای مهم</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 10px;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">📱 اعلان مرورگر</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">نمایش نوتیفیکیشن در سیستم</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 10px;">
+                    <div>
+                        <div style="font-weight: 700; font-size: 0.85rem;">🌙 حالت شب</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">اعلان‌ها در ساعات شب نمایش داده نشوند</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function filterNotif(type, btn) {
+    document.querySelectorAll('.notif-filter').forEach(b => {
+        b.style.background = 'var(--bg-tertiary)';
+        b.style.color = 'var(--text-primary)';
+    });
+    btn.style.background = 'linear-gradient(135deg, var(--gradient-start), var(--gradient-end))';
+    btn.style.color = '#fff';
+    
+    document.querySelectorAll('.notif-item').forEach(item => {
+        item.style.display = (type === 'all' || item.dataset.type === type) ? 'flex' : 'none';
+    });
+}
+
+function markNotifRead(id, el) {
+    el.style.background = 'var(--bg-tertiary)';
+    el.style.boxShadow = 'none';
+    const dot = el.querySelector('span[style*="background: #ef4444"]');
+    if (dot) dot.remove();
+}
+
+function markAllNotifRead() {
+    document.querySelectorAll('.notif-item').forEach(el => {
+        el.style.background = 'var(--bg-tertiary)';
+        el.style.boxShadow = 'none';
+        const dot = el.querySelector('span[style*="background: #ef4444"]');
+        if (dot) dot.remove();
+    });
+}
+
+// ============================================================
+// ۲️⃣ پیام‌رسانی
+// ============================================================
+function renderMessaging() {
+    const content = document.getElementById('featureContent');
+    
+    const messages = [
+        { id: 1, from: 'شورای صندوق', avatar: '👑', text: 'سلام، درخواست شما بررسی شد', time: '۱۰:۳۰', unread: true },
+        { id: 2, from: 'حسابداری', avatar: '💰', text: 'فیش واریزی شما ثبت شد', time: 'دیروز', unread: false },
+        { id: 3, from: 'آقای احمدی', avatar: '👤', text: 'ممنون از پیگیری شما', time: '۲ روز پیش', unread: false }
+    ];
+    
+    content.innerHTML = `
+        <div class="content-card">
+            <span class="preview-badge"><i class="fas fa-check-circle"></i> پیش‌نمایش فعال</span>
+            <div class="content-card-title">
+                <i class="fas fa-comments" style="color: var(--pink-color);"></i>
+                پیام‌رسانی داخلی
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                چت مستقیم با شورا، حسابداری و سایر اعضا
+            </p>
+        </div>
+        
+        <div class="content-card">
+            <div class="content-card-title">
+                <i class="fas fa-inbox" style="color: var(--gradient-start);"></i>
+                گفتگوهای اخیر
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                ${messages.map(m => `
+                    <div onclick="openChat('${m.from}', '${m.avatar}')" style="
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        padding: 12px;
+                        background: ${m.unread ? 'rgba(236, 72, 153, 0.08)' : 'var(--bg-tertiary)'};
+                        border-radius: 12px;
+                        cursor: pointer;
+                        transition: all 0.3s;
+                        ${m.unread ? 'border-right: 4px solid var(--pink-color);' : ''}
+                    ">
+                        <div style="
+                            width: 48px;
+                            height: 48px;
+                            border-radius: 50%;
+                            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 1.3rem;
+                            flex-shrink: 0;
+                        ">${m.avatar}</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; gap: 8px;">
+                                <div style="font-weight: 800; font-size: 0.9rem; color: var(--text-primary);">${m.from}</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted);">${m.time}</div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                ${m.text}
+                            </div>
+                        </div>
+                        ${m.unread ? '<div style="width: 10px; height: 10px; background: var(--pink-color); border-radius: 50%;"></div>' : ''}
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div class="content-card-title">
+                <i class="fas fa-plus-circle" style="color: var(--success-color);"></i>
+                شروع گفتگوی جدید
+            </div>
+            <button onclick="openChat('شورای صندوق', '👑')" style="
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(135deg, var(--pink-color), #db2777);
+                color: #fff;
+                border: none;
+                border-radius: 12px;
+                font-weight: 800;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: inherit;
+                margin-bottom: 8px;
+            ">
+                <i class="fas fa-crown"></i> پیام به شورا
+            </button>
+            <button onclick="openChat('حسابداری', '💰')" style="
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(135deg, var(--success-color), #059669);
+                color: #fff;
+                border: none;
+                border-radius: 12px;
+                font-weight: 800;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: inherit;
+            ">
+                <i class="fas fa-calculator"></i> پیام به حسابداری
+            </button>
+        </div>
+    `;
+}
+
+// ============================================================
+// ۳️⃣ PWA
+// ============================================================
+function renderPWA() {
+    const content = document.getElementById('featureContent');
+    
+    content.innerHTML = `
+        <div class="content-card">
+            <span class="preview-badge"><i class="fas fa-check-circle"></i> پیش‌نمایش فعال</span>
+            <div class="content-card-title">
+                <i class="fas fa-mobile-alt" style="color: var(--success-color);"></i>
+                اپلیکیشن PWA
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 20px;">
+                نصب برنامه روی گوشی مثل یه اپلیکیشن واقعی
+            </p>
+            
+            <div style="
+                max-width: 280px;
+                margin: 0 auto 20px;
+                background: linear-gradient(135deg, #1a1a2e, #0a0a1a);
+                border-radius: 30px;
+                padding: 20px 12px;
+                box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+                border: 8px solid #2a2a4a;
+            ">
+                <div style="width: 80px; height: 6px; background: #2a2a4a; border-radius: 99px; margin: 0 auto 20px;"></div>
+                
+                <div style="text-align: center; color: #fff;">
+                    <div style="
+                        width: 80px;
+                        height: 80px;
+                        border-radius: 20px;
+                        background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 2.5rem;
+                        margin: 0 auto 15px;
+                        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+                    ">🤝</div>
+                    <div style="font-size: 1.1rem; font-weight: 900; margin-bottom: 5px;">صندوق اتحاد</div>
+                    <div style="font-size: 0.7rem; opacity: 0.7; margin-bottom: 20px;">نسخه ۲.۰</div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 0 5px;">
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 4px; text-align: center;">
+                            <div style="font-size: 1.2rem;">💰</div>
+                            <div style="font-size: 0.55rem; margin-top: 4px;">موجودی</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 4px; text-align: center;">
+                            <div style="font-size: 1.2rem;">⭐</div>
+                            <div style="font-size: 0.55rem; margin-top: 4px;">امتیاز</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 4px; text-align: center;">
+                            <div style="font-size: 1.2rem;">📊</div>
+                            <div style="font-size: 0.55rem; margin-top: 4px;">گزارش</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div class="content-card-title">
+                <i class="fas fa-star" style="color: var(--gold-color);"></i>
+                ویژگی‌های اپلیکیشن
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                ${[
+                    { icon: '📲', title: 'نصب روی صفحه اصلی', desc: 'آیکون مثل اپلیکیشن واقعی' },
+                    { icon: '⚡', title: 'باز شدن سریع', desc: 'بدون نیاز به مرورگر' },
+                    { icon: '📴', title: 'کار در حالت آفلاین', desc: 'بعضی بخش‌ها بدون اینترنت' },
+                    { icon: '🔔', title: 'اعلان‌های Push', desc: 'اعلان واقعی روی گوشی' },
+                    { icon: '💾', title: 'ذخیره محلی', desc: 'داده‌ها روی گوشی ذخیره میشن' }
+                ].map(f => `
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-tertiary); border-radius: 12px; border-right: 4px solid var(--success-color);">
+                        <div style="font-size: 1.5rem;">${f.icon}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 800; font-size: 0.85rem;">${f.title}</div>
+                            <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">${f.desc}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <div class="content-card" style="text-align: center;">
+            <div class="content-card-title" style="justify-content: center;">
+                <i class="fas fa-download" style="color: var(--success-color);"></i>
+                نصب اپلیکیشن
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 15px; line-height: 1.7;">
+                برای نصب، از منوی مرورگر گزینه <strong>"افزودن به صفحه اصلی"</strong> رو انتخاب کنید
+            </p>
+            <button onclick="alert('🚀 در نسخه نهایی، این دکمه اپلیکیشن رو نصب می‌کنه!')" style="
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(135deg, var(--success-color), #059669);
+                color: #fff;
+                border: none;
+                border-radius: 12px;
+                font-weight: 800;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: inherit;
+            ">
+                <i class="fas fa-download"></i> نصب اپلیکیشن
+            </button>
+        </div>
+    `;
+}
+
+// ============================================================
+// ۴️⃣ بازی‌ها
+// ============================================================
+function renderGames() {
+    const content = document.getElementById('featureContent');
+    
+    const games = [
+        { icon: '💰', title: 'شبیه‌ساز مدیریت پول', desc: 'پولت رو مدیریت کن', color: '#10b981', badge: '🎯 فعال' },
+        { icon: '📈', title: 'بورس مجازی', desc: 'سرمایه‌گذاری یاد بگیر', color: '#f59e0b', badge: '🎯 فعال' },
+        { icon: '🎯', title: 'چالش ۳۰ روزه', desc: '۳۰ روز پس‌انداز کن', color: '#ec4899', badge: '🎯 فعال' },
+        { icon: '🏆', title: 'مسابقه پس‌انداز', desc: 'با دوستانت رقابت کن', color: '#8b5cf6', badge: '🎯 فعال' }
+    ];
+    
+    content.innerHTML = `
+        <div class="content-card">
+            <span class="preview-badge"><i class="fas fa-check-circle"></i> پیش‌نمایش فعال</span>
+            <div class="content-card-title">
+                <i class="fas fa-gamepad" style="color: var(--purple-color);"></i>
+                بازی‌های آموزشی
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                یادگیری سواد مالی با بازی‌های جذاب
+            </p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px;">
+            ${games.map(g => `
+                <div class="content-card" style="cursor: pointer; transition: all 0.3s; border-right: 4px solid ${g.color}; margin-bottom: 0;" onclick="alert('🎮 بازی ' + '${g.title}' + ' شروع میشه!')">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 60px; height: 60px; border-radius: 16px; background: ${g.color}; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; box-shadow: 0 6px 20px ${g.color}40;">${g.icon}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 900; font-size: 0.95rem; margin-bottom: 4px;">${g.title}</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-bottom: 6px;">${g.desc}</div>
+                            <span style="background: ${g.color}20; color: ${g.color}; padding: 3px 10px; border-radius: 99px; font-size: 0.6rem; font-weight: 800;">${g.badge}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        
+        <div class="content-card">
+            <div class="content-card-title">
+                <i class="fas fa-trophy" style="color: var(--gold-color);"></i>
+                جدول امتیازات بازی‌ها
+            </div>
+            <div class="top-list">
+                ${[
+                    { name: 'آقای احمدی', score: 2450, medal: '🥇' },
+                    { name: 'خانم رضایی', score: 2120, medal: '🥈' },
+                    { name: 'آقای محمدی', score: 1890, medal: '🥉' },
+                    { name: 'شما', score: 1250, medal: '4️⃣' },
+                    { name: 'خانم کریمی', score: 980, medal: '5️⃣' }
+                ].map((p, i) => `
+                    <div class="top-item" style="${p.name === 'شما' ? 'background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); border-right-color: var(--gradient-start);' : ''}">
+                        <div class="top-rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : 'normal'}">${p.medal}</div>
+                        <div class="top-info"><div class="top-name">${p.name}</div></div>
+                        <div class="top-value">${p.score.toLocaleString('fa-IR')} ⭐</div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// ============================================================
+// ۵️⃣ شبکه اجتماعی
+// ============================================================
+function renderSocial() {
+    const content = document.getElementById('featureContent');
+    
+    const posts = [
+        { id: 1, author: 'آقای احمدی', avatar: '👤', time: '۱۰ دقیقه پیش', text: 'امروز تونستم قسط این ماه رو کامل پرداخت کنم. احساس آرامش دارم. از صندوق اتحاد ممنونم 🙏', likes: 12, comments: 3 },
+        { id: 2, author: 'خانم رضایی', avatar: '👩', time: '۱ ساعت پیش', text: 'جلسه دیروز شورا خیلی خوب بود. تصمیمات خوبی برای بهبود صندوق گرفته شد 👏', likes: 8, comments: 2 },
+        { id: 3, author: 'شورای صندوق', avatar: '👑', time: '۳ ساعت پیش', text: '📢 اعلامیه: جلسه بعدی شورا پنجشنبه ساعت ۱۸ در محل صندوق برگزار میشه. حضور همه اعضا آزاده.', likes: 25, comments: 8, isOfficial: true }
+    ];
+    
+    content.innerHTML = `
+        <div class="content-card">
+            <span class="preview-badge"><i class="fas fa-check-circle"></i> پیش‌نمایش فعال</span>
+            <div class="content-card-title">
+                <i class="fas fa-users" style="color: var(--blue-color);"></i>
+                شبکه اجتماعی داخلی
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                فضای اجتماعی برای تعامل اعضا با یکدیگر
+            </p>
+        </div>
+        
+        <div class="content-card">
+            <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">👤</div>
+                <input type="text" placeholder="چه خبر؟ یه پست بنویس..." style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none;">
+            </div>
+            <button onclick="alert('📝 پست شما ثبت شد!')" style="width: 100%; padding: 12px; background: linear-gradient(135deg, var(--blue-color), #2563eb); color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 0.85rem; cursor: pointer; font-family: inherit;">
+                <i class="fas fa-paper-plane"></i> انتشار پست
+            </button>
+        </div>
+        
+        ${posts.map(p => `
+            <div class="content-card" style="${p.isOfficial ? 'border-right: 4px solid var(--gold-color);' : ''}">
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 12px;">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: ${p.isOfficial ? 'linear-gradient(135deg, var(--gold-color), #d97706)' : 'linear-gradient(135deg, var(--gradient-start), var(--gradient-end))'}; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">${p.avatar}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 800; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            ${p.author}
+                            ${p.isOfficial ? '<span style="background: var(--gold-color); color: #fff; padding: 2px 8px; border-radius: 99px; font-size: 0.55rem;">رسمی</span>' : ''}
+                        </div>
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">${p.time}</div>
+                    </div>
+                </div>
+                
+                <div style="font-size: 0.85rem; line-height: 1.9; color: var(--text-primary); margin-bottom: 12px;">${p.text}</div>
+                
+                <div style="display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-color);">
+                    <button onclick="likePost(${p.id}, this)" style="flex: 1; padding: 8px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: inherit; font-size: 0.75rem; transition: all 0.3s;">
+                        <i class="fas fa-heart"></i> ${p.likes} لایک
+                    </button>
+                    <button onclick="alert('💬 کامنت‌ها: ${p.comments}')" style="flex: 1; padding: 8px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: inherit; font-size: 0.75rem; transition: all 0.3s;">
+                        <i class="fas fa-comment"></i> ${p.comments} نظر
+                    </button>
+                    <button onclick="alert('📤 اشتراک‌گذاری')" style="flex: 1; padding: 8px; background: transparent; border: none; border-radius: 8px; color: var(--text-secondary); cursor: pointer; font-family: inherit; font-size: 0.75rem; transition: all 0.3s;">
+                        <i class="fas fa-share"></i> اشتراک
+                    </button>
+                </div>
+            </div>
+        `).join('')}
+    `;
+}
+
+// ============================================================
+// 💬 چت
+// ============================================================
+function openChat(name, avatar) {
+    const content = document.getElementById('featureContent');
+    
+    content.innerHTML = `
+        <div class="content-card" style="padding: 0; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: #fff; padding: 16px; display: flex; align-items: center; gap: 12px;">
+                <button onclick="showFeature('messaging')" style="background: rgba(255,255,255,0.2); border: none; width: 36px; height: 36px; border-radius: 50%; color: #fff; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">${avatar}</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 900; font-size: 0.95rem;">${name}</div>
+                    <div style="font-size: 0.7rem; opacity: 0.9;">آنلاین</div>
+                </div>
+            </div>
+            
+            <div style="padding: 16px; min-height: 300px; max-height: 400px; overflow-y: auto; background: var(--bg-tertiary); display: flex; flex-direction: column; gap: 10px;">
+                <div style="align-self: flex-start; max-width: 75%; padding: 10px 14px; background: var(--card-bg); border-radius: 14px 14px 14px 4px; font-size: 0.85rem; line-height: 1.7; box-shadow: var(--shadow-sm);">
+                    سلام! چطور می‌تونم کمکتون کنم؟
+                    <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">۱۰:۳۰</div>
+                </div>
+                <div style="align-self: flex-end; max-width: 75%; padding: 10px 14px; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: #fff; border-radius: 14px 14px 4px 14px; font-size: 0.85rem; line-height: 1.7;">
+                    سلام، یه سوال داشتم
+                    <div style="font-size: 0.6rem; opacity: 0.8; margin-top: 4px;">۱۰:۳۲</div>
+                </div>
+                <div style="align-self: flex-start; max-width: 75%; padding: 10px 14px; background: var(--card-bg); border-radius: 14px 14px 14px 4px; font-size: 0.85rem; line-height: 1.7; box-shadow: var(--shadow-sm);">
+                    بفرمایید، در خدمتم 😊
+                    <div style="font-size: 0.6rem; color: var(--text-muted); margin-top: 4px;">۱۰:۳۳</div>
+                </div>
+            </div>
+            
+            <div style="padding: 12px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; gap: 8px;">
+                <input type="text" placeholder="پیام خود را بنویسید..." style="flex: 1; padding: 12px; border-radius: 99px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none;">
+                <button onclick="alert('📤 پیام ارسال شد!')" style="width: 46px; height: 46px; border-radius: 50%; background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end)); color: #fff; border: none; cursor: pointer; font-size: 1rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function likePost(id, btn) {
+    const currentText = btn.innerHTML;
+    const match = currentText.match(/\d+/);
+    if (!match) return;
+    
+    let count = parseInt(match[0]);
+    const isLiked = btn.style.color === 'rgb(236, 72, 153)';
+    
+    if (isLiked) {
+        count--;
+        btn.style.color = 'var(--text-secondary)';
+        btn.innerHTML = `<i class="fas fa-heart"></i> ${count} لایک`;
+    } else {
+        count++;
+        btn.style.color = '#ec4899';
+        btn.innerHTML = `<i class="fas fa-heart" style="color: #ec4899;"></i> ${count} لایک`;
+    }
+}
+
+// ============================================================
+// 🚀 شروع
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    showFeature('notifications');
+    console.log('✅ دموی ۵ قابلیت با موفقیت بارگذاری شد');
+});
+</script>
+
+</body>
+</html>
