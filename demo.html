@@ -152,6 +152,112 @@
             transform: rotate(180deg) scale(1.1);
         }
         
+        /* ===== 📢 بنر اطلاع‌رسانی دمو ===== */
+        .demo-banner {
+            max-width: 800px;
+            margin: 15px auto 0;
+            padding: 0 15px;
+            animation: bannerSlideIn 0.5s ease;
+        }
+        
+        @keyframes bannerSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .demo-banner-content {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(217, 119, 6, 0.12));
+            border: 2px dashed var(--gold-color);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+        }
+        
+        .demo-banner-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .demo-banner-text {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .demo-banner-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--gold-color);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .demo-banner-title strong {
+            background: var(--gold-color);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+        
+        .demo-banner-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        .demo-banner-subtitle code {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--gold-color);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-weight: 800;
+            font-size: 0.7rem;
+            display: inline-block;
+            margin-top: 4px;
+            direction: rtl;
+        }
+        
+        .demo-banner-close {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: var(--gold-color);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+        
+        .demo-banner-close:hover {
+            background: var(--gold-color);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        
         /* ===== منوی قابلیت‌ها ===== */
         .features-menu {
             display: grid;
@@ -435,6 +541,22 @@
             
             .feature-label { font-size: 0.65rem; }
             .content-card { padding: 14px; border-radius: 14px; }
+            
+            .demo-banner-content {
+                padding: 12px 14px;
+            }
+            
+            .demo-banner-icon {
+                font-size: 1.5rem;
+            }
+            
+            .demo-banner-title {
+                font-size: 0.8rem;
+            }
+            
+            .demo-banner-subtitle {
+                font-size: 0.68rem;
+            }
         }
     </style>
 </head>
@@ -451,6 +573,22 @@
         <i class="fas fa-moon" id="themeIcon"></i>
     </button>
 </header>
+
+<!-- ===== 📢 بنر اطلاع‌رسانی دمو ===== -->
+<div class="demo-banner" id="demoBanner">
+    <div class="demo-banner-content">
+        <div class="demo-banner-icon">🧪</div>
+        <div class="demo-banner-text">
+            <div class="demo-banner-title">این نسخه <strong>دمو</strong> است</div>
+            <div class="demo-banner-subtitle">
+                💡 اگه این قابلیت‌ها رو پسندیدید، در بخش <strong>خروج</strong>، در قسمت پیام به شورا بنویسید:
+                <br>
+                <code>«فعال‌سازی قابلیت‌های جدید»</code>
+            </div>
+        </div>
+        <button class="demo-banner-close" onclick="document.getElementById('demoBanner').style.display='none'" title="بستن">✕</button>
+    </div>
+</div>
 
 <!-- ===== منوی قابلیت‌ها (۵ تا) ===== -->
 <nav class="features-menu">
@@ -557,18 +695,15 @@ const charts = {};
 function showFeature(feature) {
     currentFeature = feature;
     
-    // فعال کردن کارت
     document.querySelectorAll('.feature-card').forEach(card => {
         card.classList.toggle('active', card.dataset.feature === feature);
     });
     
-    // فعال کردن منوی پایین
     document.querySelectorAll('.bottom-nav-btn').forEach((btn, i) => {
         const map = ['notifications', 'messaging', 'games', null];
         btn.classList.toggle('active', map[i] === feature);
     });
     
-    // رندر محتوا
     const renderers = {
         notifications: renderNotifications,
         messaging: renderMessaging,
