@@ -6,8 +6,7 @@
     <meta name="theme-color" content="#667eea" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <title>صندوق اتحاد</title>
-<script>
+      <title>صندوق اتحاد</title>
 <script>
 /* ===== لایه کش هوشمند v2 ===== */
 (function(){
@@ -5256,7 +5255,7 @@ function shamsiToContDays(jy, jm, jd) {
             const instProgress = (inst !== null && inst > 0 && instCycle > 0) ? Math.min(100, Math.round(((instCycle - inst) / instCycle) * 100)) : 0;
             const progPct = (member.totalInstallments || 0) > 0 ? Math.round((member.paidInstallments || 0) / member.totalInstallments * 100) : 0;
             
-            // 🗂️ منوی اصلی
+                 // 🗂️ منوی اصلی
             const isCouncil = hasCouncilOrAdminAccess();
             const isHead = isHeadOfHousehold();
             const publicItems = [
@@ -5264,11 +5263,17 @@ function shamsiToContDays(jy, jm, jd) {
                 { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
                 { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
                 { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
-                { tab: 'club', label: 'امتیازات', icon: 'fa-star', color: '#f59e0b' },
                 { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
-                { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4' },
-                { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316' }
+                { tab: 'emailForm', label: 'ثبت نحوه ارسال صورتحساب', icon: 'fa-envelope', color: '#3b82f6', onclick: 'openEmailForm()' }
             ];
+// 🆕 باکس ویژه - کلیدهای جدا شده
+const specialBoxItems = [
+    { tab: 'dailyReward', label: 'پاداش روزانه', icon: 'fa-gift', color: '#ffd700', onclick: 'openDailyReward()' },
+    { tab: 'club', label: 'امتیازات و فروشگاه', icon: 'fa-star', color: '#f59e0b', onclick: "selectMenuItem('club')" },
+    { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4', onclick: "selectMenuItem('myFund')" },
+    { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316', onclick: "selectMenuItem('utilities')" },
+  
+];
             const specialItems = [
                 { tab: 'toddlerGrowth', label: '🧒 رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
                 { tab: 'teenPiggy', label: '🐷 قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
@@ -5290,9 +5295,23 @@ function shamsiToContDays(jy, jm, jd) {
                 { tab: 'adminPanel', label: '🛠️ پنل مدیر سیستم', icon: 'fa-cog', color: '#ffd700' }
             ];
             let gridHtml = '<div class="grid-menu">';
-            publicItems.forEach(item => { const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
-            gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="selectMenuItem('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; });
-            gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:linear-gradient(135deg,rgba(236,72,153,0.05),rgba(217,70,239,0.05));"><i class="fas fa-gem"></i> ویژه اعضا</div>';
+            publicItems.forEach(item => { 
+    const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
+    const clickHandler = item.onclick ? item.onclick : `selectMenuItem('${item.tab}')`;
+    gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="${clickHandler}"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`; 
+});
+            // 🆕 باکس ویژه - کلیدهای جدا شده
+           gridHtml += '<div class="family-divider" style="color:#ef4444;border-top:2px solid #ef4444;border-bottom:2px solid #ef4444;background:#ffffff;"><i class="fas fa-crown"></i> بخش ویژه</div>';
+            specialBoxItems.forEach(item => {
+                gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="${item.onclick}">
+                    <div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);">
+                        <i class="fas ${item.icon}"></i>
+                    </div>
+                    <div class="menu-label">${item.label}</div>
+                </div>`;
+            });
+            
+           gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:#ffffff;"><i class="fas fa-gem"></i> ویژه اعضا</div>';
             specialItems.forEach(item => {
                 let clickHandler = '';
                 let badgeHtml = '';
@@ -5306,7 +5325,7 @@ function shamsiToContDays(jy, jm, jd) {
                 } else if (item.tab === 'quizzes') {
                     clickHandler = 'openQuizzes()';
                     badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🏆 جدید</span>';
-                                              } else if (item.tab === 'messaging') {
+                } else if (item.tab === 'messaging') {
                     clickHandler = "openMessagingMenu()";
                     badgeHtml = '<span id="messagingBadge" style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;display:none">📨 0</span>';
                 } else if (item.tab === 'survey') {
@@ -5326,8 +5345,8 @@ function shamsiToContDays(jy, jm, jd) {
                     <div class="menu-label">${item.label}</div>
                     ${badgeHtml}
                 </div>`;
-            }); 
-            gridHtml += '<div class="family-divider"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
+            });
+            gridHtml += '<div class="family-divider" style="background:#ffffff;"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
             familyItems.forEach(item => { const disabled = isHead ? '' : 'disabled'; const lock = isHead ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>'; const click = isHead ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`; gridHtml += `<div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`; });
                         gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
             councilItems.forEach(function(item) {
@@ -13847,25 +13866,36 @@ function openEmailForm() {
 setInterval(function(){
   if (!getMyKarbari2()) return;
   if (document.getElementById('emailFormCard')) return;
-  var adminCard = null;
+  
+  // 🆕 پیدا کردن اولین کلید اصلی (اطلاعات شخصی شما)
+  var firstMainCard = null;
   var items = document.querySelectorAll('.grid-menu-item');
   for (var i = 0; i < items.length; i++) {
     var tt = (items[i].textContent || '');
-    if (tt.indexOf('برنامه های کاربردی') > -1 || tt.indexOf('برنامه‌های کاربردی') > -1) { adminCard = items[i]; break; }
+    if (tt.indexOf('اطلاعات شخصی') > -1) { 
+      firstMainCard = items[i]; 
+      break; 
+    }
   }
-  if (!adminCard) return;
-  var card = adminCard.cloneNode(true);
+  
+  if (!firstMainCard) return;
+  
+  // ساخت کلید جدید
+  var card = firstMainCard.cloneNode(true);
   card.id = 'emailFormCard';
   card.removeAttribute('onclick');
   card.onclick = openEmailForm;
+  
   var lbl = card.querySelector('.menu-label');
   if (lbl) lbl.textContent = 'ثبت نحوه ارسال صورتحساب';
+  
   var ic = card.querySelector('i');
   if (ic) ic.className = 'fas fa-envelope';
-  adminCard.parentNode.insertBefore(card, adminCard.nextSibling);
+  
+   // 🆕 درج قبل از اولین کلید اصلی (یعنی در بالای بخش اصلی)
+  firstMainCard.parentNode.insertBefore(card, firstMainCard);
 }, 4000);
 </script>
-<!-- ===== EMAILFORM END ===== -->
 <script>
 (function(){
   // ===== انیمیشن رندوم لودر =====
@@ -13971,45 +14001,26 @@ function rwToast(m){
 
   // ===== ساخت دکمه: تلاش برای grid کلیدها، وگرنه شناور =====
     function makeButton(){
-    if(document.getElementById('rwHomeBtn'))return;
-    var shop=null;
-    var cands=document.querySelectorAll('button, a, [onclick], .card, .tile, .menuItem, .sec, div, span');
-    for(var i=0;i<cands.length;i++){
-      var tx=(cands[i].textContent||'').trim();
-      if(tx && tx.length<30 && tx.indexOf('فروشگاه')>-1 && tx.indexOf('پاداش')<0){
-        shop=cands[i]; break;
-      }
-    }
-    if(!shop || !shop.parentNode) return;
-    var b=shop.cloneNode(false);
-    b.id='rwHomeBtn';
-    b.removeAttribute('onclick');
-    b.removeAttribute('href');
-    b.classList.add('rwShimmerBtn');
-    b.innerHTML='<span style="font-size:1.6rem;display:block;margin-bottom:6px">🎰</span><span>پاداش روزانه</span>';
-    if(shop.nextSibling) shop.parentNode.insertBefore(b, shop.nextSibling);
-    else shop.parentNode.appendChild(b);
-    b.onclick=function(e){ e.preventDefault(); e.stopPropagation(); openRW(); };
-  }
-  function removeButton(){
-    var b=document.getElementById('rwHomeBtn');
-    if(b&&b.parentNode) b.parentNode.removeChild(b);
-    var all=document.querySelectorAll('button');
-    for(var i=0;i<all.length;i++){
-      var st=all[i].style;
-      if(st && st.position==='fixed' && all[i].innerHTML.indexOf('🎰')>-1 && all[i].id!=='rwHomeBtn'){
-        if(all[i].parentNode) all[i].parentNode.removeChild(all[i]);
-      }
-    }
-  }
+    // 🗑️ کاملاً حذف شد - پاداش روزانه فقط در باکس ویژه
+    return;
+}
 
-  setInterval(function(){
-    var u=me();
-    var lv=false;
-    try{ var ld=document.getElementById('newLoader'); if(ld&&ld.classList.contains('active')) lv=true; }catch(e){}
-    if(u&&!lv){ makeButton(); dailyLogin(); } else { removeButton(); }
-  },800);
-})();
+// 🆕 حذف دکمه شناور پاداش روزانه
+function removeRWButton() {
+    var b = document.getElementById('rwHomeBtn');
+    if (b && b.parentNode) b.parentNode.removeChild(b);
+    // حذف هر دکمه شناور دیگه که شامل 🎰 باشه
+    var all = document.querySelectorAll('button');
+    for (var i = 0; i < all.length; i++) {
+        var st = all[i].style;
+        if (st && st.position === 'fixed' && all[i].innerHTML.indexOf('🎰') > -1) {
+            if (all[i].parentNode) all[i].parentNode.removeChild(all[i]);
+        }
+    }
+}
+
+// اجرای حذف در هر ثانیه برای اطمینان
+setInterval(removeRWButton, 1000);
 </script>
 <script>
 /* ===== لایه کش هوشمند v7 ===== */
@@ -14309,7 +14320,6 @@ function rwToast(m){
     openSince = 0;
   }
 
-  // هر کلیک anywhere در صفحه → بستن
   document.addEventListener('pointerdown', function(){
     if (findReplyModals().length) {
       console.log('[ReplyFix2] کلیک گرفته شد → بسته شد');
@@ -14317,7 +14327,6 @@ function rwToast(m){
     }
   }, true);
 
-  // بررسی هر ثانیه: اگر پنجره باز شد، بعد از ۱۲ ثانیه خودکار ببند
   setInterval(function(){
     var mods = findReplyModals();
     if (mods.length) {
@@ -14425,10 +14434,8 @@ setInterval(function(){
   try { logged = !!(typeof currentUser !== 'undefined' && currentUser); } catch(e){}
   btn.style.display = logged ? 'block' : 'none';
 }, 1000);
-</script>
-
-<script src="messaging.js"></script>
-<script>
+<</script>
+<!-- <script src="messaging.js"></script> -->
 <script>
 // ===== سیستم toast نهایی و قطعی =====
 function showSimpleToast(icon, title, msg, color) {
@@ -14477,6 +14484,338 @@ setInterval(function(){
     setTimeout(checkUserAlerts, 2000);
   }
 }, 1000);
+</script>
+<script>
+// 🆕 تابع پاداش روزانه - اتصال دکمه باکس ویژه به تابع اصلی
+window.openDailyReward = function() {
+    if (typeof openRW === 'function') {
+        openRW();
+    } else if (typeof ensureUI === 'function') {
+        var ov = ensureUI();
+        ov.classList.add('show');
+        if (typeof loadHistory === 'function') loadHistory(refreshUI);
+    } else {
+        alert('🎁 پاداش روزانه\n\nاین بخش در حال بارگذاری است...');
+    }
+};
+console.log('✅ openDailyReward آماده است:', typeof window.openDailyReward);
+</script>
+<script>
+// ============================================================
+// 🎁 سیستم پاداش روزانه و گردونه شانس - نسخه نهایی
+// ============================================================
+(function(){
+  var RW_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+  var PRIZES = [
+    {label:'۱', pts:1, msg:'🎉 آفرین! ۱ امتیاز بردی'},
+    {label:'۲', pts:2, msg:'🎉 عالی! ۲ امتیاز بردی'},
+    {label:'۳', pts:3, msg:'🎉 خوب بود! ۳ امتیاز بردی'},
+    {label:'۵', pts:5, msg:'🎉 فوق‌العاده! ۵ امتیاز بردی'},
+    {label:'۱۰', pts:10, msg:'🤩 جکپات! ۱۰ امتیاز بردی'},
+    {label:'×۲', pts:4, msg:'✨ امروز امتیازت دو برابر شد!'},
+    {label:'🎁', pts:20, msg:'🎁 جایزه ویژه! ۲۰ امتیاز'},
+    {label:'۲', pts:2, msg:'🎉 خوب بود! ۲ امتیاز بردی'}
+  ];
+
+  function fa(n){ try{ return Number(n).toLocaleString('fa-IR'); }catch(e){ return n; } }
+  function iso(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+  
+  function me(){
+    try{
+      var lr = window.loginResult;
+      if(!lr || !lr.user) return null;
+      var id = lr.user.memberId || lr.user.id;
+      if(id === undefined || id === null) return null;
+      var name = '';
+      try{
+        var ms = (lr.data && lr.data.members) || [];
+        for(var i=0;i<ms.length;i++){
+          if(Number(ms[i].id) === Number(id)){ name = ms[i].firstName || ''; break; }
+        }
+      }catch(e){}
+      return { id: String(id), name: name };
+    }catch(e){ return null; }
+  }
+
+  var rwHistory = [];
+  function loadHistory(cb){
+    var u = me();
+    if(!u){ if(cb) cb(); return; }
+    fetch(RW_API + '?action=getPointsHistory&user=' + encodeURIComponent(u.id))
+      .then(function(r){ return r.json(); })
+      .then(function(d){ rwHistory = d.history || []; if(cb) cb(); })
+      .catch(function(){ if(cb) cb(); });
+  }
+  function myPoints(){ var t=0; for(var i=0;i<rwHistory.length;i++) t += Number(rwHistory[i].points)||0; return t; }
+  function hasKey(p, day){
+    for(var i=0;i<rwHistory.length;i++){
+      if(String(rwHistory[i].uniqueKey||'').indexOf(p+day) === 0) return true;
+    }
+    return false;
+  }
+
+  function rwToast(m){
+    var old = document.getElementById('rwToastDyn');
+    if(old && old.parentNode) old.parentNode.removeChild(old);
+    var t = document.createElement('div');
+    t.id = 'rwToastDyn';
+    t.textContent = m;
+    t.style.cssText = 'position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:2px solid #ffd700;color:#fff;border-radius:14px;padding:10px 18px;font-weight:800;font-size:.85rem;z-index:2147483647;max-width:85%;text-align:center;font-family:Tahoma;box-shadow:0 0 20px rgba(255,215,0,.5);pointer-events:none;';
+    document.body.appendChild(t);
+    setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 8000);
+  }
+
+  function renderCal(){
+    var cal = document.getElementById('rwCal');
+    if(!cal) return;
+    cal.innerHTML = '';
+    var fmt = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {day:'numeric'});
+    for(var i=29;i>=0;i--){
+      var d = new Date(); d.setDate(d.getDate()-i);
+      var c = document.createElement('div');
+      var on = hasKey('login_', iso(d))||hasKey('daily_', iso(d));
+      c.className = 'd' + (on ? ' on' : '') + (i===0 ? ' today' : '');
+      c.textContent = fmt.format(d);
+      c.style.cssText = 'aspect-ratio:1;border-radius:7px;background:#22223c;border:1px solid #333;display:grid;place-items:center;font-size:.65rem;color:#888;' + (on ? 'background:linear-gradient(135deg,#0f7a4f,#3ee6a8);border-color:#3ee6a8;color:#06281a;font-weight:800;' : '');
+      cal.appendChild(c);
+    }
+  }
+
+  function refreshUI(){
+    var p = document.getElementById('rwPts');
+    if(p) p.textContent = 'امتیاز شما: ' + fa(myPoints());
+    var b = document.getElementById('rwSpin');
+    if(!b) return;
+    if(hasKey('spin_', iso())){
+      b.disabled = true;
+      b.textContent = '✅ امروز چرخاندی — فردا دوباره!';
+    } else {
+      b.disabled = false;
+      b.textContent = '🎯 بچرخان!';
+    }
+    renderCal();
+  }
+
+  var dailyDone = false;
+  function dailyLogin(){
+    if(dailyDone) return;
+    var u = me(); if(!u) return;
+    dailyDone = true;
+    fetch(RW_API + '?action=addPoints&user=' + encodeURIComponent(u.id) + '&name=' + encodeURIComponent(u.name) + '&reason=' + encodeURIComponent('📅 ورود روزانه') + '&points=2&uniqueKey=' + encodeURIComponent('login_'+iso()))
+      .then(function(r){ return r.json(); })
+      .catch(function(){});
+  }
+
+  function spinHandler(){
+    var u = me(); if(!u){ rwToast('❌ ابتدا وارد شوید'); return; }
+    var wheel = document.getElementById('rwWheel');
+    if(!wheel) return;
+    if(hasKey('spin_', iso())) return;
+    var btn = this; btn.disabled = true;
+    var r = Math.floor(Math.random() * 8);
+    wheel.style.transform = 'rotate(' + (360*6 - (r*45+22.5)) + 'deg)';
+    setTimeout(function(){
+      var p = PRIZES[r];
+      fetch(RW_API + '?action=addPoints&user=' + encodeURIComponent(u.id) + '&name=' + encodeURIComponent(u.name) + '&reason=' + encodeURIComponent('🎰 گردونه شانس') + '&points=' + p.pts + '&uniqueKey=' + encodeURIComponent('spin_'+iso()))
+        .then(function(rr){ return rr.json(); })
+        .then(function(d){
+          if(d && d.already) rwToast('⚠️ امروز قبلاً چرخاندی!');
+          else rwToast(p.msg);
+          loadHistory(refreshUI);
+        })
+        .catch(function(){ rwToast(p.msg); loadHistory(refreshUI); });
+    }, 4200);
+  }
+
+  function ensureUI(){
+    var ov = document.getElementById('rwOverlay');
+    if(!ov){
+      if(!document.getElementById('rwStyle')){
+        var st = document.createElement('style');
+        st.id = 'rwStyle';
+        st.textContent = '#rwOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2147483646;display:none;align-items:center;justify-content:center;font-family:Tahoma;padding:12px}#rwOverlay.show{display:flex}#rwBox{background:#1a1a2e;border:2px solid #ffd700;border-radius:20px;padding:18px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;color:#fff;text-align:center}#rwBox h2{color:#ffd700;font-size:1rem;margin-bottom:4px}#rwPts{font-size:.8rem;color:#3ee6a8;margin-bottom:12px}#rwClose{background:#333;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-bottom:10px}#rwWheelWrap{position:relative;width:210px;height:210px;margin:0 auto 12px}#rwWheel{width:100%;height:100%;border-radius:50%;border:4px solid #b8860b;box-shadow:0 0 24px rgba(255,215,0,.35);transition:transform 4s cubic-bezier(.15,.9,.2,1);position:relative;background:conic-gradient(#ffd700 0 45deg,#1a1a2e 45deg 90deg,#ffd700 90deg 135deg,#1a1a2e 135deg 180deg,#ffd700 180deg 225deg,#1a1a2e 225deg 270deg,#ffd700 270deg 315deg,#1a1a2e 315deg 360deg)}#rwWheel span{position:absolute;top:50%;left:50%;width:56px;margin:-9px 0 0 -28px;transform-origin:28px 0;text-align:center;font-weight:800;font-size:.78rem}#rwWheel span:nth-child(odd){color:#1a1a2e}#rwWheel span:nth-child(even){color:#ffd700}#rwPtr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:18px solid #ff4d4d;z-index:5}#rwSpin{background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:12px;padding:11px 28px;font-weight:800;cursor:pointer;font-family:Tahoma}#rwSpin:disabled{background:#333;color:#888;cursor:not-allowed}#rwCalTitle{color:#ffd700;font-size:.85rem;margin:16px 0 8px}#rwCal{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}';
+        document.head.appendChild(st);
+      }
+      ov = document.createElement('div');
+      ov.id = 'rwOverlay';
+      ov.innerHTML = '<div id="rwBox">' +
+        '<button id="rwClose">✕ بستن</button>' +
+        '<h2>🎰 پاداش روزانه و چرخش گردونه</h2>' +
+        '<div id="rwPts">امتیاز شما: —</div>' +
+        '<div id="rwWheelWrap"><div id="rwPtr"></div><div id="rwWheel"></div></div>' +
+        '<button id="rwSpin">🎯 بچرخان!</button>' +
+        '<div id="rwCalTitle">📅 تقویم ورود — ۳۰ روز اخیر</div>' +
+        '<div id="rwCal"></div>' +
+        '</div>';
+      document.body.appendChild(ov);
+    }
+    var wheel = document.getElementById('rwWheel');
+    if(wheel && !wheel.childElementCount){
+      for(var i=0;i<8;i++){
+        var s = document.createElement('span');
+        s.style.transform = 'rotate(' + (i*45+22.5) + 'deg) translateY(-80px)';
+        s.textContent = PRIZES[i].label;
+        wheel.appendChild(s);
+      }
+    }
+    var cb = document.getElementById('rwClose');
+    if(cb) cb.onclick = function(){ ov.classList.remove('show'); };
+    var sb = document.getElementById('rwSpin');
+    if(sb) sb.onclick = spinHandler;
+    return ov;
+  }
+
+  function openRW(){
+    var ov = ensureUI();
+    ov.classList.add('show');
+    loadHistory(refreshUI);
+  }
+
+  window.openDailyReward = openRW;
+  window.openRW = openRW;
+
+  setInterval(function(){
+    var u = me();
+    var lv = false;
+    try{ var ld = document.getElementById('newLoader'); if(ld && ld.classList.contains('active')) lv = true; }catch(e){}
+    if(u && !lv){ dailyLogin(); }
+  }, 800);
+
+  console.log('✅ سیستم پاداش روزانه آماده شد');
+})();
+</script>
+<script>
+// ============================================================
+// 📬 تابع ثبت نحوه ارسال صورتحساب
+// ============================================================
+window.openEmailForm = function() {
+    // چک کردن ورود
+    if (typeof currentUser === 'undefined' || !currentUser) {
+        alert('⚠️ لطفاً ابتدا وارد شوید');
+        return;
+    }
+    
+    // پیدا کردن کد کاربری
+    var kb = '';
+    try {
+        var lr = window.loginResult;
+        if (lr && lr.user) {
+            var uid = String(lr.user.memberId || lr.user.id || '');
+            var ms = (lr.data && lr.data.members) || [];
+            for (var i = 0; i < ms.length; i++) {
+                if (String(ms[i].id) === uid) { 
+                    kb = String(ms[i].karbari || ms[i].accountNumber || uid); 
+                    break; 
+                }
+            }
+            if (!kb) kb = uid;
+        }
+    } catch(e) {}
+    
+    if (!kb) { alert('❌ اطلاعات کاربر یافت نشد'); return; }
+    
+    // ساخت مودال
+    var old = document.getElementById('emailFormOverlay');
+    if (old) old.remove();
+    
+    var ov = document.createElement('div');
+    ov.id = 'emailFormOverlay';
+    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999999;display:flex;align-items:center;justify-content:center;font-family:tahoma;padding:15px';
+    
+    ov.innerHTML = 
+        '<div style="background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #3b82f6;border-radius:20px;padding:24px;width:100%;max-width:420px;color:#fff;direction:rtl;max-height:90vh;overflow-y:auto">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
+                '<div style="font-weight:900;font-size:1rem;color:#3b82f6">📬 اطلاع‌رسانی صورتحساب</div>' +
+                '<button id="efCloseBtn" style="background:#ef4444;color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem">✕</button>' +
+            '</div>' +
+            '<div style="font-size:0.78rem;color:#ffd700;margin-bottom:16px">از کدام طریق صورتحساب را دریافت کنید؟</div>' +
+            
+            '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+                '<input type="checkbox" id="chkSms" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+                '<span style="font-size:.9rem">📱 پیامک</span>' +
+            '</label>' +
+            
+            '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+                '<input type="checkbox" id="chkEmail" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+                '<span style="font-size:.9rem">📧 ایمیل (جیمیل)</span>' +
+            '</label>' +
+            
+            '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
+                '<input type="checkbox" id="chkSite" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
+                '<span style="font-size:.9rem">🌐 داخل همین سایت</span>' +
+            '</label>' +
+            
+            '<div id="emailBox" style="display:none;margin-bottom:12px">' +
+                '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">📧 آدرس ایمیل:</div>' +
+                '<input id="stmtEmailInput" type="email" dir="ltr" placeholder="example@gmail.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
+            '</div>' +
+            
+            '<div style="display:flex;gap:8px;margin-top:6px">' +
+                '<button id="stmtEmailSave" style="flex:1;background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.9rem">💾 ثبت</button>' +
+                '<button id="stmtEmailClose" style="background:#333;color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:tahoma">بستن</button>' +
+            '</div>' +
+        '</div>';
+    
+    document.body.appendChild(ov);
+    
+    // بستن با کلیک روی پس‌زمینه
+    ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+    
+    // چک‌باکس ایمیل
+    var chkE = document.getElementById('chkEmail');
+    var boxE = document.getElementById('emailBox');
+    chkE.onchange = function() { boxE.style.display = chkE.checked ? 'block' : 'none'; };
+    
+    // دکمه‌های بستن
+    document.getElementById('efCloseBtn').onclick = function() { ov.remove(); };
+    document.getElementById('stmtEmailClose').onclick = function() { ov.remove(); };
+    
+    // بارگذاری اطلاعات قبلی (اختیاری)
+    var EMAIL_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+    fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (!d || !d.ok) return;
+            document.getElementById('chkSms').checked = !!d.wantSms;
+            chkE.checked = !!d.wantEmail;
+            document.getElementById('chkSite').checked = !!d.wantSite;
+            boxE.style.display = chkE.checked ? 'block' : 'none';
+            if (d.email) document.getElementById('stmtEmailInput').value = d.email;
+        })
+        .catch(function(){});
+    
+    // ذخیره
+    document.getElementById('stmtEmailSave').onclick = function() {
+        var we = chkE.checked ? 1 : 0;
+        var ws = document.getElementById('chkSms').checked ? 1 : 0;
+        var wsi = document.getElementById('chkSite').checked ? 1 : 0;
+        var em = document.getElementById('stmtEmailInput').value.trim();
+        
+        if (we === 1 && em.indexOf('@') < 1) { 
+            alert('❌ لطفاً آدرس ایمیل معتبر وارد کنید'); 
+            return; 
+        }
+        if (we + ws + wsi === 0) { 
+            alert('⚠️ حداقل یک روش را انتخاب کنید'); 
+            return; 
+        }
+        
+        fetch(EMAIL_API + '?action=setStatementEmail&user=' + encodeURIComponent(kb) +
+              '&name=' + encodeURIComponent((currentUser && currentUser.name) || '') +
+              '&email=' + encodeURIComponent(em) +
+              '&wantEmail=' + we +
+              '&wantSms=' + ws +
+              '&wantSite=' + wsi
+        ).then(function(r) { return r.json(); })
+         .then(function(d) {
+            alert(d.ok ? '✅ تنظیمات اطلاع‌رسانی ثبت شد!' : '❌ خطا: ' + (d.error || ''));
+            if (d.ok) ov.remove();
+         })
+         .catch(function() { alert('❌ خطا در اتصال'); });
+    };
+};
+
+console.log('✅ openEmailForm آماده است');
 </script>
 </body>
 </html>
