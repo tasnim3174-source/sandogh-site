@@ -13801,27 +13801,22 @@ function openEmailForm() {
   ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:22px;width:92%;max-width:420px;color:#fff;direction:rtl;max-height:90vh;overflow-y:auto">' +
     '<div style="font-weight:800;margin-bottom:4px">📬 اطلاع‌رسانی صورتحساب</div>' +
     '<div style="font-size:.78rem;color:#ffd700;margin-bottom:16px">از کدام طریق صورتحساب را دریافت کنید؟</div>' +
-
     '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
       '<input type="checkbox" id="chkSms" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
       '<span style="font-size:.9rem">📱 پیامک</span>' +
     '</label>' +
-
     '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
       '<input type="checkbox" id="chkEmail" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
       '<span style="font-size:.9rem">📧 ایمیل (جیمیل)</span>' +
     '</label>' +
-
     '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
       '<input type="checkbox" id="chkSite" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
       '<span style="font-size:.9rem">🌐 داخل همین سایت (نمایش هنگام ورود)</span>' +
     '</label>' +
-
     '<div id="emailBox" style="display:none;margin-bottom:12px">' +
       '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">📧 آدرس ایمیل:</div>' +
       '<input id="stmtEmailInput" type="email" dir="ltr" placeholder="example@gmail.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
     '</div>' +
-
     '<div style="display:flex;gap:8px;margin-top:6px">' +
     '<button id="stmtEmailSave" style="flex:1;background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:10px;padding:11px;font-weight:800;cursor:pointer">💾 ثبت</button>' +
     '<button id="stmtEmailClose" style="background:#333;color:#fff;border:none;border-radius:10px;padding:11px 16px;cursor:pointer">بستن</button>' +
@@ -13863,39 +13858,11 @@ function openEmailForm() {
   };
   document.getElementById('stmtEmailClose').onclick = function(){ ov.parentNode.removeChild(ov); };
 }
-setInterval(function(){
-  if (!getMyKarbari2()) return;
-  if (document.getElementById('emailFormCard')) return;
-  
-  // 🆕 پیدا کردن اولین کلید اصلی (اطلاعات شخصی شما)
-  var firstMainCard = null;
-  var items = document.querySelectorAll('.grid-menu-item');
-  for (var i = 0; i < items.length; i++) {
-    var tt = (items[i].textContent || '');
-    if (tt.indexOf('اطلاعات شخصی') > -1) { 
-      firstMainCard = items[i]; 
-      break; 
-    }
-  }
-  
-  if (!firstMainCard) return;
-  
-  // ساخت کلید جدید
-  var card = firstMainCard.cloneNode(true);
-  card.id = 'emailFormCard';
-  card.removeAttribute('onclick');
-  card.onclick = openEmailForm;
-  
-  var lbl = card.querySelector('.menu-label');
-  if (lbl) lbl.textContent = 'ثبت نحوه ارسال صورتحساب';
-  
-  var ic = card.querySelector('i');
-  if (ic) ic.className = 'fas fa-envelope';
-  
-   // 🆕 درج قبل از اولین کلید اصلی (یعنی در بالای بخش اصلی)
-  firstMainCard.parentNode.insertBefore(card, firstMainCard);
-}, 4000);
+console.log('✅ openEmailForm آماده است');
 </script>
+<!-- ===== EMAILFORM END ===== -->
+
+<!-- ===== REWARD & LOADER START ===== -->
 <script>
 (function(){
   // ===== انیمیشن رندوم لودر =====
@@ -13915,11 +13882,11 @@ setInterval(function(){
   // ===== پاداش روزانه =====
   var RW_API='https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
   var PRIZES=[{label:'۱',pts:1,msg:'🎉 آفرین! ۱ امتیاز بردی'},{label:'۲',pts:2,msg:'🎉 عالی! ۲ امتیاز بردی'},{label:'۳',pts:3,msg:'🎉 خوب بود! ۳ امتیاز بردی'},{label:'۵',pts:5,msg:'🎉 فوق‌العاده! ۵ امتیاز بردی'},{label:'۱۰',pts:10,msg:'🤩 جکپات! ۱۰ امتیاز بردی'},{label:'×۲',pts:4,msg:'✨ امروز امتیاز ورودت دو برابر شد!'},{label:'🎁',pts:20,msg:'🎁 جایزه ویژه! ۲۰ امتیاز'},{label:'۲',pts:2,msg:'🎉 خوب بود! ۲ امتیاز بردی'}];
-  var RW_CSS='@keyframes rwFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}@keyframes rwShimmer{0%{left:-100%}100%{left:100%}}@keyframes rwGlowPulse{0%,100%{box-shadow:0 0 20px rgba(255,215,0,.7),0 0 40px rgba(255,215,0,.4);transform:scale(1);}50%{box-shadow:0 0 30px rgba(255,215,0,.95),0 0 60px rgba(255,215,0,.6);transform:scale(1.03);}}.rwShimmerBtn{position:relative !important;overflow:hidden !important;animation:rwGlowPulse 2s ease-in-out infinite !important;border:2px solid #fff5b8 !important;background:linear-gradient(135deg,#ffed4e 0%,#ffd700 40%,#b8860b 80%,#ffd700 100%) !important;background-size:200% 200% !important;color:#1a1a2e !important;text-shadow:0 1px 2px rgba(255,255,255,.4) !important}.rwShimmerBtn::before{content:"" !important;position:absolute !important;top:0 !important;left:-100% !important;width:100% !important;height:100% !important;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent) !important;animation:rwShimmer 2.5s linear infinite !important;pointer-events:none !important;z-index:2 !important}.rwShimmerBtn > *{position:relative !important;z-index:3 !important}#rwOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2147483646;display:none;align-items:center;justify-content:center;font-family:Tahoma;padding:12px}#rwOverlay.show{display:flex}#rwBox{background:#1a1a2e;border:2px solid #ffd700;border-radius:20px;padding:18px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;color:#fff;text-align:center}#rwBox h2{color:#ffd700;font-size:1rem;margin-bottom:4px}#rwPts{font-size:.8rem;color:#3ee6a8;margin-bottom:12px}#rwClose{background:#333;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-bottom:10px}#rwWheelWrap{position:relative;width:210px;height:210px;margin:0 auto 12px}#rwWheel{width:100%;height:100%;border-radius:50%;border:4px solid #b8860b;box-shadow:0 0 24px rgba(255,215,0,.35);transition:transform 4s cubic-bezier(.15,.9,.2,1);position:relative;background:conic-gradient(#ffd700 0 45deg,#1a1a2e 45deg 90deg,#ffd700 90deg 135deg,#1a1a2e 135deg 180deg,#ffd700 180deg 225deg,#1a1a2e 225deg 270deg,#ffd700 270deg 315deg,#1a1a2e 315deg 360deg)}#rwWheel span{position:absolute;top:50%;left:50%;width:56px;margin:-9px 0 0 -28px;transform-origin:28px 0;text-align:center;font-weight:800;font-size:.78rem}#rwWheel span:nth-child(odd){color:#1a1a2e}#rwWheel span:nth-child(even){color:#ffd700}#rwPtr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:18px solid #ff4d4d;z-index:5}#rwSpin{background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:12px;padding:11px 28px;font-weight:800;cursor:pointer;font-family:Tahoma}#rwSpin:disabled{background:#333;color:#888;cursor:not-allowed}#rwCalTitle{color:#ffd700;font-size:.85rem;margin:16px 0 8px}#rwCal{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}#rwCal .d{aspect-ratio:1;border-radius:7px;background:#22223c;border:1px solid #333;display:grid;place-items:center;font-size:.65rem;color:#888}#rwCal .d.on{background:linear-gradient(135deg,#0f7a4f,#3ee6a8);border-color:#3ee6a8;color:#06281a;font-weight:800}#rwCal .d.today{outline:2px solid #ffd700}#rwToast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(80px);background:#1a1a2e;border:2px solid #ffd700;color:#fff;border-radius:14px;padding:12px 20px;font-weight:800;z-index:2147483647;transition:transform .4s;max-width:90%;text-align:center;font-family:Tahoma}#rwToast.show{transform:translateX(-50%) translateY(0)}';
+  var RW_CSS='#rwOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2147483646;display:none;align-items:center;justify-content:center;font-family:Tahoma;padding:12px}#rwOverlay.show{display:flex}#rwBox{background:#1a1a2e;border:2px solid #ffd700;border-radius:20px;padding:18px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;color:#fff;text-align:center}#rwBox h2{color:#ffd700;font-size:1rem;margin-bottom:4px}#rwPts{font-size:.8rem;color:#3ee6a8;margin-bottom:12px}#rwClose{background:#333;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-bottom:10px}#rwWheelWrap{position:relative;width:210px;height:210px;margin:0 auto 12px}#rwWheel{width:100%;height:100%;border-radius:50%;border:4px solid #b8860b;box-shadow:0 0 24px rgba(255,215,0,.35);transition:transform 4s cubic-bezier(.15,.9,.2,1);position:relative;background:conic-gradient(#ffd700 0 45deg,#1a1a2e 45deg 90deg,#ffd700 90deg 135deg,#1a1a2e 135deg 180deg,#ffd700 180deg 225deg,#1a1a2e 225deg 270deg,#ffd700 270deg 315deg,#1a1a2e 315deg 360deg)}#rwWheel span{position:absolute;top:50%;left:50%;width:56px;margin:-9px 0 0 -28px;transform-origin:28px 0;text-align:center;font-weight:800;font-size:.78rem}#rwWheel span:nth-child(odd){color:#1a1a2e}#rwWheel span:nth-child(even){color:#ffd700}#rwPtr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:18px solid #ff4d4d;z-index:5}#rwSpin{background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:12px;padding:11px 28px;font-weight:800;cursor:pointer;font-family:Tahoma}#rwSpin:disabled{background:#333;color:#888;cursor:not-allowed}#rwCalTitle{color:#ffd700;font-size:.85rem;margin:16px 0 8px}#rwCal{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}';
 
   function fa(n){ try{ return Number(n).toLocaleString('fa-IR'); }catch(e){ return n; } }
   function iso(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
-     function me(){
+  function me(){
     try{
       var lr=window.loginResult; if(!lr||!lr.user) return null;
       var id=lr.user.memberId||lr.user.id;
@@ -13933,8 +13900,8 @@ setInterval(function(){
     }catch(e){ return null; }
   }
   function el(tag,id,txt){ var d=document.createElement(tag); if(id)d.id=id; if(txt)d.textContent=txt; return d; }
-  
-function rwToast(m){
+
+  function rwToast(m){
     var old=document.getElementById('rwToastDyn');
     if(old&&old.parentNode) old.parentNode.removeChild(old);
     var t=document.createElement('div');
@@ -13949,7 +13916,7 @@ function rwToast(m){
   function myPoints(){ var t=0; for(var i=0;i<rwHistory.length;i++) t+=Number(rwHistory[i].points)||0; return t; }
   function hasKey(p,day){ for(var i=0;i<rwHistory.length;i++){ if(String(rwHistory[i].uniqueKey||'').indexOf(p+day)===0) return true; } return false; }
 
-  function renderCal(){ var cal=document.getElementById('rwCal'); if(!cal)return; cal.innerHTML=''; var fmt=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{day:'numeric'}); for(var i=29;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); var c=el('div'); c.className='d'+((hasKey('login_',iso(d))||hasKey('daily_',iso(d)))?' on':'')+(i===0?' today':''); c.textContent=fmt.format(d); cal.appendChild(c); } }
+  function renderCal(){ var cal=document.getElementById('rwCal'); if(!cal)return; cal.innerHTML=''; var fmt=new Intl.DateTimeFormat('fa-IR-u-ca-persian',{day:'numeric'}); for(var i=29;i>=0;i--){ var d=new Date(); d.setDate(d.getDate()-i); var c=el('div'); c.textContent=fmt.format(d); c.style.cssText='aspect-ratio:1;border-radius:7px;background:#22223c;border:1px solid #333;display:grid;place-items:center;font-size:.65rem;color:#888;' + ((hasKey('login_',iso(d))||hasKey('daily_',iso(d)))?'background:linear-gradient(135deg,#0f7a4f,#3ee6a8);border-color:#3ee6a8;color:#06281a;font-weight:800;':'') + (i===0?'outline:2px solid #ffd700;':''); cal.appendChild(c); } }
   function refreshUI(){ var p=document.getElementById('rwPts'); if(p)p.textContent='امتیاز شما: '+fa(myPoints()); var b=document.getElementById('rwSpin'); if(!b)return; if(hasKey('spin_',iso())){ b.disabled=true; b.textContent='✅ امروز چرخاندی — فردا دوباره!'; } else { b.disabled=false; b.textContent='🎯 بچرخان!'; } renderCal(); }
 
   var dailyDone=false;
@@ -13973,20 +13940,19 @@ function rwToast(m){
 
   function ensureUI(){
     if(!document.getElementById('rwStyle')){ var st=el('style','rwStyle'); st.textContent=RW_CSS; document.head.appendChild(st); }
-    var lg=document.getElementById('rwToast'); if(lg&&lg.parentNode) lg.parentNode.removeChild(lg);
     var ov=document.getElementById('rwOverlay');
     if(!ov){
       ov=el('div','rwOverlay');
       var box=el('div','rwBox');
-      box.appendChild(el('button','rwClose','✕ بستن'));
-      box.appendChild(el('h2',null,'🎰','پاداش روزانه و چرخش گردونه'));
-      box.appendChild(el('div','rwPts','امتیاز شما: —'));
+      var bc=el('button','rwClose'); bc.textContent='✕ بستن'; box.appendChild(bc);
+      var h2=el('h2'); h2.textContent='🎰 پاداش روزانه و چرخش گردونه'; box.appendChild(h2);
+      var pts=el('div','rwPts'); pts.textContent='امتیاز شما: —'; box.appendChild(pts);
       var ww=el('div','rwWheelWrap');
       ww.appendChild(el('div','rwPtr'));
       ww.appendChild(el('div','rwWheel'));
       box.appendChild(ww);
-      box.appendChild(el('button','rwSpin','🎯 بچرخان!'));
-      box.appendChild(el('div','rwCalTitle','📅 تقویم ورود — ۳۰ روز اخیر'));
+      var sp=el('button','rwSpin'); sp.textContent='🎯 بچرخان!'; box.appendChild(sp);
+      var ct=el('div','rwCalTitle'); ct.textContent='📅 تقویم ورود — ۳۰ روز اخیر'; box.appendChild(ct);
       box.appendChild(el('div','rwCal'));
       ov.appendChild(box);
       document.body.appendChild(ov);
@@ -13999,445 +13965,36 @@ function rwToast(m){
   }
   function openRW(){ var ov=ensureUI(); ov.classList.add('show'); loadHistory(refreshUI); }
 
-  // ===== ساخت دکمه: تلاش برای grid کلیدها، وگرنه شناور =====
-    function makeButton(){
-    // 🗑️ کاملاً حذف شد - پاداش روزانه فقط در باکس ویژه
-    return;
-}
+  window.openDailyReward = openRW;
+  window.openRW = openRW;
 
-// 🆕 حذف دکمه شناور پاداش روزانه
-function removeRWButton() {
+  function removeRWButton() {
     var b = document.getElementById('rwHomeBtn');
     if (b && b.parentNode) b.parentNode.removeChild(b);
-    // حذف هر دکمه شناور دیگه که شامل 🎰 باشه
     var all = document.querySelectorAll('button');
     for (var i = 0; i < all.length; i++) {
-        var st = all[i].style;
-        if (st && st.position === 'fixed' && all[i].innerHTML.indexOf('🎰') > -1) {
-            if (all[i].parentNode) all[i].parentNode.removeChild(all[i]);
-        }
-    }
-}
-
-// اجرای حذف در هر ثانیه برای اطمینان
-setInterval(removeRWButton, 1000);
-</script>
-<script>
-/* ===== لایه کش هوشمند v7 ===== */
-(function(){
-  var TTL_FAST = 30 * 1000;
-  var TTL_SLOW = 5 * 60 * 1000;
-  var MAX_CONCURRENT = 3;
-  var SLOW = ['readExcel','getPointsHistory','getAllMembersWithPoints','getQuizzes','getShopProducts','getPurchaseRequests','getSurvey'];
-  var COLLAPSE = ['addPoints','readExcel','getPointsHistory','isCouncil','status','getAllMembersWithPoints',
-    'getQuizzes','getShopProducts','getPurchaseRequests','getSurvey','logLogin','getStatementEmailList',
-    'councilLogin','verifyCouncilToken'];
-  var MUTATE = ['addPoints','updatePoints','resolvePurchase','cancelPurchase','logLogin',
-    'deleteSelectedLogs','resetAll','enable','disable','sendMonthlyReport','setupMonthlyReport',
-    'createQuiz','deleteQuiz','addShopProduct','deleteShopProduct','updateShopProduct',
-    'setupHourlyGroupMessage','setupEvery30MinGroupMessage','setupDailyStatement',
-    'sendStatementsNow','setShoraChatId','sendGroupAnnouncement','sendThursdayGuideNow',
-    'resetThursdayGuide'];
-  var ONCE_SESSION = ['logLogin'];
-  var mem = {}, inflight = {}, failCache = {};
-  var active = 0, queue = [];
-  var origFetch = window.fetch ? window.fetch.bind(window) : null;
-  if (!origFetch) return;
-
-  function resp(d){ return new Response(JSON.stringify(d), {status:200, headers:{'Content-Type':'application/json'}}); }
-  function has(url,list){ for(var i=0;i<list.length;i++){ if(url.indexOf('action='+list[i])>-1) return true; } return false; }
-  function day(){ var n=new Date(); return n.getFullYear()+'-'+(n.getMonth()+1)+'-'+n.getDate(); }
-  function ssGet(k){ try{ var r=sessionStorage.getItem(k); if(r) return JSON.parse(r); }catch(e){} return null; }
-  function ssSet(k,v){ try{ sessionStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
-  function lsGet(k){ try{ var r=localStorage.getItem(k); if(!r) return null; var o=JSON.parse(r); if(o.d===day()) return o.r; localStorage.removeItem(k); }catch(e){} return null; }
-  function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify({d:day(), r:v})); }catch(e){} }
-  function param(url,name){ var m=url.match(new RegExp('[?&]'+name+'=([^&]*)')); return m?m[1]:''; }
-  function actionOf(url){ var m=url.match(/[?&]action=([^&]+)/); return m?m[1]:''; }
-  function collapseKey(url){
-    var a = actionOf(url);
-    if (a === 'addPoints') return 'ck|addPoints|u='+param(url,'user')+'|p='+param(url,'points')+'|t='+param(url,'type');
-    if (COLLAPSE.indexOf(a) > -1) return 'ck|'+a+'|u='+param(url,'user');
-    return url;
-  }
-  function isDataFile(url){ return url.indexOf('data1.xlsx')>-1 || url.indexOf('data.xlsx')>-1; }
-  function clearFinancialCache(){
-    Object.keys(mem).forEach(function(k){
-      if (k.indexOf('ck|getPointsHistory')===0 || k.indexOf('ck|getAllMembersWithPoints')===0 ||
-          k.indexOf('ck|getShopProducts')===0 || k.indexOf('ck|getPurchaseRequests')===0) delete mem[k];
-    });
-  }
-  /* محدودکننده همزمانی */
-  function limited(task){
-    return new Promise(function(res, rej){
-      queue.push(function(){
-        task().then(function(v){ active--; pump(); res(v); },
-                    function(e){ active--; pump(); rej(e); });
-      });
-      pump();
-    });
-  }
-  function pump(){
-    while (queue.length && active < MAX_CONCURRENT) {
-      var job = queue.shift(); active++; job();
-    }
-  }
-
-  window.fetch = function(input, init){
-    var url = (typeof input==='string') ? input : ((input && input.url) || '');
-
-    if (isDataFile(url)) {
-      var f = failCache[url];
-      if (f && Date.now()-f.t < 5*60*1000) return Promise.resolve(new Response('', {status:f.s}));
-      return origFetch(input, init).then(function(r){
-        if (r.status >= 400) failCache[url] = {t:Date.now(), s:r.status};
-        return r;
-      });
-    }
-
-    if (url.indexOf('action=') === -1) return origFetch(input, init);
-    var a = actionOf(url);
-    var mutate = has(url, MUTATE);
-    var os = has(url, ONCE_SESSION);
-    var ak = (a === 'addPoints') ? ('odk_addpts|u='+param(url,'user')+'|p='+param(url,'points')+'|t='+param(url,'type')+'|n='+param(url,'name')) : null;
-    var ik = ak || collapseKey(url);
-    var ttl = (SLOW.indexOf(a) > -1) ? TTL_SLOW : TTL_FAST;
-
-    if (ak) { var ca = lsGet(ak); if (ca !== null) return Promise.resolve(resp(ca)); }
-    if (os) { var cs = ssGet('os_'+a+'_'+param(url,'user')); if (cs !== null) return Promise.resolve(resp(cs)); }
-    if (!mutate) { var c = mem[ik]; if (c && Date.now()-c.t < ttl) return Promise.resolve(resp(c.d)); }
-    if (inflight[ik]) return inflight[ik].then(function(x){ return resp(x); });
-
-    inflight[ik] = limited(function(){ return origFetch(input, init); })
-      .then(function(r){ return r.json(); })
-      .then(function(x){
-        if (ak) lsSet(ak, x);
-        if (os) ssSet('os_'+a+'_'+param(url,'user'), x);
-        if (mutate) clearFinancialCache(); else mem[ik] = {t: Date.now(), d: x};
-        delete inflight[ik];
-        return x;
-      })
-      .catch(function(e){ delete inflight[ik]; throw e; });
-
-    return inflight[ik].then(function(x){ return resp(x); });
-  };
-})();
-/* ===== پایان لایه کش ===== */
-</script>
-<script>
-// ===== سیستم نمایش پاسخ شورا - نسخه تضمینی =====
-(function(){
-  var shown = false;
-  
-  function checkAndShow() {
-    if (shown) return;
-    
-    // بررسی currentUser
-    if (typeof currentUser === 'undefined' || !currentUser) return;
-    
-    var userCode = currentUser.username || currentUser.user || currentUser.id || '';
-    if (!userCode) return;
-    
-    console.log('[Reply] شروع چک برای کاربر:', userCode);
-    
-    fetch(ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(userCode))
-      .then(function(r){ return r.json(); })
-      .then(function(d){
-        console.log('[Reply] پاسخ سرور:', d);
-        
-        if (!d || !d.ok || !d.replies || !d.replies.length) return;
-        
-        // پیدا کردن اولین پاسخ unseen
-        var reply = null;
-        for (var i = 0; i < d.replies.length; i++) {
-          if (!d.replies[i].seen) {
-            reply = d.replies[i];
-            break;
-          }
-        }
-        
-        if (!reply) {
-          console.log('[Reply] همه پاسخ‌ها دیده شده‌اند');
-          return;
-        }
-        
-        shown = true;
-        console.log('[Reply] نمایش پاسخ:', reply.id);
-        
-        // ساخت پنجره
-        var overlay = document.createElement('div');
-        overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:9999999;display:flex;align-items:center;justify-content:center;padding:20px';
-        
-        var modal = document.createElement('div');
-        modal.style.cssText = 'background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #ffd700;border-radius:20px;padding:25px;max-width:420px;width:100%;color:#fff;font-family:tahoma;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5)';
-        
-        var replyDate = '';
-        try { replyDate = new Date(reply.replyAt).toLocaleString('fa-IR'); } catch(e){}
-        
-        modal.innerHTML = 
-          '<div style="font-size:3.5rem;margin-bottom:15px">📨</div>' +
-          '<h3 style="color:#ffd700;margin:0 0 10px;font-size:1.2rem">پاسخ شورای صندوق اتحاد</h3>' +
-          (replyDate ? '<div style="color:rgba(255,255,255,0.6);font-size:0.75rem;margin-bottom:15px">' + replyDate + '</div>' : '') +
-          '<div style="background:rgba(255,255,255,0.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:right">' +
-            '<div style="color:rgba(255,255,255,0.5);font-size:0.72rem;margin-bottom:6px">💬 پیام شما:</div>' +
-            '<div style="font-size:0.88rem;line-height:1.8">' + String(reply.message || '').replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>' +
-          '</div>' +
-          '<div style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.4);border-radius:12px;padding:14px;margin-bottom:18px;text-align:right">' +
-            '<div style="color:#ffd700;font-size:0.78rem;margin-bottom:8px;font-weight:bold">✨ پاسخ شورا:</div>' +
-            '<div style="font-size:0.92rem;line-height:1.9">' + String(reply.reply || '').replace(/</g, '&lt;').replace(/\n/g, '<br>') + '</div>' +
-          '</div>' +
-          '<button id="closeReplyBtn" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;font-weight:bold;font-size:0.95rem;cursor:pointer">✅ متوجه شدم</button>';
-        
-        overlay.appendChild(modal);
-        document.body.appendChild(overlay);
-        
-        // دکمه بستن
-        document.getElementById('closeReplyBtn').onclick = function(){
-          overlay.remove();
-          fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(userCode)).catch(function(){});
-        };
-      })
-      .catch(function(e){
-        console.log('[Reply] خطا:', e);
-      });
-  }
-  
-  // چک هر ۳ ثانیه تا ۱۰ بار
-  var count = 0;
-  var timer = setInterval(function(){
-    count++;
-    checkAndShow();
-    if (count >= 10 || shown) clearInterval(timer);
-  }, 3000);
-  
-  console.log('[Reply] سیستم نمایش پاسخ فعال شد');
-})();
-</script>
-            <script>
-// ===== تعمیرکار دکمه پاسخ (بدون حذف هیچ کدی) =====
-(function(){
-  function fixButtons(){
-    var btns = document.querySelectorAll('button');
-    for (var i = 0; i < btns.length; i++) {
-      var b = btns[i];
-      if (b.textContent.indexOf('متوجه شدم') >= 0 && !b.getAttribute('data-fixed')) {
-        b.setAttribute('data-fixed', '1');
-        b.addEventListener('click', function(){
-          // حذف همه پنجره‌های پاسخ (هر نسخه‌ای که باشد)
-          var ovs = document.querySelectorAll('#replyOverlay');
-          for (var k = 0; k < ovs.length; k++) ovs[k].remove();
-          var all = document.querySelectorAll('div[style*="position:fixed"]');
-          for (var m = 0; m < all.length; m++) {
-            if (all[m].textContent.indexOf('پاسخ شورای صندوق') >= 0) all[m].remove();
-          }
-          // علامت‌گذاری به‌عنوان دیده‌شده
-          var u = '';
-          try { u = currentUser.username || currentUser.user || currentUser.id || ''; } catch(e){}
-          if (u) fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(u)).catch(function(){});
-        }, true);
+      var st = all[i].style;
+      if (st && st.position === 'fixed' && all[i].innerHTML.indexOf('🎰') > -1) {
+        if (all[i].parentNode) all[i].parentNode.removeChild(all[i]);
       }
     }
   }
-  setInterval(fixButtons, 800);
-})();
-</script>
-            <script>
-// ===== جارو و تعمیرکار پنجره پاسخ (نسخه نهایی) =====
-(function(){
+  setInterval(removeRWButton, 1000);
 
-  // ۱) جارو: اگر چند پنجره پاسخ روی هم است، فقط آخری بماند
   setInterval(function(){
-    var ovs = document.querySelectorAll('[id^="replyOverlay"]');
-    for (var i = 0; i < ovs.length - 1; i++) ovs[i].remove();
+    var u = me();
+    var lv = false;
+    try{ var ld = document.getElementById('newLoader'); if(ld && ld.classList.contains('active')) lv = true; }catch(e){}
+    if(u && !lv){ dailyLogin(); }
   }, 800);
 
-  // ۲) خنثی‌کننده لایه‌های نامرئیِ روی دکمه
-  setInterval(function(){
-    var btns = document.querySelectorAll('button');
-    for (var i = 0; i < btns.length; i++) {
-      var b = btns[i];
-      if (String(b.textContent).indexOf('متوجه شدم') < 0) continue;
-      var r = b.getBoundingClientRect();
-      if (!r.width) continue;
-      var el = document.elementFromPoint(r.left + r.width/2, r.top + r.height/2);
-      if (el && el !== b && !b.contains(el)) {
-        var p = el;
-        while (p && p !== document.body) {
-          p.style.pointerEvents = 'none';
-          p = p.parentElement;
-        }
-        console.log('[ReplyFix] لایه مسدودکننده خنثی شد');
-      }
-    }
-  }, 1000);
-
-  // ۳) گیرنده کلیک سراسری: هر دکمه «متوجه شدم» از هر لایه‌ای
-  document.addEventListener('click', function(e){
-    var t = e.target;
-    var btn = (t && t.closest) ? t.closest('button') : null;
-    if (!btn) return;
-    if (String(btn.textContent).indexOf('متوجه شدم') < 0) return;
-    console.log('[ReplyFix] کلیک گرفته شد → بستن همه پنجره‌ها');
-    closeAllReplies();
-  }, true);
-
-  function closeAllReplies(){
-    var ovs = document.querySelectorAll('[id^="replyOverlay"]');
-    for (var i = 0; i < ovs.length; i++) ovs[i].remove();
-    var divs = document.querySelectorAll('div');
-    for (var j = 0; j < divs.length; j++) {
-      var d = divs[j];
-      if (d.style && d.style.position === 'fixed' && d.textContent.indexOf('پاسخ شورای صندوق') >= 0) d.remove();
-    }
-    var u = '';
-    try { u = currentUser.username || currentUser.user || currentUser.id || ''; } catch(e){}
-    if (u) fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(u)).catch(function(){});
-  }
-  window.closeAllReplies = closeAllReplies;
-
+  console.log('✅ سیستم پاداش روزانه آماده شد');
 })();
 </script>
-            <script>
-// ===== بستن همه‌کاره پنجره پاسخ (نسخه نهایی) =====
-(function(){
-  var openSince = 0;
+<!-- ===== REWARD & LOADER END ===== -->
 
-  function findReplyModals(){
-    var out = [];
-    var divs = document.querySelectorAll('div');
-    for (var i = 0; i < divs.length; i++) {
-      var d = divs[i];
-      if (d.style && d.style.position === 'fixed' && d.textContent.indexOf('پاسخ شورای صندوق') >= 0) out.push(d);
-    }
-    return out;
-  }
-
-  function closeAll(){
-    var mods = findReplyModals();
-    for (var i = 0; i < mods.length; i++) mods[i].remove();
-    var u = '';
-    try { u = currentUser.username || currentUser.user || currentUser.id || ''; } catch(e){}
-    if (u) fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(u)).catch(function(){});
-    openSince = 0;
-  }
-
-  document.addEventListener('pointerdown', function(){
-    if (findReplyModals().length) {
-      console.log('[ReplyFix2] کلیک گرفته شد → بسته شد');
-      closeAll();
-    }
-  }, true);
-
-  setInterval(function(){
-    var mods = findReplyModals();
-    if (mods.length) {
-      if (!openSince) openSince = Date.now();
-      if (Date.now() - openSince > 20000) {
-        console.log('[ReplyFix2] بستن خودکار بعد از 20 ثانیه');
-        closeAll();
-      }
-    } else {
-      openSince = 0;
-    }
-  }, 1000);
-})();
-</script>
-           <!-- دکمه پیام‌های من (فقط بعد از ورود) -->
-<button id="myMessagesBtn" onclick="openMyMessages()" style="position:fixed;bottom:80px;right:20px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border:none;border-radius:50px;padding:12px 20px;font-weight:bold;font-family:tahoma;box-shadow:0 4px 15px rgba(255,215,0,.4);cursor:pointer;z-index:9999;display:none">📨 پیام‌های من</button>
-
+<!-- ===== SIMPLE TOAST & ALERTS START ===== -->
 <script>
-// ===== نمایش دکمه فقط وقتی کاربر وارد شده =====
-setInterval(function(){
-  var btn = document.getElementById('myMessagesBtn');
-  if (!btn) return;
-  var logged = false;
-  try { logged = !!(typeof currentUser !== 'undefined' && currentUser); } catch(e){}
-  btn.style.display = logged ? 'block' : 'none';
-}, 1000);
-
-// ===== باز کردن تاریخچه پیام‌های عضو =====
-function openMyMessages(){
-  if (typeof currentUser === 'undefined' || !currentUser) {
-    alert('⚠️ لطفاً ابتدا وارد شوید');
-    return;
-  }
-  
-  var userCode = currentUser.username || currentUser.user || currentUser.id || '';
-  var overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999999;display:flex;align-items:center;justify-content:center;padding:20px';
-  
-  var modal = document.createElement('div');
-  modal.style.cssText = 'background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #ffd700;border-radius:20px;padding:25px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;color:#fff;font-family:tahoma;box-shadow:0 20px 60px rgba(0,0,0,.5)';
-  
-  modal.innerHTML = '<h3 style="color:#ffd700;margin:0 0 20px;text-align:center">📨 پیام‌ها و پاسخ‌های من</h3><div id="messagesLoading" style="text-align:center;padding:20px">در حال بارگذاری...</div><div id="messagesList"></div>';
-  
-  overlay.appendChild(modal);
-  document.body.appendChild(overlay);
-  
-  overlay.onclick = function(e){ if (e.target === overlay) overlay.remove(); };
-  
-  fetch(ADMIN_URL + '?action=getMyMessageHistory&user=' + encodeURIComponent(userCode))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      var loading = document.getElementById('messagesLoading');
-      var list = document.getElementById('messagesList');
-      
-      if (!loading) return;
-      
-      if (!d || !d.ok || !d.messages || !d.messages.length) {
-        loading.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,.6)">📭 هنوز پیامی ارسال نکرده‌اید</div>';
-        return;
-      }
-      
-      loading.remove();
-      
-      d.messages.forEach(function(msg){
-        var date = '';
-        try { date = new Date(msg.timestamp).toLocaleString('fa-IR'); } catch(e){}
-        
-        var replyDate = '';
-        if (msg.replyAt) { try { replyDate = new Date(msg.replyAt).toLocaleString('fa-IR'); } catch(e){} }
-        
-        var card = document.createElement('div');
-        card.style.cssText = 'background:rgba(255,255,255,.05);border-radius:12px;padding:15px;margin-bottom:15px';
-        
-        card.innerHTML = 
-          '<div style="color:rgba(255,255,255,.5);font-size:.72rem;margin-bottom:8px">📅 ' + date + '</div>' +
-          '<div style="background:rgba(255,255,255,.08);border-radius:8px;padding:10px;margin-bottom:10px">' +
-            '<div style="color:rgba(255,255,255,.5);font-size:.7rem;margin-bottom:4px">💬 پیام شما:</div>' +
-            '<div style="font-size:.85rem;line-height:1.7">' + String(msg.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>' +
-          '</div>' +
-          (msg.status === 'answered' ? 
-            '<div style="background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.3);border-radius:8px;padding:10px">' +
-              '<div style="color:#ffd700;font-size:.72rem;margin-bottom:4px;font-weight:bold">✨ پاسخ شورا' + (replyDate ? ' (' + replyDate + ')' : '') + ':</div>' +
-              '<div style="font-size:.85rem;line-height:1.7">' + String(msg.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>' +
-            '</div>'
-            : 
-            '<div style="text-align:center;color:rgba(255,255,255,.4);font-size:.8rem;padding:8px">⏳ در انتظار پاسخ...</div>'
-          );
-        
-        list.appendChild(card);
-      });
-    })
-    .catch(function(e){
-      var l = document.getElementById('messagesLoading');
-      if (l) l.innerHTML = '<div style="color:#ff6b6b;text-align:center">❌ خطا در بارگذاری</div>';
-    });
-}
-</script>
-<button id="myMessagesBtn" onclick="openMyMessages()" style="position:fixed;bottom:80px;right:20px;background:linear-gradient(135deg,#ffd700,#ff9d00);color:#1a1a2e;border:none;border-radius:50px;padding:12px 20px;font-weight:bold;font-family:tahoma;box-shadow:0 4px 15px rgba(255,215,0,.4);cursor:pointer;z-index:9999;display:none">📨 پیام‌های من</button>
-
-<script>
-setInterval(function(){
-  var btn = document.getElementById('myMessagesBtn');
-  if (!btn) return;
-  var logged = false;
-  try { logged = !!(typeof currentUser !== 'undefined' && currentUser); } catch(e){}
-  btn.style.display = logged ? 'block' : 'none';
-}, 1000);
-<</script>
-<!-- <script src="messaging.js"></script> -->
-<script>
-// ===== سیستم toast نهایی و قطعی =====
 function showSimpleToast(icon, title, msg, color) {
   var c = document.getElementById('simpleToastContainer');
   if (!c) {
@@ -14446,11 +14003,9 @@ function showSimpleToast(icon, title, msg, color) {
     c.style.cssText = 'position:fixed;bottom:25px;left:50%;transform:translateX(-50%);z-index:99999999;display:flex;flex-direction:column;gap:12px;width:400px;max-width:90%';
     document.body.appendChild(c);
   }
-  
   var t = document.createElement('div');
   t.style.cssText = 'background:linear-gradient(135deg,#1e1e35,#151528);border:2px solid ' + color + ';border-radius:14px;padding:14px;color:#fff;font-family:tahoma;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transform:translateY(30px);transition:all .4s';
   t.innerHTML = '<div style="display:flex;gap:10px"><div style="font-size:1.3rem">' + icon + '</div><div style="flex:1"><div style="font-weight:bold;color:' + color + ';margin-bottom:4px">' + title + '</div><div style="font-size:.82rem;line-height:1.6">' + msg + '</div></div></div>';
-  
   c.appendChild(t);
   setTimeout(function(){ t.style.opacity = '1'; t.style.transform = 'translateY(0)'; }, 50);
   setTimeout(function(){ t.style.opacity = '0'; t.style.transform = 'translateY(30px)'; setTimeout(function(){ if(t.parentElement) t.remove(); }, 400); }, 8000);
@@ -14460,11 +14015,8 @@ function checkUserAlerts() {
   if (typeof currentUser === 'undefined' || !currentUser) return;
   var userCode = currentUser.username || currentUser.user || currentUser.id || '';
   if (!userCode) return;
-  
-  // جلوگیری از اجرای مکرر
   if (window.__alertsShown) return;
   window.__alertsShown = true;
-  
   fetch(ADMIN_URL + '?action=getUserAlerts&user=' + encodeURIComponent(userCode))
     .then(function(r){ return r.json(); })
     .then(function(d){
@@ -14478,344 +14030,10 @@ function checkUserAlerts() {
     .catch(function(e){ console.log('خطا:', e); });
 }
 
-// چک هر ثانیه - بعد از ورود، فقط یکبار اجرا می‌شود
 setInterval(function(){
   if (typeof currentUser !== 'undefined' && currentUser && !window.__alertsShown) {
     setTimeout(checkUserAlerts, 2000);
   }
 }, 1000);
 </script>
-<script>
-// 🆕 تابع پاداش روزانه - اتصال دکمه باکس ویژه به تابع اصلی
-window.openDailyReward = function() {
-    if (typeof openRW === 'function') {
-        openRW();
-    } else if (typeof ensureUI === 'function') {
-        var ov = ensureUI();
-        ov.classList.add('show');
-        if (typeof loadHistory === 'function') loadHistory(refreshUI);
-    } else {
-        alert('🎁 پاداش روزانه\n\nاین بخش در حال بارگذاری است...');
-    }
-};
-console.log('✅ openDailyReward آماده است:', typeof window.openDailyReward);
-</script>
-<script>
-// ============================================================
-// 🎁 سیستم پاداش روزانه و گردونه شانس - نسخه نهایی
-// ============================================================
-(function(){
-  var RW_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-  var PRIZES = [
-    {label:'۱', pts:1, msg:'🎉 آفرین! ۱ امتیاز بردی'},
-    {label:'۲', pts:2, msg:'🎉 عالی! ۲ امتیاز بردی'},
-    {label:'۳', pts:3, msg:'🎉 خوب بود! ۳ امتیاز بردی'},
-    {label:'۵', pts:5, msg:'🎉 فوق‌العاده! ۵ امتیاز بردی'},
-    {label:'۱۰', pts:10, msg:'🤩 جکپات! ۱۰ امتیاز بردی'},
-    {label:'×۲', pts:4, msg:'✨ امروز امتیازت دو برابر شد!'},
-    {label:'🎁', pts:20, msg:'🎁 جایزه ویژه! ۲۰ امتیاز'},
-    {label:'۲', pts:2, msg:'🎉 خوب بود! ۲ امتیاز بردی'}
-  ];
-
-  function fa(n){ try{ return Number(n).toLocaleString('fa-IR'); }catch(e){ return n; } }
-  function iso(d){ d=d||new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
-  
-  function me(){
-    try{
-      var lr = window.loginResult;
-      if(!lr || !lr.user) return null;
-      var id = lr.user.memberId || lr.user.id;
-      if(id === undefined || id === null) return null;
-      var name = '';
-      try{
-        var ms = (lr.data && lr.data.members) || [];
-        for(var i=0;i<ms.length;i++){
-          if(Number(ms[i].id) === Number(id)){ name = ms[i].firstName || ''; break; }
-        }
-      }catch(e){}
-      return { id: String(id), name: name };
-    }catch(e){ return null; }
-  }
-
-  var rwHistory = [];
-  function loadHistory(cb){
-    var u = me();
-    if(!u){ if(cb) cb(); return; }
-    fetch(RW_API + '?action=getPointsHistory&user=' + encodeURIComponent(u.id))
-      .then(function(r){ return r.json(); })
-      .then(function(d){ rwHistory = d.history || []; if(cb) cb(); })
-      .catch(function(){ if(cb) cb(); });
-  }
-  function myPoints(){ var t=0; for(var i=0;i<rwHistory.length;i++) t += Number(rwHistory[i].points)||0; return t; }
-  function hasKey(p, day){
-    for(var i=0;i<rwHistory.length;i++){
-      if(String(rwHistory[i].uniqueKey||'').indexOf(p+day) === 0) return true;
-    }
-    return false;
-  }
-
-  function rwToast(m){
-    var old = document.getElementById('rwToastDyn');
-    if(old && old.parentNode) old.parentNode.removeChild(old);
-    var t = document.createElement('div');
-    t.id = 'rwToastDyn';
-    t.textContent = m;
-    t.style.cssText = 'position:fixed;bottom:110px;left:50%;transform:translateX(-50%);background:#1a1a2e;border:2px solid #ffd700;color:#fff;border-radius:14px;padding:10px 18px;font-weight:800;font-size:.85rem;z-index:2147483647;max-width:85%;text-align:center;font-family:Tahoma;box-shadow:0 0 20px rgba(255,215,0,.5);pointer-events:none;';
-    document.body.appendChild(t);
-    setTimeout(function(){ if(t.parentNode) t.parentNode.removeChild(t); }, 8000);
-  }
-
-  function renderCal(){
-    var cal = document.getElementById('rwCal');
-    if(!cal) return;
-    cal.innerHTML = '';
-    var fmt = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {day:'numeric'});
-    for(var i=29;i>=0;i--){
-      var d = new Date(); d.setDate(d.getDate()-i);
-      var c = document.createElement('div');
-      var on = hasKey('login_', iso(d))||hasKey('daily_', iso(d));
-      c.className = 'd' + (on ? ' on' : '') + (i===0 ? ' today' : '');
-      c.textContent = fmt.format(d);
-      c.style.cssText = 'aspect-ratio:1;border-radius:7px;background:#22223c;border:1px solid #333;display:grid;place-items:center;font-size:.65rem;color:#888;' + (on ? 'background:linear-gradient(135deg,#0f7a4f,#3ee6a8);border-color:#3ee6a8;color:#06281a;font-weight:800;' : '');
-      cal.appendChild(c);
-    }
-  }
-
-  function refreshUI(){
-    var p = document.getElementById('rwPts');
-    if(p) p.textContent = 'امتیاز شما: ' + fa(myPoints());
-    var b = document.getElementById('rwSpin');
-    if(!b) return;
-    if(hasKey('spin_', iso())){
-      b.disabled = true;
-      b.textContent = '✅ امروز چرخاندی — فردا دوباره!';
-    } else {
-      b.disabled = false;
-      b.textContent = '🎯 بچرخان!';
-    }
-    renderCal();
-  }
-
-  var dailyDone = false;
-  function dailyLogin(){
-    if(dailyDone) return;
-    var u = me(); if(!u) return;
-    dailyDone = true;
-    fetch(RW_API + '?action=addPoints&user=' + encodeURIComponent(u.id) + '&name=' + encodeURIComponent(u.name) + '&reason=' + encodeURIComponent('📅 ورود روزانه') + '&points=2&uniqueKey=' + encodeURIComponent('login_'+iso()))
-      .then(function(r){ return r.json(); })
-      .catch(function(){});
-  }
-
-  function spinHandler(){
-    var u = me(); if(!u){ rwToast('❌ ابتدا وارد شوید'); return; }
-    var wheel = document.getElementById('rwWheel');
-    if(!wheel) return;
-    if(hasKey('spin_', iso())) return;
-    var btn = this; btn.disabled = true;
-    var r = Math.floor(Math.random() * 8);
-    wheel.style.transform = 'rotate(' + (360*6 - (r*45+22.5)) + 'deg)';
-    setTimeout(function(){
-      var p = PRIZES[r];
-      fetch(RW_API + '?action=addPoints&user=' + encodeURIComponent(u.id) + '&name=' + encodeURIComponent(u.name) + '&reason=' + encodeURIComponent('🎰 گردونه شانس') + '&points=' + p.pts + '&uniqueKey=' + encodeURIComponent('spin_'+iso()))
-        .then(function(rr){ return rr.json(); })
-        .then(function(d){
-          if(d && d.already) rwToast('⚠️ امروز قبلاً چرخاندی!');
-          else rwToast(p.msg);
-          loadHistory(refreshUI);
-        })
-        .catch(function(){ rwToast(p.msg); loadHistory(refreshUI); });
-    }, 4200);
-  }
-
-  function ensureUI(){
-    var ov = document.getElementById('rwOverlay');
-    if(!ov){
-      if(!document.getElementById('rwStyle')){
-        var st = document.createElement('style');
-        st.id = 'rwStyle';
-        st.textContent = '#rwOverlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:2147483646;display:none;align-items:center;justify-content:center;font-family:Tahoma;padding:12px}#rwOverlay.show{display:flex}#rwBox{background:#1a1a2e;border:2px solid #ffd700;border-radius:20px;padding:18px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;color:#fff;text-align:center}#rwBox h2{color:#ffd700;font-size:1rem;margin-bottom:4px}#rwPts{font-size:.8rem;color:#3ee6a8;margin-bottom:12px}#rwClose{background:#333;color:#fff;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-bottom:10px}#rwWheelWrap{position:relative;width:210px;height:210px;margin:0 auto 12px}#rwWheel{width:100%;height:100%;border-radius:50%;border:4px solid #b8860b;box-shadow:0 0 24px rgba(255,215,0,.35);transition:transform 4s cubic-bezier(.15,.9,.2,1);position:relative;background:conic-gradient(#ffd700 0 45deg,#1a1a2e 45deg 90deg,#ffd700 90deg 135deg,#1a1a2e 135deg 180deg,#ffd700 180deg 225deg,#1a1a2e 225deg 270deg,#ffd700 270deg 315deg,#1a1a2e 315deg 360deg)}#rwWheel span{position:absolute;top:50%;left:50%;width:56px;margin:-9px 0 0 -28px;transform-origin:28px 0;text-align:center;font-weight:800;font-size:.78rem}#rwWheel span:nth-child(odd){color:#1a1a2e}#rwWheel span:nth-child(even){color:#ffd700}#rwPtr{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:18px solid #ff4d4d;z-index:5}#rwSpin{background:linear-gradient(135deg,#b8860b,#ffd700);color:#1a1a2e;border:none;border-radius:12px;padding:11px 28px;font-weight:800;cursor:pointer;font-family:Tahoma}#rwSpin:disabled{background:#333;color:#888;cursor:not-allowed}#rwCalTitle{color:#ffd700;font-size:.85rem;margin:16px 0 8px}#rwCal{display:grid;grid-template-columns:repeat(10,1fr);gap:5px}';
-        document.head.appendChild(st);
-      }
-      ov = document.createElement('div');
-      ov.id = 'rwOverlay';
-      ov.innerHTML = '<div id="rwBox">' +
-        '<button id="rwClose">✕ بستن</button>' +
-        '<h2>🎰 پاداش روزانه و چرخش گردونه</h2>' +
-        '<div id="rwPts">امتیاز شما: —</div>' +
-        '<div id="rwWheelWrap"><div id="rwPtr"></div><div id="rwWheel"></div></div>' +
-        '<button id="rwSpin">🎯 بچرخان!</button>' +
-        '<div id="rwCalTitle">📅 تقویم ورود — ۳۰ روز اخیر</div>' +
-        '<div id="rwCal"></div>' +
-        '</div>';
-      document.body.appendChild(ov);
-    }
-    var wheel = document.getElementById('rwWheel');
-    if(wheel && !wheel.childElementCount){
-      for(var i=0;i<8;i++){
-        var s = document.createElement('span');
-        s.style.transform = 'rotate(' + (i*45+22.5) + 'deg) translateY(-80px)';
-        s.textContent = PRIZES[i].label;
-        wheel.appendChild(s);
-      }
-    }
-    var cb = document.getElementById('rwClose');
-    if(cb) cb.onclick = function(){ ov.classList.remove('show'); };
-    var sb = document.getElementById('rwSpin');
-    if(sb) sb.onclick = spinHandler;
-    return ov;
-  }
-
-  function openRW(){
-    var ov = ensureUI();
-    ov.classList.add('show');
-    loadHistory(refreshUI);
-  }
-
-  window.openDailyReward = openRW;
-  window.openRW = openRW;
-
-  setInterval(function(){
-    var u = me();
-    var lv = false;
-    try{ var ld = document.getElementById('newLoader'); if(ld && ld.classList.contains('active')) lv = true; }catch(e){}
-    if(u && !lv){ dailyLogin(); }
-  }, 800);
-
-  console.log('✅ سیستم پاداش روزانه آماده شد');
-})();
-</script>
-<script>
-// ============================================================
-// 📬 تابع ثبت نحوه ارسال صورتحساب
-// ============================================================
-window.openEmailForm = function() {
-    // چک کردن ورود
-    if (typeof currentUser === 'undefined' || !currentUser) {
-        alert('⚠️ لطفاً ابتدا وارد شوید');
-        return;
-    }
-    
-    // پیدا کردن کد کاربری
-    var kb = '';
-    try {
-        var lr = window.loginResult;
-        if (lr && lr.user) {
-            var uid = String(lr.user.memberId || lr.user.id || '');
-            var ms = (lr.data && lr.data.members) || [];
-            for (var i = 0; i < ms.length; i++) {
-                if (String(ms[i].id) === uid) { 
-                    kb = String(ms[i].karbari || ms[i].accountNumber || uid); 
-                    break; 
-                }
-            }
-            if (!kb) kb = uid;
-        }
-    } catch(e) {}
-    
-    if (!kb) { alert('❌ اطلاعات کاربر یافت نشد'); return; }
-    
-    // ساخت مودال
-    var old = document.getElementById('emailFormOverlay');
-    if (old) old.remove();
-    
-    var ov = document.createElement('div');
-    ov.id = 'emailFormOverlay';
-    ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999999;display:flex;align-items:center;justify-content:center;font-family:tahoma;padding:15px';
-    
-    ov.innerHTML = 
-        '<div style="background:linear-gradient(160deg,#1e1e35,#151528);border:2px solid #3b82f6;border-radius:20px;padding:24px;width:100%;max-width:420px;color:#fff;direction:rtl;max-height:90vh;overflow-y:auto">' +
-            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">' +
-                '<div style="font-weight:900;font-size:1rem;color:#3b82f6">📬 اطلاع‌رسانی صورتحساب</div>' +
-                '<button id="efCloseBtn" style="background:#ef4444;color:#fff;border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem">✕</button>' +
-            '</div>' +
-            '<div style="font-size:0.78rem;color:#ffd700;margin-bottom:16px">از کدام طریق صورتحساب را دریافت کنید؟</div>' +
-            
-            '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
-                '<input type="checkbox" id="chkSms" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
-                '<span style="font-size:.9rem">📱 پیامک</span>' +
-            '</label>' +
-            
-            '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
-                '<input type="checkbox" id="chkEmail" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
-                '<span style="font-size:.9rem">📧 ایمیل (جیمیل)</span>' +
-            '</label>' +
-            
-            '<label style="display:flex;align-items:center;gap:10px;background:#111;border:1px solid #333;border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">' +
-                '<input type="checkbox" id="chkSite" style="width:20px;height:20px;accent-color:#ffd700;cursor:pointer" />' +
-                '<span style="font-size:.9rem">🌐 داخل همین سایت</span>' +
-            '</label>' +
-            
-            '<div id="emailBox" style="display:none;margin-bottom:12px">' +
-                '<div style="font-size:.75rem;color:#bbb;margin-bottom:6px">📧 آدرس ایمیل:</div>' +
-                '<input id="stmtEmailInput" type="email" dir="ltr" placeholder="example@gmail.com" style="width:100%;box-sizing:border-box;padding:10px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.9rem" />' +
-            '</div>' +
-            
-            '<div style="display:flex;gap:8px;margin-top:6px">' +
-                '<button id="stmtEmailSave" style="flex:1;background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;border:none;border-radius:10px;padding:12px;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.9rem">💾 ثبت</button>' +
-                '<button id="stmtEmailClose" style="background:#333;color:#fff;border:none;border-radius:10px;padding:12px 20px;cursor:pointer;font-family:tahoma">بستن</button>' +
-            '</div>' +
-        '</div>';
-    
-    document.body.appendChild(ov);
-    
-    // بستن با کلیک روی پس‌زمینه
-    ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
-    
-    // چک‌باکس ایمیل
-    var chkE = document.getElementById('chkEmail');
-    var boxE = document.getElementById('emailBox');
-    chkE.onchange = function() { boxE.style.display = chkE.checked ? 'block' : 'none'; };
-    
-    // دکمه‌های بستن
-    document.getElementById('efCloseBtn').onclick = function() { ov.remove(); };
-    document.getElementById('stmtEmailClose').onclick = function() { ov.remove(); };
-    
-    // بارگذاری اطلاعات قبلی (اختیاری)
-    var EMAIL_API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-    fetch(EMAIL_API + '?action=getStatementEmail&user=' + encodeURIComponent(kb))
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-            if (!d || !d.ok) return;
-            document.getElementById('chkSms').checked = !!d.wantSms;
-            chkE.checked = !!d.wantEmail;
-            document.getElementById('chkSite').checked = !!d.wantSite;
-            boxE.style.display = chkE.checked ? 'block' : 'none';
-            if (d.email) document.getElementById('stmtEmailInput').value = d.email;
-        })
-        .catch(function(){});
-    
-    // ذخیره
-    document.getElementById('stmtEmailSave').onclick = function() {
-        var we = chkE.checked ? 1 : 0;
-        var ws = document.getElementById('chkSms').checked ? 1 : 0;
-        var wsi = document.getElementById('chkSite').checked ? 1 : 0;
-        var em = document.getElementById('stmtEmailInput').value.trim();
-        
-        if (we === 1 && em.indexOf('@') < 1) { 
-            alert('❌ لطفاً آدرس ایمیل معتبر وارد کنید'); 
-            return; 
-        }
-        if (we + ws + wsi === 0) { 
-            alert('⚠️ حداقل یک روش را انتخاب کنید'); 
-            return; 
-        }
-        
-        fetch(EMAIL_API + '?action=setStatementEmail&user=' + encodeURIComponent(kb) +
-              '&name=' + encodeURIComponent((currentUser && currentUser.name) || '') +
-              '&email=' + encodeURIComponent(em) +
-              '&wantEmail=' + we +
-              '&wantSms=' + ws +
-              '&wantSite=' + wsi
-        ).then(function(r) { return r.json(); })
-         .then(function(d) {
-            alert(d.ok ? '✅ تنظیمات اطلاع‌رسانی ثبت شد!' : '❌ خطا: ' + (d.error || ''));
-            if (d.ok) ov.remove();
-         })
-         .catch(function() { alert('❌ خطا در اتصال'); });
-    };
-};
-
-console.log('✅ openEmailForm آماده است');
-</script>
-</body>
-</html>
+<!-- ===== SIMPLE TOAST & ALERTS END ===== -->
