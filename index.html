@@ -5272,6 +5272,7 @@ const specialBoxItems = [
     { tab: 'club', label: 'امتیازات و فروشگاه', icon: 'fa-star', color: '#f59e0b', onclick: "selectMenuItem('club')" },
     { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4', onclick: "selectMenuItem('myFund')" },
     { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316', onclick: "selectMenuItem('utilities')" },
+        { tab: 'demoFeatures', label: '✨ قابلیت‌های جدید', icon: 'fa-flask', color: '#10b981', onclick: 'openDemoFeatures()' }
   
 ];
             const specialItems = [
@@ -14035,5 +14036,135 @@ setInterval(function(){
     setTimeout(checkUserAlerts, 2000);
   }
 }, 1000);
+
+// ============================================================
+// 🆕 باز کردن دموی قابلیت‌های جدید (iframe تمام‌صفحه)
+// ============================================================
+window.openDemoFeatures = function() {
+    // حذف iframe قبلی اگه وجود داره
+    var old = document.getElementById('demoFeaturesIframe');
+    if (old) old.remove();
+    
+    // ساخت کانتینر اصلی
+    var container = document.createElement('div');
+    container.id = 'demoFeaturesIframe';
+    container.style.cssText = [
+        'position: fixed',
+        'inset: 0',
+        'z-index: 9999999',
+        'background: #000',
+        'display: flex',
+        'flex-direction: column',
+        'opacity: 0',
+        'transition: opacity 0.3s ease'
+    ].join(';');
+    
+    // هدر
+    var header = document.createElement('div');
+    header.style.cssText = [
+        'background: linear-gradient(135deg, #667eea, #764ba2)',
+        'color: #fff',
+        'padding: 12px 16px',
+        'display: flex',
+        'align-items: center',
+        'justify-content: space-between',
+        'box-shadow: 0 4px 20px rgba(0,0,0,0.3)',
+        'flex-shrink: 0'
+    ].join(';');
+    
+    header.innerHTML = 
+        '<div style="display: flex; align-items: center; gap: 10px; font-weight: 900; font-size: 0.95rem;">' +
+            '<i class="fas fa-flask"></i>' +
+            '<span>قابلیت‌های جدید صندوق اتحاد</span>' +
+            '<span style="background: rgba(255,255,255,0.2); padding: 3px 10px; border-radius: 99px; font-size: 0.65rem;">نسخه آزمایشی</span>' +
+        '</div>' +
+        '<button onclick="closeDemoFeatures()" style="' +
+            'background: rgba(255,255,255,0.2);' +
+            'border: 1px solid rgba(255,255,255,0.3);' +
+            'color: #fff;' +
+            'width: 38px;' +
+            'height: 38px;' +
+            'border-radius: 50%;' +
+            'cursor: pointer;' +
+            'font-size: 1rem;' +
+            'display: flex;' +
+            'align-items: center;' +
+            'justify-content: center;' +
+        '">' +
+            '<i class="fas fa-times"></i>' +
+        '</button>';
+    
+    // iframe
+    var iframe = document.createElement('iframe');
+    iframe.src = 'demo.html';
+    iframe.style.cssText = [
+        'flex: 1',
+        'width: 100%',
+        'border: none',
+        'background: #fff'
+    ].join(';');
+    iframe.setAttribute('allowfullscreen', 'true');
+    
+    // فوتر
+    var footer = document.createElement('div');
+    footer.style.cssText = [
+        'background: rgba(0,0,0,0.85)',
+        'color: #fff',
+        'padding: 8px 16px',
+        'text-align: center',
+        'font-size: 0.7rem',
+        'display: flex',
+        'align-items: center',
+        'justify-content: center',
+        'gap: 12px',
+        'flex-shrink: 0',
+        'flex-wrap: wrap'
+    ].join(';');
+    footer.innerHTML = 
+        '<span>🎯 این یک دمو است</span>' +
+        '<span style="opacity: 0.5;">|</span>' +
+        '<span>⌨️ برای بستن ESC را بزنید</span>';
+    
+    // اضافه کردن
+    container.appendChild(header);
+    container.appendChild(iframe);
+    container.appendChild(footer);
+    document.body.appendChild(container);
+    
+    setTimeout(function() {
+        container.style.opacity = '1';
+    }, 10);
+    
+    document.body.style.overflow = 'hidden';
+};
+
+// ============================================================
+// 🆕 بستن دمو
+// ============================================================
+window.closeDemoFeatures = function() {
+    var container = document.getElementById('demoFeaturesIframe');
+    if (container) {
+        container.style.opacity = '0';
+        setTimeout(function() {
+            container.remove();
+            document.body.style.overflow = '';
+        }, 300);
+    }
+};
+
+// ============================================================
+// 🆕 بستن با ESC
+// ============================================================
+if (!window.__demoFeaturesEscBound) {
+    window.__demoFeaturesEscBound = true;
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            var container = document.getElementById('demoFeaturesIframe');
+            if (container) closeDemoFeatures();
+        }
+    });
+}
+
+console.log('✅ openDemoFeatures آماده است');
 </script>
 <!-- ===== SIMPLE TOAST & ALERTS END ===== -->
