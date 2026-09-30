@@ -14394,7 +14394,7 @@ console.log('✅ openDemoFeatures آماده است');
         // محتوا
         if (contentArea) {
             var sysHeight = fixed.offsetHeight;
-            contentArea.style.paddingTop = (hdrHeight + sysHeight + 10) + 'px';
+           
         }
     }
     
@@ -14546,7 +14546,7 @@ console.log('✅ openDemoFeatures آماده است');
         var contentArea = document.getElementById('contentArea');
         if (contentArea && page === 'menu') {
             var sysHeight = sys.offsetHeight;
-            contentArea.style.paddingTop = (hdrHeight + sysHeight + 10) + 'px';
+           
         }
     }
     
@@ -14802,6 +14802,111 @@ console.log('✅ openDemoFeatures آماده است');
     console.log('✅ پیام سیستم داخل هدر فعال شد');
 })();
 </script>
-
+<!-- 🎯 فاصله ثابت محتوا — دائمی -->
+<style id="contentPaddingFinal">
+    #contentArea {
+        margin-top: 0 !important;
+        padding-top: 260px !important;
+    }
+    #contentArea > *:first-child {
+        margin-top: 10px !important;
+        padding-top:150px !important;
+    }
+    .grid-menu {
+        margin-top: 15px !important;
+        padding-top: 15px !important;
+    }
+    .hdr {
+        margin-bottom: 0 !important;
+    }
+</style>
+<!-- ============================================================
+     🛡️ محافظ فاصله — جلوگیری از پرش
+     ============================================================ -->
+<script>
+(function() {
+    'use strict';
+    
+    function setupPaddingGuard() {
+        var contentArea = document.getElementById('contentArea');
+        if (!contentArea) return;
+        
+        // فاصله مناسب
+        contentArea.style.setProperty('padding-top', '160px', 'important');
+        
+        // نگهبان: هر ۱۰۰ms چک کن
+        if (window._paddingGuard) clearInterval(window._paddingGuard);
+        window._paddingGuard = setInterval(function() {
+            var current = contentArea.style.paddingTop;
+            if (current !== '160px') {
+                contentArea.style.setProperty('padding-top', '160px', 'important');
+            }
+        }, 100);
+        
+        console.log('✅ محافظ فاصله فعال شد');
+    }
+    
+    // اجرا در بارگذاری
+    setTimeout(setupPaddingGuard, 500);
+    setTimeout(setupPaddingGuard, 1500);
+    setTimeout(setupPaddingGuard, 3000);
+    
+    // چک کن contentArea وجود داره
+    setInterval(function() {
+        if (document.getElementById('contentArea') && !window._paddingGuard) {
+            setupPaddingGuard();
+        }
+    }, 2000);
+    
+})();
+</script>
+<!-- ============================================================
+     🛡️ حذف فوری پیام بنفش
+     ============================================================ -->
+<script>
+(function() {
+    'use strict';
+    
+    // حذف فوری هر پیام بنفش که ساخته میشه
+    setInterval(function() {
+        var contentArea = document.getElementById('contentArea');
+        if (contentArea) {
+            contentArea.querySelectorAll('.system-message-box').forEach(function(b) {
+                b.remove();
+            });
+        }
+        
+        document.querySelectorAll('.system-message-box').forEach(function(b) {
+            if (b.id === 'hdrSysMsg') return;
+            if (b.closest && b.closest('.hdr')) return;
+            if (b.closest && b.closest('#hdrSysMsg')) return;
+            b.remove();
+        });
+    }, 30);
+    
+    // MutationObserver — حذف فوری
+    if (window.MutationObserver) {
+        var obs = new MutationObserver(function(muts) {
+            muts.forEach(function(m) {
+                m.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        if (node.classList && node.classList.contains('system-message-box') && node.id !== 'hdrSysMsg' && !node.closest('.hdr')) {
+                            node.remove();
+                        }
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('.system-message-box').forEach(function(b) {
+                                if (b.id !== 'hdrSysMsg' && !b.closest('.hdr')) b.remove();
+                            });
+                        }
+                    }
+                });
+            });
+        });
+        obs.observe(document.body, { childList: true, subtree: true });
+    }
+    
+    console.log('✅ حذف فوری پیام بنفش دائمی شد');
+})();
+</script>
 </body>
 </html>
