@@ -2138,7 +2138,7 @@ background: Wormy !important;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding:14px 0;
+            padding:18px 0;
             z-index: 100;
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(12px);
@@ -14277,18 +14277,20 @@ console.log('✅ openDemoFeatures آماده است');
         color: #ffd700 !important;
         -webkit-text-fill-color: #ffd700 !important;
     }
-    .hdr .daterow .clock {
-        background: rgba(255, 201, 77, 0.15) !important;
-        color: #ffd700 !important;
-        -webkit-text-fill-color: #ffd700 !important;
-        border: 1px solid rgba(255, 201, 77, 0.3) !important;
-    }
-    .hdr .hello {
-        background: rgba(255, 201, 77, 0.15) !important;
-        color: #ffd700 !important;
-        -webkit-text-fill-color: #ffd700 !important;
-        border: 1px solid rgba(255, 201, 77, 0.3) !important;
-    }
+    /* 🆕 غیرفعال شد چون رنگ پویا شد */
+.hdr .daterow .clock {
+    /* background: rgba(255, 201, 77, 0.15) !important; */
+    /* color: #ffd700 !important; */
+    /* -webkit-text-fill-color: #ffd700 !important; */
+    /* border: 1px solid rgba(255, 201, 77, 0.3) !important; */
+}
+ /* 🆕 غیرفعال شد چون رنگ پویا شد */
+.hdr .hello {
+    /* background: rgba(255, 201, 77, 0.15) !important; */
+    /* color: #ffd700 !important; */
+    /* -webkit-text-fill-color: #ffd700 !important; */
+    /* border: 1px solid rgba(255, 201, 77, 0.3) !important; */
+}
     
     /* پیام سیستم مشکی/طلایی */
     #fixedSystemMsg, .system-message-box {
@@ -14906,6 +14908,68 @@ console.log('✅ openDemoFeatures آماده است');
     }
     
     console.log('✅ حذف فوری پیام بنفش دائمی شد');
+})();
+</script>
+<!-- ============================================================
+     🎨 رنگ ساعت پویا — بر اساس زمان روز
+     ============================================================ -->
+<script>
+(function() {
+    'use strict';
+    
+    function updateClockColor() {
+        var hour = new Date().getHours();
+        var color, bg, border;
+        
+        if (hour >= 5 && hour < 12) {
+            // 🌅 صبح — سبز زمردی
+            color = '#10b981';
+            bg = 'rgba(16, 185, 129, 0.15)';
+            border = 'rgba(16, 185, 129, 0.4)';
+        } else if (hour >= 12 && hour < 17) {
+            // ☀️ ظهر — آبی آسمانی
+            color = '#38bdf8';
+            bg = 'rgba(56, 189, 248, 0.15)';
+            border = 'rgba(56, 189, 248, 0.4)';
+        } else if (hour >= 17 && hour < 20) {
+            // 🌇 عصر — نارنجی غروب
+            color = '#f97316';
+            bg = 'rgba(249, 115, 22, 0.15)';
+            border = 'rgba(249, 115, 22, 0.4)';
+        } else {
+            // 🌙 شب — صورتی ملایم
+            color = '#f472b6';
+            bg = 'rgba(244, 114, 182, 0.15)';
+            border = 'rgba(244, 114, 182, 0.4)';
+        }
+        
+        var clock = document.querySelector('.hdr .daterow .clock');
+        if (clock) {
+            clock.style.setProperty('color', color, 'important');
+            clock.style.setProperty('-webkit-text-fill-color', color, 'important');
+            clock.style.setProperty('background', bg, 'important');
+            clock.style.setProperty('border', '1px solid ' + border, 'important');
+        }
+        
+        var hello = document.querySelector('.hdr .hello');
+        if (hello) {
+            hello.style.setProperty('color', color, 'important');
+            hello.style.setProperty('-webkit-text-fill-color', color, 'important');
+            hello.style.setProperty('background', bg, 'important');
+            hello.style.setProperty('border', '1px solid ' + border, 'important');
+        }
+    }
+    
+    // اجرای اولیه
+    setTimeout(updateClockColor, 500);
+    setTimeout(updateClockColor, 1500);
+    setTimeout(updateClockColor, 3000);
+    
+    // اجرا در هر ۶۰ ثانیه (برای تغییر خودکار)
+    if (window._clockColorInterval) clearInterval(window._clockColorInterval);
+    window._clockColorInterval = setInterval(updateClockColor, 60000);
+    
+    console.log('✅ رنگ ساعت پویا فعال شد');
 })();
 </script>
 </body>
