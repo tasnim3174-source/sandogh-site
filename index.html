@@ -14972,5 +14972,76 @@ console.log('✅ openDemoFeatures آماده است');
     console.log('✅ رنگ ساعت پویا فعال شد');
 })();
 </script>
+<!-- ============================================================
+     🎨 رنگ پویا ساعت و hello — دائمی
+     ============================================================ -->
+<style id="dynamicClockColorFinal">
+    /* رنگ پیش‌فرض (اگه JS کار نکرد) */
+    .hdr .daterow .clock,
+    .hdr .hello {
+        color: #10b981 !important;
+        -webkit-text-fill-color: #10b981 !important;
+        background: rgba(16, 185, 129, 0.15) !important;
+        border: 1px solid rgba(16, 185, 129, 0.4) !important;
+    }
+</style>
+
+<script>
+(function() {
+    'use strict';
+    
+    function updateClockColor() {
+        var hour = new Date().getHours();
+        var color, bg, border;
+        
+        if (hour >= 5 && hour < 12) {
+            color = '#10b981'; bg = 'rgba(16, 185, 129, 0.15)'; border = 'rgba(16, 185, 129, 0.4)';
+        } else if (hour >= 12 && hour < 17) {
+            color = '#38bdf8'; bg = 'rgba(56, 189, 248, 0.15)'; border = 'rgba(56, 189, 248, 0.4)';
+        } else if (hour >= 17 && hour < 20) {
+            color = '#f97316'; bg = 'rgba(249, 115, 22, 0.15)'; border = 'rgba(249, 115, 22, 0.4)';
+        } else {
+            color = '#f472b6'; bg = 'rgba(244, 114, 182, 0.15)'; border = 'rgba(244, 114, 182, 0.4)';
+        }
+        
+        // ساعت
+        var clock = document.querySelector('.hdr .daterow .clock');
+        if (clock) {
+            clock.removeAttribute('style');
+            clock.setAttribute('style', 
+                'color: ' + color + ' !important; ' +
+                '-webkit-text-fill-color: ' + color + ' !important; ' +
+                'background: ' + bg + ' !important; ' +
+                'border: 1px solid ' + border + ' !important; ' +
+                'padding: 3px 11px !important; ' +
+                'border-radius: 99px !important;'
+            );
+        }
+        
+        // hello
+        var hello = document.querySelector('.hdr .hello');
+        if (hello) {
+            hello.removeAttribute('style');
+            hello.setAttribute('style',
+                'color: ' + color + ' !important; ' +
+                '-webkit-text-fill-color: ' + color + ' !important; ' +
+                'background: ' + bg + ' !important; ' +
+                'border: 1px solid ' + border + ' !important;'
+            );
+        }
+    }
+    
+    // اجرای اولیه
+    setTimeout(updateClockColor, 500);
+    setTimeout(updateClockColor, 1500);
+    setTimeout(updateClockColor, 3000);
+    
+    // اجرا در هر ۶۰ ثانیه
+    if (window._clockColorFinal) clearInterval(window._clockColorFinal);
+    window._clockColorFinal = setInterval(updateClockColor, 60000);
+    
+    console.log('✅ رنگ پویا دائمی شد');
+})();
+</script>
 </body>
 </html>
