@@ -3099,12 +3099,10 @@ ldrSecT = setInterval(function() {
         window.addEventListener('resize', ldrResize);
         // ============================================================
         // بخش ۱: متغیرهای سراسری
-        // ============================================================
-        const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
-        const DATA_URL_1 = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
-        const DATA_URL_1_FALLBACK = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data1.xlsx';
-        const FEATURES = { showMyFund: true };
-
+// ============================================================
+const DATA_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data.xlsx';
+const DATA_URL_1 = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/data1.xlsx';
+const FEATURES = { showMyFund: true };
         let currentUser = null;
         let currentPage = 'menu';
         let currentClubTab = 'shop';
@@ -5058,34 +5056,21 @@ const response = await fetch(fullUrl, { cache: 'no-cache' });
         }
 
         // 🆕 تابع هوشمند: خواندن با اولویت Apps Script، سپس گیت‌هاب
-        async function loadFile1Smart() {
-            console.log('🔍 در حال تلاش برای خواندن از Apps Script...');
-            
-            try {
-                                const result1 = await parseOneExcelFromAppsScript(DATA_URL_1);
-                if (result1 && result1.members && result1.members.length > 0) {
-                    console.log('✅ موفق! داده‌ها از Apps Script خوانده شدند.');
-                    return { source: 'Apps Script', data: result1 };
-                }
-            } catch (err) {
-                console.warn('⚠️ Apps Script ناموفق بود:', err.message);
-            }
-            
-            console.log('🔄 در حال تلاش برای خواندن از گیت‌هاب (Fallback)...');
-            try {
-                const result2 = await parseOneExcelFile(DATA_URL_1_FALLBACK);
-                if (result2 && result2.members && result2.members.length > 0) {
-                    console.log('✅ موفق! داده‌ها از گیت‌هاب خوانده شدند.');
-                    return { source: 'GitHub', data: result2 };
-                }
-            } catch (err) {
-                console.warn('⚠️ گیت‌هاب هم ناموفق بود:', err.message);
-            }
-            
-            console.error('❌ هیچ منبع داده‌ای در دسترس نبود');
-            return { source: 'None', data: { members: [], transactions: [], users: [] } };
+       async function loadFile1Smart() {
+    console.log('🔄 در حال خواندن data1.xlsx از گیت‌هاب...');
+    try {
+        const result = await parseOneExcelFile(DATA_URL_1);
+        if (result && result.members && result.members.length > 0) {
+            console.log('✅ موفق! data1.xlsx از گیت‌هاب خوانده شد.');
+            return { source: 'GitHub', data: result };
         }
-
+    } catch (err) {
+        console.warn('⚠️ گیت‌هاب ناموفق بود:', err.message);
+    }
+    
+    console.error('❌ data1.xlsx از گیت‌هاب لود نشد');
+    return { source: 'None', data: { members: [], transactions: [], users: [] } };
+}
  // 🆕 تابع اصلی: بارگذاری و ترکیب دو فایل
         async function loadMainData() {
             // 🔄 بارگذاری کتابخانه XLSX
