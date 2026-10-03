@@ -1048,6 +1048,90 @@ margin-top: 50px;
                 font-size: 1.15rem;
             }
         }
+        /* ============================================================
+           🆕 دکمه شناور خانه - طلایی با پالس
+           ============================================================ */
+        .floating-main-menu-btn {
+            position: fixed !important;
+            bottom: 90px !important;
+            right: 20px !important;
+            width: 60px !important;
+            height: 60px !important;
+            border-radius: 50% !important;
+            border: 3px solid #ffffff !important;
+            background: linear-gradient(135deg, #ffd700 0%, #ff9d00 100%) !important;
+            color: #1a1a2e !important;
+            font-size: 1.5rem !important;
+            display: none !important;
+            align-items: center !important;
+            justify-content: center !important;
+            cursor: pointer !important;
+            z-index: 9999 !important;
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.6) !important;
+            transition: all 0.3s ease !important;
+            touch-action: manipulation !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            outline: none !important;
+            animation: mainMenuPulseGold 2s ease-in-out infinite !important;
+        }
+
+        .floating-main-menu-btn.show {
+            display: flex !important;
+        }
+
+        .floating-main-menu-btn i {
+            color: #1a1a2e !important;
+            font-size: 1.5rem !important;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+        }
+
+        @keyframes mainMenuPulseGold {
+            0%, 100% {
+                box-shadow: 
+                    0 4px 20px rgba(255, 215, 0, 0.6),
+                    0 0 0 0 rgba(255, 215, 0, 0.7) !important;
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 
+                    0 4px 30px rgba(255, 215, 0, 0.9),
+                    0 0 0 15px rgba(255, 215, 0, 0) !important;
+                transform: scale(1.08);
+            }
+        }
+
+        .floating-main-menu-btn:hover {
+            transform: scale(1.15) rotate(-8deg) !important;
+            box-shadow: 
+                0 8px 40px rgba(255, 215, 0, 0.9),
+                0 0 0 20px rgba(255, 215, 0, 0) !important;
+            animation: none !important;
+        }
+
+        .floating-main-menu-btn:active {
+            transform: scale(0.9) !important;
+        }
+
+        [data-theme="dark"] .floating-main-menu-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ff9d00 100%) !important;
+            border: 3px solid #ffffff !important;
+            color: #1a1a2e !important;
+        }
+
+        @media (max-width: 600px) {
+            .floating-main-menu-btn {
+                width: 52px !important;
+                height: 52px !important;
+                font-size: 1.3rem !important;
+                bottom: 85px !important;
+                right: 14px !important;
+            }
+            
+            .floating-main-menu-btn i {
+                font-size: 1.3rem !important;
+            }
+        }
 
         .floating-home-btn {
             position: fixed;
