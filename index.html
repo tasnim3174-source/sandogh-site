@@ -2882,11 +2882,45 @@ background: Wormy !important;
     ldrRender();
     document.getElementById('ldrRing').classList.add('okc');
 
-    var res = loginResult;
+        var res = loginResult;
     currentUser = res.user;
     members = res.data.members;
     transactions = res.data.transactions || [];
     users = res.data.users;
+    
+    // 🆕 اضافه کردن memberId به currentUser اگر نبود
+    if (!currentUser.memberId) {
+        // پیدا کردن member بر اساس username (که شماره حساب است)
+        var foundMember = members.find(function(m) { 
+            return String(m.accountNumber) === String(currentUser.username);
+        });
+        
+        // اگر پیدا نشد، بر اساس نام کاربری
+        if (!foundMember) {
+            foundMember = members.find(function(m) { 
+                return String(m.karbari) === String(currentUser.username);
+            });
+        }
+        
+        // اگر پیدا نشد، بر اساس accountNumber
+        if (!foundMember) {
+            foundMember = members.find(function(m) { 
+                return String(m.accountNumber) === String(currentUser.accountNumber);
+            });
+        }
+        
+        if (foundMember) {
+            currentUser.memberId = foundMember.id;
+            console.log('✅ memberId به currentUser اضافه شد:', foundMember.id);
+        } else {
+            console.error('❌ memberId برای کاربر پیدا نشد:', currentUser.username);
+            console.log('🔍 جستجو شد بین:', members.length, 'عضو');
+            console.log('🔍 username جستجو شده:', currentUser.username);
+            console.log('🔍 نمونه اعضا:', members.slice(0, 3).map(function(m) { 
+                return { accountNumber: m.accountNumber, karbari: m.karbari, id: m.id };
+            }));
+        }
+    }
 
     transactionsByMember = new Map();
     transactions.forEach(t => {
