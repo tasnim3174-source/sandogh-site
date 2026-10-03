@@ -111,6 +111,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="10" data-role="all" onclick="showTab(10)">💬 پیام‌ها و پاسخ‌ها</div>
     <div class="menu-item" data-tab="11" data-role="all" onclick="showTab(11)">📊 گزارش‌گیری</div>
     <div class="menu-item" data-tab="12" data-role="all" onclick="showTab(12)">🔐 اطلاعات کاربری اعضا</div>
+    <div class="menu-item" data-tab="13" data-role="admin" onclick="showTab(13)">📤 آپلود فایل اکسل</div>
   </div>
 
   <div class="main-content">
@@ -275,6 +276,28 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div id="sec11" style="display:none">
       <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
     </div>
+<div id="sec13" style="display:none">
+  <div class="box" style="text-align:center">
+    <h3 style="color:#ffd700;margin-bottom:15px">📤 آپلود فایل اکسل جدید</h3>
+    <p style="color:rgba(255,255,255,.7);margin-bottom:16px;line-height:2;font-size:.85rem">
+      فایل <b style="color:#ffd700">data1.xlsx</b> جدید رو انتخاب کن.<br>
+      این فایل جایگزین فایل قبلی در گیت‌هاب می‌شه.
+    </p>
+    <input type="file" id="adminExcelFile" accept=".xlsx,.xls" 
+           style="width:100%;max-width:500px;padding:12px;border:2px dashed #ffc94d;border-radius:12px;box-sizing:border-box;background:rgba(0,0,0,0.3);color:#fff;cursor:pointer;font-size:.85rem;margin-bottom:14px;font-family:tahoma">
+    <button id="adminUploadBtn" onclick="adminUploadExcelToGitHub()" 
+            style="width:100%;max-width:500px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffc94d,#d97706);color:#1a1a2e;font-size:1rem;font-weight:900;cursor:pointer;font-family:tahoma">
+      🚀 آپلود به گیت‌هاب
+    </button>
+    <div id="adminUploadStatus" style="margin-top:16px;padding:14px;border-radius:12px;display:none;font-size:.85rem;text-align:center;line-height:2;max-width:500px;margin-left:auto;margin-right:auto"></div>
+    <div style="margin-top:20px;padding:14px;background:rgba(255,215,0,.06);border:1px dashed rgba(255,215,0,.4);border-radius:12px;max-width:500px;margin-left:auto;margin-right:auto;font-size:.75rem;color:rgba(255,255,255,.6);line-height:2;text-align:right">
+      <b style="color:#ffd700">💡 نکات مهم:</b><br>
+      • فایل باید از نوع <b style="color:#ffd700">.xlsx</b> باشد<br>
+      • نام فایل باید <b style="color:#ffd700">data1.xlsx</b> باشد<br>
+      • بعد از آپلود، برنامه را رفرش کن
+    </div>
+  </div>
+</div>
 
     <div id="sec12" style="display:none">
       <div class="box">
@@ -417,6 +440,7 @@ function showTab(n){
   var sec10 = document.getElementById('sec10'); if (sec10) sec10.style.display = 'none';
   var sec11 = document.getElementById('sec11'); if (sec11) sec11.style.display = 'none';
   var sec12 = document.getElementById('sec12'); if (sec12) sec12.style.display = 'none';
+  var sec13 = document.getElementById('sec13'); if (sec13) sec13.style.display = 'none';
 
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
@@ -451,7 +475,11 @@ function showTab(n){
     }
     loadUsersInfo();
   }
-
+  else if (n === 13) {
+    if (sec13) {
+      sec13.style.display = 'block';
+    }
+  }
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
 
@@ -1447,6 +1475,102 @@ function downloadUsersExcel() {
   document.body.removeChild(link);
   
   alert('✅ فایل Excel دانلود شد');
+}
+// ============================================================
+// 🆕 آپلود فایل اکسل به گیت‌هاب
+// ============================================================
+
+async function adminUploadExcelToGitHub() {
+    var fileInput = document.getElementById('adminExcelFile');
+    var status = document.getElementById('adminUploadStatus');
+    var btn = document.getElementById('adminUploadBtn');
+    
+    if (!fileInput.files || fileInput.files.length === 0) {
+        showAdminUploadStatus('⚠️ لطفاً یه فایل اکسل انتخاب کن', 'warning');
+        return;
+    }
+    
+    var file = fileInput.files[0];
+    
+    if (!file.name.toLowerCase().endsWith('.xlsx') && !file.name.toLowerCase().endsWith('.xls')) {
+        showAdminUploadStatus('❌ فقط فایل‌های Excel (.xlsx یا .xls) مجاز هستند', 'error');
+        return;
+    }
+    
+    var sizeKB = (file.size / 1024).toFixed(1);
+    showAdminUploadStatus('⏳ در حال آپلود (' + sizeKB + ' کیلوبایت)...<br>لطفاً صبر کن...', 'info');
+    btn.disabled = true;
+    btn.innerHTML = '⏳ در حال آپلود...';
+    
+    try {
+        var base64 = await adminFileToBase64(file);
+        
+        var response = await fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'uploadExcel',
+                fileContent: base64
+            }),
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+        });
+        
+        var text = await response.text();
+        var result;
+        try {
+            result = JSON.parse(text);
+        } catch (e) {
+            showAdminUploadStatus('❌ پاسخ نامعتبر از سرور:<br>' + text.substring(0, 200), 'error');
+            btn.disabled = false;
+            btn.innerHTML = '🚀 آپلود به گیت‌هاب';
+            return;
+        }
+        
+        if (result.ok) {
+            showAdminUploadStatus('✅ فایل با موفقیت آپلود شد!<br>📊 حجم: ' + sizeKB + ' کیلوبایت<br>🔗 <a href="' + result.url + '" target="_blank" style="color:#22c55e;font-weight:bold">مشاهده در گیت‌هاب</a>', 'success');
+            fileInput.value = '';
+            btn.disabled = false;
+            btn.innerHTML = '🚀 آپلود به گیت‌هاب';
+            
+            setTimeout(function() {
+                showAdminUploadStatus('✅ آپلود موفق!<br>🔄 حالا برنامه رو ببند و دوباره باز کن تا اطلاعات جدید لود بشه.', 'success');
+            }, 3000);
+        } else {
+            showAdminUploadStatus('❌ ' + (result.error || 'خطای نامشخص'), 'error');
+            btn.disabled = false;
+            btn.innerHTML = '🚀 آپلود به گیت‌هاب';
+        }
+    } catch (e) {
+        showAdminUploadStatus('❌ خطا: ' + e.message, 'error');
+        btn.disabled = false;
+        btn.innerHTML = '🚀 آپلود به گیت‌هاب';
+    }
+}
+
+function adminFileToBase64(file) {
+    return new Promise(function(resolve, reject) {
+        var reader = new FileReader();
+        reader.onload = function() { resolve(reader.result.split(',')[1]); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function showAdminUploadStatus(msg, type) {
+    var status = document.getElementById('adminUploadStatus');
+    if (!status) return;
+    status.style.display = 'block';
+    
+    var colors = {
+        info: { bg: 'rgba(56,189,248,0.15)', color: '#38bdf8', border: '#38bdf8' },
+        warning: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', border: '#f59e0b' },
+        error: { bg: 'rgba(239,68,68,0.15)', color: '#ef4444', border: '#ef4444' },
+        success: { bg: 'rgba(34,197,94,0.15)', color: '#22c55e', border: '#22c55e' }
+    };
+    var c = colors[type] || colors.info;
+    status.style.background = c.bg;
+    status.style.color = c.color;
+    status.style.borderRight = '3px solid ' + c.border;
+    status.innerHTML = msg;
 }
 
 console.log('✅ تب اطلاعات کاربری آماده است');
