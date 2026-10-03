@@ -110,6 +110,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="9" data-role="all" onclick="showTab(9)">📬 اطلاع‌رسانی</div>
     <div class="menu-item" data-tab="10" data-role="all" onclick="showTab(10)">💬 پیام‌ها و پاسخ‌ها</div>
     <div class="menu-item" data-tab="11" data-role="all" onclick="showTab(11)">📊 گزارش‌گیری</div>
+    <div class="menu-item" data-tab="12" data-role="all" onclick="showTab(12)">🔐 اطلاعات کاربری اعضا</div>
   </div>
 
   <div class="main-content">
@@ -274,9 +275,59 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div id="sec11" style="display:none">
       <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
     </div>
+
+    <div id="sec12" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700;margin:0">🔐 اطلاعات کاربری اعضا</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button onclick="loadUsersInfo()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-weight:700">🔄 به‌روزرسانی</button>
+            <button onclick="downloadUsersExcel()" style="padding:8px 16px;border-radius:12px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">📥 دانلود Excel</button>
+          </div>
+        </div>
+        
+        <div class="stats" id="usersStats" style="margin-bottom:14px">
+          <div class="stat"><b id="usTotal">0</b><span>کل کاربران</span></div>
+          <div class="stat"><b id="usChanged">0</b><span>تغییر رمز داده</span></div>
+          <div class="stat"><b id="usCouncil">0</b><span>عضو شورا</span></div>
+          <div class="stat"><b id="usRegular">0</b><span>عضو عادی</span></div>
+        </div>
+        
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <input type="text" id="usersSearch" placeholder="🔍 جستجو (نام، شماره حساب، نام کاربری...)" 
+                 style="flex:1;min-width:200px;padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none;font-family:tahoma"
+                 oninput="renderUsersTable()">
+          <select id="usersRoleFilter" onchange="renderUsersTable()" 
+                  style="padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">همه نقش‌ها</option>
+            <option value="council" style="background:#1a1a2e">فقط شورا</option>
+            <option value="regular" style="background:#1a1a2e">فقط عادی</option>
+          </select>
+          <select id="usersPwdFilter" onchange="renderUsersTable()" 
+                  style="padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">همه رمزها</option>
+            <option value="default" style="background:#1a1a2e">رمز پیش‌فرض (= کاربری)</option>
+            <option value="changed" style="background:#1a1a2e">رمز تغییر یافته</option>
+          </select>
+        </div>
+        
+        <div class="tw" id="usersTableContainer">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+        
+        <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <h4 style="color:#ffd700;margin:0">📜 تاریخچه تغییرات رمز</h4>
+            <button onclick="loadPasswordLog()" style="padding:6px 12px;border-radius:10px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-size:.8rem">🔄 به‌روزرسانی</button>
+          </div>
+          <div id="passwordLogContainer" style="max-height:300px;overflow:auto;border-radius:12px;border:1px solid rgba(255,255,255,.08)">
+            <div class="loader">در حال بارگذاری...</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
@@ -365,6 +416,7 @@ function showTab(n){
   var sec9 = document.getElementById('sec9'); if (sec9) sec9.style.display = 'none';
   var sec10 = document.getElementById('sec10'); if (sec10) sec10.style.display = 'none';
   var sec11 = document.getElementById('sec11'); if (sec11) sec11.style.display = 'none';
+  var sec12 = document.getElementById('sec12'); if (sec12) sec12.style.display = 'none';
 
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
@@ -372,7 +424,9 @@ function showTab(n){
     if(item.getAttribute('data-tab') === String(n)) item.classList.add('active');
   });
 
-  if (n >= 1 && n <= 6) { var sec = document.getElementById('sec' + n); if (sec) sec.style.display = 'block'; }
+  if (n >= 1 && n <= 6) {
+    var sec = document.getElementById('sec' + n); if (sec) sec.style.display = 'block';
+  }
   else if (n === 7) { if (tab7El) tab7El.style.display = 'block'; loadShopProducts(); }
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
@@ -390,6 +444,12 @@ function showTab(n){
       var fr = document.getElementById('reportFrame');
       if (fr && fr.getAttribute('src') === 'about:blank') fr.src = 'report.html?embed=1&v=' + Date.now();
     }
+  }
+  else if (n === 12) {
+    if (sec12) {
+      sec12.style.display = 'block';
+    }
+    loadUsersInfo();
   }
 
   var qEl = document.getElementById('q');
@@ -961,9 +1021,10 @@ function openStmtList() {
     if (d.ok) { isCouncil = true; window.__councilUser = { id: d.id, name: d.name }; enterDashboard(); }
   }).catch(function(){});
 })();
-</script>
 
-<script>
+// ============================================================
+// بخش پیام‌های شورا
+// ============================================================
 var allCouncilMsgs = [];
 var msgFilter = 'pending';
 
@@ -1084,6 +1145,311 @@ function sendMemberReply(mid){
     })
     .catch(function(){ alert('❌ خطا در ارتباط'); });
 }
+
+// ============================================================
+// 🆕 تب ۱۲: اطلاعات کاربری و رمزهای اعضا
+// ============================================================
+
+var allUsersInfo = [];
+var passwordLogData = [];
+
+function loadUsersInfo() {
+  document.getElementById('usersTableContainer').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+  document.getElementById('passwordLogContainer').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+  
+  fetch(URL + '?action=getAllUsers&_=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.ok || !d.users) {
+        document.getElementById('usersTableContainer').innerHTML = 
+          '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت کاربران: ' + (d.error || 'نامشخص') + '</div>';
+        return;
+      }
+      allUsersInfo = d.users;
+      updateUsersStats();
+      renderUsersTable();
+    })
+    .catch(function(e) {
+      document.getElementById('usersTableContainer').innerHTML = 
+        '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در اتصال</div>';
+    });
+  
+  loadPasswordLog();
+}
+
+function updateUsersStats() {
+  var total = allUsersInfo.length;
+  var council = 0, regular = 0, changed = 0;
+  
+  allUsersInfo.forEach(function(u) {
+    if (u.isAdmin) return;
+    if (u.isCouncil) council++;
+    else regular++;
+    
+    var defaultPwd = u.accountNumber || u.username;
+    if (u.password && u.password !== defaultPwd) changed++;
+  });
+  
+  document.getElementById('usTotal').textContent = total;
+  document.getElementById('usChanged').textContent = changed;
+  document.getElementById('usCouncil').textContent = council;
+  document.getElementById('usRegular').textContent = regular;
+}
+
+function renderUsersTable() {
+  var q = (document.getElementById('usersSearch').value || '').trim().toLowerCase();
+  var roleFilter = document.getElementById('usersRoleFilter').value;
+  var pwdFilter = document.getElementById('usersPwdFilter').value;
+  
+  var filtered = allUsersInfo.filter(function(u) {
+    if (q) {
+      var searchStr = String(
+        (u.firstName || '') + ' ' + 
+        (u.accountNumber || '') + ' ' + 
+        (u.username || '') + ' ' + 
+        (u.phone || '')
+      ).toLowerCase();
+      if (searchStr.indexOf(q) < 0) return false;
+    }
+    
+    if (roleFilter === 'council' && !u.isCouncil) return false;
+    if (roleFilter === 'regular' && (u.isCouncil || u.isAdmin)) return false;
+    
+    var defaultPwd = u.accountNumber || u.username;
+    var isChanged = u.password && u.password !== defaultPwd;
+    if (pwdFilter === 'default' && isChanged) return false;
+    if (pwdFilter === 'changed' && !isChanged) return false;
+    
+    return true;
+  });
+  
+  if (filtered.length === 0) {
+    document.getElementById('usersTableContainer').innerHTML = 
+      '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">🔍 کاربری یافت نشد</div>';
+    return;
+  }
+  
+  var html = '<table><tr>' +
+    '<th style="width:40px">#</th>' +
+    '<th>نام</th>' +
+    '<th>شماره حساب</th>' +
+    '<th>نام کاربری</th>' +
+    '<th style="min-width:150px">رمز عبور</th>' +
+    '<th>نقش</th>' +
+    '<th>تلفن</th>' +
+    '<th style="width:200px">عملیات</th>' +
+    '</tr>';
+  
+  filtered.forEach(function(u, idx) {
+    var defaultPwd = u.accountNumber || u.username;
+    var isChanged = u.password && u.password !== defaultPwd;
+    var usernameColor = isChanged ? '#22c55e' : '#ffd700';
+    
+    var roleText, roleColor;
+    if (u.isAdmin) {
+      roleText = '👑 مدیر'; roleColor = '#ffd700';
+    } else if (u.isCouncil) {
+      roleText = '🛡️ شورا'; roleColor = '#3b82f6';
+    } else {
+      roleText = '👤 عضو'; roleColor = 'rgba(255,255,255,.6)';
+    }
+    
+    var pwdId = 'pwd_' + idx;
+    var pwdDisplay = isChanged ? '🟢 تغییر یافته' : '🔵 پیش‌فرض';
+    
+    html += '<tr>';
+    html += '<td>' + (idx + 1) + '</td>';
+    html += '<td><b>' + (u.firstName || '—') + '</b></td>';
+    html += '<td style="font-family:monospace;direction:ltr;text-align:center">' + (u.accountNumber || '—') + '</td>';
+    html += '<td style="font-family:monospace;direction:ltr;text-align:center;color:' + usernameColor + ';font-weight:700">' + (u.username || '—') + '</td>';
+    html += '<td style="text-align:center">' +
+      '<span id="' + pwdId + '_hidden" style="font-family:monospace;font-size:1.1rem;letter-spacing:2px;color:#888">••••••</span>' +
+      '<span id="' + pwdId + '_shown" style="font-family:monospace;direction:ltr;font-weight:700;color:#22c55e;display:none">' + (u.password || '—') + '</span>' +
+      '<div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-top:3px">' + pwdDisplay + '</div>' +
+      '</td>';
+    html += '<td style="color:' + roleColor + ';font-weight:700;font-size:.75rem">' + roleText + '</td>';
+    html += '<td style="font-family:monospace;direction:ltr;font-size:.7rem">' + (u.phone || '—') + '</td>';
+    html += '<td>' +
+      '<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center">' +
+      '<button onclick="toggleUserPwd(\'' + pwdId + '\')" title="نمایش/مخفی رمز" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(59,130,246,.15);color:#60a5fa;cursor:pointer;font-size:.7rem">👁️</button>' +
+      '<button onclick="copyUserInfo(\'' + u.accountNumber + '\',\'' + u.username + '\',\'' + (u.password||'') + '\')" title="کپی اطلاعات" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer;font-size:.7rem">📋</button>' +
+      '<button onclick="adminChangeUserPwd(\'' + u.accountNumber + '\',\'' + (u.firstName||'') + '\')" title="تغییر رمز" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer;font-size:.7rem">✏️</button>' +
+      '</div>' +
+      '</td>';
+    html += '</tr>';
+  });
+  
+  html += '</table>';
+  document.getElementById('usersTableContainer').innerHTML = html;
+}
+
+function toggleUserPwd(pwdId) {
+  var hidden = document.getElementById(pwdId + '_hidden');
+  var shown = document.getElementById(pwdId + '_shown');
+  if (!hidden || !shown) return;
+  
+  if (shown.style.display === 'none') {
+    hidden.style.display = 'none';
+    shown.style.display = 'inline';
+  } else {
+    hidden.style.display = 'inline';
+    shown.style.display = 'none';
+  }
+}
+
+function copyUserInfo(accountNum, username, password) {
+  var text = '👤 اطلاعات ورود صندوق اتحاد\n\n' +
+             '🔢 شماره حساب: ' + accountNum + '\n' +
+             '👤 نام کاربری: ' + username + '\n' +
+             '🔑 رمز عبور: ' + password;
+  
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(function() {
+      alert('✅ اطلاعات کپی شد!');
+    }).catch(function() {
+      fallbackCopyUsers(text);
+    });
+  } else {
+    fallbackCopyUsers(text);
+  }
+}
+
+function fallbackCopyUsers(text) {
+  var textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    alert('✅ اطلاعات کپی شد!');
+  } catch (e) {
+    alert('❌ خطا در کپی');
+  }
+  document.body.removeChild(textarea);
+}
+
+function adminChangeUserPwd(accountNum, firstName) {
+  var newPwd = prompt('🔑 رمز جدید برای «' + firstName + '» (شماره حساب ' + accountNum + '):');
+  if (newPwd === null) return;
+  newPwd = newPwd.trim();
+  if (!newPwd || newPwd.length < 4) {
+    alert('⚠️ رمز باید حداقل ۴ کاراکتر باشد');
+    return;
+  }
+  
+  if (!confirm('آیا از تغییر رمز «' + firstName + '» به «' + newPwd + '» مطمئن هستید؟')) return;
+  
+  fetch(URL + '?action=adminChangePassword&key=' + encodeURIComponent(KEY) + 
+        '&username=' + encodeURIComponent(accountNum) + 
+        '&newPassword=' + encodeURIComponent(newPwd))
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.ok) {
+        alert('✅ رمز با موفقیت تغییر کرد\n\nرمز جدید: ' + newPwd);
+        loadUsersInfo();
+      } else {
+        alert('❌ ' + (d.error || 'خطا در تغییر رمز'));
+      }
+    })
+    .catch(function() { alert('❌ خطا در اتصال'); });
+}
+
+function loadPasswordLog() {
+  fetch(URL + '?action=getPasswordLog&_=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      passwordLogData = d.log || [];
+      renderPasswordLog();
+    })
+    .catch(function() {
+      document.getElementById('passwordLogContainer').innerHTML = 
+        '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت</div>';
+    });
+}
+
+function renderPasswordLog() {
+  if (passwordLogData.length === 0) {
+    document.getElementById('passwordLogContainer').innerHTML = 
+      '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">📭 هنوز تغییر رمزی ثبت نشده</div>';
+    return;
+  }
+  
+  var html = '<table><tr>' +
+    '<th>#</th>' +
+    '<th>تاریخ</th>' +
+    '<th>نام کاربری</th>' +
+    '<th>رمز قبلی</th>' +
+    '<th>رمز جدید</th>' +
+    '<th>تغییر دهنده</th>' +
+    '</tr>';
+  
+  passwordLogData.slice(0, 100).forEach(function(log, idx) {
+    var changerText = log.changedBy === 'admin' ? '👑 مدیر' : '👤 کاربر';
+    var changerColor = log.changedBy === 'admin' ? '#ffd700' : '#3b82f6';
+    
+    html += '<tr>' +
+      '<td>' + (idx + 1) + '</td>' +
+      '<td style="font-size:.7rem;color:rgba(255,255,255,.6)">' + (log.date || '—') + '</td>' +
+      '<td style="font-family:monospace;direction:ltr;text-align:center">' + (log.username || '—') + '</td>' +
+      '<td style="font-family:monospace;direction:ltr;text-align:center;color:rgba(255,255,255,.5);font-size:.75rem">' + (log.oldPassword || '—') + '</td>' +
+      '<td style="font-family:monospace;direction:ltr;text-align:center;color:#22c55e;font-weight:700">' + (log.newPassword || '—') + '</td>' +
+      '<td style="color:' + changerColor + ';font-weight:700;font-size:.75rem">' + changerText + '</td>' +
+      '</tr>';
+  });
+  
+  html += '</table>';
+  document.getElementById('passwordLogContainer').innerHTML = html;
+}
+
+function downloadUsersExcel() {
+  if (allUsersInfo.length === 0) {
+    alert('⚠️ هیچ کاربری برای دانلود وجود ندارد');
+    return;
+  }
+  
+  var rows = [];
+  rows.push(['ردیف', 'نام', 'شماره حساب', 'نام کاربری', 'رمز عبور', 'نقش', 'تلفن', 'کد خانوار', 'تعداد اعضا']);
+  
+  allUsersInfo.forEach(function(u, idx) {
+    var roleText = u.isAdmin ? 'مدیر' : (u.isCouncil ? 'شورا' : 'عضو');
+    rows.push([
+      (idx + 1),
+      u.firstName || '',
+      u.accountNumber || '',
+      u.username || '',
+      u.password || '',
+      roleText,
+      u.phone || '',
+      u.heh1 || '',
+      u.familyCount || 0
+    ]);
+  });
+  
+  var csv = '\uFEFF';
+  rows.forEach(function(row) {
+    csv += row.map(function(cell) {
+      var s = String(cell);
+      if (s.indexOf(',') >= 0 || s.indexOf('"') >= 0 || s.indexOf('\n') >= 0) {
+        return '"' + s.replace(/"/g, '""') + '"';
+      }
+      return s;
+    }).join(',') + '\n';
+  });
+  
+  var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  var link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'users_info_' + new Date().toISOString().split('T')[0] + '.csv';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  alert('✅ فایل Excel دانلود شد');
+}
+
+console.log('✅ تب اطلاعات کاربری آماده است');
 </script>
 </body>
 </html>
