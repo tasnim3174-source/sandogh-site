@@ -2509,6 +2509,374 @@ background: Wormy !important;
             }
         }
 </style>
+<!-- 🆕 CSS چت‌بات -->
+<style id="chatbotStyles">
+/* دکمه شناور چت‌بات */
+.chatbot-float-btn {
+   position: fixed;
+top: 50%;
+left: 20px;
+transform: translateY(-50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: 3px solid #ffd700;
+    cursor: pointer;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 8px 30px rgba(102,126,234,0.6);
+    transition: all 0.3s ease;
+    animation: robotPulse 2.5s ease-in-out infinite;
+}
+
+.chatbot-float-btn.show {
+    display: flex;
+}
+
+.chatbot-float-btn:hover {
+    transform: scale(1.15) rotate(-5deg);
+    box-shadow: 0 12px 40px rgba(102,126,234,0.9);
+}
+
+.chatbot-float-btn:active {
+    transform: scale(0.95);
+}
+
+.chatbot-float-btn .badge-notif {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-family: Tahoma;
+}
+
+@keyframes robotPulse {
+    0%, 100% {
+        box-shadow: 0 8px 30px rgba(102,126,234,0.6), 0 0 0 0 rgba(102,126,234,0.7);
+    }
+    50% {
+        box-shadow: 0 8px 40px rgba(102,126,234,0.9), 0 0 0 20px rgba(102,126,234,0);
+    }
+}
+
+/* پنجره چت */
+.chatbot-window {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 550px;
+    max-height: calc(100vh - 120px);
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px) scale(0.8);
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.chatbot-window.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.chatbot-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ffd700;
+    flex-shrink: 0;
+}
+
+.chatbot-header .bot-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chatbot-header .bot-avatar {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border: 2px solid #fff;
+}
+
+.chatbot-header .bot-name {
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.chatbot-header .bot-status {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+}
+
+.chatbot-header .bot-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22c55e;
+    animation: blinkDot 1.5s ease-in-out infinite;
+}
+
+@keyframes blinkDot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.chatbot-close {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.chatbot-close:hover {
+    background: #ef4444;
+    transform: rotate(90deg);
+}
+
+.chatbot-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+}
+
+.chatbot-body::-webkit-scrollbar { width: 6px; }
+.chatbot-body::-webkit-scrollbar-track { background: transparent; }
+.chatbot-body::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 99px; }
+
+.chat-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    word-wrap: break-word;
+    animation: msgIn 0.3s ease;
+}
+
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg.bot {
+    background: rgba(102,126,234,0.15);
+    border: 1px solid rgba(102,126,234,0.3);
+    color: #fff;
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-msg.user {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-msg strong {
+    color: #ffd700;
+    font-weight: 900;
+}
+
+.chat-msg .highlight {
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-family: monospace;
+    direction: ltr;
+    display: inline-block;
+    margin: 2px 0;
+}
+
+.chat-quick-actions {
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,215,0,0.2);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-height: 100px;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.quick-btn {
+    padding: 6px 12px;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 99px;
+    color: #ffd700;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.quick-btn:hover {
+    background: rgba(255,215,0,0.2);
+    transform: translateY(-2px);
+}
+
+.chatbot-input-area {
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.4);
+    border-top: 2px solid #ffd700;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.chatbot-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.chatbot-input:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px rgba(255,215,0,0.1);
+}
+
+.chatbot-send {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    color: #1a1a2e;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.chatbot-send:hover {
+    transform: scale(1.1);
+}
+
+.chatbot-send:active {
+    transform: scale(0.9);
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: rgba(102,126,234,0.15);
+    border-radius: 16px;
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: #ffd700;
+    border-radius: 50%;
+    animation: typingBounce 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-8px); opacity: 1; }
+}
+
+/* موبایل */
+@media (max-width: 500px) {
+    .chatbot-float-btn {
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        width: 55px;
+        height: 55px;
+        font-size: 1.7rem;
+    }
+    
+    .chatbot-window {
+        top: 50%;
+        left: 75px;
+        transform: translateY(-50%);
+        right: 10px;
+        width: auto;
+        max-width: none;
+        height: calc(100vh - 40px);
+        max-height: 600px;
+    }
+    
+    .chatbot-window.show {
+        transform: translateY(-50%) scale(1);
+    }
+}
+</style>
 </head>
 <body>
 
@@ -3014,46 +3382,54 @@ background: Wormy !important;
     });
 
     loadCoins();
-    loadNotifications();
-    loadGameScores();
-    members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
-    saveRememberMe(res.username, res.password);
+loadNotifications();
+loadGameScores();
+members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+// 🆕 نمایش دکمه چت‌بات بعد از لاگین
+setTimeout(function() {
+    var chatBtn = document.getElementById('chatbotFloatBtn');
+    if (chatBtn) {
+        chatBtn.style.display = 'flex';
+        console.log('✅ دکمه چت‌بات نمایش داده شد');
+    }
+}, 2000);
 
-    setTimeout(function() {
-        document.getElementById('loaderOk').classList.add('active');
-        document.getElementById('loaderOk').classList.add('show');
-        ldrBurst(W / 2, H * 0.35, 90);
-        setTimeout(function() { ldrBurst(W * 0.3, H * 0.3, 40); }, 200);
-        setTimeout(function() { ldrBurst(W * 0.7, H * 0.3, 40); }, 400);
-    }, 600);
+saveRememberMe(res.username, res.password);
 
+setTimeout(function() {
+    document.getElementById('loaderOk').classList.add('active');
+    document.getElementById('loaderOk').classList.add('show');
+    ldrBurst(W / 2, H * 0.35, 90);
+    setTimeout(function() { ldrBurst(W * 0.3, H * 0.3, 40); }, 200);
+    setTimeout(function() { ldrBurst(W * 0.7, H * 0.3, 40); }, 400);
+}, 600);
+
+setTimeout(function() {
+    document.getElementById('newLoader').classList.add('away');
+    document.getElementById('loaderOk').classList.remove('show');
+    const appContainer = document.getElementById('appContainer');
+    appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+    renderPage('menu');
+    updateVisitInfo();
+    updateFloatingButtons();
+    startKeepAlive();
+    
+    if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+    autoUpdateInterval = setInterval(async function() { 
+        if (currentUser) await forceUpdateData(); 
+    }, 60 * 60 * 1000);
+    
+    const member = members.find(m => m.id === currentUser.memberId);
+    setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
+    
     setTimeout(function() {
-        document.getElementById('newLoader').classList.add('away');
-        document.getElementById('loaderOk').classList.remove('show');
-        const appContainer = document.getElementById('appContainer');
-        appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
-        renderPage('menu');
-        updateVisitInfo();
-        updateFloatingButtons();
-        startKeepAlive();
-        
-        if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-        // 🆕 به‌روزرسانی هر ۱ ساعت (نه بلافاصله)
-        autoUpdateInterval = setInterval(async function() { 
-            if (currentUser) await forceUpdateData(); 
-        }, 60 * 60 * 1000);
-        
-        const member = members.find(m => m.id === currentUser.memberId);
-        setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
-        
-        setTimeout(function() {
-            document.getElementById('newLoader').style.display = 'none';
-            document.getElementById('newLoader').classList.remove('active', 'away');
-            document.getElementById('loaderOk').classList.remove('active');
-            document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
-            if (ldrFx) ldrFx.classList.remove('active');
-        }, 700);
-    }, 1800);
+        document.getElementById('newLoader').style.display = 'none';
+        document.getElementById('newLoader').classList.remove('active', 'away');
+        document.getElementById('loaderOk').classList.remove('active');
+        document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
+        if (ldrFx) ldrFx.classList.remove('active');
+    }, 700);
+}, 1800);
 }
         function showLoaderAnimation() {
             // ===== زمان‌سنج از لحظه نمایش لودر =====
@@ -3409,7 +3785,56 @@ const FEATURES = { showMyFund: true };
         // ============================================================
         // بخش ۴: مدیریت ورود و خروج
         // ============================================================
-        function saveRememberMe(username, password) {
+        // ============================================================
+// 🆕 توابع کش کاربران (localStorage)
+// ============================================================
+
+function saveUsersToCache(usersList) {
+    try {
+        const cacheData = {
+            version: 1,
+            timestamp: Date.now(),
+            users: usersList
+        };
+        localStorage.setItem('sandogh_users_cache', JSON.stringify(cacheData));
+        console.log('💾 کاربران در localStorage ذخیره شدند:', usersList.length);
+    } catch (e) {
+        console.warn('⚠️ خطا در ذخیره کاربران:', e);
+    }
+}
+
+function loadUsersFromCache() {
+    try {
+        const cached = localStorage.getItem('sandogh_users_cache');
+        if (!cached) return null;
+        
+        const data = JSON.parse(cached);
+        if (!data.users || !Array.isArray(data.users)) return null;
+        
+        const age = Date.now() - (data.timestamp || 0);
+        const MAX_AGE = 24 * 60 * 60 * 1000;
+        
+        if (age > MAX_AGE) {
+            console.log('⏰ کش کاربران منقضی شده');
+            return null;
+        }
+        
+        console.log('✅ کاربران از localStorage بارگذاری شدند:', data.users.length);
+        return data.users;
+    } catch (e) {
+        console.warn('⚠️ خطا در خواندن کش کاربران:', e);
+        return null;
+    }
+}
+
+function clearUsersCache() {
+    try {
+        localStorage.removeItem('sandogh_users_cache');
+        console.log('🗑️ کش کاربران پاک شد');
+    } catch (e) {}
+}
+
+function saveRememberMe(username, password) {
             if (document.getElementById('rememberMe').checked) {
                 try {
                     localStorage.setItem('sandogh_remember_username', username);
@@ -5269,6 +5694,18 @@ const response = await fetch(fullUrl, { cache: 'no-cache' });
                     transactionsByMember.get(id).push(t);
                 });
                 members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+// 🆕 نمایش دکمه چت‌بات بعد از لاگین
+setTimeout(function() {
+    var chatBtn = document.getElementById('chatbotFloatBtn');
+    if (chatBtn) {
+        chatBtn.style.display = 'flex';
+        console.log('✅ دکمه چت‌بات نمایش داده شد');
+    }
+}, 2000);
+    
+    // 🆕 نمایش دکمه چت‌بات
+    setTimeout(showChatbotButton, 2000);
+   
                 localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
                 if (currentPage) renderPage(currentPage);
                 showToast({ type: 'success', title: 'بروزرسانی موفق', message: 'اطلاعات به‌روز شد.' });
@@ -8369,7 +8806,88 @@ function getMemberRealBalance(memberId) {
             const filtered = allTxns.filter(tx => Object.values(tx).some(val => String(val).toLowerCase().includes(search)));
             renderExcelTransactions(filtered, 'txExcelContainer');
         }
-
+// ============================================================
+// 🆕 ارسال اطلاعات کاربر به چت‌بات
+// ============================================================
+// ============================================================
+// 🆕 ساخت خودکار iframe چت‌بات
+// ============================================================
+function createChatbotIframe() {
+    // اگه قبلاً هست، دوباره نساز
+    if (document.getElementById('chatbotIframe')) {
+        console.log('ℹ️ iframe چت‌بات از قبل هست');
+        return;
+    }
+    
+    var iframe = document.createElement('iframe');
+    iframe.id = 'chatbotIframe';
+    iframe.src = 'chatbot.html';
+    iframe.setAttribute('allowtransparency', 'true');
+    iframe.style.cssText = 'position:fixed;bottom:0;right:0;width:100%;height:100%;border:none;pointer-events:none;z-index:9998;background:transparent;display:none;';
+    
+    document.body.appendChild(iframe);
+    console.log('✅ iframe چت‌بات ساخته شد');
+}
+function sendUserDataToChatbot() {
+    var iframe = document.getElementById('chatbotIframe');
+    if (!iframe || !iframe.contentWindow) {
+        console.log('⚠️ چت‌بات آماده نیست');
+        return;
+    }
+    
+    if (!currentUser || !currentUser.memberId) {
+        console.log('⚠️ کاربر لاگین نکرده');
+        return;
+    }
+    
+    var member = members.find(function(m) { return m.id === currentUser.memberId; });
+    if (!member) {
+        console.log('⚠️ اطلاعات عضو پیدا نشد');
+        return;
+    }
+    
+    var sd = memberScores[member.id];
+    
+    // محاسبه تاریخ قسط بعدی
+    var nextInstDate = '---';
+    var nextInstDays = 0;
+    try {
+        var t = getTodayShamsi();
+        var todayCont = shamsiToContDays(t.y, t.m, t.d);
+        var instDates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+        for (var i = 0; i < instDates.length; i++) {
+            var num = shamsiToContDays(instDates[i].year, instDates[i].month, instDates[i].day);
+            if (num >= todayCont) {
+                nextInstDays = num - todayCont;
+                nextInstDate = instDates[i].year + '/' + String(instDates[i].month).padStart(2,'0') + '/' + String(instDates[i].day).padStart(2,'0');
+                break;
+            }
+        }
+    } catch(e) {}
+    
+    iframe.contentWindow.postMessage({
+        type: 'USER_DATA',
+        data: {
+            firstName: member.firstName || 'کاربر',
+            accountNumber: member.accountNumber || '---',
+            balance: member.balance || 0,
+            loanBalance: member.loanBalance || 0,
+            totalInstallments: member.totalInstallments || 0,
+            paidInstallments: member.paidInstallments || 0,
+            remainingInstallments: member.remainingInstallments || 0,
+            overdueInstallments: Math.abs(member.overdueInstallments || 0),
+            installmentAmount: member.installmentAmount || 0,
+            monthlySalary: member.monthlySalary || 0,
+            savingsStatus: member.savingsStatus || 0,
+            nextInstallmentDate: nextInstDate,
+            nextInstallmentDays: nextInstDays,
+            points: sd ? sd.score : 0,
+            tier: sd ? (sd.tierEmoji + ' ' + sd.tierName) : '---'
+        }
+    }, '*');
+    
+    console.log('✅ اطلاعات کاربر به چت‌بات ارسال شد');
+}
         function goToMenu() {
             currentPage = 'menu';
             renderPage('menu');
@@ -16311,6 +16829,1067 @@ function fallbackCopy(text) {
 }
 
 console.log('✅ مودال فراموشی رمز (نسخه نهایی) آماده است');
+// 🆕 اجازه دادن به کلیک روی محتوا (چون iframe کل صفحه رو پوشونده)
+setTimeout(function() {
+    var iframe = document.getElementById('chatbotIframe');
+    if (iframe) {
+        iframe.style.pointerEvents = 'none';
+        
+        // 🆕 مدیریت پیام‌های چت‌بات
+window.addEventListener('message', function(e) {
+    var iframe = document.getElementById('chatbotIframe');
+    if (!iframe) return;
+    
+    // 🆕 چت‌بات آماده شد → اطلاعات کاربر رو بفرست
+    if (e.data && e.data.type === 'CHATBOT_READY') {
+        console.log('✅ چت‌بات آماده شد - ارسال اطلاعات');
+        if (typeof sendUserDataToChatbot === 'function' && currentUser) {
+            sendUserDataToChatbot();
+        }
+    }
+    
+    // 🆕 چت‌بات باز شد → iframe کلیک‌پذیر بشه
+    if (e.data && e.data.type === 'CHATBOT_OPEN') {
+        iframe.style.pointerEvents = 'auto';
+        console.log('✅ چت‌بات باز شد');
+    }
+    
+    // 🆕 چت‌بات بسته شد → iframe کلیک‌ناپذیر بشه
+    if (e.data && e.data.type === 'CHATBOT_CLOSE') {
+        iframe.style.pointerEvents = 'none';
+        console.log('✅ چت‌بات بسته شد');
+    }
+});
+<!-- ============================================================
+     🤖 CSS چت‌بات
+     ============================================================ -->
+<style id="chatbotStyles">
+.chatbot-float-btn {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: 3px solid #ffd700;
+    cursor: pointer;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 8px 30px rgba(102,126,234,0.6);
+    transition: all 0.3s ease;
+    animation: robotPulse 2.5s ease-in-out infinite;
+}
+.chatbot-float-btn.show { display: flex; }
+.chatbot-float-btn:hover { transform: translateY(-50%) scale(1.15) rotate(-5deg); }
+.chatbot-float-btn:active { transform: translateY(-50%) scale(0.95); }
+
+@keyframes robotPulse {
+    0%, 100% { box-shadow: 0 8px 30px rgba(102,126,234,0.6), 0 0 0 0 rgba(102,126,234,0.7); }
+    50% { box-shadow: 0 8px 40px rgba(102,126,234,0.9), 0 0 0 20px rgba(102,126,234,0); }
+}
+
+.chatbot-window {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 550px;
+    max-height: calc(100vh - 120px);
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px) scale(0.8);
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+.chatbot-window.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+.chatbot-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ffd700;
+    flex-shrink: 0;
+}
+.chatbot-header .bot-info { display: flex; align-items: center; gap: 10px; }
+.chatbot-header .bot-avatar {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    border: 2px solid #fff;
+}
+.chatbot-header .bot-name { font-weight: 900; font-size: 0.95rem; color: #fff; }
+.chatbot-header .bot-status {
+    font-size: 0.7rem; color: rgba(255,255,255,0.85); margin-top: 2px;
+    display: flex; align-items: center; gap: 5px;
+}
+.chatbot-header .bot-status::before {
+    content: '';
+    width: 8px; height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22c55e;
+}
+.chatbot-close {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.chatbot-close:hover { background: #ef4444; }
+.chatbot-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+}
+.chat-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    word-wrap: break-word;
+}
+.chat-msg.bot {
+    background: rgba(102,126,234,0.15);
+    border: 1px solid rgba(102,126,234,0.3);
+    color: #fff;
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+}
+.chat-msg.user {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-left-radius: 4px;
+}
+.chat-msg strong { color: #ffd700; font-weight: 900; }
+.chat-msg .highlight {
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-family: monospace;
+    direction: ltr;
+    display: inline-block;
+}
+.chat-quick-actions {
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,215,0,0.2);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-height: 100px;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+.quick-btn {
+    padding: 6px 12px;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 99px;
+    color: #ffd700;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.quick-btn:hover { background: rgba(255,215,0,0.2); }
+.chatbot-input-area {
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.4);
+    border-top: 2px solid #ffd700;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+.chatbot-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+}
+.chatbot-input:focus { border-color: #ffd700; }
+.chatbot-send {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    color: #1a1a2e;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+.chatbot-send:hover { transform: scale(1.1); }
+
+.chatbot-highlight {
+    animation: chatbotHighlight 1s ease-in-out infinite !important;
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.4) !important;
+    transform: scale(1.08) !important;
+    z-index: 5 !important;
+    position: relative !important;
+}
+@keyframes chatbotHighlight {
+    0%, 100% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.4); transform: scale(1.08); }
+    50% { box-shadow: 0 0 50px rgba(255, 215, 0, 1), 0 0 100px rgba(255, 215, 0, 0.6); transform: scale(1.12); }
+}
+
+@media (max-width: 500px) {
+    .chatbot-float-btn {
+        top: 50%; left: 10px;
+        transform: translateY(-50%);
+        width: 55px; height: 55px;
+        font-size: 1.7rem;
+    }
+    .chatbot-window {
+        bottom: 90px; right: 10px; left: 10px;
+        width: auto;
+        height: calc(100vh - 110px);
+    }
+}
+</style>
+
+<!-- ============================================================
+     🤖 HTML چت‌بات
+     ============================================================ -->
+<button class="chatbot-float-btn" id="chatbotFloatBtn" onclick="toggleChatbot()">
+    🤖
+</button>
+
+<div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+        <div class="bot-info">
+            <div class="bot-avatar">🤖</div>
+            <div>
+                <div class="bot-name">دستیار صندوق</div>
+                <div class="bot-status">آنلاین</div>
+            </div>
+        </div>
+        <button class="chatbot-close" onclick="toggleChatbot()">✕</button>
+    </div>
+    <div class="chatbot-body" id="chatbotBody"></div>
+    <div class="chat-quick-actions" id="chatQuickActions"></div>
+    <div class="chatbot-input-area">
+        <input type="text" class="chatbot-input" id="chatbotInput" placeholder="سوالت رو بنویس..." onkeypress="if(event.key==='Enter') sendChatMessage()">
+        <button class="chatbot-send" onclick="sendChatMessage()">📤</button>
+    </div>
+</div>
+
+<!-- ============================================================
+     🤖 JavaScript چت‌بات
+     ============================================================ -->
+<script>
+(function() {
+    'use strict';
+    console.log('🚀 شروع چت‌بات...');
+    
+    var chatbotUserData = {
+        firstName: 'کاربر', balance: 0, loanBalance: 0,
+        totalInstallments: 0, paidInstallments: 0,
+        remainingInstallments: 0, overdueInstallments: 0,
+        installmentAmount: 0, monthlySalary: 0, savingsStatus: 0,
+        nextInstallmentDate: '---', nextInstallmentDays: 0,
+        points: 0, tier: '---'
+    };
+    var isChatbotOpen = false;
+    var isChatbotFirstOpen = true;
+    
+    window.highlightMenuKey = function(keyName) {
+        document.querySelectorAll('.chatbot-highlight').forEach(function(el) {
+            el.classList.remove('chatbot-highlight');
+        });
+        var items = document.querySelectorAll('.grid-menu-item');
+        var found = null;
+        items.forEach(function(item) {
+            if ((item.textContent || '').includes(keyName)) found = item;
+        });
+        if (found) {
+            found.classList.add('chatbot-highlight');
+            found.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function() { found.classList.remove('chatbot-highlight'); }, 5000);
+        }
+    };
+    
+    window.updateChatbotUserData = function() {
+        if (typeof currentUser === 'undefined' || !currentUser || !currentUser.memberId) return;
+        if (typeof members === 'undefined' || !members) return;
+        var member = members.find(function(m) { return m.id === currentUser.memberId; });
+        if (!member) return;
+        var sd = (typeof memberScores !== 'undefined' && memberScores[member.id]) ? memberScores[member.id] : null;
+        var nextDate = '---', nextDays = 0;
+        try {
+            if (typeof getTodayShamsi === 'function' && typeof shamsiToContDays === 'function' && typeof generateInstallmentDates === 'function') {
+                var t = getTodayShamsi();
+                var todayCont = shamsiToContDays(t.y, t.m, t.d);
+                var dates = generateInstallmentDates(member.loanReceiveDate, member.totalInstallments || 0);
+                for (var i = 0; i < dates.length; i++) {
+                    var num = shamsiToContDays(dates[i].year, dates[i].month, dates[i].day);
+                    if (num >= todayCont) {
+                        nextDays = num - todayCont;
+                        nextDate = dates[i].year + '/' + String(dates[i].month).padStart(2,'0') + '/' + String(dates[i].day).padStart(2,'0');
+                        break;
+                    }
+                }
+            }
+        } catch(e) {}
+        chatbotUserData = {
+            firstName: member.firstName || 'کاربر',
+            balance: member.balance || 0,
+            loanBalance: member.loanBalance || 0,
+            totalInstallments: member.totalInstallments || 0,
+            paidInstallments: member.paidInstallments || 0,
+            remainingInstallments: member.remainingInstallments || 0,
+            overdueInstallments: Math.abs(member.overdueInstallments || 0),
+            installmentAmount: member.installmentAmount || 0,
+            monthlySalary: member.monthlySalary || 0,
+            savingsStatus: member.savingsStatus || 0,
+            nextInstallmentDate: nextDate,
+            nextInstallmentDays: nextDays,
+            points: sd ? sd.score : 0,
+            tier: sd ? (sd.tierEmoji + ' ' + sd.tierName) : '---'
+        };
+    };
+    
+    window.toggleChatbot = function() {
+        isChatbotOpen = !isChatbotOpen;
+        var win = document.getElementById('chatbotWindow');
+        var btn = document.getElementById('chatbotFloatBtn');
+        if (isChatbotOpen) {
+            win.classList.add('show');
+            btn.innerHTML = '❌';
+            if (isChatbotFirstOpen) {
+                isChatbotFirstOpen = false;
+                updateChatbotUserData();
+                setTimeout(function() {
+                    addBotMessage('سلام ' + chatbotUserData.firstName + ' عزیز! 👋<br>من دستیار هوشمند صندوق اتحاد هستم.<br>چطور می‌تونم کمکت کنم؟');
+                    showChatbotQuickActions(['موجودی من چقدره؟', 'وام من چقدره؟', 'صورتحساب کجاست؟', 'کمک']);
+                }, 300);
+            }
+            setTimeout(function() { var i = document.getElementById('chatbotInput'); if(i) i.focus(); }, 500);
+        } else {
+            win.classList.remove('show');
+            btn.innerHTML = '🤖';
+        }
+    };
+    
+    window.addBotMessage = function(html) {
+        var body = document.getElementById('chatbotBody');
+        if (!body) return;
+        var msg = document.createElement('div');
+        msg.className = 'chat-msg bot';
+        msg.innerHTML = html;
+        body.appendChild(msg);
+        body.scrollTop = body.scrollHeight;
+    };
+    
+    window.addUserMessage = function(text) {
+        var body = document.getElementById('chatbotBody');
+        if (!body) return;
+        var msg = document.createElement('div');
+        msg.className = 'chat-msg user';
+        msg.textContent = text;
+        body.appendChild(msg);
+        body.scrollTop = body.scrollHeight;
+    };
+    
+    window.showChatbotQuickActions = function(actions) {
+        var c = document.getElementById('chatQuickActions');
+        if (!c) return;
+        c.innerHTML = '';
+        actions.forEach(function(a) {
+            var b = document.createElement('button');
+            b.className = 'quick-btn';
+            b.textContent = a;
+            b.onclick = function() { document.getElementById('chatbotInput').value = a; window.sendChatMessage(); };
+            c.appendChild(b);
+        });
+    };
+    
+    window.sendChatMessage = function() {
+        var input = document.getElementById('chatbotInput');
+        if (!input) return;
+        var text = input.value.trim();
+        if (!text) return;
+        addUserMessage(text);
+        input.value = '';
+        setTimeout(function() {
+            var ans = window.getChatbotAnswer(text);
+            addBotMessage(ans.text);
+            showChatbotQuickActions(ans.quickActions || ['موجودی من چقدره؟', 'وام من چقدره؟']);
+        }, 500);
+    };
+    
+    window.getChatbotAnswer = function(text) {
+        var t = text.toLowerCase().replace(/[؟?!.]/g, '').trim();
+        var d = chatbotUserData;
+        
+        if (t.includes('محاسبه') && (t.includes('قسط') || t.includes('وام'))) {
+            return { text: '🧮 <strong>اطلاعات اقساط:</strong><br><br>مانده وام: <span class="highlight">' + cfMoney(d.loanBalance) + ' تومان</span><br>مبلغ هر قسط: <span class="highlight">' + cfMoney(d.installmentAmount) + ' تومان</span><br>کل اقساط: <strong>' + d.totalInstallments + '</strong><br>باقی‌مانده: <strong>' + d.remainingInstallments + '</strong>', quickActions: ['چند قسط مونده؟', 'قسط بعدیم کیه؟'] };
+        }
+        if (t.includes('چند') && t.includes('قسط')) {
+            return { text: '📊 شما <span class="highlight">' + d.remainingInstallments + ' قسط</span> از ' + d.totalInstallments + ' باقی مونده.', quickActions: ['قسط بعدیم کیه؟', 'وام من چقدره؟'] };
+        }
+        if (t.includes('بازی') || t.includes('سرگرمی')) {
+            highlightMenuKey('رشد ویژه خردسالان');
+            return { text: '🎮 <strong>بازی‌ها</strong><br><br>بخش <strong>«ویژه اعضا»</strong> رو ببین.<br>روی <span class="highlight">🧒 رشد ویژه خردسالان</span> بزن.<br><br>• 🐍 مار و پله<br>• ❌⭕ دوز<br>• 🧮 بازی ریاضی', quickActions: ['مار و پله کجاست؟', 'بازی دوز کجاست؟'] };
+        }
+        if (t.includes('مار و پله')) {
+            highlightMenuKey('رشد ویژه خردسالان');
+            return { text: '🐍🪜 <strong>مار و پله</strong><br>برو به <span class="highlight">🧒 رشد ویژه خردسالان</span>.', quickActions: ['بازی‌ها کجاست؟'] };
+        }
+        if (t.includes('دوز')) {
+            highlightMenuKey('رشد ویژه خردسالان');
+            return { text: '❌⭕ <strong>دوز</strong><br>برو به <span class="highlight">🧒 رشد ویژه خردسالان</span>.', quickActions: ['بازی‌ها کجاست؟'] };
+        }
+        if (t.includes('کودک') || t.includes('بچه') || t.includes('خردسال')) {
+            highlightMenuKey('رشد ویژه خردسالان');
+            return { text: '🧒 <strong>بخش کودکان</strong><br>بخش <strong>«ویژه اعضا»</strong> → <span class="highlight">🧒 رشد ویژه خردسالان</span>', quickActions: ['بازی‌ها کجاست؟'] };
+        }
+        if (t.includes('نوجوان') || t.includes('قلک')) {
+            highlightMenuKey('قلک ویژه نوجوانان');
+            return { text: '🐷 <strong>قلک نوجوانان</strong><br>بخش <strong>«ویژه اعضا»</strong> → <span class="highlight">🐷 قلک ویژه نوجوانان</span>', quickActions: ['صندوق من کجاست؟'] };
+        }
+        if (t.includes('بانو') || t.includes('خانم') || t.includes('آشپزی') || t.includes('غذا')) {
+            highlightMenuKey('بانو ویژه بانوان');
+            return { text: '👩 <strong>بخش بانوان</strong><br>بخش <strong>«ویژه اعضا»</strong> → <span class="highlight">👩 بانو ویژه بانوان</span>', quickActions: ['آشپزی کجاست؟'] };
+        }
+        if (t.includes('مسابقه') || t.includes('کوییز')) {
+            highlightMenuKey('مسابقات');
+            return { text: '🏆 <strong>مسابقات</strong><br>بخش <strong>«ویژه اعضا»</strong> → <span class="highlight">🏆 مسابقات</span>', quickActions: ['چطور امتیاز بگیرم؟'] };
+        }
+        if (t.includes('نظرسنجی')) {
+            highlightMenuKey('نظرسنجی');
+            return { text: '📊 <strong>نظرسنجی</strong><br>بخش <strong>«ویژه اعضا»</strong> → <span class="highlight">📊 نظرسنجی</span>', quickActions: ['چطور امتیاز بگیرم؟'] };
+        }
+        if ((t.includes('بخش') || t.includes('کلید')) && (t.includes('چیه') || t.includes('همه') || t.includes('لیست') || t.includes('نشون'))) {
+            return { text: '📱 <strong>بخش‌های برنامه:</strong><br><br>🏠 <strong>عمومی:</strong> اطلاعات شخصی، صورتحساب، درخواست‌ها، پشتیبانی<br><br>👑 <strong>ویژه:</strong> پاداش، امتیازات، صندوق من، برنامه‌های کاربردی<br><br>💎 <strong>ویژه اعضا:</strong> خردسالان، نوجوانان، بانوان، مسابقات، پیام، نظرسنجی<br><br>👨‍👩‍👧 <strong>خانواده</strong>، 👑 <strong>شورا</strong>', quickActions: ['صورتحساب کجاست؟', 'بازی‌ها کجاست؟'] };
+        }
+        if (t.includes('کاربردی') || t.includes('ماشین حساب') || t.includes('تقویم') || t.includes('یادداشت')) {
+            highlightMenuKey('برنامه‌های کاربردی');
+            return { text: '🛠️ <strong>برنامه‌های کاربردی</strong><br>روی <span class="highlight">🛠️ برنامه‌های کاربردی</span> بزن.<br><br>• 📞 دفترچه تلفن<br>• 🧮 ماشین‌حساب<br>• 📝 یادداشت‌ها<br>• 📅 تقویم<br>• 🏥 سلامت<br>• 🕌 معارف اسلامی', quickActions: ['ماشین حساب زکات کجاست؟', 'تقویم کجاست؟'] };
+        }
+        if (t.includes('زکات') || t.includes('خمس')) {
+            return { text: '🕌 ماشین‌حساب زکات/خمس<br>توی <span class="highlight">🛠️ برنامه‌های کاربردی</span> → تب <strong>ماشین‌حساب‌ها</strong>', quickActions: ['برنامه‌های کاربردی کجاست؟'] };
+        }
+        if (t.includes('تقویم')) {
+            return { text: '📅 تقویم<br>توی <span class="highlight">🛠️ برنامه‌های کاربردی</span> → تب <strong>تقویم</strong>', quickActions: ['برنامه‌های کاربردی کجاست؟'] };
+        }
+        if (t.includes('پاداش') || t.includes('جایزه') || t.includes('گردونه')) {
+            highlightMenuKey('پاداش روزانه');
+            return { text: '🎁 <strong>پاداش روزانه</strong><br>بخش <strong>«بخش ویژه»</strong> → <span class="highlight">🎁 پاداش روزانه</span>', quickActions: ['امتیاز من چقدره؟'] };
+        }
+        if (t.includes('فروشگاه') || t.includes('خرید')) {
+            highlightMenuKey('امتیازات');
+            return { text: '🛍️ <strong>فروشگاه</strong><br>بخش <strong>«بخش ویژه»</strong> → <span class="highlight">⭐ امتیازات و فروشگاه</span>', quickActions: ['امتیاز من چقدره؟'] };
+        }
+        if (t.includes('صندوق من') || t.includes('درخت رشد') || t.includes('نشان')) {
+            highlightMenuKey('صندوق من');
+            return { text: '💎 <strong>صندوق من</strong><br>بخش <strong>«بخش ویژه»</strong> → <span class="highlight">💎 صندوق من</span>', quickActions: ['امتیاز من چقدره؟'] };
+        }
+        if (t.includes('شورا') || t.includes('مدیر') || t.includes('پنل')) {
+            return { text: '👑 <strong>بخش شورا و مدیر</strong><br>پایین‌ترین بخش منو → <span class="highlight">🛠️ پنل مدیر سیستم</span><br><br>⚠️ فقط برای شورا و مدیر', quickActions: ['دسترسی‌ها کجاست؟', 'آمار کجاست؟'] };
+        }
+        if (t.includes('دسترسی')) {
+            return { text: '🔑 <strong>دسترسی‌ها</strong><br>توی <span class="highlight">🛠️ پنل مدیر سیستم</span>', quickActions: ['پنل شورا کجاست؟'] };
+        }
+        if (t.includes('آمار')) {
+            return { text: '📊 <strong>اطلاعات و آمار</strong><br>توی <span class="highlight">🛠️ پنل مدیر سیستم</span>', quickActions: ['پنل شورا کجاست؟'] };
+        }
+        if (t.includes('گزارش') && t.includes('گیری')) {
+            return { text: '📈 <strong>گزارش‌گیری</strong><br>توی <span class="highlight">🛠️ پنل مدیر سیستم</span>', quickActions: ['پنل شورا کجاست؟'] };
+        }
+        if (t.includes('خانواده') || t.includes('فامیل')) {
+            highlightMenuKey('خانواده من');
+            return { text: '👨‍👩‍👧 <strong>خانواده من</strong><br>بخش <strong>«بخش خانواده»</strong> → <span class="highlight">👥 خانواده من</span><br><br>⚠️ فقط سرپرست خانوار', quickActions: ['اطلاعات خانواده کجاست؟'] };
+        }
+        if (t.includes('موجودی') || t.includes('پول')) {
+            return { text: '💰 موجودی: <span class="highlight">' + cfMoney(d.balance) + ' تومان</span>', quickActions: ['وام من چقدره؟', 'قسط بعدیم کیه؟', 'پس‌انداز من چقدره؟'] };
+        }
+        if (t.includes('وام') || t.includes('بدهی')) {
+            if (d.loanBalance === 0) return { text: '🎉 شما <strong>هیچ وامی</strong> ندارید.', quickActions: ['موجودی من چقدره؟'] };
+            return { text: '💳 <strong>اطلاعات وام:</strong><br><br>مانده وام: <span class="highlight">' + cfMoney(d.loanBalance) + ' تومان</span><br>اقساط: ' + d.paidInstallments + ' از ' + d.totalInstallments + '<br>مبلغ هر قسط: <span class="highlight">' + cfMoney(d.installmentAmount) + ' تومان</span>', quickActions: ['قسط بعدیم کیه؟', 'معوقه دارم؟', 'چند قسط مونده؟'] };
+        }
+        if (t.includes('قسط') || t.includes('اقساط')) {
+            if (d.remainingInstallments === 0) return { text: '🎉 همه اقساط پرداخت شده.', quickActions: ['وام من چقدره؟'] };
+            return { text: '📅 قسط بعدی: <span class="highlight">' + d.nextInstallmentDate + '</span><br>مبلغ: ' + cfMoney(d.installmentAmount) + ' تومان<br>⏳ <strong>' + d.nextInstallmentDays + ' روز</strong> مونده', quickActions: ['معوقه دارم؟', 'وام من چقدره؟'] };
+        }
+        if (t.includes('معوقه')) {
+            if (d.overdueInstallments === 0) return { text: '✅ شما <strong>هیچ معوقه‌ای</strong> ندارید. 🌟', quickActions: ['قسط بعدیم کیه؟'] };
+            return { text: '⚠️ شما <span class="highlight">' + d.overdueInstallments + ' قسط معوقه</span> دارید.', quickActions: ['قسط بعدیم کیه؟'] };
+        }
+        if (t.includes('امتیاز') || t.includes('رتبه')) {
+            return { text: '💎 امتیاز: <span class="highlight">' + d.points + ' ⭐</span><br>رتبه: <strong>' + d.tier + '</strong>', quickActions: ['چطور امتیاز بگیرم؟'] };
+        }
+        if ((t.includes('چطور') || t.includes('چگونه')) && t.includes('امتیاز')) {
+            return { text: '⭐ <strong>راه‌های امتیازگیری:</strong><br><br>✅ پرداخت به‌موقع اقساط<br>✅ پس‌انداز منظم<br>✅ شرکت در مسابقات<br>✅ نظرسنجی<br>✅ ورود روزانه<br>✅ درس‌های مالی', quickActions: ['امتیاز من چقدره؟'] };
+        }
+        if (t.includes('پس انداز') || t.includes('پس‌انداز')) {
+            return { text: '💰 پس‌انداز: <span class="highlight">' + cfMoney(d.savingsStatus) + ' تومان</span><br>مقرری: ' + cfMoney(d.monthlySalary) + ' تومان', quickActions: ['موجودی من چقدره؟'] };
+        }
+        if (t.includes('صورتحساب') || t.includes('تراکنش')) {
+            highlightMenuKey('صورتحساب');
+            return { text: '📊 <strong>صورتحساب</strong><br>روی <span class="highlight">📊 صورتحساب</span> بزن.<br><br>• 💰 موجودی<br>• 📅 اقساط<br>• 📋 تراکنش‌ها<br>• 📥 دانلود Excel و PDF', quickActions: ['موجودی من چقدره؟', 'قسط بعدیم کیه؟'] };
+        }
+        if (t.includes('اطلاعات شخصی') || t.includes('پروفایل')) {
+            highlightMenuKey('اطلاعات شخصی');
+            return { text: '👤 <strong>اطلاعات شخصی</strong><br>روی <span class="highlight">👤 اطلاعات شخصی شما</span> بزن.', quickActions: ['تغییر رمز چطوریه؟'] };
+        }
+        if (t.includes('درخواست')) {
+            highlightMenuKey('درخواست‌ها');
+            return { text: '📝 <strong>درخواست‌ها</strong><br>روی <span class="highlight">📝 درخواست‌ها</span> بزن.', quickActions: ['نوبت وام کجاست؟'] };
+        }
+        if (t.includes('پیامک') || t.includes('سامانه')) {
+            highlightMenuKey('سامانه‌های پیامکی');
+            return { text: '📱 <strong>سامانه‌های پیامکی</strong><br>روی <span class="highlight">📱 سامانه‌های پیامکی</span> بزن.', quickActions: ['پشتیبانی کجاست؟'] };
+        }
+        if (t.includes('پشتیبانی') || t.includes('تماس') || t.includes('شماره')) {
+            highlightMenuKey('پشتیبانی');
+            return { text: '🎧 <strong>پشتیبانی</strong><br>روی <span class="highlight">🎧 پشتیبانی</span> بزن.<br><br>📞 شماره: <span class="highlight">۰۹۱۳۸۹۴۴۷۰۹</span>', quickActions: ['موجودی من چقدره؟'] };
+        }
+        if (t.includes('رمز') || t.includes('پسورد')) {
+            if (t.includes('فراموش') || t.includes('یادم')) {
+                return { text: '🔑 <strong>فراموشی رمز</strong><br><br>۱. توی صفحه لاگین، روی <strong>«رمز عبور خود را فراموش کرده‌اید؟»</strong> بزن<br>۲. شماره حساب، موبایل و تعداد اعضای خانواده رو وارد کن<br>۳. رمزت نمایش داده می‌شه', quickActions: ['تغییر رمز چطوریه؟'] };
+            }
+            if (t.includes('تغییر') || t.includes('عوض')) {
+                return { text: '🔑 <strong>تغییر رمز</strong><br>توی <span class="highlight">👤 اطلاعات شخصی</span> → بخش <strong>«امنیت حساب»</strong>', quickActions: ['اطلاعات شخصی کجاست؟'] };
+            }
+            return { text: '🔑 درباره رمز:<br>• فراموشی: «رمزمو فراموش کردم»<br>• تغییر: «تغییر رمز»', quickActions: ['رمزمو فراموش کردم', 'تغییر رمز چطوریه؟'] };
+        }
+        if (t.includes('کمک') || t.includes('راهنما') || t.includes('چی میتونی')) {
+            return { text: '🤖 <strong>من می‌تونم این‌ها رو جواب بدم:</strong><br><br>💰 <strong>مالی:</strong> موجودی، وام، قسط، معوقه، پس‌انداز<br>💎 <strong>امتیازی:</strong> امتیاز، رتبه<br>📊 <strong>کلیدها:</strong> «... کجاست؟»<br>🎮 <strong>بازی‌ها</strong>، 🏆 <strong>مسابقات</strong><br>🧒 <strong>کودکان</strong>، 🐷 <strong>نوجوانان</strong>، 👩 <strong>بانوان</strong><br>🔑 <strong>رمز</strong>، 👤 <strong>پروفایل</strong>', quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟', 'صورتحساب کجاست؟', 'بازی‌ها کجاست؟'] };
+        }
+        if (t.includes('کجاست') || t.includes('کجا هست')) {
+            return { text: '🤔 دقیق‌تر بگو دنبال چی هستی:<br>• <strong>صورتحساب کجاست؟</strong><br>• <strong>شورا کجاست؟</strong><br>• <strong>خانواده من کجاست؟</strong><br>• <strong>بازی‌ها کجاست؟</strong>', quickActions: ['صورتحساب کجاست؟', 'شورا کجاست؟', 'بازی‌ها کجاست؟'] };
+        }
+        if (t.includes('سلام') || t.includes('درود')) {
+            return { text: 'سلام ' + d.firstName + ' عزیز! 😊<br>چطور می‌تونم کمکت کنم؟', quickActions: ['موجودی من چقدره؟', 'کمک'] };
+        }
+        if (t.includes('ممنون') || t.includes('مرسی') || t.includes('تشکر')) {
+            return { text: 'خواهش می‌کنم ' + d.firstName + ' جان! 🌹', quickActions: ['موجودی من چقدره؟'] };
+        }
+        return { text: 'متأسفم، متوجه نشدم 🤔<br><br>بنویس <strong>«کمک»</strong> تا لیست کامل سوالات رو ببینی.', quickActions: ['کمک', 'موجودی من چقدره؟', 'صورتحساب کجاست؟'] };
+    };
+    
+    window.cfMoney = function(n) { return new Intl.NumberFormat('fa-IR').format(n || 0); };
+    
+    function showBtn() {
+        if (typeof currentUser !== 'undefined' && currentUser && document.getElementById('contentArea')) {
+            var btn = document.getElementById('chatbotFloatBtn');
+            if (btn) {
+                btn.style.display = 'flex';
+                updateChatbotUserData();
+            }
+        }
+    }
+    
+    setInterval(showBtn, 1500);
+    setTimeout(showBtn, 1000);
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isChatbotOpen) toggleChatbot();
+    });
+    
+    console.log('✅ چت‌بات صندوق آماده است');
+})();
+</script>
+<!-- ============================================================
+     🤖 چت‌بات صندوق
+     ============================================================ -->
+<style id="chatbotCSS">
+.chatbot-float-btn {
+    position: fixed;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: 3px solid #ffd700;
+    cursor: pointer;
+    z-index: 10000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 8px 30px rgba(102,126,234,0.6);
+}
+.chatbot-float-btn.show { display: flex; }
+.chatbot-window {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 550px;
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+.chatbot-window.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+.chatbot-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ffd700;
+}
+.chatbot-header .bot-avatar {
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+    border: 2px solid #fff;
+    margin-left: 10px;
+}
+.chatbot-header .bot-name { font-weight: 900; font-size: 0.95rem; color: #fff; }
+.chatbot-close {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.chatbot-close:hover { background: #ef4444; }
+.chatbot-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+}
+.chat-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    word-wrap: break-word;
+}
+.chat-msg.bot {
+    background: rgba(102,126,234,0.15);
+    border: 1px solid rgba(102,126,234,0.3);
+    color: #fff;
+    align-self: flex-start;
+}
+.chat-msg.user {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    align-self: flex-end;
+}
+.chat-msg strong { color: #ffd700; }
+.chat-msg .highlight {
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 900;
+}
+.chat-quick-actions {
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,215,0,0.2);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.quick-btn {
+    padding: 6px 12px;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 99px;
+    color: #ffd700;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+.quick-btn:hover { background: rgba(255,215,0,0.2); }
+.chatbot-input-area {
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.4);
+    border-top: 2px solid #ffd700;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.chatbot-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 0.85rem;
+    outline: none;
+}
+.chatbot-send {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    color: #1a1a2e;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+@media (max-width: 500px) {
+    .chatbot-float-btn { width: 55px; height: 55px; font-size: 1.7rem; }
+    .chatbot-window { bottom: 90px; right: 10px; left: 10px; width: auto; }
+}
+</style>
+
+<button class="chatbot-float-btn" id="chatbotFloatBtn" onclick="toggleChatbot()">🤖</button>
+
+<div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+        <div style="display:flex;align-items:center;">
+            <div class="bot-avatar">🤖</div>
+            <div style="margin-right:10px;">
+                <div class="bot-name">دستیار صندوق</div>
+                <div style="font-size:0.7rem;color:rgba(255,255,255,0.85);">آنلاین</div>
+            </div>
+        </div>
+        <button class="chatbot-close" onclick="toggleChatbot()">✕</button>
+    </div>
+    <div class="chatbot-body" id="chatbotBody"></div>
+    <div class="chat-quick-actions" id="chatQuickActions"></div>
+    <div class="chatbot-input-area">
+        <input type="text" class="chatbot-input" id="chatbotInput" placeholder="سوالت رو بنویس..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+        <button class="chatbot-send" onclick="sendChatMessage()">📤</button>
+    </div>
+</div>
+
+<script>
+var chatbotUserData = { firstName: 'کاربر', balance: 0, loanBalance: 0, totalInstallments: 0, paidInstallments: 0, remainingInstallments: 0, overdueInstallments: 0, installmentAmount: 0, monthlySalary: 0, savingsStatus: 0, nextInstallmentDate: '---', nextInstallmentDays: 0, points: 0, tier: '---' };
+var isChatbotOpen = false;
+var isChatbotFirstOpen = true;
+
+function updateChatbotUserData() {
+    if (typeof currentUser === 'undefined' || !currentUser || !currentUser.memberId) return;
+    var member = members.find(function(m) { return m.id === currentUser.memberId; });
+    if (!member) return;
+    var sd = memberScores[member.id];
+    chatbotUserData = {
+        firstName: member.firstName || 'کاربر',
+        balance: member.balance || 0,
+        loanBalance: member.loanBalance || 0,
+        totalInstallments: member.totalInstallments || 0,
+        paidInstallments: member.paidInstallments || 0,
+        remainingInstallments: member.remainingInstallments || 0,
+        overdueInstallments: Math.abs(member.overdueInstallments || 0),
+        installmentAmount: member.installmentAmount || 0,
+        monthlySalary: member.monthlySalary || 0,
+        savingsStatus: member.savingsStatus || 0,
+        points: sd ? sd.score : 0,
+        tier: sd ? (sd.tierEmoji + ' ' + sd.tierName) : '---'
+    };
+}
+
+function toggleChatbot() {
+    isChatbotOpen = !isChatbotOpen;
+    var win = document.getElementById('chatbotWindow');
+    var btn = document.getElementById('chatbotFloatBtn');
+    if (isChatbotOpen) {
+        win.classList.add('show');
+        btn.innerHTML = '❌';
+        if (isChatbotFirstOpen) {
+            isChatbotFirstOpen = false;
+            updateChatbotUserData();
+            setTimeout(function() {
+                addBotMessage('سلام ' + chatbotUserData.firstName + ' عزیز! 👋<br>چطور می‌تونم کمکت کنم؟');
+                showChatbotQuickActions(['موجودی من چقدره؟', 'وام من چقدره؟', 'قسط بعدیم کیه؟', 'کمک']);
+            }, 300);
+        }
+    } else {
+        win.classList.remove('show');
+        btn.innerHTML = '🤖';
+    }
+}
+
+function addBotMessage(html) {
+    var body = document.getElementById('chatbotBody');
+    var msg = document.createElement('div');
+    msg.className = 'chat-msg bot';
+    msg.innerHTML = html;
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+}
+
+function addUserMessage(text) {
+    var body = document.getElementById('chatbotBody');
+    var msg = document.createElement('div');
+    msg.className = 'chat-msg user';
+    msg.textContent = text;
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+}
+
+function showChatbotQuickActions(actions) {
+    var c = document.getElementById('chatQuickActions');
+    c.innerHTML = '';
+    actions.forEach(function(a) {
+        var b = document.createElement('button');
+        b.className = 'quick-btn';
+        b.textContent = a;
+        b.onclick = function() { document.getElementById('chatbotInput').value = a; sendChatMessage(); };
+        c.appendChild(b);
+    });
+}
+
+function sendChatMessage() {
+    var input = document.getElementById('chatbotInput');
+    var text = input.value.trim();
+    if (!text) return;
+    addUserMessage(text);
+    input.value = '';
+    setTimeout(function() {
+        var ans = getChatbotAnswer(text);
+        addBotMessage(ans.text);
+        showChatbotQuickActions(ans.quickActions || ['موجودی من چقدره؟', 'وام من چقدره؟']);
+    }, 500);
+}
+
+function getChatbotAnswer(text) {
+    var t = text.toLowerCase().replace(/[؟?!.]/g, '').trim();
+    var d = chatbotUserData;
+    
+    // ═══════════════ کلیدهای شورا ═══════════════
+    if (t.includes('شورا') || t.includes('کلید شورا') || t.includes('پنل شورا') || t.includes('دسترسی شورا')) {
+        return {
+            text: '👑 <strong>دسترسی به کلیدهای شورا</strong><br><br>برای دسترسی به کلیدهای شورا:<br>۱. باید <strong>عضو شورای صندوق</strong> باشید<br>۲. از <strong>حسابداری</strong> بخواهید شما را عضو شورا کند<br>۳. پس از تأیید، کلیدها <strong>خودکار</strong> برای شما فعال می‌شوند<br><br>📞 شماره حسابداری: <span class="highlight">۰۹۱۳۸۹۴۴۷۰۹</span><br><br>⚠️ فقط اعضای شورا و مدیر به این بخش دسترسی دارند.',
+            quickActions: ['پشتیبانی کجاست؟', 'اطلاعات و آمار کجاست؟', 'گزارش‌گیری کجاست؟']
+        };
+    }
+    
+    // ═══════════════ اطلاعات خانواده ═══════════════
+    if ((t.includes('خانواده') && (t.includes('ببینم') || t.includes('اطلاعات') || t.includes('مشاهده'))) || t.includes('اطلاعات خانواده') || t.includes('خانواده ام')) {
+        return {
+            text: '👨‍👩‍👧 <strong>مشاهده اطلاعات خانواده</strong><br><br>برای دیدن اطلاعات خانواده:<br>۱. به <strong>منوی اصلی</strong> بروید<br>۲. بخش <strong>«بخش خانواده»</strong> را پیدا کنید<br>۳. روی کلید <span class="highlight">👥 خانواده من</span> بزنید<br>۴. اعضای خانواده را می‌بینید و می‌توانید روی هر کدام کلیک کنید<br><br>⚠️ این بخش فقط برای <strong>سرپرست خانوار</strong> فعال است.',
+            quickActions: ['خانواده من کجاست؟', 'اطلاعات خانواده کجاست؟']
+        };
+    }
+    
+    // ═══════════════ تغییر رمز ═══════════════
+    if ((t.includes('رمز') && (t.includes('تغییر') || t.includes('عوض') || t.includes('چطور'))) || t.includes('تغییر رمز') || t.includes('عوض کردن رمز')) {
+        return {
+            text: '🔑 <strong>تغییر رمز ورود</strong><br><br>برای تغییر رمز عبور:<br>۱. به <strong>منوی اصلی</strong> بروید<br>۲. روی کلید <span class="highlight">👤 اطلاعات شخصی شما</span> بزنید<br>۳. به پایین صفحه بروید → بخش <strong>«امنیت حساب»</strong><br>۴. روی دکمه <span class="highlight">🔑 تغییر رمز عبور</span> بزنید<br>۵. رمز فعلی و رمز جدید را وارد کنید<br>۶. ذخیره کنید<br><br>✅ رمز جدید بلافاصله اعمال می‌شود.',
+            quickActions: ['اطلاعات شخصی کجاست؟', 'رمزمو فراموش کردم']
+        };
+    }
+    
+    // ═══════════════ فعال‌سازی کلید سرپرستان ═══════════════
+    if ((t.includes('سرپرست') && (t.includes('فعال') || t.includes('چطور') || t.includes('چگونه'))) || t.includes('کلید سرپرستان') || t.includes('بخش سرپرستان')) {
+        return {
+            text: '👑 <strong>فعال‌سازی کلیدهای سرپرستان</strong><br><br>کلیدهای بخش سرپرستان به صورت خودکار فعال می‌شوند:<br><br>✅ اگر شما <strong>سرپرست خانوار</strong> هستید:<br>در فایل اکسل، ستون <span class="highlight">heh2</span> باید مقدار <span class="highlight">01</span> داشته باشد.<br><br>❌ اگر سرپرست نیستید:<br>این کلیدها برای شما غیرفعال است.<br><br>📞 برای تنظیم، با حسابداری تماس بگیرید:<br><span class="highlight">۰۹۱۳۸۹۴۴۷۰۹</span><br><br>💡 کلیدهای سرپرستان شامل:<br>• 👥 خانواده من<br>• 📊 اطلاعات کلی خانواده',
+            quickActions: ['خانواده من کجاست؟', 'پشتیبانی کجاست؟']
+        };
+    }
+    
+    // ═══════════════ توضیح بخش خردسالان ═══════════════
+    if ((t.includes('رشد') || t.includes('خردسال')) && (t.includes('چیه') || t.includes('توضیح') || t.includes('چیست') || t.includes('بگو'))) {
+        return {
+            text: '🧒 <strong>بخش رشد ویژه خردسالان</strong><br><br>این بخش ویژه <strong>کودکان</strong> طراحی شده و شامل:<br><br>🐍 <strong>مار و پله</strong><br>بازی کلاسیک با کامپیوتر<br><br>❌⭕ <strong>بازی دوز</strong><br>بازی فکری با هوش مصنوعی<br><br>🧮 <strong>بازی ریاضی</strong><br>تمرین ریاضی با تایمر و امتیاز<br><br>🎯 <strong>هدف:</strong> تقویت مهارت‌های ذهنی و آموزشی کودکان<br><br>📍 محل: منوی اصلی → بخش «ویژه اعضا» → <span class="highlight">🧒 رشد ویژه خردسالان</span>',
+            quickActions: ['بازی‌ها کجاست؟', 'مار و پله کجاست؟']
+        };
+    }
+    
+    // ═══════════════ توضیح بخش بانوان ═══════════════
+    if ((t.includes('بانو') || t.includes('بانوان')) && (t.includes('چیه') || t.includes('توضیح') || t.includes('چیست') || t.includes('بگو'))) {
+        return {
+            text: '👩 <strong>بخش بانو ویژه بانوان</strong><br><br>این بخش ویژه <strong>بانوان</strong> طراحی شده و شامل:<br><br>🍽️ <strong>پخت و پز</strong><br>منوی غذاهای ایرانی با دستور پخت کامل<br><br>🛒 <strong>تهیه مواد</strong><br>پیدا کردن نزدیک‌ترین فروشگاه<br><br>🌸 <strong>و به‌زودی...</strong><br>برنامه‌های بیشتر<br><br>📍 محل: منوی اصلی → بخش «ویژه اعضا» → <span class="highlight">👩 بانو ویژه بانوان</span>',
+            quickActions: ['آشپزی کجاست؟', 'بخش بانوان کجاست؟']
+        };
+    }
+    
+    // ═══════════════ توضیح بخش نوجوانان ═══════════════
+    if ((t.includes('نوجوان') || t.includes('قلک')) && (t.includes('چیه') || t.includes('توضیح') || t.includes('چیست') || t.includes('بگو'))) {
+        return {
+            text: '🐷 <strong>بخش قلک ویژه نوجوانان</strong><br><br>این بخش ویژه <strong>نوجوانان</strong> طراحی شده و شامل:<br><br>🐷 <strong>قلک دیجیتال</strong><br>ثبت پس‌انداز و هدف مالی<br><br>🎯 <strong>چالش‌های مالی</strong><br>چالش‌های ۷، ۱۴ و ۳۰ روزه<br><br>📊 <strong>دستیار بودجه</strong><br>مدیریت درآمد و هزینه<br><br>🎓 <strong>آموزش مالی</strong><br>درس‌های کوتاه<br><br>🏅 <strong>نشان‌ها</strong><br>مدال‌های افتخار<br><br>📍 محل: منوی اصلی → بخش «ویژه اعضا» → <span class="highlight">🐷 قلک ویژه نوجوانان</span>',
+            quickActions: ['قلک نوجوانان کجاست؟', 'صندوق من کجاست؟']
+        };
+    }
+    
+    // ═══════════════ بالا بردن رتبه ═══════════════
+    if ((t.includes('رتبه') || t.includes('امتیاز')) && (t.includes('بالا') || t.includes('افزایش') || t.includes('بیشتر') || t.includes('چطور'))) {
+        return {
+            text: '⭐ <strong>راه‌های بالا بردن رتبه و امتیاز</strong><br><br>✅ <strong>پرداخت به‌موقع اقساط</strong><br>هر قسط به‌موقع = امتیاز<br><br>💰 <strong>پس‌انداز منظم</strong><br>پس‌انداز ماهانه = امتیاز<br><br>🎯 <strong>شرکت در مسابقات</strong><br>برنده شدن = امتیاز ویژه<br><br>📊 <strong>شرکت در نظرسنجی‌ها</strong><br>هر رأی = امتیاز<br><br>📅 <strong>ورود روزانه</strong><br>هر روز = امتیاز<br><br>🎓 <strong>تکمیل درس‌های مالی</strong><br>در بخش صندوق من<br><br>🏆 <strong>رتبه‌ها:</strong><br>⚫ سیاه → 🥈 نقره‌ای → ⭐ طلایی',
+            quickActions: ['امتیاز من چقدره؟', 'رتبه من چیه؟']
+        };
+    }
+    
+    // ═══════════════ جایزه گرفتن ═══════════════
+    if ((t.includes('جایزه') || t.includes('پاداش')) && (t.includes('چطور') || t.includes('چگونه') || t.includes('بگیرم'))) {
+        return {
+            text: '🎁 <strong>راه‌های گرفتن جایزه</strong><br><br>🎰 <strong>گردونه شانس (پاداش روزانه)</strong><br>هر روز یک بار بچرخانید<br>📍 منوی اصلی → <span class="highlight">🎁 پاداش روزانه</span><br><br>🎂 <strong>جایزه تولد</strong><br>۵ امتیاز هدیه در روز تولد<br><br>🏆 <strong>جایزه مسابقات</strong><br>با شرکت در مسابقات<br>📍 بخش «ویژه اعضا» → <span class="highlight">🏆 مسابقات</span><br><br>⭐ <strong>جایزه امتیازگیری</strong><br>در فروشگاه خرج کنید<br>📍 بخش «بخش ویژه» → <span class="highlight">⭐ امتیازات و فروشگاه</span>',
+            quickActions: ['پاداش روزانه کجاست؟', 'مسابقات کجاست؟']
+        };
+    }
+    
+    // ═══════════════ موجودی ═══════════════
+    if (t.includes('موجودی') || t.includes('پول')) {
+        return { text: '💰 موجودی: <span class="highlight">' + cfMoney(d.balance) + ' تومان</span>', quickActions: ['وام من چقدره؟', 'قسط بعدیم کیه؟'] };
+    }
+    
+    // ═══════════════ وام ═══════════════
+    if (t.includes('وام') || t.includes('بدهی')) {
+        return { text: '💳 مانده وام: <span class="highlight">' + cfMoney(d.loanBalance) + ' تومان</span><br>اقساط: ' + d.paidInstallments + ' از ' + d.totalInstallments, quickActions: ['قسط بعدیم کیه؟', 'معوقه دارم؟'] };
+    }
+    
+    // ═══════════════ قسط ═══════════════
+    if (t.includes('قسط') || t.includes('بعدی')) {
+        return { text: '📅 قسط بعدی: <span class="highlight">' + d.nextInstallmentDate + '</span><br>مبلغ: ' + cfMoney(d.installmentAmount) + ' تومان<br>⏳ ' + d.nextInstallmentDays + ' روز مونده', quickActions: ['معوقه دارم؟', 'وام من چقدره؟'] };
+    }
+    
+    // ═══════════════ معوقه ═══════════════
+    if (t.includes('معوقه')) {
+        return { text: d.overdueInstallments === 0 ? '✅ معوقه ندارید' : '⚠️ ' + d.overdueInstallments + ' قسط معوقه دارید', quickActions: ['وام من چقدره؟'] };
+    }
+    
+    // ═══════════════ امتیاز ═══════════════
+    if (t.includes('امتیاز')) {
+        return { text: '💎 امتیاز: <span class="highlight">' + d.points + ' ⭐</span><br>رتبه: ' + d.tier, quickActions: ['چطور امتیاز بگیرم؟', 'صندوق من کجاست؟'] };
+    }
+    
+    // ═══════════════ پس‌انداز ═══════════════
+    if (t.includes('پس انداز') || t.includes('پس‌انداز')) {
+        return { text: '💰 پس‌انداز: <span class="highlight">' + cfMoney(d.savingsStatus) + ' تومان</span>', quickActions: ['موجودی من چقدره؟'] };
+    }
+    
+    // ═══════════════ صورتحساب ═══════════════
+    if (t.includes('صورتحساب')) {
+        return { text: '📊 صورتحساب توی منوی اصلیه!', quickActions: ['موجودی من چقدره؟', 'قسط بعدیم کیه؟'] };
+    }
+    
+    // ═══════════════ بازی‌ها ═══════════════
+    if (t.includes('بازی')) {
+        return { text: '🎮 بازی‌ها توی بخش «ویژه اعضا» → «رشد ویژه خردسالان»', quickActions: ['مار و پله کجاست؟', 'بازی دوز کجاست؟'] };
+    }
+    
+    // ═══════════════ پشتیبانی ═══════════════
+    if (t.includes('پشتیبانی') || t.includes('تماس') || t.includes('شماره')) {
+        return { text: '🎧 شماره پشتیبانی: <span class="highlight">۰۹۱۳۸۹۴۴۷۰۹</span>', quickActions: ['موجودی من چقدره؟'] };
+    }
+    
+    // ═══════════════ رمز فراموشی ═══════════════
+    if (t.includes('رمز') && (t.includes('فراموش') || t.includes('یادم'))) {
+        return { text: '🔑 توی صفحه لاگین، روی <strong>«رمز عبور خود را فراموش کرده‌اید؟»</strong> بزن.<br>بعدش شماره حساب، موبایل و تعداد اعضای خانواده رو وارد کن.', quickActions: ['تغییر رمز چطوریه؟'] };
+    }
+    
+    // ═══════════════ کمک ═══════════════
+    if (t.includes('کمک') || t.includes('راهنما')) {
+        return { text: '🤖 <strong>من می‌تونم این‌ها رو جواب بدم:</strong><br><br>💰 موجودی، وام، قسط، معوقه، پس‌انداز<br>💎 امتیاز، رتبه<br>📊 راهنما (کلیدها، شورا، خانواده)<br>🎮 بازی‌ها، 🏆 مسابقات<br>🧒 کودکان، 🐷 نوجوانان، 👩 بانوان<br>🔑 رمز، 👤 پروفایل', quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟', 'بازی‌ها کجاست؟', 'کلید شورا کجاست؟'] };
+    }
+    
+    // ═══════════════ سلام ═══════════════
+    if (t.includes('سلام') || t.includes('درود')) {
+        return { text: 'سلام ' + d.firstName + ' عزیز! 😊<br>چطور می‌تونم کمکت کنم؟', quickActions: ['موجودی من چقدره؟', 'کمک'] };
+    }
+    
+    // ═══════════════ پیش‌فرض ═══════════════
+    return { text: 'متأسفم، متوجه نشدم 🤔<br><br>بنویس <strong>«کمک»</strong> تا لیست کامل سوالات رو ببینی.', quickActions: ['کمک', 'موجودی من چقدره؟', 'کلید شورا کجاست؟'] };
+}
+function showChatbotBtn() {
+    if (typeof currentUser !== 'undefined' && currentUser && document.getElementById('contentArea')) {
+        var btn = document.getElementById('chatbotFloatBtn');
+        if (btn) {
+            btn.classList.add('show');
+            updateChatbotUserData();
+        }
+    }
+}
+// ساخت مستقیم HTML چت‌بات
+function buildChatbot() {
+    if (document.getElementById('chatbotFloatBtn')) return;
+    
+    var btn = document.createElement('button');
+    btn.id = 'chatbotFloatBtn';
+    btn.className = 'chatbot-float-btn';
+    btn.innerHTML = '🤖';
+    btn.onclick = toggleChatbot;
+    document.body.appendChild(btn);
+    
+    var win = document.createElement('div');
+    win.id = 'chatbotWindow';
+    win.className = 'chatbot-window';
+    win.innerHTML = 
+        '<div class="chatbot-header">' +
+            '<div style="display:flex;align-items:center;">' +
+                '<div class="bot-avatar">🤖</div>' +
+                '<div style="margin-right:10px;">' +
+                    '<div class="bot-name">دستیار صندوق</div>' +
+                    '<div style="font-size:0.7rem;color:rgba(255,255,255,0.85);">آنلاین</div>' +
+                '</div>' +
+            '</div>' +
+            '<button class="chatbot-close" onclick="toggleChatbot()">✕</button>' +
+        '</div>' +
+        '<div class="chatbot-body" id="chatbotBody"></div>' +
+        '<div class="chat-quick-actions" id="chatQuickActions"></div>' +
+        '<div class="chatbot-input-area">' +
+            '<input type="text" class="chatbot-input" id="chatbotInput" placeholder="سوالت رو بنویس..." onkeypress="if(event.key===\'Enter\')sendChatMessage()">' +
+            '<button class="chatbot-send" onclick="sendChatMessage()">📤</button>' +
+        '</div>';
+    document.body.appendChild(win);
+    
+    btn.style.display = 'flex';
+    btn.classList.add('show');
+    console.log('✅ دکمه چت‌بات ساخته شد');
+}
+
+// اجرا در چند مرحله
+setTimeout(buildChatbot, 2000);
+setTimeout(buildChatbot, 4000);
+setInterval(buildChatbot, 5000);
 </script>
 </body>
 </html>
