@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🤖 دستیار صندوق اتحاد</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    color: #fff;
+}
+
+/* ============================================================
+   🎯 سر ربات (دکمه شناور)
+   ============================================================ */
+.chatbot-float-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: 3px solid #ffd700;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    box-shadow: 0 8px 30px rgba(102,126,234,0.6);
+    transition: all 0.3s ease;
+    animation: robotPulse 2.5s ease-in-out infinite;
+}
+
+.chatbot-float-btn:hover {
+    transform: scale(1.15) rotate(-5deg);
+    box-shadow: 0 12px 40px rgba(102,126,234,0.9);
+}
+
+.chatbot-float-btn:active {
+    transform: scale(0.95);
+}
+
+.chatbot-float-btn .badge-notif {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 22px;
+    height: 22px;
+    background: #ef4444;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-family: Tahoma;
+}
+
+@keyframes robotPulse {
+    0%, 100% {
+        box-shadow: 0 8px 30px rgba(102,126,234,0.6), 0 0 0 0 rgba(102,126,234,0.7);
+    }
+    50% {
+        box-shadow: 0 8px 40px rgba(102,126,234,0.9), 0 0 0 20px rgba(102,126,234,0);
+    }
+}
+
+/* ============================================================
+   🎯 پنجره چت‌بات
+   ============================================================ */
+.chatbot-window {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    height: 550px;
+    max-height: calc(100vh - 120px);
+    background: linear-gradient(135deg, #1a1a2e, #2a2a4a);
+    border: 2px solid #ffd700;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+    z-index: 9998;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(30px) scale(0.8);
+    transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.chatbot-window.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.chatbot-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ffd700;
+    flex-shrink: 0;
+}
+
+.chatbot-header .bot-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.chatbot-header .bot-avatar {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    border: 2px solid #fff;
+}
+
+.chatbot-header .bot-name {
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: #fff;
+}
+
+.chatbot-header .bot-status {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.85);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 2px;
+}
+
+.chatbot-header .bot-status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #22c55e;
+    animation: blinkDot 1.5s ease-in-out infinite;
+}
+
+@keyframes blinkDot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+.chatbot-close {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.chatbot-close:hover {
+    background: #ef4444;
+    transform: rotate(90deg);
+}
+
+.chatbot-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0,0,0,0.2);
+}
+
+.chatbot-body::-webkit-scrollbar { width: 6px; }
+.chatbot-body::-webkit-scrollbar-track { background: transparent; }
+.chatbot-body::-webkit-scrollbar-thumb { background: rgba(255,215,0,0.3); border-radius: 99px; }
+
+.chat-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    line-height: 1.8;
+    word-wrap: break-word;
+    animation: msgIn 0.3s ease;
+}
+
+@keyframes msgIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg.bot {
+    background: rgba(102,126,234,0.15);
+    border: 1px solid rgba(102,126,234,0.3);
+    color: #fff;
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-msg.user {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-left-radius: 4px;
+}
+
+.chat-msg strong {
+    color: #ffd700;
+    font-weight: 900;
+}
+
+.chat-msg .highlight {
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-family: monospace;
+    direction: ltr;
+    display: inline-block;
+    margin: 2px 0;
+}
+
+.chat-quick-actions {
+    padding: 10px 16px;
+    background: rgba(0,0,0,0.3);
+    border-top: 1px solid rgba(255,215,0,0.2);
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    max-height: 100px;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.quick-btn {
+    padding: 6px 12px;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0.4);
+    border-radius: 99px;
+    color: #ffd700;
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.quick-btn:hover {
+    background: rgba(255,215,0,0.2);
+    transform: translateY(-2px);
+}
+
+.chatbot-input-area {
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.4);
+    border-top: 2px solid #ffd700;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.chatbot-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.3s;
+}
+
+.chatbot-input:focus {
+    border-color: #ffd700;
+    box-shadow: 0 0 0 3px rgba(255,215,0,0.1);
+}
+
+.chatbot-send {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #d97706);
+    color: #1a1a2e;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    flex-shrink: 0;
+}
+
+.chatbot-send:hover {
+    transform: scale(1.1);
+}
+
+.chatbot-send:active {
+    transform: scale(0.9);
+}
+
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: rgba(102,126,234,0.15);
+    border-radius: 16px;
+    align-self: flex-start;
+    border-bottom-right-radius: 4px;
+}
+
+.typing-indicator span {
+    width: 8px;
+    height: 8px;
+    background: #ffd700;
+    border-radius: 50%;
+    animation: typingBounce 1.4s ease-in-out infinite;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-8px); opacity: 1; }
+}
+
+/* موبایل */
+@media (max-width: 500px) {
+    .chatbot-float-btn {
+        bottom: 15px;
+        right: 15px;
+        width: 60px;
+        height: 60px;
+        font-size: 1.9rem;
+    }
+    
+    .chatbot-window {
+        bottom: 90px;
+        right: 10px;
+        left: 10px;
+        width: auto;
+        max-width: none;
+        height: calc(100vh - 110px);
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- دکمه شناور (سر ربات) -->
+<button class="chatbot-float-btn" id="chatbotFloatBtn" onclick="toggleChatbot()">
+    🤖
+    <span class="badge-notif">1</span>
+</button>
+
+<!-- پنجره چت‌بات -->
+<div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+        <div class="bot-info">
+            <div class="bot-avatar">🤖</div>
+            <div>
+                <div class="bot-name">دستیار صندوق</div>
+                <div class="bot-status">آنلاین</div>
+            </div>
+        </div>
+        <button class="chatbot-close" onclick="toggleChatbot()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <div class="chatbot-body" id="chatbotBody"></div>
+    
+    <div class="chat-quick-actions" id="chatQuickActions"></div>
+    
+    <div class="chatbot-input-area">
+        <input type="text" class="chatbot-input" id="chatbotInput" 
+               placeholder="سوالت رو بنویس..." 
+               onkeypress="if(event.key==='Enter') sendChatMessage()">
+        <button class="chatbot-send" onclick="sendChatMessage()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// 🎯 دریافت اطلاعات کاربر از برنامه اصلی (از طریق iframe)
+// ============================================================
+let USER_DATA = {
+    firstName: 'کاربر',
+    accountNumber: '---',
+    balance: 0,
+    loanBalance: 0,
+    totalInstallments: 0,
+    paidInstallments: 0,
+    remainingInstallments: 0,
+    overdueInstallments: 0,
+    nextInstallmentDate: '---',
+    nextInstallmentDays: 0,
+    installmentAmount: 0,
+    monthlySalary: 0,
+    savingsStatus: 0,
+    points: 0,
+    tier: '---'
+};
+
+// گوش دادن به پیام‌های برنامه اصلی
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'USER_DATA') {
+        USER_DATA = Object.assign(USER_DATA, event.data.data);
+        console.log('✅ اطلاعات کاربر دریافت شد:', USER_DATA);
+    }
+});
+
+// درخواست اطلاعات از برنامه اصلی
+function requestUserData() {
+    try {
+        window.parent.postMessage({ type: 'REQUEST_USER_DATA' }, '*');
+    } catch(e) {}
+}
+
+// ============================================================
+// 🎯 باز/بسته کردن چت‌بات
+// ============================================================
+let isChatOpen = false;
+let isFirstOpen = true;
+
+function toggleChatbot() {
+    isChatOpen = !isChatOpen;
+    const win = document.getElementById('chatbotWindow');
+    const btn = document.getElementById('chatbotFloatBtn');
+    
+    if (isChatOpen) {
+        win.classList.add('show');
+        btn.innerHTML = '❌';
+        
+        const badge = btn.querySelector('.badge-notif');
+        if (badge) badge.remove();
+        
+        if (isFirstOpen) {
+            isFirstOpen = false;
+            requestUserData();
+            setTimeout(() => {
+                addBotMessage('سلام ' + USER_DATA.firstName + ' عزیز! 👋<br>من دستیار هوشمند صندوق اتحاد هستم.<br>چطور می‌تونم کمکت کنم؟');
+                showQuickActions([
+                    'موجودی من چقدره؟',
+                    'وام من چقدره؟',
+                    'قسط بعدیم کیه؟',
+                    'امتیاز من چقدره؟',
+                    'کلید صورتحساب کجاست؟'
+                ]);
+            }, 300);
+        }
+        
+        setTimeout(() => {
+            const input = document.getElementById('chatbotInput');
+            if (input) input.focus();
+        }, 500);
+    } else {
+        win.classList.remove('show');
+        btn.innerHTML = '🤖';
+    }
+}
+
+// ============================================================
+// 🎯 پیام‌ها
+// ============================================================
+function addBotMessage(html) {
+    const body = document.getElementById('chatbotBody');
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg bot';
+    msg.innerHTML = html;
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+}
+
+function addUserMessage(text) {
+    const body = document.getElementById('chatbotBody');
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg user';
+    msg.textContent = text;
+    body.appendChild(msg);
+    body.scrollTop = body.scrollHeight;
+}
+
+function showTyping() {
+    const body = document.getElementById('chatbotBody');
+    const typing = document.createElement('div');
+    typing.className = 'typing-indicator';
+    typing.id = 'typingIndicator';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    body.appendChild(typing);
+    body.scrollTop = body.scrollHeight;
+}
+
+function hideTyping() {
+    const typing = document.getElementById('typingIndicator');
+    if (typing) typing.remove();
+}
+
+function showQuickActions(actions) {
+    const container = document.getElementById('chatQuickActions');
+    container.innerHTML = '';
+    actions.forEach(action => {
+        const btn = document.createElement('button');
+        btn.className = 'quick-btn';
+        btn.textContent = action;
+        btn.onclick = () => {
+            document.getElementById('chatbotInput').value = action;
+            sendChatMessage();
+        };
+        container.appendChild(btn);
+    });
+}
+
+// ============================================================
+// 🎯 ارسال پیام
+// ============================================================
+function sendChatMessage() {
+    const input = document.getElementById('chatbotInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    addUserMessage(text);
+    input.value = '';
+    
+    setTimeout(() => {
+        showTyping();
+        setTimeout(() => {
+            hideTyping();
+            const answer = getBotAnswer(text);
+            addBotMessage(answer.text);
+            if (answer.quickActions) {
+                showQuickActions(answer.quickActions);
+            } else {
+                showQuickActions([
+                    'موجودی من چقدره؟',
+                    'وام من چقدره؟',
+                    'قسط بعدیم کیه؟',
+                    'امتیاز من چقدره؟'
+                ]);
+            }
+        }, 800);
+    }, 200);
+}
+
+// ============================================================
+// 🎯 مغز چت‌بات
+// ============================================================
+function getBotAnswer(text) {
+    const t = text.toLowerCase().replace(/[؟?!.]/g, '').trim();
+    
+    // 💰 موجودی
+    if (t.includes('موجودی') || t.includes('پول') || (t.includes('حساب') && t.includes('چقد'))) {
+        return {
+            text: '💰 موجودی فعلی شما:<br><span class="highlight">' + formatMoney(USER_DATA.balance) + ' تومان</span><br><br>📅 آخرین به‌روزرسانی: امروز',
+            quickActions: ['وضعیت پس‌انداز من چیه؟', 'وام من چقدره؟', 'قسط بعدیم کیه؟']
+        };
+    }
+    
+    // 💳 وام
+    if (t.includes('وام') || t.includes('بدهی') || t.includes('بدهکار')) {
+        if (USER_DATA.loanBalance === 0) {
+            return {
+                text: '🎉 تبریک!<br>شما <strong>هیچ وامی</strong> ندارید.<br>مانده بدهی شما: <span class="highlight">۰ تومان</span>',
+                quickActions: ['موجودی من چقدره؟', 'قسط بعدیم کیه؟']
+            };
+        }
+        return {
+            text: '💳 اطلاعات وام شما:<br><br>مانده وام: <span class="highlight">' + formatMoney(USER_DATA.loanBalance) + ' تومان</span><br>تعداد کل اقساط: <strong>' + USER_DATA.totalInstallments + '</strong><br>پرداخت شده: <strong>' + USER_DATA.paidInstallments + '</strong> ✅<br>مانده: <strong>' + USER_DATA.remainingInstallments + '</strong><br>مبلغ هر قسط: <span class="highlight">' + formatMoney(USER_DATA.installmentAmount) + ' تومان</span>',
+            quickActions: ['قسط بعدیم کیه؟', 'معوقه دارم؟', 'موجودی من چقدره؟']
+        };
+    }
+    
+    // 📅 قسط
+    if (t.includes('قسط') || t.includes('اقساط') || t.includes('بعدی')) {
+        if (USER_DATA.remainingInstallments === 0) {
+            return {
+                text: '🎉 تبریک!<br>شما <strong>همه اقساط</strong> رو پرداخت کردید.',
+                quickActions: ['وام من چقدره؟', 'موجودی من چقدره؟']
+            };
+        }
+        return {
+            text: '📅 قسط بعدی شما:<br><br>تاریخ: <span class="highlight">' + USER_DATA.nextInstallmentDate + '</span><br>مبلغ: <span class="highlight">' + formatMoney(USER_DATA.installmentAmount) + ' تومان</span><br>⏳ <strong>' + USER_DATA.nextInstallmentDays + ' روز</strong> مونده',
+            quickActions: ['معوقه دارم؟', 'وام من چقدره؟']
+        };
+    }
+    
+    // ⚠️ معوقه
+    if (t.includes('معوقه') || t.includes('دیرکرد')) {
+        if (USER_DATA.overdueInstallments === 0) {
+            return {
+                text: '✅ عالی!<br>شما <strong>هیچ قسط معوقه‌ای</strong> ندارید. 🌟',
+                quickActions: ['قسط بعدیم کیه؟', 'وام من چقدره؟']
+            };
+        }
+        return {
+            text: '⚠️ هشدار!<br>شما <span class="highlight">' + USER_DATA.overdueInstallments + ' قسط معوقه</span> دارید.',
+            quickActions: ['قسط بعدیم کیه؟', 'وام من چقدره؟']
+        };
+    }
+    
+    // 💎 امتیاز
+    if (t.includes('امتیاز') || t.includes('رتبه') || t.includes('نشان')) {
+        return {
+            text: '💎 اطلاعات امتیاز شما:<br><br>امتیاز فعلی: <span class="highlight">' + USER_DATA.points + ' ⭐</span><br>رتبه: <strong>' + USER_DATA.tier + '</strong>',
+            quickActions: ['چطور امتیاز بگیرم؟', 'موجودی من چقدره؟']
+        };
+    }
+    
+    // 💰 پس‌انداز
+    if (t.includes('پس انداز') || t.includes('پس‌انداز') || t.includes('ذخیره')) {
+        return {
+            text: '💰 وضعیت پس‌انداز شما:<br><br>مبلغ پس‌انداز: <span class="highlight">' + formatMoney(USER_DATA.savingsStatus) + ' تومان</span><br>مقرری ماهانه: <strong>' + formatMoney(USER_DATA.monthlySalary) + ' تومان</strong>',
+            quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟']
+        };
+    }
+    
+    // 📊 راهنما
+    if (t.includes('صورتحساب') && (t.includes('کجا') || t.includes('چطور'))) {
+        return {
+            text: '📊 کلید صورتحساب توی <strong>منوی اصلی</strong> هست.<br>روی کلید <span class="highlight">📊 صورتحساب</span> بزن.',
+            quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟']
+        };
+    }
+    
+    if (t.includes('پشتیبانی') || t.includes('تماس') || t.includes('شماره')) {
+        return {
+            text: '🎧 شماره پشتیبانی: <span class="highlight">۰۹۱۳۸۹۴۴۷۰۹</span>',
+            quickActions: ['موجودی من چقدره؟', 'صورتحساب کجاست؟']
+        };
+    }
+    
+    if (t.includes('رمز') && (t.includes('فراموش') || t.includes('یادم'))) {
+        return {
+            text: '🔑 توی صفحه لاگین، روی <strong>«رمز عبور خود را فراموش کرده‌اید؟»</strong> بزن.<br>بعدش شماره حساب، موبایل و تعداد اعضای خانواده رو وارد کن.',
+            quickActions: ['موجودی من چقدره؟', 'کلید صورتحساب کجاست؟']
+        };
+    }
+    
+    if (t.includes('پاداش') || t.includes('جایزه') || t.includes('گردونه')) {
+        return {
+            text: '🎁 کلید <strong>پاداش روزانه</strong> توی منوی اصلیه!<br>هر روز گردونه شانس رو بچرخون.',
+            quickActions: ['امتیاز من چقدره؟', 'چطور امتیاز بگیرم؟']
+        };
+    }
+    
+    if (t.includes('چطور') && t.includes('امتیاز')) {
+        return {
+            text: '⭐ راه‌های افزایش امتیاز:<br><br>✅ پرداخت به‌موقع اقساط<br>✅ پس‌انداز منظم<br>✅ شرکت در مسابقات<br>✅ ورود روزانه<br>✅ تکمیل درس‌های مالی',
+            quickActions: ['امتیاز من چقدره؟', 'وام من چقدره؟']
+        };
+    }
+    
+    if (t.includes('کمک') || t.includes('چیکار') || t.includes('راهنما') || t.includes('چی میتونی')) {
+        return {
+            text: '🤖 من می‌تونم این‌ها رو جواب بدم:<br><br>💰 <strong>مالی:</strong> موجودی، وام، قسط، معوقه، پس‌انداز<br>💎 <strong>امتیازی:</strong> امتیاز، رتبه<br>📊 <strong>راهنما:</strong> کلیدها، رمز فراموشی',
+            quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟', 'امتیاز من چقدره؟', 'کلید صورتحساب کجاست؟']
+        };
+    }
+    
+    if (t.includes('سلام') || t.includes('درود') || t.includes('خوبی')) {
+        return {
+            text: 'سلام ' + USER_DATA.firstName + ' عزیز! 😊<br>چطور می‌تونم کمکت کنم؟',
+            quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟', 'امتیاز من چقدره؟']
+        };
+    }
+    
+    if (t.includes('ممنون') || t.includes('مرسی') || t.includes('تشکر') || t.includes('سپاس')) {
+        return {
+            text: 'خواهش می‌کنم ' + USER_DATA.firstName + ' جان! 🌹',
+            quickActions: ['موجودی من چقدره؟', 'وام من چقدره؟']
+        };
+    }
+    
+    return {
+        text: 'متأسفم، متوجه نشدم. 🤔<br><br>بنویس <strong>«کمک»</strong> تا لیست کامل سوالات رو ببینی.',
+        quickActions: ['کمک', 'موجودی من چقدره؟', 'وام من چقدره؟']
+    };
+}
+
+function formatMoney(num) {
+    return new Intl.NumberFormat('fa-IR').format(num);
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && isChatOpen) toggleChatbot();
+});
+
+console.log('✅ چت‌بات آماده است');
+</script>
+
+</body>
+</html>
