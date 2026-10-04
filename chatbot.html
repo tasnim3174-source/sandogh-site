@@ -464,6 +464,12 @@ function toggleChatbot() {
     const btn = document.getElementById('chatbotFloatBtn');
     
     if (isChatOpen) {
+            // 🆕 اطلاع دادن به برنامه اصلی
+    try {
+        window.parent.postMessage({
+            type: isChatOpen ? 'CHATBOT_OPEN' : 'CHATBOT_CLOSE'
+        }, '*');
+    } catch(e) {}
         win.classList.add('show');
         btn.innerHTML = '❌';
         
@@ -719,7 +725,14 @@ function formatMoney(num) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && isChatOpen) toggleChatbot();
 });
-
+// 🆕 اطلاع دادن به برنامه اصلی که چت‌بات باز/بسته شد
+function notifyParent(open) {
+    try {
+        window.parent.postMessage({
+            type: open ? 'CHATBOT_OPEN' : 'CHATBOT_CLOSE'
+        }, '*');
+    } catch(e) {}
+}
 console.log('✅ چت‌بات آماده است');
 </script>
 
