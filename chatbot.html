@@ -733,6 +733,13 @@ function notifyParent(open) {
         }, '*');
     } catch(e) {}
 }
+// 🆕 به والد اطلاع بده که آماده‌ام
+setTimeout(function() {
+    try {
+        window.parent.postMessage({ type: 'CHATBOT_READY' }, '*');
+        console.log('✅ پیام آمادگی به والد ارسال شد');
+    } catch(e) {}
+}, 500);    
 console.log('✅ چت‌بات آماده است');
 </script>
 
