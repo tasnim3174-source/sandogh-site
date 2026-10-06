@@ -4315,20 +4315,40 @@
             if (typeof XLSX === 'undefined') throw new Error('کتابخانه XLSX بارگذاری نشد');
         }
 
-        const [dataOld, dataNew] = await Promise.all([
-            parseOneExcelFile(DATA_URL).catch(err => {
-                console.warn('⚠️ فایل data بارگذاری نشد:', err.message);
-                return { members: [], transactions: [], users: [] };
-            }),
-            (async () => {
-                const r = await loadFile1Smart();
-                return r.data;
-            })().catch(err => {
-                console.warn('⚠️ فایل data1 بارگذاری نشد:', err.message);
-                return { members: [], transactions: [], users: [] };
-            })
-        ]);
+        // ============================================================
+        // مرحله ۱: اول از data1.xlsx بخوان (سریع‌تر)
+        // ============================================================
+        console.log('📥 خواندن data1.xlsx...');
+        let dataNew = { members: [], transactions: [], users: [] };
+        
+        try {
+            const r = await loadFile1Smart();
+            dataNew = r.data;
+            console.log('✅ data1 خوانده شد:', dataNew.members.length, 'عضو،', dataNew.transactions.length, 'تراکنش');
+        } catch (err) {
+            console.warn('⚠️ data1 ناموفق بود:', err.message);
+        }
 
+        // ============================================================
+        // مرحله ۲: اگر data1 خالی بود، از data.xlsx بخوان
+        // ============================================================
+        let dataOld = { members: [], transactions: [], users: [] };
+        
+        if (!dataNew.members || dataNew.members.length === 0) {
+            console.log('📥 data1 خالی بود → خواندن data.xlsx...');
+            try {
+                dataOld = await parseOneExcelFile(DATA_URL);
+                console.log('✅ data خوانده شد:', dataOld.members.length, 'عضو');
+            } catch (err) {
+                console.warn('⚠️ data ناموفق بود:', err.message);
+            }
+        } else {
+            console.log('✅ فقط از data1 استفاده می‌شود (سریع‌تر)');
+        }
+
+        // ============================================================
+        // مرحله ۳: ادغام داده‌ها
+        // ============================================================
         const membersMap = new Map();
         dataOld.members.forEach(m => membersMap.set(m.accountNumber, {...m}));
         dataNew.members.forEach(newMember => {
@@ -4373,9 +4393,20 @@
         const accToIdMap = new Map();
         combinedMembers.forEach(m => accToIdMap.set(m.accountNumber, m.id));
 
+        // ============================================================
+        // تراکنش‌ها (محدود به ۵۰۰ تراکنش آخر برای کاهش حجم)
+        // ============================================================
         const allTransactions = [...dataOld.transactions, ...dataNew.transactions];
+        
+        const MAX_TRANSACTIONS = 500;
+        allTransactions.sort(function(a, b) {
+            return (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0);
+        });
+        const recentTransactions = allTransactions.slice(0, MAX_TRANSACTIONS);
+        console.log('📊 تراکنش‌ها:', allTransactions.length, 'کل،', recentTransactions.length, 'نگه داشته شد');
+        
         const txMap = new Map();
-        allTransactions.forEach(tx => {
+        recentTransactions.forEach(tx => {
             const key = tx._transactionId + '_' + tx['شماره حساب'];
             const accNum = tx['شماره حساب'];
             tx._memberId = accToIdMap.get(accNum) || tx._memberId;
@@ -4383,6 +4414,9 @@
         });
         const combinedTransactions = Array.from(txMap.values());
 
+        // ============================================================
+        // کاربران
+        // ============================================================
         const usersMap = new Map();
         dataOld.users.forEach(u => usersMap.set(u.username, u));
         dataNew.users.forEach(u => usersMap.set(u.username, u));
@@ -4417,79 +4451,6 @@
             transactions: combinedTransactions,
             users: finalUsers
         };
-    }
-
-    async function loadMainDataWithCache(forceRefresh = false) {
-    const CACHE_KEY = 'sandogh_data_v2';
-    const CACHE_TIME_KEY = 'sandogh_data_time_v2';
-    
-    // سعی کن از sessionStorage بخوان (سریع‌تر از localStorage)
-    if (!forceRefresh) {
-        try {
-            const cached = sessionStorage.getItem(CACHE_KEY);
-            const cachedTime = sessionStorage.getItem(CACHE_TIME_KEY);
-            if (cached && cachedTime) {
-                const age = Date.now() - parseInt(cachedTime);
-                if (age < 60 * 60 * 1000) {
-                    console.log('⚡ داده از sessionStorage خوانده شد');
-                    return JSON.parse(cached);
-                }
-            }
-        } catch (e) { 
-            sessionStorage.removeItem(CACHE_KEY); 
-            sessionStorage.removeItem(CACHE_TIME_KEY); 
-        }
-    }
-    
-    // اگر cache نبود، از گیت‌هاب دانلود کن
-    console.log('📥 داده از گیت‌هاب دانلود می‌شود...');
-    const data = await loadMainData();
-    
-    // ذخیره در sessionStorage
-    try {
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-        sessionStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
-        console.log('💾 داده در sessionStorage ذخیره شد');
-    } catch (e) {
-        console.warn('⚠️ خطا در ذخیره:', e.message);
-    }
-    
-    return data;
-}
-
-    async function forceUpdateData() {
-        if (!currentUser) return;
-        try {
-            localStorage.removeItem('sandogh_data_v2');
-            localStorage.removeItem('sandogh_data_time_v2');
-            const data = await loadMainDataWithCache(true);
-            members = data.members;
-            transactions = data.transactions || [];
-            users = data.users;
-            transactionsByMember = new Map();
-            transactions.forEach(t => {
-                const id = String(t._memberId);
-                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                transactionsByMember.get(id).push(t);
-            });
-            members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
-
-            localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
-            if (currentPage) renderPage(currentPage);
-            showToast({ type: 'success', title: 'بروزرسانی موفق', message: 'اطلاعات به‌روز شد.' });
-        } catch (e) {
-            console.error('خطا در بروزرسانی:', e);
-        }
-    }
-
-    function getMemberRealBalance(memberId) {
-        const txns = (transactionsByMember.get(String(memberId)) || [])
-            .sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-        if (txns.length > 0) {
-            return parseFloat(txns[0]['موجودی']) || 0;
-        }
-        const m = members.find(x => x.id === memberId);
-        return m ? (m.balance || 0) : 0;
     }
     </script>
     <!-- ===== بخش رندر صفحات ===== -->
