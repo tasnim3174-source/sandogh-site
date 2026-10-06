@@ -4397,7 +4397,6 @@
         // تراکنش‌ها (محدود به ۵۰۰ تراکنش آخر برای کاهش حجم)
         // ============================================================
         const allTransactions = [...dataOld.transactions, ...dataNew.transactions];
-        
         const MAX_TRANSACTIONS = 500;
         allTransactions.sort(function(a, b) {
             return (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0);
@@ -4446,11 +4445,49 @@
             finalUsers.push({ id: 999, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
         }
 
-        return {
+                return {
             members: combinedMembers,
             transactions: combinedTransactions,
             users: finalUsers
         };
+    }
+
+    // ============================================================
+    // ✅ تابع loadMainDataWithCache (اضافه شد)
+    // ============================================================
+    async function loadMainDataWithCache(forceRefresh = false) {
+        const CACHE_KEY = 'sandogh_data_v2';
+        const CACHE_TIME_KEY = 'sandogh_data_time_v2';
+        
+        if (!forceRefresh) {
+            try {
+                const cached = sessionStorage.getItem(CACHE_KEY);
+                const cachedTime = sessionStorage.getItem(CACHE_TIME_KEY);
+                if (cached && cachedTime) {
+                    const age = Date.now() - parseInt(cachedTime);
+                    if (age < 60 * 60 * 1000) {
+                        console.log('⚡ داده از sessionStorage خوانده شد');
+                        return JSON.parse(cached);
+                    }
+                }
+            } catch (e) { 
+                sessionStorage.removeItem(CACHE_KEY); 
+                sessionStorage.removeItem(CACHE_TIME_KEY); 
+            }
+        }
+        
+        console.log('📥 داده از گیت‌هاب دانلود می‌شود...');
+        const data = await loadMainData();
+        
+        try {
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            sessionStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
+            console.log('💾 داده در sessionStorage ذخیره شد');
+        } catch (e) {
+            console.warn('⚠️ خطا در ذخیره:', e.message);
+        }
+        
+        return data;
     }
     </script>
     <!-- ===== بخش رندر صفحات ===== -->
