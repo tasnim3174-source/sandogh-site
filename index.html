@@ -156,7 +156,7 @@
             right: 0;
             bottom: 0;
             background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
-            opacity: 2;
+            opacity: 0;
             pointer-events: none;
             z-index: -1;
             transition: opacity 0.5s ease;
@@ -180,8 +180,7 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(80px);
-            animation: orbFloat 20s ease-in-out infinite;
-        }
+                    }
 
         .login-bg-animated .orb:nth-child(1) {
             width: 400px; height: 400px;
@@ -334,18 +333,22 @@
           100%{ left:0;   transform:scale(1);  z-index:2; }
         }
 
-        .container {
+            .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 8px 6px 16px;
-            min-height: 100vh;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            position: relative;
-            z-index: 1;
+            padding: 16px 6px 16px;
+            ...
         }
 
         .login-page {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(520px, calc(100vw - 24px));
+            max-height: calc(100vh - 24px);
+            overflow-y: auto;
+            z-index: 20;
             background: var(--login-box-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -553,7 +556,7 @@
             top: -50%; left: -50%;
             width: 200%; height: 200%;
             background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.1), transparent 60%);
-            animation: rotateGlow 3s linear infinite;
+            
         }
 
         @keyframes rotateGlow { to { transform: rotate(360deg); } }
@@ -593,25 +596,38 @@
 
         .login-combined-hint .hint-item i { margin-left: 4px; }
 
-        .grid-menu {
+                 .grid-menu {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            padding: 5px 16px;
-            margin-top: 50px;
+            gap: 10px;
+            padding: 8px 0;
+            margin-top: 8px;
+            margin-bottom: 0;
             background: transparent;
             border-radius: 0;
             box-shadow: none;
-            margin-bottom: 14px;
             backdrop-filter: none;
             border: none;
             width: 100%;
-            animation: fadeInUp 0.6s ease;
+        }
+
+        .grid-menu.moving {
+            animation: menuFloat 4s ease-in-out infinite;
         }
 
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+                @keyframes menuFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        
+        /* جلوگیری از انیمیشن روی هدر */
+        .hdr {
+            animation: none !important;
         }
 
         @media (max-width: 600px) {
@@ -1211,7 +1227,7 @@
             top: -50%; left: -50%;
             width: 200%; height: 200%;
             background: radial-gradient(circle, rgba(255, 255, 255, 0.1), transparent 60%);
-            animation: pulseRadial 3s ease-in-out infinite;
+            
         }
 
         @keyframes pulseRadial {
@@ -1558,10 +1574,26 @@
             .grid-menu-item .menu-label { font-size: 0.9rem; }
         }
 
-        @media (max-width: 768px) {
-            .grid-menu { grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 12px; }
-            .grid-menu-item .menu-icon { width: 80px; height: 80px; font-size: 2.6rem; border-radius: 22px; }
-            .grid-menu-item .menu-label { font-size: 0.8rem; }
+                @media (max-width: 768px) {
+            .hdr {
+                max-height: 80vh !important;
+                padding: 10px 12px !important;
+            }
+            .grid-menu {
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 8px !important;
+                padding: 8px 0 !important;
+                margin-top: 8px !important;
+            }
+            .grid-menu-item .menu-icon {
+                width: 55px !important;
+                height: 55px !important;
+                font-size: 1.5rem !important;
+                border-radius: 16px !important;
+            }
+            .grid-menu-item .menu-label {
+                font-size: 0.7rem !important;
+            }
             .quick-info-box { grid-template-columns: 1fr 1fr; gap: 8px; }
             .header-date .date-row { font-size: 1rem; gap: 8px; }
             .header-date .date-row span { font-size: 1rem; }
@@ -1590,6 +1622,11 @@
             .app-page { padding: 0 !important; border-radius: 0 !important; background: transparent !important; border: none !important; box-shadow: none !important; width: 100% !important; max-width: 100% !important; }
             h1 { font-size: 1.2rem; }
             .report-summary { grid-template-columns: 1fr 1fr; }
+        }
+                #contentArea {
+            padding-top: 0 !important;
+            min-height: 100vh;
+            margin-top: 0 !important;
         }
 
         @media (max-width: 480px) {
@@ -1680,7 +1717,7 @@
             .summary-grid { grid-template-columns: repeat(4, 1fr); gap: 12px; }
         }
 
-        .hdr {
+         .hdr {
             background: var(--card-bg);
             border: none;
             border-radius: 0;
@@ -1695,6 +1732,8 @@
             z-index: 99;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+            max-height: 85vh;
+            overflow-y: auto;
         }
         .hdr .lbl{font-size:0.78rem;color:var(--text-secondary);font-weight:700}
         .rankrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -2161,7 +2200,21 @@
             .stat-value, .summary-value { font-size: 1rem !important; }
             .stat-label, .summary-label { font-size: 0.6rem !important; }
         }
-    </style>
+    
+        /* ===== اصلاح نهایی چیدمان ===== */
+        html, body { background: var(--bg-primary) !important; }
+        #appContainer { padding: 0 !important; margin: 0 !important; max-width: none !important; width: 100% !important; }
+        #appContainer > .app-page { min-height: 100vh !important; background: var(--bg-primary) !important; }
+        #contentArea { background: var(--bg-primary) !important; min-height: 100vh !important; }
+        #mainHeader { pointer-events: auto !important; }
+        #mainHeader .grid-menu-item, #mainHeader button, #mainHeader a { pointer-events: auto !important; }
+        .script-services-divider{grid-column:1/-1;width:100%;box-sizing:border-box;margin:12px 0 6px;padding:10px 12px;border-top:2px solid #38bdf8;border-bottom:2px solid #38bdf8;background:rgba(56,189,248,.08);color:#38bdf8;text-align:center;font-weight:900;font-size:.78rem;border-radius:12px;}
+        .script-services-divider i{margin-left:6px}.script-services-divider span{display:block;margin-top:3px;color:var(--text-secondary);font-size:.58rem;font-weight:500}.script-service-item{position:relative}.script-service-item .script-load-dot{position:absolute;top:7px;left:7px;font-size:.65rem;opacity:.9}@keyframes scriptLoadBar{from{width:25%}to{width:82%}}
+        .login-page { will-change: auto !important; animation: none !important; }
+        @media (max-width: 600px) {
+            .login-page { width: calc(100vw - 16px) !important; max-height: calc(100vh - 16px) !important; }
+        }
+</style>
     <script src="password-functions.js"></script>
     <!-- ===== رنگ هدر و ساعت پویا ===== -->
     <style id="headerClockTheme">
@@ -2370,11 +2423,6 @@
                 <span class="badge-android">APK</span>
                 <i class="fas fa-download"></i>
             </button>
-
-            <div class="login-combined-hint">
-                <div class="hint-title"><i class="fas fa-exclamation-triangle"></i> نکات مهم قبل از ورود</div>
-                <div class="hint-item"><i class="fas fa-keyboard"></i> کیبورد را روی انگلیسی (EN) قرار دهید</div>
-            </div>
 
             <div class="input-group">
                 <label><i class="fas fa-user"></i> نام کاربری</label>
@@ -3301,6 +3349,13 @@
         }
     }
 
+    function forceEnglishKeyboard() {
+        var u = document.getElementById('loginUsername');
+        var pw = document.getElementById('loginPassword');
+        [u,pw].forEach(function(el){ if(el){ el.setAttribute('lang','en'); el.setAttribute('inputmode','text'); el.style.direction='ltr'; }});
+    }
+    document.addEventListener('DOMContentLoaded', forceEnglishKeyboard);
+
     function loadRememberMe() {
         try {
             const username = localStorage.getItem('sandogh_remember_username') || '';
@@ -3531,11 +3586,12 @@
 
     function mfAddPoints(n) {
         try {
-            const key = 'sandogh_coins_' + currentUser.memberId;
-            const cur = parseInt(localStorage.getItem(key)) || 0;
-            const newPts = cur + n;
-            localStorage.setItem(key, newPts);
-            syncPointsToServer(currentUser.memberId, currentUser.name || currentUser.firstName || '', newPts);
+            if (!currentUser || !currentUser.memberId) return;
+            fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(currentUser.memberId) +
+                  '&name=' + encodeURIComponent(currentUser.name || currentUser.firstName || '') +
+                  '&reason=' + encodeURIComponent('تکمیل فعالیت مالی') + '&points=' + encodeURIComponent(n) +
+                  '&uniqueKey=' + encodeURIComponent('mf_' + Date.now() + '_' + currentUser.memberId))
+              .then(function(){ return loadClubFromAdmin(); }).catch(function(){});
         } catch (e) { }
     }
 
@@ -4647,12 +4703,9 @@
             { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
             { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
             { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
-            { tab: 'emailForm', label: 'ثبت نحوه ارسال صورتحساب', icon: 'fa-envelope', color: '#3b82f6', onclick: 'openEmailForm()' }
         ];
 
         const specialBoxItems = [
-            { tab: 'dailyReward', label: 'پاداش روزانه', icon: 'fa-gift', color: '#ffd700', onclick: 'openDailyReward()' },
-            { tab: 'club', label: 'امتیازات و فروشگاه', icon: 'fa-star', color: '#f59e0b', onclick: "selectMenuItem('club')" },
             { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4', onclick: "selectMenuItem('myFund')" },
             { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316', onclick: "selectMenuItem('utilities')" }
         ];
@@ -4661,9 +4714,6 @@
             { tab: 'toddlerGrowth', label: '🧒 رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
             { tab: 'teenPiggy', label: '🐷 قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
             { tab: 'ladySpecial', label: '👩 بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' },
-            { tab: 'quizzes', label: '🏆 مسابقات', icon: 'fa-trophy', color: '#ffd700' },
-            { tab: 'messaging', label: '📨 ارسال پیام', icon: 'fa-paper-plane', color: '#8b5cf6' },
-            { tab: 'survey', label: '📊 نظرسنجی', icon: 'fa-poll', color: '#ec4899' }
         ];
 
         const familyItems = [
@@ -4685,6 +4735,19 @@
             const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
             const clickHandler = item.onclick ? item.onclick : `selectMenuItem('${item.tab}')`;
             gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="${clickHandler}"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`;
+        });
+
+        gridHtml += '<div class="script-services-divider"><i class="fas fa-cloud"></i> خدمات آنلاین و متصل به اسکریپت <span>☁️ اطلاعات این بخش فقط هنگام ورود به آن بارگذاری می‌شود</span></div>';
+        const scriptServices = [
+            { tab:'emailForm', label:'ثبت نحوه ارسال صورتحساب', icon:'fa-envelope', color:'#3b82f6' },
+            { tab:'club', label:'امتیازات و فروشگاه', icon:'fa-star', color:'#f59e0b' },
+            { tab:'dailyReward', label:'پاداش روزانه', icon:'fa-gift', color:'#ffd700' },
+            { tab:'quizzes', label:'🏆 مسابقات', icon:'fa-trophy', color:'#ffd700' },
+            { tab:'messaging', label:'📨 ارسال پیام', icon:'fa-paper-plane', color:'#8b5cf6' },
+            { tab:'survey', label:'📊 نظرسنجی', icon:'fa-poll', color:'#ec4899' }
+        ];
+        scriptServices.forEach(item => {
+            gridHtml += `<div class="grid-menu-item script-service-item" data-tab="${item.tab}" onclick="openScriptService('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="script-load-dot">☁️</span></div>`;
         });
 
         gridHtml += '<div class="family-divider" style="color:#ef4444;border-top:2px solid #ef4444;border-bottom:2px solid #ef4444;background:#ffffff;"><i class="fas fa-crown"></i> بخش ویژه</div>';
@@ -4760,8 +4823,8 @@
 
         let systemMessageHtml = '';
 
-        content.innerHTML = `
-            <div class="hdr">
+               content.innerHTML = `
+            <div class="hdr" id="mainHeader">
                 <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                     <b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b>
                     <span style="display:inline-flex;align-items:center;gap:7px;">${bdayCakeHtml}</span>
@@ -4772,11 +4835,45 @@
                     <span>${getPersianDayName()}</span>
                     <span class="hello">${greeting}</span>
                 </div>
+                ${systemMessageHtml}
+                ${gridHtml}
             </div>
-            ${systemMessageHtml}
-            ${gridHtml}
-            <div style="text-align:center;padding:12px;color:var(--text-muted);font-size:0.8rem;">برای ورود به هر بخش، روی کلید مورد نظر کلیک کنید</div>
         `;
+
+        // انتقال هدر به body (خارج از contentArea)
+        setTimeout(function() {
+            var hdr = document.getElementById('mainHeader');
+            var contentArea = document.getElementById('contentArea');
+            
+            if (hdr && contentArea) {
+                // هدر رو به body منتقل کن
+                if (hdr.parentElement === contentArea) {
+                    document.body.insertBefore(hdr, document.body.firstChild);
+                }
+                
+                // استایل هدر
+                hdr.style.position = 'fixed';
+                hdr.style.top = '0';
+                hdr.style.left = '0';
+                hdr.style.right = '0';
+                hdr.style.maxHeight = '70vh';
+                hdr.style.overflowY = 'auto';
+                hdr.style.padding = '8px 12px';
+                hdr.style.zIndex = '99';
+                hdr.style.background = 'linear-gradient(135deg, #1a1a2e, #2a2a4a)';
+                hdr.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+                
+                // فاصله محتوا از هدر
+                document.body.style.paddingTop = hdr.offsetHeight + 'px';
+                document.body.style.background = 'var(--bg-primary)';
+                contentArea.style.paddingTop = '0';
+                contentArea.style.marginTop = '0';
+                contentArea.style.background = 'var(--bg-primary)';
+                contentArea.style.minHeight = 'calc(100vh - ' + hdr.offsetHeight + 'px)';
+                
+                console.log('✅ هدر به body منتقل شد. ارتفاع:', hdr.offsetHeight + 'px');
+            }
+        }, 100);
 
         setInterval(function() {
             const clk = document.getElementById('liveClock');
@@ -5802,11 +5899,45 @@
         el.innerHTML = html;
     }
 
+    // ===== ناوبری مقاوم برای موبایل =====
+    // فقط صفحاتی که واقعاً با selectMenuItem باز می‌شوند از این مسیر عبور می‌کنند.
+    // بخش‌های ویژه و پنل مدیریت handler اختصاصی خودشان را حفظ می‌کنند.
+    document.addEventListener('click', function(e) {
+        var item = e.target.closest ? e.target.closest('.grid-menu-item[data-tab]') : null;
+        if (!item || item.classList.contains('disabled')) return;
+        var tab = item.getAttribute('data-tab');
+        if (!tab) return;
+
+        var directTabs = {
+            profile:1, dashboard:1, requests:1, sms:1, support:1,
+            club:1, myFund:1, utilities:1, family:1, familyInfo:1,
+            access:1, infoStats:1, manageCoins:1, reports:1
+        };
+
+        if (!directTabs[tab]) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof window.selectMenuItem === 'function') window.selectMenuItem(tab);
+    }, true);
+
     // ============================================================
     // ناوبری بین صفحات
     // ============================================================
     function goToMenu() {
         currentPage = 'menu';
+        var hdr = document.getElementById('mainHeader');
+        if (hdr) {
+            hdr.style.display = '';
+            hdr.style.visibility = 'visible';
+            hdr.style.pointerEvents = 'auto';
+            hdr.style.position = 'fixed';
+            hdr.style.top = '0';
+            hdr.style.left = '0';
+            hdr.style.right = '0';
+            hdr.style.zIndex = '99';
+            document.body.style.paddingTop = hdr.offsetHeight + 'px';
+        }
         renderPage('menu');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (typeof updateFloatingButtons === 'function') updateFloatingButtons();
@@ -5814,7 +5945,20 @@
 
     function selectMenuItem(tab) {
         currentPage = tab;
+
+        // صفحات داخلی باید تمام صفحه باز شوند؛ منوی اصلی نباید بالای صفحه باقی بماند.
+        // به این ترتیب محتوای صفحه داخل ناحیه سفیدِ زیر هدر قرار نمی‌گیرد.
+        var hdr = document.getElementById('mainHeader');
+        if (hdr) {
+            hdr.style.display = 'none';
+            hdr.style.visibility = 'hidden';
+            hdr.style.pointerEvents = 'none';
+        }
+        document.body.style.paddingTop = '0px';
+
         renderPage(tab);
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        if (tab === 'club') loadClubFromAdmin().then(function(){ if (currentPage === 'club') renderPage('club'); });
         if (typeof updateFloatingButtons === 'function') updateFloatingButtons();
     }
 
@@ -6520,6 +6664,46 @@
     // ============================================================
     // رندر باشگاه امتیازات
     // ============================================================
+    async function loadClubFromAdmin() {
+        if (!currentUser || !currentUser.memberId) return;
+        try {
+            const d = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
+                ? {history: window.__scriptServicesCache.points || []}
+                : await fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(currentUser.memberId)).then(function(r){return r.json();});
+            if (d && Array.isArray(d.history)) {
+                coinHistory = d.history.map(function(x){ return {
+                    date: x.date || x.createdAt || '',
+                    amount: Number(x.points) || 0,
+                    reason: x.reason || '',
+                    detail: x.detail || x.description || ''
+                }; });
+                userCoins = coinHistory.reduce(function(sum, x){ return sum + (Number(x.amount) || 0); }, 0);
+                localStorage.setItem('sandogh_coins_' + currentUser.memberId, String(userCoins));
+                localStorage.setItem('sandogh_coinHistory_' + currentUser.memberId, JSON.stringify(coinHistory));
+            }
+        } catch(e) { console.warn('خطا در دریافت امتیازات از پنل مدیریت', e); }
+        try {
+            const d2 = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
+                ? {products: window.__scriptServicesCache.products || []}
+                : await fetch(SHOP_URL + '?action=getShopProducts').then(function(r){return r.json();});
+            if (d2 && Array.isArray(d2.products)) window.SHOP_PRODUCTS = d2.products;
+        } catch(e) { console.warn('خطا در دریافت فروشگاه از پنل مدیریت', e); }
+    }
+
+    function renderPointsRulesHtml() {
+        return '<div class="dashboard-section" style="border-right-color:var(--gold-color);">' +
+          '<h3><i class="fas fa-list-check" style="color:var(--gold-color);"></i> شرایط دریافت امتیاز</h3>' +
+          '<div style="display:grid;gap:6px;font-size:.72rem;color:var(--text-secondary);line-height:1.8;">' +
+          '<div>📅 ورود روزانه: ۱ امتیاز</div>' +
+          '<div>🎂 تولد: ۵ امتیاز</div>' +
+          '<div>💰 پرداخت مقرری ماهانه: ۱ امتیاز</div>' +
+          '<div>💳 پرداخت قسط ماهانه: ۱ امتیاز</div>' +
+          '<div>🏦 افزایش موجودی: ۱ امتیاز</div>' +
+          '<div>✅ نداشتن قسط معوقه: ۱ امتیاز</div>' +
+          '<div>🏆 مسابقات و فعالیت‌های تعریف‌شده در پنل مدیریت</div>' +
+          '</div></div>';
+    }
+
     function renderClubContent() {
         const products = window.SHOP_PRODUCTS || [];
         let tabContent = '';
@@ -6609,19 +6793,30 @@
     function selectClubTab(tab) {
         currentClubTab = tab;
         renderPage('club');
+        loadClubFromAdmin().then(function(){ if (currentPage === 'club') renderPage('club'); });
     }
 
-    function buyProduct(shenaseh, name, price) {
-        if (userCoins >= price) {
-            if (confirm('خرید ' + name + ' به قیمت ' + price + ' امتیاز؟')) {
-                deductCoins(price, 'خرید از فروشگاه', 'محصول: ' + name);
-                const orderCode = 'ORD-' + Date.now().toString().slice(-6);
-                userPurchases.push({ orderCode, productId: shenaseh, productName: name, price, date: new Date().toLocaleString('fa-IR'), delivered: false });
-                saveCoins();
-                alert('✅ خرید موفق!');
-                renderPage('club');
-            }
-        } else { alert('امتیاز کافی ندارید!'); }
+    async function buyProduct(shenaseh, name, price) {
+        if (userCoins < price) { alert('امتیاز کافی ندارید!'); return; }
+        if (!confirm('خرید ' + name + ' به قیمت ' + price + ' امتیاز؟')) return;
+        try {
+            const url = SHOP_URL + '?action=resolvePurchase&user=' + encodeURIComponent(currentUser.memberId) +
+                '&name=' + encodeURIComponent(currentUser.firstName || currentUser.username || '') +
+                '&productId=' + encodeURIComponent(shenaseh) + '&product=' + encodeURIComponent(name) +
+                '&price=' + encodeURIComponent(price);
+            const r = await fetch(url);
+            const d = await r.json();
+            if (d && d.ok === false) { alert('❌ ' + (d.error || 'خرید انجام نشد')); return; }
+            userCoins -= price;
+            coinHistory.push({date:new Date().toLocaleString('fa-IR'), amount:-Number(price), reason:'خرید از فروشگاه', detail:'محصول: '+name});
+            userPurchases.push({orderCode:(d && (d.orderCode || d.id)) || ('ORD-' + Date.now().toString().slice(-6)), productId:shenaseh, productName:name, price:Number(price), date:new Date().toLocaleString('fa-IR'), delivered:false});
+            saveCoins();
+            alert('✅ خرید موفق!');
+            await loadClubFromAdmin();
+            renderPage('club');
+        } catch(e) {
+            alert('❌ ارتباط با پنل مدیریت برقرار نشد');
+        }
     }
 
     // ============================================================
@@ -10296,7 +10491,10 @@
     }
 
     function loadQuizList() {
-        fetch(ADMIN_URL + '?action=getQuizzes').then(function(r){ return r.json(); }).then(function(d){
+        var quizSource = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
+            ? Promise.resolve({quizzes: window.__scriptServicesCache.quizzes || []})
+            : fetch(ADMIN_URL + '?action=getQuizzes').then(function(r){ return r.json(); });
+        quizSource.then(function(d){
             var quizzes = (d.quizzes || []).filter(function(q){ return q.active; });
             var today = new Date().toISOString().split('T')[0];
 
@@ -10936,6 +11134,59 @@
     // ============================================================
     // توابع کمکی پیام‌رسانی و اطلاع‌رسانی
     // ============================================================
+    // ===== خدمات متصل به Google Apps Script؛ فقط با ورود کاربر بارگذاری می‌شوند =====
+    window.__scriptServicesCache = window.__scriptServicesCache || {loaded:false,loading:null,points:null,products:null,quizzes:null,email:null};
+    function showScriptServicesLoading(){
+        var old=document.getElementById('scriptServicesLoading'); if(old) old.remove();
+        var ov=document.createElement('div'); ov.id='scriptServicesLoading';
+        ov.style.cssText='position:fixed;inset:0;background:rgba(8,10,25,.78);backdrop-filter:blur(5px);z-index:100000;display:flex;align-items:center;justify-content:center;font-family:tahoma;direction:rtl;';
+        ov.innerHTML='<div style="width:min(380px,88%);background:#17172b;border:1px solid rgba(56,189,248,.45);border-radius:20px;padding:24px;text-align:center;color:#fff;box-shadow:0 15px 50px rgba(0,0,0,.45)"><div style="font-size:2.4rem">☁️</div><div style="font-size:1rem;font-weight:900;color:#38bdf8">در حال دریافت خدمات آنلاین</div><div style="font-size:.76rem;color:#bbb;margin-top:8px;line-height:1.9">اطلاعات امتیازات، فروشگاه، مسابقات و تنظیمات مرتبط با اسکریپت در حال بارگذاری است.<br>لطفاً چند لحظه صبر کنید...</div><div style="height:6px;background:#2b2b45;border-radius:10px;overflow:hidden;margin-top:16px"><div style="height:100%;background:linear-gradient(90deg,#38bdf8,#8b5cf6);animation:scriptLoadBar 1.1s infinite alternate;border-radius:10px"></div></div></div>';
+        document.body.appendChild(ov);
+    }
+    function hideScriptServicesLoading(){var ov=document.getElementById('scriptServicesLoading');if(ov)ov.remove();}
+    async function loadScriptServicesOnce(){
+        var c=window.__scriptServicesCache; if(c.loaded)return c; if(c.loading)return c.loading; if(!currentUser)throw new Error('کاربر وارد نشده است');
+        showScriptServicesLoading();
+        c.loading=(async function(){
+            var uid=currentUser.memberId||currentUser.username||'';
+            var rs=await Promise.all([
+                fetch(SHOP_URL+'?action=getPointsHistory&user='+encodeURIComponent(uid),{cache:'no-cache'}).then(r=>r.json()).catch(()=>({history:[]})),
+                fetch(SHOP_URL+'?action=getShopProducts',{cache:'no-cache'}).then(r=>r.json()).catch(()=>({products:[]})),
+                fetch(ADMIN_URL+'?action=getQuizzes',{cache:'no-cache'}).then(r=>r.json()).catch(()=>({quizzes:[]})),
+                fetch(ADMIN_URL+'?action=getStatementEmail&user='+encodeURIComponent(currentUser.username||''),{cache:'no-cache'}).then(r=>r.json()).catch(()=>({ok:false}))
+            ]);
+            c.points=rs[0].history||[]; c.products=rs[1].products||[]; c.quizzes=rs[2].quizzes||[]; c.email=rs[3]||{ok:false}; c.loaded=true;c.loading=null;hideScriptServicesLoading();return c;
+        })().catch(e=>{c.loading=null;hideScriptServicesLoading();throw e;});
+        return c.loading;
+    }
+    function openDailyReward(){
+        if(!currentUser){alert('⚠️ ابتدا وارد شوید');return;}
+        var today = new Date().toISOString().slice(0,10);
+        var key = 'daily_reward_view_' + currentUser.memberId + '_' + today;
+        var old=document.getElementById('dailyRewardOverlay'); if(old) old.remove();
+        var ov=document.createElement('div'); ov.id='dailyRewardOverlay';
+        ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100001;display:flex;align-items:center;justify-content:center;padding:15px;font-family:tahoma;direction:rtl;';
+        ov.innerHTML='<div style="width:min(390px,92%);background:linear-gradient(160deg,#1e1e35,#151528);border:1px solid rgba(255,215,0,.35);border-radius:22px;padding:24px;color:#fff;text-align:center;box-shadow:0 15px 50px rgba(0,0,0,.5)"><div style="font-size:3rem">🎁</div><h2 style="font-size:1.1rem;color:#ffd700;margin:8px 0">پاداش روزانه</h2><p style="font-size:.78rem;color:#bbb;line-height:1.8">با ورود روزانه می‌توانید امتیاز دریافت کنید.<br>امتیاز این بخش از سیستم امتیازات اسکریپت ثبت می‌شود.</p><div style="display:flex;gap:8px;margin-top:18px"><button id="dailyRewardClaim" style="flex:1;background:linear-gradient(135deg,#ffd700,#f59e0b);border:0;border-radius:12px;padding:12px;font-weight:900;color:#17172b;cursor:pointer">⭐ دریافت پاداش امروز</button><button id="dailyRewardClose" style="background:#333;color:#fff;border:0;border-radius:12px;padding:12px 16px;cursor:pointer">بستن</button></div></div>';
+        document.body.appendChild(ov);
+        document.getElementById('dailyRewardClose').onclick=function(){ov.remove();};
+        document.getElementById('dailyRewardClaim').onclick=async function(){
+            this.disabled=true; this.textContent='⏳ در حال ثبت...';
+            try{ await awardDailyLogin(currentUser); alert('✅ درخواست پاداش روزانه به اسکریپت ارسال شد.'); this.textContent='✅ ثبت شد'; }
+            catch(e){ alert('❌ ثبت پاداش ناموفق بود'); this.disabled=false; this.textContent='⭐ دریافت پاداش امروز'; }
+        };
+        if(localStorage.getItem(key)) document.getElementById('dailyRewardClaim').textContent='✅ امروز بررسی شده';
+    }
+
+    async function openScriptService(tab){
+        try{await loadScriptServicesOnce();}catch(e){alert('❌ دریافت اطلاعات خدمات آنلاین ناموفق بود.\nلطفاً دوباره تلاش کنید.');return;}
+        if(tab==='emailForm')return openEmailForm();
+        if(tab==='club')return selectMenuItem('club');
+        if(tab==='dailyReward')return openDailyReward();
+        if(tab==='quizzes')return openQuizzes();
+        if(tab==='messaging')return openMessagingMenu();
+        if(tab==='survey')return showComingSoon('نظرسنجی');
+    }
+
     function openMessagingMenu() {
         alert('📨 سیستم پیام‌رسانی به زودی فعال می‌شود');
     }
@@ -10977,7 +11228,10 @@
         var boxE = document.getElementById('emailBox');
         chkE.onchange = function(){ boxE.style.display = chkE.checked ? 'block' : 'none'; };
 
-        fetch(ADMIN_URL + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); }).then(function(d){
+        var emailSource = (window.__scriptServicesCache && window.__scriptServicesCache.loaded && window.__scriptServicesCache.email)
+            ? Promise.resolve(window.__scriptServicesCache.email)
+            : fetch(ADMIN_URL + '?action=getStatementEmail&user=' + encodeURIComponent(kb)).then(function(r){ return r.json(); });
+        emailSource.then(function(d){
             if (!d.ok) return;
             document.getElementById('chkSms').checked = !!d.wantSms;
             chkE.checked = !!d.wantEmail;
@@ -11367,5 +11621,123 @@
     console.log('📌 تمام کلیدها فعال هستند - نسخه بهینه‌شده');
     </script>
 
+<script>
+// ============================================================
+// سیستم هدر ثابت با منوی داخلی
+// ============================================================
+(function() {
+    'use strict';
+    
+    function setupHeader() {
+        var hdr = document.querySelector('.hdr');
+        var contentArea = document.getElementById('contentArea');
+        var gridMenu = document.querySelector('.grid-menu');
+        
+        if (!hdr) return false;
+        
+        // ۱. اگه هدر داخل contentArea هست، به body منتقلش کن
+        if (hdr.parentElement && hdr.parentElement.id === 'contentArea') {
+            document.body.insertBefore(hdr, document.body.firstChild);
+        }
+        
+        // ۲. اگه gridMenu هست و داخل هدر نیست، داخل هدر بذار
+        if (gridMenu && !hdr.contains(gridMenu)) {
+            hdr.appendChild(gridMenu);
+        }
+        
+        // ۳. حذف انیمیشن از منو
+        if (gridMenu) {
+            gridMenu.classList.remove('moving');
+            gridMenu.style.animation = 'none';
+        }
+        
+        // ۴. استایل هدر
+        hdr.style.cssText = `
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            max-height: 70vh !important;
+            overflow-y: auto !important;
+            padding: 8px 12px !important;
+            z-index: 99 !important;
+            background: linear-gradient(135deg, #1a1a2e, #2a2a4a) !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3) !important;
+        `;
+        
+        // ۵. تنظیم فاصله محتوا
+        setTimeout(function() {
+            var hdrHeight = hdr.offsetHeight;
+            if (hdrHeight > 0) {
+                document.body.style.paddingTop = hdrHeight + 'px';
+                if (contentArea) {
+                    contentArea.style.paddingTop = '0';
+                    contentArea.style.marginTop = '0';
+                }
+                console.log('✅ هدر تنظیم شد. ارتفاع:', hdrHeight + 'px');
+            }
+        }, 200);
+        
+        return true;
+    }
+    
+    setTimeout(setupHeader, 300);
+    setTimeout(setupHeader, 800);
+    setTimeout(setupHeader, 1500);
+    setTimeout(setupHeader, 2500);
+    
+    // هر بار محتوا عوض شد، دوباره تنظیم کن
+    setTimeout(function() {
+        var contentArea = document.getElementById('contentArea');
+        if (contentArea) {
+            var observer = new MutationObserver(function() {
+                setTimeout(function() {
+                    var hdr = document.querySelector('.hdr');
+                    var gridMenu = document.querySelector('.grid-menu');
+                    
+                    if (hdr) {
+                        // در صفحات داخلی، هدر منوی اصلی باید مخفی بماند.
+                        if (currentPage && currentPage !== 'menu') {
+                            hdr.style.display = 'none';
+                            hdr.style.visibility = 'hidden';
+                            hdr.style.pointerEvents = 'none';
+                            document.body.style.paddingTop = '0px';
+                            return;
+                        }
+                        hdr.style.display = '';
+                        hdr.style.visibility = 'visible';
+                        hdr.style.pointerEvents = 'auto';
+                        // اگه هدر داخل contentArea رفته بود، خارجش کن
+                        if (hdr.parentElement && hdr.parentElement.id === 'contentArea') {
+                            document.body.insertBefore(hdr, document.body.firstChild);
+                        }
+                        
+                        // اگه gridMenu جدید ساخته شد، به هدر اضافه کن
+                        if (gridMenu && !hdr.contains(gridMenu)) {
+                            hdr.appendChild(gridMenu);
+                            gridMenu.classList.remove('moving');
+                            gridMenu.style.animation = 'none';
+                        }
+                        
+                        // فاصله body رو دوباره تنظیم کن
+                        document.body.style.paddingTop = hdr.offsetHeight + 'px';
+                    }
+                }, 200);
+            });
+            observer.observe(contentArea, { childList: true, subtree: true });
+        }
+    }, 1000);
+    
+    // تغییر اندازه صفحه
+    window.addEventListener('resize', function() {
+        var hdr = document.querySelector('.hdr');
+        if (hdr) {
+            document.body.style.paddingTop = hdr.offsetHeight + 'px';
+        }
+    });
+    
+    console.log('✅ سیستم هدر فعال شد');
+})();
+</script>
 </body>
 </html>
