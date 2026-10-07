@@ -2205,11 +2205,7 @@
         html, body { background: var(--bg-primary) !important; }
         #appContainer { padding: 0 !important; margin: 0 !important; max-width: none !important; width: 100% !important; }
         #appContainer > .app-page { min-height: 100vh !important; background: var(--bg-primary) !important; }
-        /* حذف کامل فضای سفید ناشی از min-height و فاصله هدر */
-        #contentArea { background: var(--bg-primary) !important; min-height: 0 !important; height: auto !important; padding-top: 0 !important; margin-top: 0 !important; }
-        #appContainer, #appContainer > .app-page { min-height: 0 !important; height: auto !important; }
-        body { padding-top: 0 !important; }
-        html, body { margin-top: 0 !important; }
+        #contentArea { background: var(--bg-primary) !important; min-height: 100vh !important; }
         #mainHeader { pointer-events: auto !important; }
         #mainHeader .grid-menu-item, #mainHeader button, #mainHeader a { pointer-events: auto !important; }
         .script-services-divider{grid-column:1/-1;width:100%;box-sizing:border-box;margin:12px 0 6px;padding:10px 12px;border-top:2px solid #38bdf8;border-bottom:2px solid #38bdf8;background:rgba(56,189,248,.08);color:#38bdf8;text-align:center;font-weight:900;font-size:.78rem;border-radius:12px;}
@@ -5942,8 +5938,6 @@
             hdr.style.zIndex = '99';
             document.body.style.paddingTop = hdr.offsetHeight + 'px';
         }
-        var ca2 = document.getElementById('contentArea');
-        if (ca2) { ca2.style.paddingTop = '0'; ca2.style.marginTop = '0'; ca2.style.minHeight = '0'; }
         renderPage('menu');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (typeof updateFloatingButtons === 'function') updateFloatingButtons();
@@ -5961,8 +5955,6 @@
             hdr.style.pointerEvents = 'none';
         }
         document.body.style.paddingTop = '0px';
-        var ca = document.getElementById('contentArea');
-        if (ca) { ca.style.paddingTop = '0'; ca.style.marginTop = '0'; ca.style.minHeight = '0'; }
 
         renderPage(tab);
         window.scrollTo({ top: 0, behavior: 'auto' });
@@ -11677,14 +11669,12 @@
         setTimeout(function() {
             var hdrHeight = hdr.offsetHeight;
             if (hdrHeight > 0) {
-                var onMenu = (typeof currentPage === 'undefined' || currentPage === 'menu');
-                document.body.style.paddingTop = onMenu ? (hdrHeight + 'px') : '0px';
+                document.body.style.paddingTop = hdrHeight + 'px';
                 if (contentArea) {
                     contentArea.style.paddingTop = '0';
                     contentArea.style.marginTop = '0';
-                    contentArea.style.minHeight = '0';
                 }
-                console.log('✅ هدر تنظیم شد. ارتفاع:', hdrHeight + 'px', 'صفحه:', onMenu ? 'menu' : currentPage);
+                console.log('✅ هدر تنظیم شد. ارتفاع:', hdrHeight + 'px');
             }
         }, 200);
         
