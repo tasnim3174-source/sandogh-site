@@ -1,0 +1,11 @@
+[
+  {
+    "id": "admin",
+    "accountNumber": "admin",
+    "username": "admin",
+    "password": "admin123",
+    "role": "admin",
+    "memberId": null,
+    "familyCount": 1
+  }
+]
