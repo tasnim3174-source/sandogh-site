@@ -11935,5 +11935,66 @@
     console.log('✅ fixBottomNavAndWhiteBoxPermanent فعال شد - نسخه قطعی');
 })();
 </script>
+       <script>
+// ============================================================
+// 🛠️ رفع باگ: حذف کادر اضافی و دوبار رندر شدن صفحه اصلی در پایین
+// ============================================================
+(function fixDuplicateMenuBug() {
+    'use strict';
+
+    function removeDuplicate() {
+        // ۱. پیدا کردن همه کانتینرهای محتوا
+        var contentAreas = document.querySelectorAll('#contentArea');
+        if (contentAreas.length > 1) {
+            // اگر بیش از یکی وجود داشت، از دومی به بعد را حذف کن
+            for (var i = 1; i < contentAreas.length; i++) {
+                contentAreas[i].remove();
+            }
+        }
+
+        // ۲. پیدا کردن همه گرید منوها
+        var gridMenus = document.querySelectorAll('.grid-menu');
+        if (gridMenus.length > 1) {
+            // اگر بیش از یکی وجود داشت، از دومی به بعد را حذف کن
+            for (var j = 1; j < gridMenus.length; j++) {
+                gridMenus[j].remove();
+            }
+        }
+
+        // ۳. پاکسازی کادرهای خالی اضافی در پایین صفحه
+        var allDivs = document.querySelectorAll('body > div');
+        allDivs.forEach(function(div) {
+            // اگر یک div خالی و بدون محتوا بود (فقط فاصله سفید)
+            if (div.id !== 'appContainer' && 
+                div.id !== 'newLoader' && 
+                div.id !== 'loaderOk' && 
+                div.id !== 'settingsModal' && 
+                div.id !== 'notificationPanel' && 
+                div.id !== 'toastContainer' && 
+                div.id !== 'bottomNav' &&
+                !div.classList.contains('hdr') &&
+                !div.classList.contains('floating-main-menu-btn') &&
+                !div.classList.contains('back-to-top') &&
+                !div.classList.contains('login-bg-animated') &&
+                !div.classList.contains('loaderGlow') &&
+                div.innerHTML.trim() === '') {
+                div.remove();
+            }
+        });
+    }
+
+    // اجرای اولیه
+    removeDuplicate();
+    setTimeout(removeDuplicate, 100);
+    setTimeout(removeDuplicate, 500);
+    setTimeout(removeDuplicate, 1500);
+    setTimeout(removeDuplicate, 3000);
+
+    // چک کردن مداوم برای جلوگیری از ایجاد مجدد
+    setInterval(removeDuplicate, 2000);
+
+    console.log('✅ رفع باگ کادر اضافی پایین صفحه انجام شد');
+})();
+</script> 
 </body>
 </html>
