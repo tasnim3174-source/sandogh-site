@@ -971,10 +971,57 @@
             transition: all 0.3s ease;
         }
         .summary-section {
-            background-color: white !important;
-            border: 1px solid white !important;
-            border-right: 4px solid white !important;
+            background: transparent !important;
+            border: 1px solid var(--glass-border) !important;
+            border-right: 4px solid var(--gradient-start) !important;
+            position: sticky;
+            top: 8px;
+            z-index: 30;
         }
+
+        /* صورتحساب سه بخشی: کلیدها افقی و محتوای هر بخش زیر آن */
+        .statement-tabs {
+            display:flex;
+            gap:7px;
+            overflow-x:auto;
+            padding:5px 2px 8px;
+            margin:0 0 10px;
+            scrollbar-width:thin;
+            position:sticky;
+            top:150px;
+            z-index:29;
+            background:var(--bg-primary);
+        }
+        .statement-tab {
+            flex:0 0 auto;
+            border:1px solid var(--glass-border);
+            background:var(--card-bg);
+            color:var(--text-primary);
+            border-radius:12px;
+            padding:9px 13px;
+            font-family:inherit;
+            font-size:.68rem;
+            font-weight:800;
+            cursor:pointer;
+            white-space:nowrap;
+            transition:.2s ease;
+        }
+        .statement-tab.active {
+            background:linear-gradient(135deg,var(--gradient-start),var(--gradient-end));
+            color:#fff;
+            border-color:transparent;
+            box-shadow:0 4px 14px var(--shadow-color);
+        }
+        .statement-panel { display:none; animation:fadeIn .2s ease; }
+        .statement-panel.active { display:block; }
+        @media(max-width:768px){
+            .summary-section{top:4px;}
+            .statement-tabs{top:118px;}
+            .statement-tab{padding:8px 11px;font-size:.64rem;}
+        }
+
+        /* نوار ثابت پایین حذف شد تا فضای سفید و هدر پایین باقی نماند */
+        #bottomNav, .bottom-nav { display:none !important; }
         .dashboard-section:hover { box-shadow: 0 8px 30px var(--shadow-color); }
         .dashboard-section h3 { color: var(--text-primary); margin-bottom: 10px; font-size: 1.05rem; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 
@@ -6569,7 +6616,7 @@
             if (container) renderExcelTransactions(memberTxns, 'txExcelContainer');
         }, 200);
 
-        return summaryBox + 
+        const statusHtml =
             '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:12px 14px;">' +
                 '<div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;">' +
                     '<span style="font-size:1.8rem;flex-shrink:0;">' + (overdueInstallments > 0 ? '🔴' : (hasActiveLoan ? '🟡' : '🟢')) + '</span>' +
@@ -6580,8 +6627,74 @@
                     '</div>' +
                 '</div>' +
             '</div>' +
-            adminHtml + warningsHtml + loanInfoHtml + installmentPlanHtml +
-            lastTxHtml + approvedHtml + allTxnsHtml + miniSmsHtml;
+            adminHtml + warningsHtml;
+
+        const allowanceSummaryHtml =
+            '<div class="dashboard-section" style="border-right-color:var(--success-color);">' +
+                '<h3><i class="fas fa-piggy-bank" style="color:var(--success-color);"></i> مقرری و پس‌انداز</h3>' +
+                '<div class="stats-grid">' +
+                    '<div class="stat-card"><div class="stat-icon">💰</div><div class="stat-value green">' + fmtNum(member.monthlySalary || 0) + '</div><div class="stat-label">مقرری ماهانه</div></div>' +
+                    '<div class="stat-card"><div class="stat-icon">🏦</div><div class="stat-value ' + (member.savingsStatus < 0 ? 'red' : 'green') + '">' + fmtNum(Math.round(member.savingsStatus || 0)) + '</div><div class="stat-label">وضعیت پس‌انداز</div></div>' +
+                '</div>' +
+            '</div>';
+
+        const tabHtml =
+            '<div class="statement-tabs" role="tablist">' +
+                '<button type="button" class="statement-tab active" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری و پس‌انداز</button>' +
+                '<button type="button" class="statement-tab" data-statement-tab="loan" onclick="switchDashboardTab(\'loan\')">🏦 تسهیلات</button>' +
+                '<button type="button" class="statement-tab" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 حساب شما از یک نگاه</button>' +
+            '</div>';
+
+        window.switchDashboardTab = function(tab) {
+            var root = document.getElementById('dashboardStatementRoot');
+            if (!root) return;
+            root.querySelectorAll('.statement-tab').forEach(function(btn) {
+                btn.classList.toggle('active', btn.getAttribute('data-statement-tab') === tab);
+            });
+            root.querySelectorAll('.statement-panel').forEach(function(panel) {
+                panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
+            });
+            if (tab === 'overview') {
+                var c = document.getElementById('txExcelContainer');
+                if (c && memberTxns) renderExcelTransactions(memberTxns, 'txExcelContainer');
+            }
+        };
+
+        return '<div id="dashboardStatementRoot">' +
+            summaryBox +
+            tabHtml +
+            '<div class="statement-panel active" data-statement-panel="allowance">' +
+                allowanceSummaryHtml +
+                warningsHtml +
+                lastTxHtml +
+                approvedHtml +
+                miniSmsHtml +
+            '</div>' +
+            '<div class="statement-panel" data-statement-panel="loan">' +
+                statusHtml +
+                loanInfoHtml +
+                installmentPlanHtml +
+                allTxnsHtml +
+            '</div>' +
+            '<div class="statement-panel" data-statement-panel="overview">' +
+                statusHtml +
+                '<div class="dashboard-section">' +
+                    '<h3><i class="fas fa-eye" style="color:var(--gradient-start);"></i> حساب شما از یک نگاه</h3>' +
+                    '<div class="stats-grid">' +
+                        '<div class="stat-card"><div class="stat-icon">👤</div><div class="stat-value">' + esc(member.firstName || '---') + '</div><div class="stat-label">عضو صندوق</div></div>' +
+                        '<div class="stat-card"><div class="stat-icon">🧾</div><div class="stat-value">' + memberTxns.length + '</div><div class="stat-label">تعداد تراکنش‌ها</div></div>' +
+                        '<div class="stat-card"><div class="stat-icon">💳</div><div class="stat-value">' + fmtNum(balance) + '</div><div class="stat-label">موجودی</div></div>' +
+                        '<div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value red">' + fmtNum(member.loanBalance || 0) + '</div><div class="stat-label">مانده بدهی وام</div></div>' +
+                    '</div>' +
+                '</div>' +
+                loanInfoHtml +
+                installmentPlanHtml +
+                lastTxHtml +
+                approvedHtml +
+                miniSmsHtml +
+                allTxnsHtml +
+            '</div>' +
+        '</div>';
     }
 
     // ============================================================
@@ -11737,6 +11850,89 @@
     });
     
     console.log('✅ سیستم هدر فعال شد');
+})();
+</script>
+<!-- ============================================================ -->
+<!-- راه‌حل قطعی: اصلاح نوار پایین و حذف کادر سفید -->
+<!-- ============================================================ -->
+<script>
+(function fixBottomNavAndWhiteBoxPermanent() {
+    'use strict';
+
+    function fix() {
+        var nav = document.getElementById('bottomNav');
+        var gm = document.querySelector('.grid-menu');
+        var hdr = document.querySelector('.hdr') || document.getElementById('mainHeader');
+        var page = (typeof currentPage !== 'undefined') ? currentPage : 'menu';
+
+        // ۱. اصلاح نوار پایین (فقط وقتی لاگین هستیم)
+        if (nav) {
+            var isLoggedIn = (typeof currentUser !== 'undefined' && currentUser);
+            if (isLoggedIn) {
+                nav.removeAttribute('style');
+                nav.style.cssText = 'position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; top: auto !important; display: flex !important; justify-content: space-around !important; align-items: center !important; padding: 12px 0 !important; z-index: 999 !important; background: linear-gradient(135deg, #1a1a2e, #2a2a4a) !important; border-top: 2px solid #ffc94d !important; height: auto !important; max-height: 90px !important; box-shadow: 0 -4px 20px rgba(255, 201, 77, 0.2) !important;';
+            } else {
+                nav.style.setProperty('display', 'none', 'important');
+            }
+        }
+
+        // ۲. اصلاح grid-menu (فقط در صفحه منو)
+        if (gm && (page === 'menu' || !page)) {
+            gm.style.setProperty('height', 'auto', 'important');
+            gm.style.setProperty('min-height', '0', 'important');
+            gm.style.setProperty('max-height', 'none', 'important');
+            gm.style.setProperty('background', 'transparent', 'important');
+            gm.style.setProperty('box-shadow', 'none', 'important');
+        }
+
+        // ۳. اصلاح هدر (فقط در صفحه منو)
+        if (hdr && (page === 'menu' || !page)) {
+            hdr.style.setProperty('max-height', 'calc(100vh - 90px)', 'important');
+            hdr.style.setProperty('padding-bottom', '80px', 'important');
+        }
+
+        // ۴. body padding
+        document.body.style.setProperty('padding-bottom', '0', 'important');
+        if (hdr && (page === 'menu' || !page)) {
+            document.body.style.setProperty('padding-top', hdr.offsetHeight + 'px', 'important');
+        }
+    }
+
+    // اجرای اولیه
+    fix();
+    setTimeout(fix, 50);
+    setTimeout(fix, 200);
+    setTimeout(fix, 500);
+    setTimeout(fix, 1000);
+    setTimeout(fix, 2000);
+
+    // چک مداوم (چون هدر و منو هر بار رندر می‌شن)
+    setInterval(fix, 400);
+
+    // وقتی صفحه عوض شد
+    if (typeof window.renderPage === 'function') {
+        var origRenderPage = window.renderPage;
+        window.renderPage = function() {
+            var r = origRenderPage.apply(this, arguments);
+            setTimeout(fix, 50);
+            setTimeout(fix, 200);
+            setTimeout(fix, 500);
+            return r;
+        };
+    }
+
+    // Observer برای تغییرات DOM
+    if (document.body) {
+        new MutationObserver(function() {
+            setTimeout(fix, 100);
+        }).observe(document.body, { childList: true, subtree: true });
+    }
+
+    // تغییر اندازه صفحه
+    window.addEventListener('resize', fix);
+    window.addEventListener('orientationchange', fix);
+
+    console.log('✅ fixBottomNavAndWhiteBoxPermanent فعال شد - نسخه قطعی');
 })();
 </script>
 </body>
