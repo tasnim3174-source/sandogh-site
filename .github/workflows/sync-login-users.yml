@@ -1,0 +1,48 @@
+name: Sync login users from Excel
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/10 * * * *"
+  push:
+    paths:
+      - "data.xlsx"
+      - "data1.xlsx"
+      - "sync-login-users.js"
+      - "package.json"
+      - ".github/workflows/sync-login-users.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Sync users
+        run: node sync-login-users.js
+
+      - name: Save updated login list
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add login-users.json
+
+          if git diff --cached --quiet; then
+            echo "No login-user changes."
+          else
+            git commit -m "Auto-sync login users from Excel"
+            git push
+          fi
