@@ -285,10 +285,14 @@
         </div>
     </div>
 
+    <!-- ============================================================
+         اسکریپت‌های هسته - همیشه لازم
+         ============================================================ -->
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
     <script src="js/core/api.js"></script>
     <script src="js/core/cache.js"></script>
+    <script src="js/core/lazy-loader.js"></script>
     <script src="js/data/load-excel.js"></script>
     <script src="js/auth/login.js"></script>
     <script src="js/auth/forgot-password.js"></script>
@@ -301,36 +305,11 @@
     <script src="js/ui/bottom-nav.js"></script>
     <script src="js/pages/menu.js"></script>
     <script src="js/pages/profile.js"></script>
-    <script src="js/pages/dashboard.js"></script>
-    <script src="js/pages/sms.js"></script>
-    <script src="js/pages/support.js"></script>
-    <script src="js/pages/requests.js"></script>
-    <script src="js/pages/family.js"></script>
-    <script src="js/pages/family-info.js"></script>
-    <script src="js/pages/access.js"></script>
-    <script src="js/pages/stats.js"></script>
-    <script src="js/pages/manage-coins.js"></script>
-    <script src="js/pages/reports.js"></script>
-    <script src="js/script-services/club.js"></script>
-    <script src="js/script-services/quizzes.js"></script>
-    <script src="js/script-services/daily-reward.js"></script>
-    <script src="js/script-services/email-form.js"></script>
-    <script src="js/script-services/messaging.js"></script>
-    <script src="js/entertainment/games.js"></script>
-    <script src="js/entertainment/lady-section.js"></script>
-    <script src="js/entertainment/cooking.js"></script>
-    <script src="js/entertainment/teen-piggy.js"></script>
-    <script src="js/entertainment/toddler.js"></script>
-    <script src="js/entertainment/my-fund.js"></script>
-    <script src="js/entertainment/utilities.js"></script>
-    <script src="js/entertainment/calendar.js"></script>
-    <script src="js/entertainment/notes.js"></script>
-    <script src="js/entertainment/calculators.js"></script>
     <script src="shared/password-functions.js"></script>
 
     <script>
     // ============================================================
-    // متغیرهای لودر (اگر در globals.js نبودند، اینجا تعریف می‌شوند)
+    // متغیرهای لودر
     // ============================================================
     var ldrFx = null, ldrCx = null, W = 0, H = 0, dust = [], conf = [];
     var ldrStages = [
@@ -342,9 +321,6 @@
     var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
     var C = 414.7;
 
-    // ============================================================
-    // توابع لودر
-    // ============================================================
     function ldrResize() {
         if (!ldrFx) return;
         W = window.innerWidth; H = window.innerHeight;
@@ -471,7 +447,7 @@
         }
 
         transactionsByMember = new Map();
-        transactions.forEach(t => {
+        transactions.forEach(function(t) {
             const id = String(t._memberId);
             if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
             transactionsByMember.get(id).push(t);
@@ -480,7 +456,7 @@
         loadCoins();
         loadNotifications();
         loadGameScores();
-        members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+        members.forEach(function(m) { memberScores[m.id] = calculateMemberScore(m); });
 
         saveRememberMe(res.username, res.password);
 
@@ -500,7 +476,6 @@
             updateFloatingButtons();
             startKeepAlive();
 
-            // نمایش نوار پایین
             var mainNav = document.getElementById('mainBottomNav');
             if (mainNav) mainNav.style.display = 'flex';
 
@@ -509,8 +484,8 @@
                 if (currentUser) await forceUpdateData();
             }, 60 * 60 * 1000);
 
-            const member = members.find(m => m.id === currentUser.memberId);
-            setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
+            const member = members.find(function(m) { return m.id === currentUser.memberId; });
+            setTimeout(function() { if (member) checkAutoNotifications(member); }, 1000);
 
             setTimeout(function() {
                 document.getElementById('newLoader').style.display = 'none';
@@ -570,64 +545,77 @@
     function openDirectLink(url) { window.open(url, '_blank'); }
 
     // ============================================================
-    // تابع renderPage (اصلاح‌شده)
+    // تابع renderPage با Lazy Loading
     // ============================================================
-    function renderPage(page) {
+    async function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
-        
+
+        // Lazy Loading: اگر بخش نیاز به بارگذاری دارد
+        if (window.LazyLoader && page !== 'menu' && page !== 'profile') {
+            if (LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
+                try {
+                    await LazyLoader.ensureSectionLoaded(page);
+                } catch (err) {
+                    content.style.display = 'block';
+                    content.innerHTML = '<div class="info-box" style="border-right-color:#ef4444;">❌ خطا در بارگذاری: ' + err.message + '</div>';
+                    return;
+                }
+            }
+        }
+
         if (page === 'menu') {
-            // صفحه منو: محتوا مخفی (هدر جای آن را می‌گیرد)
             content.style.display = 'none';
             content.style.height = '0';
             content.style.minHeight = '0';
             content.style.overflow = 'hidden';
             renderMenuPage(content);
         } else {
-            // صفحات داخلی: محتوا نمایش داده شود
             content.style.display = 'block';
             content.style.height = 'auto';
             content.style.minHeight = 'calc(100vh - 200px)';
             content.style.overflow = 'visible';
-            
+
             var hdr = document.getElementById('mainHeader');
-            if (hdr) {
-                hdr.style.display = 'none';
-            }
-            
+            if (hdr) hdr.style.display = 'none';
+
             document.body.style.paddingBottom = '110px';
             document.body.style.paddingTop = '0';
-            
+
             renderContentPage(page, content);
         }
-        
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderContentPage(page, content) {
-        if (page === 'myFund') { renderMyFundPage(content); return; }
-        if (page === 'utilities') { renderUtilitiesPage(content); return; }
+        if (page === 'myFund') { if (typeof renderMyFundPage === 'function') renderMyFundPage(content); return; }
+        if (page === 'utilities') { if (typeof renderUtilitiesPage === 'function') renderUtilitiesPage(content); return; }
         let pageContent = '';
 
         switch (page) {
-            case 'profile': pageContent = renderProfileContent(); break;
-            case 'dashboard': pageContent = renderDashboardContent(); break;
-            case 'sms': pageContent = renderSmsContent(); break;
-            case 'club': pageContent = renderClubContent(); break;
-            case 'family': pageContent = renderFamilyContent(); break;
-            case 'familyInfo': pageContent = renderFamilyInfoContent(); break;
-            case 'access': pageContent = renderAccessContent(); break;
-            case 'infoStats': pageContent = renderInfoStatsContent(); break;
-            case 'manageCoins': pageContent = renderManageCoinsContent(); break;
-            case 'reports': pageContent = renderReportsContent(); break;
-            case 'requests': pageContent = renderRequestsContent(); break;
-            case 'support': pageContent = renderSupportContent(); break;
-            default: pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
+            case 'profile':     pageContent = (typeof renderProfileContent === 'function') ? renderProfileContent() : '<div>خطا</div>'; break;
+            case 'dashboard':   pageContent = (typeof renderDashboardContent === 'function') ? renderDashboardContent() : '<div>خطا</div>'; break;
+            case 'sms':         pageContent = (typeof renderSmsContent === 'function') ? renderSmsContent() : '<div>خطا</div>'; break;
+            case 'club':        pageContent = (typeof renderClubContent === 'function') ? renderClubContent() : '<div>خطا</div>'; break;
+            case 'family':      pageContent = (typeof renderFamilyContent === 'function') ? renderFamilyContent() : '<div>خطا</div>'; break;
+            case 'familyInfo':  pageContent = (typeof renderFamilyInfoContent === 'function') ? renderFamilyInfoContent() : '<div>خطا</div>'; break;
+            case 'access':      pageContent = (typeof renderAccessContent === 'function') ? renderAccessContent() : '<div>خطا</div>'; break;
+            case 'infoStats':   pageContent = (typeof renderInfoStatsContent === 'function') ? renderInfoStatsContent() : '<div>خطا</div>'; break;
+            case 'manageCoins': pageContent = (typeof renderManageCoinsContent === 'function') ? renderManageCoinsContent() : '<div>خطا</div>'; break;
+            case 'reports':     pageContent = (typeof renderReportsContent === 'function') ? renderReportsContent() : '<div>خطا</div>'; break;
+            case 'requests':    pageContent = (typeof renderRequestsContent === 'function') ? renderRequestsContent() : '<div>خطا</div>'; break;
+            case 'support':     pageContent = (typeof renderSupportContent === 'function') ? renderSupportContent() : '<div>خطا</div>'; break;
+            default:            pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
         }
 
         content.innerHTML = pageContent;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // در معرض عموم قرار بده تا menu.js بتونه استفاده کنه
+    window.renderPage = renderPage;
+    window.renderContentPage = renderContentPage;
 
     document.addEventListener('DOMContentLoaded', function() {
         loadRememberMe();
@@ -660,4 +648,4 @@
         </button>
     </div>
 </body>
-    </html>
+</html>
