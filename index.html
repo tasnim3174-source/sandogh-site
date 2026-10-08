@@ -469,6 +469,23 @@
         setTimeout(function() {
             document.getElementById('newLoader').classList.add('away');
             document.getElementById('loaderOk').classList.remove('show');
+
+            // ============================================================
+            // ✅ مخفی کردن کامل لودر و صفحه ورود
+            // ============================================================
+            var nl = document.getElementById('newLoader');
+            if (nl) { nl.style.display = 'none'; nl.style.visibility = 'hidden'; }
+            var ok = document.getElementById('loaderOk');
+            if (ok) { ok.style.display = 'none'; ok.style.visibility = 'hidden'; }
+            var lp = document.getElementById('loginPage');
+            if (lp) { lp.style.display = 'none'; lp.style.visibility = 'hidden'; }
+            document.querySelectorAll('.loaderGlow').forEach(function(el) {
+                el.classList.remove('active');
+                el.style.display = 'none';
+            });
+            var fx = document.getElementById('loaderFx');
+            if (fx) { fx.classList.remove('active'); fx.style.display = 'none'; }
+
             const appContainer = document.getElementById('appContainer');
             appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
             renderPage('menu');
@@ -487,13 +504,15 @@
             const member = members.find(function(m) { return m.id === currentUser.memberId; });
             setTimeout(function() { if (member) checkAutoNotifications(member); }, 1000);
 
+            // اطمینان نهایی
             setTimeout(function() {
-                document.getElementById('newLoader').style.display = 'none';
-                document.getElementById('newLoader').classList.remove('active', 'away');
-                document.getElementById('loaderOk').classList.remove('active');
-                document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
-                if (ldrFx) ldrFx.classList.remove('active');
-            }, 700);
+                var nl2 = document.getElementById('newLoader');
+                if (nl2) { nl2.style.display = 'none'; nl2.style.visibility = 'hidden'; }
+                var ok2 = document.getElementById('loaderOk');
+                if (ok2) { ok2.style.display = 'none'; ok2.style.visibility = 'hidden'; }
+                var lp2 = document.getElementById('loginPage');
+                if (lp2) { lp2.style.display = 'none'; lp2.style.visibility = 'hidden'; }
+            }, 300);
         }, 1800);
     }
 
@@ -551,7 +570,10 @@
         const content = document.getElementById('contentArea');
         if (!content) return;
 
-        // Lazy Loading: اگر بخش نیاز به بارگذاری دارد
+        // اطمینان از مخفی بودن صفحه ورود
+        var lp = document.getElementById('loginPage');
+        if (lp) lp.style.display = 'none';
+
         if (window.LazyLoader && page !== 'menu' && page !== 'profile') {
             if (LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
                 try {
@@ -613,7 +635,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // در معرض عموم قرار بده تا menu.js بتونه استفاده کنه
     window.renderPage = renderPage;
     window.renderContentPage = renderContentPage;
 
@@ -648,4 +669,4 @@
         </button>
     </div>
 </body>
-</html>
+                        </html>
