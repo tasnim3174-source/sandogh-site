@@ -561,7 +561,44 @@
     }
 
     function openDirectLink(url) { window.open(url, '_blank'); }
+// ============================================================
+// تابع renderPage (تعریف در اینجا)
+// ============================================================
+function renderPage(page) {
+    const content = document.getElementById('contentArea');
+    if (!content) return;
+    if (page === 'menu') {
+        renderMenuPage(content);
+    } else {
+        renderContentPage(page, content);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
+function renderContentPage(page, content) {
+    if (page === 'myFund') { renderMyFundPage(content); return; }
+    if (page === 'utilities') { renderUtilitiesPage(content); return; }
+    let pageContent = '';
+
+    switch (page) {
+        case 'profile': pageContent = renderProfileContent(); break;
+        case 'dashboard': pageContent = renderDashboardContent(); break;
+        case 'sms': pageContent = renderSmsContent(); break;
+        case 'club': pageContent = renderClubContent(); break;
+        case 'family': pageContent = renderFamilyContent(); break;
+        case 'familyInfo': pageContent = renderFamilyInfoContent(); break;
+        case 'access': pageContent = renderAccessContent(); break;
+        case 'infoStats': pageContent = renderInfoStatsContent(); break;
+        case 'manageCoins': pageContent = renderManageCoinsContent(); break;
+        case 'reports': pageContent = renderReportsContent(); break;
+        case 'requests': pageContent = renderRequestsContent(); break;
+        case 'support': pageContent = renderSupportContent(); break;
+        default: pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
+    }
+
+    content.innerHTML = pageContent;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
     document.addEventListener('DOMContentLoaded', function() {
         loadRememberMe();
         checkMaintenance();
