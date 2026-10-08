@@ -1,17 +1,123 @@
 /* ============================================================
    صندوق اتحاد - منوی اصلی
-   نسخه: 2.0
+   نسخه: 2.1 - با Lazy Loading
    ============================================================ */
 
+// ============================================================
+// انتخاب آیتم منو با Lazy Loading
+// ============================================================
+async function selectMenuItem(tab) {
+    if (window.LazyLoader && LazyLoader.SECTION_DEPS[tab] && !LazyLoader.isLoaded(tab)) {
+        try {
+            await LazyLoader.ensureSectionLoaded(tab);
+        } catch (err) {
+            alert('❌ خطا در بارگذاری: ' + err.message);
+            return;
+        }
+    }
+    if (typeof window.renderPage === 'function') {
+        window.renderPage(tab);
+    } else {
+        renderPage(tab);
+    }
+}
+
+// ============================================================
+// باز کردن سرویس اسکریپتی
+// ============================================================
+async function openScriptService(tabName) {
+    if (window.LazyLoader && LazyLoader.SECTION_DEPS[tabName] && !LazyLoader.isLoaded(tabName)) {
+        try {
+            await LazyLoader.ensureSectionLoaded(tabName);
+        } catch (err) {
+            alert('❌ خطا در بارگذاری: ' + err.message);
+            return;
+        }
+    }
+
+    switch (tabName) {
+        case 'club':
+            if (typeof renderClubContent === 'function') {
+                if (typeof window.renderPage === 'function') window.renderPage('club');
+                else renderPage('club');
+            } else {
+                alert('⚠️ بخش باشگاه مشتریان هنوز آماده نیست');
+            }
+            break;
+        case 'quizzes':
+            if (typeof openQuizzes === 'function') openQuizzes();
+            else if (typeof renderQuizzesContent === 'function') {
+                if (typeof window.renderPage === 'function') window.renderPage('quizzes');
+                else renderPage('quizzes');
+            } else alert('⚠️ بخش مسابقات هنوز آماده نیست');
+            break;
+        case 'dailyReward':
+            if (typeof openDailyReward === 'function') openDailyReward();
+            else alert('⚠️ بخش پاداش روزانه هنوز آماده نیست');
+            break;
+        case 'emailForm':
+            if (typeof openEmailForm === 'function') openEmailForm();
+            else alert('⚠️ فرم ایمیل هنوز آماده نیست');
+            break;
+        case 'messaging':
+            if (typeof openMessaging === 'function') openMessaging();
+            else alert('⚠️ پیام‌رسان هنوز آماده نیست');
+            break;
+        case 'survey':
+            if (typeof openSurvey === 'function') openSurvey();
+            else alert('⚠️ نظرسنجی هنوز آماده نیست');
+            break;
+        default:
+            if (typeof window.renderPage === 'function') window.renderPage(tabName);
+            else renderPage(tabName);
+    }
+}
+
+// ============================================================
+// توابع باز کردن بخش‌های ویژه (با Lazy Loading)
+// ============================================================
+async function openToddlerGames() {
+    if (window.LazyLoader && !LazyLoader.isLoaded('toddler')) {
+        try { await LazyLoader.ensureSectionLoaded('toddler'); }
+        catch (err) { alert('❌ ' + err.message); return; }
+    }
+    if (typeof openToddlerGamesHandler === 'function') openToddlerGamesHandler();
+    else if (typeof renderToddlerPage === 'function') renderToddlerPage(document.getElementById('contentArea'));
+    else alert('⚠️ بخش رشد خردسالان هنوز آماده نیست');
+}
+
+async function openLadySection() {
+    if (window.LazyLoader && !LazyLoader.isLoaded('ladySection')) {
+        try { await LazyLoader.ensureSectionLoaded('ladySection'); }
+        catch (err) { alert('❌ ' + err.message); return; }
+    }
+    if (typeof openLadySectionHandler === 'function') openLadySectionHandler();
+    else if (typeof renderLadySection === 'function') renderLadySection(document.getElementById('contentArea'));
+    else alert('⚠️ بخش بانوان هنوز آماده نیست');
+}
+
+async function openTeenPiggy() {
+    if (window.LazyLoader && !LazyLoader.isLoaded('teenPiggy')) {
+        try { await LazyLoader.ensureSectionLoaded('teenPiggy'); }
+        catch (err) { alert('❌ ' + err.message); return; }
+    }
+    if (typeof openTeenPiggyHandler === 'function') openTeenPiggyHandler();
+    else if (typeof renderTeenPiggyPage === 'function') renderTeenPiggyPage(document.getElementById('contentArea'));
+    else alert('⚠️ بخش قلک نوجوانان هنوز آماده نیست');
+}
+
+// ============================================================
+// رندر صفحه منو
+// ============================================================
 function renderMenuPage(content) {
-    const member = members.find(m => m.id === currentUser.memberId);
+    const member = members.find(function(m) { return m.id === currentUser.memberId; });
     if (!member) { content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>'; return; }
 
     const sd = memberScores[member.id];
     const greeting = getGreeting();
 
     const famScores = computeFamilyScores();
-    const myRank = famScores.findIndex(f => f.code === member.heh1) + 1;
+    const myRank = famScores.findIndex(function(f) { return f.code === member.heh1; }) + 1;
     const totalFam = famScores.length;
 
     const t = getTodayShamsi();
@@ -25,7 +131,7 @@ function renderMenuPage(content) {
         const bd = String(member.birthDateShamsi).trim();
         let bYear = 0, bMonth = 0, bDay = 0;
 
-        if (bd.includes('/')) {
+        if (bd.indexOf('/') > -1) {
             const bb = bd.split('/');
             if (bb.length === 3) {
                 bYear = +bb[0]; bMonth = +bb[1]; bDay = +bb[2];
@@ -48,9 +154,9 @@ function renderMenuPage(content) {
     const bdayCakeHtml = isUserBirthday ? '<span class="bdaycake" title="🎉 تولدتان مبارک!">🎂</span>' : '';
 
     if (isUserBirthday) {
-        const birthdayKey = `bday_shown_${member.id}_${t.y}_${t.m}`;
+        const birthdayKey = 'bday_shown_' + member.id + '_' + t.y + '_' + t.m;
         if (!localStorage.getItem(birthdayKey)) {
-            setTimeout(() => showBirthdayWish(member, birthDay, t.m), 800);
+            setTimeout(function() { showBirthdayWish(member, birthDay, t.m); }, 800);
             localStorage.setItem(birthdayKey, '1');
         }
     }
@@ -63,18 +169,18 @@ function renderMenuPage(content) {
         { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
         { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
         { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
-        { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
+        { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' }
     ];
 
     const specialBoxItems = [
-        { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4', onclick: "selectMenuItem('myFund')" },
-        { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316', onclick: "selectMenuItem('utilities')" }
+        { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4' },
+        { tab: 'utilities', label: 'برنامه‌های کاربردی', icon: 'fa-toolbox', color: '#f97316' }
     ];
 
     const specialItems = [
         { tab: 'toddlerGrowth', label: '🧒 رشد ویژه خردسالان', icon: 'fa-baby', color: '#38bdf8' },
         { tab: 'teenPiggy', label: '🐷 قلک ویژه نوجوانان', icon: 'fa-child', color: '#ec4899' },
-        { tab: 'ladySpecial', label: '👩 بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' },
+        { tab: 'ladySpecial', label: '👩 بانو ویژه بانوان', icon: 'fa-female', color: '#d946ef' }
     ];
 
     const familyItems = [
@@ -92,134 +198,128 @@ function renderMenuPage(content) {
 
     let gridHtml = '<div class="grid-menu">';
 
-    publicItems.forEach(item => {
+    publicItems.forEach(function(item) {
         const blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
-        const clickHandler = item.onclick ? item.onclick : `selectMenuItem('${item.tab}')`;
-        gridHtml += `<div class="grid-menu-item${blinkClass}" data-tab="${item.tab}" onclick="${clickHandler}"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="menu-badge">0</span></div>`;
+        gridHtml += '<div class="grid-menu-item' + blinkClass + '" data-tab="' + item.tab + '" onclick="selectMenuItem(\'' + item.tab + '\')">' +
+            '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+            '<i class="fas ' + item.icon + '"></i></div>' +
+            '<div class="menu-label">' + item.label + '</div>' +
+            '<span class="menu-badge">0</span></div>';
     });
 
     gridHtml += '<div class="script-services-divider"><i class="fas fa-cloud"></i> خدمات آنلاین و متصل به اسکریپت <span>☁️ اطلاعات این بخش فقط هنگام ورود به آن بارگذاری می‌شود</span></div>';
+
     const scriptServices = [
-        { tab:'emailForm', label:'ثبت نحوه ارسال صورتحساب', icon:'fa-envelope', color:'#3b82f6' },
-        { tab:'club', label:'امتیازات و فروشگاه', icon:'fa-star', color:'#f59e0b' },
-        { tab:'dailyReward', label:'پاداش روزانه', icon:'fa-gift', color:'#ffd700' },
-        { tab:'quizzes', label:'🏆 مسابقات', icon:'fa-trophy', color:'#ffd700' },
-        { tab:'messaging', label:'📨 ارسال پیام', icon:'fa-paper-plane', color:'#8b5cf6' },
-        { tab:'survey', label:'📊 نظرسنجی', icon:'fa-poll', color:'#ec4899' }
+        { tab: 'emailForm', label: 'ثبت نحوه ارسال صورتحساب', icon: 'fa-envelope', color: '#3b82f6' },
+        { tab: 'club', label: 'امتیازات و فروشگاه', icon: 'fa-star', color: '#f59e0b' },
+        { tab: 'dailyReward', label: 'پاداش روزانه', icon: 'fa-gift', color: '#ffd700' },
+        { tab: 'quizzes', label: '🏆 مسابقات', icon: 'fa-trophy', color: '#ffd700' },
+        { tab: 'messaging', label: '📨 ارسال پیام', icon: 'fa-paper-plane', color: '#8b5cf6' },
+        { tab: 'survey', label: '📊 نظرسنجی', icon: 'fa-poll', color: '#ec4899' }
     ];
-    scriptServices.forEach(item => {
-        gridHtml += `<div class="grid-menu-item script-service-item" data-tab="${item.tab}" onclick="openScriptService('${item.tab}')"><div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div><span class="script-load-dot">☁️</span></div>`;
+
+    scriptServices.forEach(function(item) {
+        gridHtml += '<div class="grid-menu-item script-service-item" data-tab="' + item.tab + '" onclick="openScriptService(\'' + item.tab + '\')">' +
+            '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+            '<i class="fas ' + item.icon + '"></i></div>' +
+            '<div class="menu-label">' + item.label + '</div>' +
+            '<span class="script-load-dot">☁️</span></div>';
     });
 
     gridHtml += '<div class="family-divider" style="color:#ef4444;border-top:2px solid #ef4444;border-bottom:2px solid #ef4444;background:#ffffff;"><i class="fas fa-crown"></i> بخش ویژه</div>';
-    specialBoxItems.forEach(item => {
-        gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="${item.onclick}">
-            <div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="menu-label">${item.label}</div>
-        </div>`;
+
+    specialBoxItems.forEach(function(item) {
+        gridHtml += '<div class="grid-menu-item" data-tab="' + item.tab + '" onclick="selectMenuItem(\'' + item.tab + '\')">' +
+            '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+            '<i class="fas ' + item.icon + '"></i></div>' +
+            '<div class="menu-label">' + item.label + '</div></div>';
     });
 
     gridHtml += '<div class="family-divider" style="color:#ec4899;border-top:2px solid #ec4899;border-bottom:2px solid #ec4899;background:#ffffff;"><i class="fas fa-gem"></i> ویژه اعضا</div>';
-    specialItems.forEach(item => {
+
+    specialItems.forEach(function(item) {
         let clickHandler = '';
         let badgeHtml = '';
 
         if (item.tab === 'toddlerGrowth') {
-            clickHandler = `openToddlerGames()`;
-            badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">✅ فعال</span>`;
+            clickHandler = 'openToddlerGames()';
+            badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">✅ فعال</span>';
         } else if (item.tab === 'ladySpecial') {
-            clickHandler = `openLadySection()`;
-            badgeHtml = `<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#d946ef,#a21caf);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">👩 فعال</span>`;
+            clickHandler = 'openLadySection()';
+            badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#d946ef,#a21caf);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">👩 فعال</span>';
         } else if (item.tab === 'teenPiggy') {
             clickHandler = 'openTeenPiggy()';
             badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">🚀 جدید</span>';
-        } else {
-            clickHandler = "showComingSoon('" + item.label + "')";
-            badgeHtml = '<span style="position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;padding:3px 10px;border-radius:10px;font-size:0.5rem;">بزودی 🚧</span>';
         }
-        gridHtml += `<div class="grid-menu-item" data-tab="${item.tab}" onclick="${clickHandler}">
-            <div class="menu-icon" style="background:linear-gradient(135deg,${item.color},${item.color}dd);">
-                <i class="fas ${item.icon}"></i>
-            </div>
-            <div class="menu-label">${item.label}</div>
-            ${badgeHtml}
-        </div>`;
+
+        gridHtml += '<div class="grid-menu-item" data-tab="' + item.tab + '" onclick="' + clickHandler + '">' +
+            '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+            '<i class="fas ' + item.icon + '"></i></div>' +
+            '<div class="menu-label">' + item.label + '</div>' +
+            badgeHtml + '</div>';
     });
 
     gridHtml += '<div class="family-divider" style="background:#ffffff;"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
-    familyItems.forEach(item => {
+
+    familyItems.forEach(function(item) {
         const disabled = isHead ? '' : 'disabled';
         const lock = isHead ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>';
-        const click = isHead ? `selectMenuItem('${item.tab}')` : `alert('🔒 فقط سرپرستان خانوار دسترسی دارند')`;
-        gridHtml += `<div class="grid-menu-item family-item ${disabled}" data-tab="${item.tab}" onclick="${click}"><div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);"><i class="fas ${item.icon}"></i></div><div class="menu-label">${item.label}</div>${lock}</div>`;
+        const click = isHead ? 'selectMenuItem(\'' + item.tab + '\')' : 'alert(\'🔒 فقط سرپرستان خانوار دسترسی دارند\')';
+        gridHtml += '<div class="grid-menu-item family-item ' + disabled + '" data-tab="' + item.tab + '" onclick="' + click + '">' +
+            '<div class="menu-icon" style="background:linear-gradient(135deg,#10b981,#059669);">' +
+            '<i class="fas ' + item.icon + '"></i></div>' +
+            '<div class="menu-label">' + item.label + '</div>' + lock + '</div>';
     });
 
     gridHtml += '<div class="council-divider"><i class="fas fa-crown"></i> بخش ویژه شورا و مدیر</div>';
+
     councilItems.forEach(function(item) {
         var disabled = isCouncil ? '' : 'disabled';
         var lock = isCouncil ? '' : '<span class="lock-icon"><i class="fas fa-lock"></i></span>';
         var click;
         if (isCouncil) {
-            click = (item.tab === 'adminPanel') ? 'openAdminPanel()' : "selectMenuItem('" + item.tab + "')";
+            click = (item.tab === 'adminPanel') ? 'openAdminPanel()' : 'selectMenuItem(\'' + item.tab + '\')';
         } else {
-            click = "alert('🔒 فقط اعضای شورا و مدیر دسترسی دارند')";
+            click = 'alert(\'🔒 فقط اعضای شورا و مدیر دسترسی دارند\')';
         }
         gridHtml += '<div class="grid-menu-item council-item ' + disabled + '" data-tab="' + item.tab + '" onclick="' + click + '">' +
             '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
             '<i class="fas ' + item.icon + '"></i></div>' +
             '<div class="menu-label">' + item.label + '</div>' + lock + '</div>';
     });
+
     gridHtml += '</div>';
 
     let systemMessageHtml = '';
 
-    content.innerHTML = `
-        <div class="hdr" id="mainHeader">
-            <div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                <b>${esc(member.firstName)} عزیز، خوش آمدید 👋</b>
-                <span style="display:inline-flex;align-items:center;gap:7px;">${bdayCakeHtml}</span>
-            </div>
-            <div class="daterow">
-                <span>📅 ${new Date().toLocaleDateString('fa-IR')}</span>
-                <span class="clock" id="liveClock">🕐 --:--:--</span>
-                <span>${getPersianDayName()}</span>
-                <span class="hello">${greeting}</span>
-            </div>
-            ${systemMessageHtml}
-            ${gridHtml}
-        </div>
-    `;
+    content.innerHTML =
+        '<div class="hdr" id="mainHeader">' +
+            '<div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
+                '<b>' + esc(member.firstName) + ' عزیز، خوش آمدید 👋</b>' +
+                '<span style="display:inline-flex;align-items:center;gap:7px;">' + bdayCakeHtml + '</span>' +
+            '</div>' +
+            '<div class="daterow">' +
+                '<span>📅 ' + new Date().toLocaleDateString('fa-IR') + '</span>' +
+                '<span class="clock" id="liveClock">🕐 --:--:--</span>' +
+                '<span>' + getPersianDayName() + '</span>' +
+                '<span class="hello">' + greeting + '</span>' +
+            '</div>' +
+            systemMessageHtml +
+            gridHtml +
+        '</div>';
 
-    // انتقال هدر به body (خارج از contentArea)
     setTimeout(function() {
         var hdr = document.getElementById('mainHeader');
         var contentArea = document.getElementById('contentArea');
-        
+
         if (hdr && contentArea) {
             if (hdr.parentElement === contentArea) {
                 document.body.insertBefore(hdr, document.body.firstChild);
             }
-            
-            // ✅ اصلاح: پاک کردن contentArea و مخفی کردن کامل آن
+
             contentArea.innerHTML = '';
             contentArea.style.display = 'none';
-            contentArea.style.height = '0';
-            contentArea.style.minHeight = '0';
-            contentArea.style.maxHeight = '0';
-            contentArea.style.overflow = 'hidden';
-            contentArea.style.padding = '0';
-            contentArea.style.margin = '0';
-            
-            // ✅ مخفی کردن appContainer
-            var appContainer = document.getElementById('appContainer');
-            if (appContainer) {
-                appContainer.style.minHeight = '0';
-                appContainer.style.height = 'auto';
-                appContainer.style.paddingBottom = '80px'; // برای نوار پایین
-            }
-            
+
             hdr.style.position = 'fixed';
             hdr.style.top = '0';
             hdr.style.left = '0';
@@ -230,25 +330,18 @@ function renderMenuPage(content) {
             hdr.style.zIndex = '99';
             hdr.style.background = 'linear-gradient(135deg, #1a1a2e, #2a2a4a)';
             hdr.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
-            
+
             document.body.style.paddingTop = hdr.offsetHeight + 'px';
             document.body.style.background = 'var(--bg-primary)';
-            document.body.style.paddingBottom = '80px';
+            document.body.style.paddingBottom = '0';
             document.body.style.marginBottom = '0';
-            document.body.style.height = 'auto';
-            document.body.style.minHeight = '0';
+            contentArea.style.paddingTop = '0';
+            contentArea.style.marginTop = '0';
+            contentArea.style.background = 'var(--bg-primary)';
+            contentArea.style.minHeight = '0';
         }
     }, 100);
 
-    // نمایش نوار پایین
-    setTimeout(function() {
-        var mainNav = document.getElementById('mainBottomNav');
-        if (mainNav) {
-            mainNav.style.display = 'flex';
-        }
-    }, 200);
-
-    // ساعت زنده
     setInterval(function() {
         const clk = document.getElementById('liveClock');
         if (clk) {
@@ -263,3 +356,11 @@ function renderMenuPage(content) {
     updateNotifBadge();
     updateFloatingButtons();
 }
+
+// در معرض عموم
+window.selectMenuItem = selectMenuItem;
+window.openScriptService = openScriptService;
+window.openToddlerGames = openToddlerGames;
+window.openLadySection = openLadySection;
+window.openTeenPiggy = openTeenPiggy;
+window.renderMenuPage = renderMenuPage;
