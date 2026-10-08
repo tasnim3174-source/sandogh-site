@@ -7,27 +7,27 @@
 // ذخیره و بارگذاری Remember Me
 // ============================================================
 function saveRememberMe(username, password) {
-    if (document.getElementById('rememberMe').checked) {
-        try {
+    try {
+        if (document.getElementById('rememberMe') && document.getElementById('rememberMe').checked) {
             localStorage.setItem('sandogh_remember_username', username);
             localStorage.setItem('sandogh_remember_password', password);
             localStorage.setItem('sandogh_remember_checked', 'true');
-        } catch (e) {}
-    } else {
-        localStorage.removeItem('sandogh_remember_username');
-        localStorage.removeItem('sandogh_remember_password');
-        localStorage.setItem('sandogh_remember_checked', 'false');
-    }
+        } else {
+            localStorage.removeItem('sandogh_remember_username');
+            localStorage.removeItem('sandogh_remember_password');
+            localStorage.setItem('sandogh_remember_checked', 'false');
+        }
+    } catch (e) {}
 }
 
 function forceEnglishKeyboard() {
     var u = document.getElementById('loginUsername');
     var pw = document.getElementById('loginPassword');
-    [u,pw].forEach(function(el){ 
-        if(el){ 
-            el.setAttribute('lang','en'); 
-            el.setAttribute('inputmode','text'); 
-            el.style.direction='ltr'; 
+    [u, pw].forEach(function(el){
+        if(el){
+            el.setAttribute('lang', 'en');
+            el.setAttribute('inputmode', 'text');
+            el.style.direction = 'ltr';
         }
     });
 }
@@ -39,9 +39,12 @@ function loadRememberMe() {
         const password = localStorage.getItem('sandogh_remember_password') || '';
         const checked = localStorage.getItem('sandogh_remember_checked') === 'true';
         if (username && password && checked) {
-            document.getElementById('loginUsername').value = username;
-            document.getElementById('loginPassword').value = password;
-            document.getElementById('rememberMe').checked = true;
+            var u = document.getElementById('loginUsername');
+            var p = document.getElementById('loginPassword');
+            var r = document.getElementById('rememberMe');
+            if (u) u.value = username;
+            if (p) p.value = password;
+            if (r) r.checked = true;
             return true;
         }
         return false;
@@ -49,9 +52,25 @@ function loadRememberMe() {
 }
 
 // ============================================================
+// مخفی کردن نوار پایین (تابع کمکی)
+// ============================================================
+function hideBottomNav() {
+    var mainNav = document.getElementById('mainBottomNav');
+    if (mainNav) mainNav.style.display = 'none';
+}
+
+function showBottomNav() {
+    var mainNav = document.getElementById('mainBottomNav');
+    if (mainNav) mainNav.style.display = 'flex';
+}
+
+// ============================================================
 // تابع ورود اصلی
 // ============================================================
 async function handleLogin() {
+    // ✅ مخفی کردن نوار پایین هنگام لاگین
+    hideBottomNav();
+
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     if (!username || !password) {
@@ -71,8 +90,8 @@ async function handleLogin() {
         let user = null;
 
         if (cachedUsers && cachedUsers.length > 0) {
-            user = cachedUsers.find(u => 
-                (u.username === username || u.accountNumber === username) && 
+            user = cachedUsers.find(u =>
+                (u.username === username || u.accountNumber === username) &&
                 u.password === password
             );
         }
@@ -81,8 +100,8 @@ async function handleLogin() {
         let data;
         if (!user) {
             data = await loadMainDataWithCache(false);
-            user = data.users.find(u => 
-                (u.username === username || u.accountNumber === username) && 
+            user = data.users.find(u =>
+                (u.username === username || u.accountNumber === username) &&
                 u.password === password
             );
 
@@ -164,4 +183,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    // ✅ اطمینان از مخفی بودن نوار پایین در صفحه لاگین
+    hideBottomNav();
 });
