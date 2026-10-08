@@ -64,7 +64,8 @@ var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldr
 var C = 414.7;
 var loginDataReady = false;
 var loginResult = null;
-
+// ===== توابع لودر =====
+function ldrFa(n) { return new Intl.NumberFormat('fa-IR').format(n); }
 // ===== متغیرهای فراموشی رمز =====
 var forgotUser = null;
 var forgotStep = 1;
