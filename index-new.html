@@ -8,7 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>صندوق اتحاد</title>
 
-    <!-- ===== CDNها ===== -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -17,17 +16,14 @@
     <link href="https://v1.fontapi.ir/css/BTitr" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- ===== استایل اصلی ===== -->
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
 
-    <!-- ===== پس‌زمینهٔ صفحهٔ بارگذاری ===== -->
     <div class="loaderGlow g1"></div>
     <div class="loaderGlow g2"></div>
     <canvas id="loaderFx"></canvas>
 
-    <!-- ===== صفحهٔ بارگذاری ===== -->
     <div id="newLoader">
         <div class="loaderTop" style="justify-content:center;">
             <div class="badge"><span class="dot"></span> رمزنگاری AES-256</div>
@@ -80,7 +76,6 @@
         <div class="loaderBot"><span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span></div>
     </div>
 
-    <!-- ===== مودال موفقیت ===== -->
     <div id="loaderOk">
         <div class="okc">
             <svg class="bck" viewBox="0 0 110 110"><circle cx="55" cy="55" r="48"/><path d="M34 57l14 14 28-32"/></svg>
@@ -89,7 +84,6 @@
         </div>
     </div>
 
-    <!-- ===== مودال تنظیمات ===== -->
     <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
             <button class="settings-close" onclick="closeSettings()">✕</button>
@@ -129,7 +123,6 @@
         </div>
     </div>
 
-    <!-- ===== پنل اعلان‌ها ===== -->
     <div id="notificationPanel">
         <div class="notification-panel-content">
             <div style="padding:10px 14px;border-bottom:2px solid var(--border-color);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
@@ -154,7 +147,6 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-    <!-- ===== APP - صفحه اصلی ===== -->
     <div class="container" id="appContainer">
         <div class="login-bg-animated">
             <div class="orb"></div>
@@ -162,7 +154,6 @@
             <div class="orb"></div>
         </div>
 
-        <!-- ===== صفحه لاگین ===== -->
         <div class="login-page" id="loginPage">
             <h1>سیستم حسابداری صندوق اتحاد</h1>
 
@@ -294,7 +285,6 @@
         </div>
     </div>
 
-    <!-- ===== فایل‌های JS ===== -->
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
     <script src="js/core/api.js"></script>
@@ -338,11 +328,22 @@
     <script src="js/entertainment/calculators.js"></script>
     <script src="shared/password-functions.js"></script>
 
-    <!-- ===== اسکریپت لودر و راه‌اندازی ===== -->
     <script>
     // ============================================================
-    // لودر
+    // لودر - با متغیرهای محلی (بدون تداخل)
     // ============================================================
+
+    var ldrFx = null, ldrCx = null, W = 0, H = 0, dust = [], conf = [];
+    var ldrStages = [
+        { u: 25, t: 'اتصال به سرور اصلی' },
+        { u: 50, t: 'احراز هویت و امنیت' },
+        { u: 78, t: 'همگام‌سازی تراکنش‌ها' },
+        { u: 101, t: 'بارگذاری داشبورد مالی' }
+    ];
+    var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
+    var C = 414.7;
+
+    function ldrFa(n) { return new Intl.NumberFormat('fa-IR').format(n); }
 
     function ldrResize() {
         if (!ldrFx) return;
@@ -493,7 +494,7 @@
             document.getElementById('newLoader').classList.add('away');
             document.getElementById('loaderOk').classList.remove('show');
             const appContainer = document.getElementById('appContainer');
-            appContainer.innerHTML = `<div class="app-page"><div id="contentArea"></div></div>`;
+            appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
             renderPage('menu');
             updateVisitInfo();
             updateFloatingButtons();
@@ -547,9 +548,6 @@
 
     window.addEventListener('resize', ldrResize);
 
-    // ============================================================
-    // توابع کمکی UI
-    // ============================================================
     function toggleServicesPanelV2() {
         const panel = document.getElementById('servicesPanelV2');
         const arrow = document.getElementById('servicesArrowV2');
@@ -564,9 +562,6 @@
 
     function openDirectLink(url) { window.open(url, '_blank'); }
 
-    // ============================================================
-    // راه‌اندازی نهایی
-    // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         loadRememberMe();
         checkMaintenance();
