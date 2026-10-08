@@ -554,3 +554,90 @@ async function parseOneExcelFromAppsScript(url) {
         return { members: [], transactions: [], users: [] };
     }
 }
+/* ============================================================
+   🟢 Lazy Data Loading - بارگذاری تنبل داده‌های بخش‌ها
+   این بخش به انتهای فایل load-excel.js اضافه شود
+   ============================================================ */
+
+// کش داده‌های تنبل
+var _lazyDataCache = {};
+
+/**
+ * بارگذاری داده یک بخش به صورت تنبل
+ * @param {string} sectionName - نام بخش
+ * @returns {Promise<any>} داده‌های بخش
+ */
+async function loadLazyData(sectionName) {
+    if (_lazyDataCache[sectionName]) {
+        console.log('📦 Lazy data from cache:', sectionName);
+        return _lazyDataCache[sectionName];
+    }
+
+    console.log('⬇️ Lazy loading data:', sectionName);
+
+    var fileName = null;
+    switch (sectionName) {
+        case 'reports':     fileName = 'reports.xlsx'; break;
+        case 'stats':
+        case 'infoStats':   fileName = 'stats.xlsx'; break;
+        case 'club':        fileName = 'club.xlsx'; break;
+        case 'quizzes':     fileName = 'quizzes.xlsx'; break;
+        case 'games':       fileName = 'games.xlsx'; break;
+        case 'access':      fileName = 'access.xlsx'; break;
+        case 'manageCoins': fileName = 'coins.xlsx'; break;
+        case 'family':      fileName = 'family.xlsx'; break;
+        case 'familyInfo':  fileName = 'family-info.xlsx'; break;
+        case 'dashboard':
+        case 'sms':         fileName = 'sms.xlsx'; break;
+        case 'requests':    fileName = 'requests.xlsx'; break;
+        default:
+            console.warn('⚠️ بخش ناشناخته برای داده تنبل:', sectionName);
+            return null;
+    }
+
+    try {
+        // ⚠️ از تابع موجود در فایل خودت استفاده کن
+        // اگر اسم تابع فرق داره، این خط رو عوض کن
+        var data = null;
+        if (typeof readExcelFile === 'function') {
+            data = await readExcelFile(fileName);
+        } else if (typeof loadExcelFromServer === 'function') {
+            data = await loadExcelFromServer(fileName);
+        } else if (typeof fetchExcelData === 'function') {
+            data = await fetchExcelData(fileName);
+        } else {
+            console.warn('⚠️ تابع خواندن اکسل پیدا نشد - از fetch استفاده می‌شود');
+            var resp = await fetch('data/' + fileName);
+            if (resp.ok) {
+                var arrayBuffer = await resp.arrayBuffer();
+                var workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                data = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+            }
+        }
+
+        _lazyDataCache[sectionName] = data;
+        return data;
+    } catch (err) {
+        console.error('❌ خطا در بارگذاری داده تنبل ' + sectionName + ':', err);
+        return null;
+    }
+}
+
+/**
+ * پاک کردن کش داده تنبل
+ */
+function invalidateLazyData(sectionName) {
+    if (sectionName) {
+        delete _lazyDataCache[sectionName];
+    } else {
+        _lazyDataCache = {};
+    }
+    console.log('🗑️ Lazy data cache invalidated:', sectionName || 'all');
+}
+
+// در معرض عموم
+window.DataLoader = {
+    loadLazyData: loadLazyData,
+    invalidateLazyData: invalidateLazyData
+};
