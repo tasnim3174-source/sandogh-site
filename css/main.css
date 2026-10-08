@@ -2210,3 +2210,49 @@ body {
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
 }
+/* ===== حذف کادر سفید و ارتفاع اضافی ===== */
+html, body {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#appContainer {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    overflow: visible !important;
+}
+
+#appContainer > .app-page {
+    min-height: 0 !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+#contentArea {
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    display: none !important; /* مخفی کن چون خالی است */
+}
+
+/* اگر contentArea محتوا دارد، نمایش بده */
+#contentArea:not(:empty) {
+    display: block !important;
+}
+
+/* حذف فاصله اضافی آخرین عنصر */
+body > *:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+}
