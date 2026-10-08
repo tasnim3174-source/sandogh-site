@@ -2222,3 +2222,9 @@ body > *:last-child {
 #bottomNav {
     display: none !important;
 }
+.grid-menu > .script-services-divider,
+.grid-menu > .family-divider,
+.grid-menu > .council-divider {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+}
