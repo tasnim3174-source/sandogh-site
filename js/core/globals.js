@@ -399,5 +399,5 @@ const ladyFoodItems = [
         { ingredient: 'رب گوجه', amount: '۲ قاشق غذاخوری' },
         { ingredient: 'ادویه بندری', amount: '۱ قاشق چایخوری' }
     ]}
-};
+];
 
