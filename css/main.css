@@ -2196,3 +2196,17 @@ html, body { background: var(--bg-primary) !important; }
 @media (max-width: 600px) {
     .login-page { width: calc(100vw - 16px) !important; max-height: calc(100vh - 16px) !important; }
 }
+#contentArea:empty,
+#contentArea[style*="display: none"] {
+    display: none !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body {
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
