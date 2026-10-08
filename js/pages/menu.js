@@ -202,6 +202,10 @@ function renderMenuPage(content) {
                 document.body.insertBefore(hdr, document.body.firstChild);
             }
             
+            // ✅ اصلاح: پاک کردن contentArea و مخفی کردن آن
+            contentArea.innerHTML = '';
+            contentArea.style.display = 'none';
+            
             hdr.style.position = 'fixed';
             hdr.style.top = '0';
             hdr.style.left = '0';
@@ -215,10 +219,12 @@ function renderMenuPage(content) {
             
             document.body.style.paddingTop = hdr.offsetHeight + 'px';
             document.body.style.background = 'var(--bg-primary)';
+            document.body.style.paddingBottom = '0';
+            document.body.style.marginBottom = '0';
             contentArea.style.paddingTop = '0';
             contentArea.style.marginTop = '0';
             contentArea.style.background = 'var(--bg-primary)';
-            contentArea.style.minHeight = 'calc(100vh - ' + hdr.offsetHeight + 'px)';
+            contentArea.style.minHeight = '0';
         }
     }, 100);
 
