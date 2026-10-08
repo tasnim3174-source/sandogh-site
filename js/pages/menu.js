@@ -202,9 +202,23 @@ function renderMenuPage(content) {
                 document.body.insertBefore(hdr, document.body.firstChild);
             }
             
-            // ✅ اصلاح: پاک کردن contentArea و مخفی کردن آن
+            // ✅ اصلاح: پاک کردن contentArea و مخفی کردن کامل آن
             contentArea.innerHTML = '';
             contentArea.style.display = 'none';
+            contentArea.style.height = '0';
+            contentArea.style.minHeight = '0';
+            contentArea.style.maxHeight = '0';
+            contentArea.style.overflow = 'hidden';
+            contentArea.style.padding = '0';
+            contentArea.style.margin = '0';
+            
+            // ✅ مخفی کردن appContainer
+            var appContainer = document.getElementById('appContainer');
+            if (appContainer) {
+                appContainer.style.minHeight = '0';
+                appContainer.style.height = 'auto';
+                appContainer.style.paddingBottom = '80px'; // برای نوار پایین
+            }
             
             hdr.style.position = 'fixed';
             hdr.style.top = '0';
@@ -219,14 +233,20 @@ function renderMenuPage(content) {
             
             document.body.style.paddingTop = hdr.offsetHeight + 'px';
             document.body.style.background = 'var(--bg-primary)';
-            document.body.style.paddingBottom = '0';
+            document.body.style.paddingBottom = '80px';
             document.body.style.marginBottom = '0';
-            contentArea.style.paddingTop = '0';
-            contentArea.style.marginTop = '0';
-            contentArea.style.background = 'var(--bg-primary)';
-            contentArea.style.minHeight = '0';
+            document.body.style.height = 'auto';
+            document.body.style.minHeight = '0';
         }
     }, 100);
+
+    // نمایش نوار پایین
+    setTimeout(function() {
+        var mainNav = document.getElementById('mainBottomNav');
+        if (mainNav) {
+            mainNav.style.display = 'flex';
+        }
+    }, 200);
 
     // ساعت زنده
     setInterval(function() {
