@@ -330,9 +330,8 @@
 
     <script>
     // ============================================================
-    // لودر - با متغیرهای محلی (بدون تداخل)
+    // متغیرهای لودر (اگر در globals.js نبودند، اینجا تعریف می‌شوند)
     // ============================================================
-
     var ldrFx = null, ldrCx = null, W = 0, H = 0, dust = [], conf = [];
     var ldrStages = [
         { u: 25, t: 'اتصال به سرور اصلی' },
@@ -343,8 +342,9 @@
     var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
     var C = 414.7;
 
-    function ldrFa(n) { return new Intl.NumberFormat('fa-IR').format(n); }
-
+    // ============================================================
+    // توابع لودر
+    // ============================================================
     function ldrResize() {
         if (!ldrFx) return;
         W = window.innerWidth; H = window.innerHeight;
@@ -500,6 +500,10 @@
             updateFloatingButtons();
             startKeepAlive();
 
+            // نمایش نوار پایین
+            var mainNav = document.getElementById('mainBottomNav');
+            if (mainNav) mainNav.style.display = 'flex';
+
             if (autoUpdateInterval) clearInterval(autoUpdateInterval);
             autoUpdateInterval = setInterval(async function() {
                 if (currentUser) await forceUpdateData();
@@ -548,6 +552,9 @@
 
     window.addEventListener('resize', ldrResize);
 
+    // ============================================================
+    // توابع کمکی UI
+    // ============================================================
     function toggleServicesPanelV2() {
         const panel = document.getElementById('servicesPanelV2');
         const arrow = document.getElementById('servicesArrowV2');
@@ -561,44 +568,67 @@
     }
 
     function openDirectLink(url) { window.open(url, '_blank'); }
-// ============================================================
-// تابع renderPage (تعریف در اینجا)
-// ============================================================
-function renderPage(page) {
-    const content = document.getElementById('contentArea');
-    if (!content) return;
-    if (page === 'menu') {
-        renderMenuPage(content);
-    } else {
-        renderContentPage(page, content);
+
+    // ============================================================
+    // تابع renderPage (اصلاح‌شده)
+    // ============================================================
+    function renderPage(page) {
+        const content = document.getElementById('contentArea');
+        if (!content) return;
+        
+        if (page === 'menu') {
+            // صفحه منو: محتوا مخفی (هدر جای آن را می‌گیرد)
+            content.style.display = 'none';
+            content.style.height = '0';
+            content.style.minHeight = '0';
+            content.style.overflow = 'hidden';
+            renderMenuPage(content);
+        } else {
+            // صفحات داخلی: محتوا نمایش داده شود
+            content.style.display = 'block';
+            content.style.height = 'auto';
+            content.style.minHeight = 'calc(100vh - 200px)';
+            content.style.overflow = 'visible';
+            
+            var hdr = document.getElementById('mainHeader');
+            if (hdr) {
+                hdr.style.display = 'none';
+            }
+            
+            document.body.style.paddingBottom = '110px';
+            document.body.style.paddingTop = '0';
+            
+            renderContentPage(page, content);
+        }
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
-function renderContentPage(page, content) {
-    if (page === 'myFund') { renderMyFundPage(content); return; }
-    if (page === 'utilities') { renderUtilitiesPage(content); return; }
-    let pageContent = '';
+    function renderContentPage(page, content) {
+        if (page === 'myFund') { renderMyFundPage(content); return; }
+        if (page === 'utilities') { renderUtilitiesPage(content); return; }
+        let pageContent = '';
 
-    switch (page) {
-        case 'profile': pageContent = renderProfileContent(); break;
-        case 'dashboard': pageContent = renderDashboardContent(); break;
-        case 'sms': pageContent = renderSmsContent(); break;
-        case 'club': pageContent = renderClubContent(); break;
-        case 'family': pageContent = renderFamilyContent(); break;
-        case 'familyInfo': pageContent = renderFamilyInfoContent(); break;
-        case 'access': pageContent = renderAccessContent(); break;
-        case 'infoStats': pageContent = renderInfoStatsContent(); break;
-        case 'manageCoins': pageContent = renderManageCoinsContent(); break;
-        case 'reports': pageContent = renderReportsContent(); break;
-        case 'requests': pageContent = renderRequestsContent(); break;
-        case 'support': pageContent = renderSupportContent(); break;
-        default: pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
+        switch (page) {
+            case 'profile': pageContent = renderProfileContent(); break;
+            case 'dashboard': pageContent = renderDashboardContent(); break;
+            case 'sms': pageContent = renderSmsContent(); break;
+            case 'club': pageContent = renderClubContent(); break;
+            case 'family': pageContent = renderFamilyContent(); break;
+            case 'familyInfo': pageContent = renderFamilyInfoContent(); break;
+            case 'access': pageContent = renderAccessContent(); break;
+            case 'infoStats': pageContent = renderInfoStatsContent(); break;
+            case 'manageCoins': pageContent = renderManageCoinsContent(); break;
+            case 'reports': pageContent = renderReportsContent(); break;
+            case 'requests': pageContent = renderRequestsContent(); break;
+            case 'support': pageContent = renderSupportContent(); break;
+            default: pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
+        }
+
+        content.innerHTML = pageContent;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    content.innerHTML = pageContent;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
     document.addEventListener('DOMContentLoaded', function() {
         loadRememberMe();
         checkMaintenance();
@@ -606,27 +636,28 @@ function renderContentPage(page, content) {
 
     console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
     </script>
+
     <!-- ===== نوار پایین ===== -->
-<div class="bottom-nav" id="mainBottomNav" style="display:none;">
-    <button class="bottom-nav-btn" onclick="goToMenu()">
-        <i class="fas fa-home"></i>
-        <span>خانه</span>
-    </button>
-    <button class="bottom-nav-btn" onclick="handleLogoutFromNav()">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>خروج</span>
-    </button>
-    <button class="bottom-nav-center" onclick="showBottomNavModal()">
-        <i class="fas fa-chart-pie"></i>
-    </button>
-    <button class="bottom-nav-btn" onclick="openSettings()">
-        <i class="fas fa-sliders-h"></i>
-        <span>تنظیمات</span>
-    </button>
-    <button class="bottom-nav-btn" onclick="showInfoNavModal()">
-        <i class="fas fa-info-circle"></i>
-        <span>اطلاعات</span>
-    </button>
-</div>
+    <div class="bottom-nav" id="mainBottomNav" style="display:none;">
+        <button class="bottom-nav-btn" onclick="goToMenu()">
+            <i class="fas fa-home"></i>
+            <span>خانه</span>
+        </button>
+        <button class="bottom-nav-btn" onclick="handleLogoutFromNav()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>خروج</span>
+        </button>
+        <button class="bottom-nav-center" onclick="showBottomNavModal()">
+            <i class="fas fa-chart-pie"></i>
+        </button>
+        <button class="bottom-nav-btn" onclick="openSettings()">
+            <i class="fas fa-sliders-h"></i>
+            <span>تنظیمات</span>
+        </button>
+        <button class="bottom-nav-btn" onclick="showInfoNavModal()">
+            <i class="fas fa-info-circle"></i>
+            <span>اطلاعات</span>
+        </button>
+    </div>
 </body>
-</html>
+    </html>
