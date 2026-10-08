@@ -73,3 +73,4 @@ function openEmailForm() {
         }).catch(function(){ alert('❌ خطا در اتصال'); });
     };
     document.getElementById('stmtEmailClose').onclick = function(){ ov.parentNode.removeChild(ov); };
+}
