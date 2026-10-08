@@ -285,14 +285,10 @@
         </div>
     </div>
 
-    <!-- ============================================================
-         اسکریپت‌های هسته - همیشه لازم
-         ============================================================ -->
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
     <script src="js/core/api.js"></script>
     <script src="js/core/cache.js"></script>
-    <script src="js/core/lazy-loader.js"></script>
     <script src="js/data/load-excel.js"></script>
     <script src="js/auth/login.js"></script>
     <script src="js/auth/forgot-password.js"></script>
@@ -305,11 +301,36 @@
     <script src="js/ui/bottom-nav.js"></script>
     <script src="js/pages/menu.js"></script>
     <script src="js/pages/profile.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+    <script src="js/pages/sms.js"></script>
+    <script src="js/pages/support.js"></script>
+    <script src="js/pages/requests.js"></script>
+    <script src="js/pages/family.js"></script>
+    <script src="js/pages/family-info.js"></script>
+    <script src="js/pages/access.js"></script>
+    <script src="js/pages/stats.js"></script>
+    <script src="js/pages/manage-coins.js"></script>
+    <script src="js/pages/reports.js"></script>
+    <script src="js/script-services/club.js"></script>
+    <script src="js/script-services/quizzes.js"></script>
+    <script src="js/script-services/daily-reward.js"></script>
+    <script src="js/script-services/email-form.js"></script>
+    <script src="js/script-services/messaging.js"></script>
+    <script src="js/entertainment/games.js"></script>
+    <script src="js/entertainment/lady-section.js"></script>
+    <script src="js/entertainment/cooking.js"></script>
+    <script src="js/entertainment/teen-piggy.js"></script>
+    <script src="js/entertainment/toddler.js"></script>
+    <script src="js/entertainment/my-fund.js"></script>
+    <script src="js/entertainment/utilities.js"></script>
+    <script src="js/entertainment/calendar.js"></script>
+    <script src="js/entertainment/notes.js"></script>
+    <script src="js/entertainment/calculators.js"></script>
     <script src="shared/password-functions.js"></script>
 
     <script>
     // ============================================================
-    // متغیرهای لودر
+    // متغیرهای لودر (اگر در globals.js نبودند، اینجا تعریف می‌شوند)
     // ============================================================
     var ldrFx = null, ldrCx = null, W = 0, H = 0, dust = [], conf = [];
     var ldrStages = [
@@ -321,6 +342,9 @@
     var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
     var C = 414.7;
 
+    // ============================================================
+    // توابع لودر
+    // ============================================================
     function ldrResize() {
         if (!ldrFx) return;
         W = window.innerWidth; H = window.innerHeight;
@@ -408,27 +432,16 @@
     function ldrAbortWithError(message) {
         ldrDone = true;
         clearInterval(ldrSecT);
-        var nl = document.getElementById('newLoader');
-        if (nl) {
-            nl.classList.add('away');
-            setTimeout(function() {
-                if (nl.parentNode) nl.parentNode.removeChild(nl);
-                var ok = document.getElementById('loaderOk');
-                if (ok && ok.parentNode) ok.parentNode.removeChild(ok);
-                document.querySelectorAll('.loaderGlow').forEach(function(el) {
-                    if (el.parentNode) el.parentNode.removeChild(el);
-                });
-                var fx = document.getElementById('loaderFx');
-                if (fx && fx.parentNode) fx.parentNode.removeChild(fx);
-                // نمایش مجدد صفحه ورود
-                var lp = document.getElementById('loginPage');
-                if (lp) {
-                    lp.style.display = '';
-                    lp.style.visibility = '';
-                }
-                alert('❌ ' + message);
-            }, 700);
-        }
+        document.getElementById('newLoader').classList.add('away');
+        setTimeout(function() {
+            document.getElementById('newLoader').style.display = 'none';
+            document.getElementById('newLoader').classList.remove('active', 'away');
+            document.getElementById('loaderOk').classList.remove('active', 'show');
+            document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
+            if (ldrFx) ldrFx.classList.remove('active');
+            document.getElementById('loginPage').style.display = '';
+            alert('❌ ' + message);
+        }, 700);
     }
 
     function ldrFinish() {
@@ -458,7 +471,7 @@
         }
 
         transactionsByMember = new Map();
-        transactions.forEach(function(t) {
+        transactions.forEach(t => {
             const id = String(t._memberId);
             if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
             transactionsByMember.get(id).push(t);
@@ -467,62 +480,27 @@
         loadCoins();
         loadNotifications();
         loadGameScores();
-        members.forEach(function(m) { memberScores[m.id] = calculateMemberScore(m); });
+        members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
 
         saveRememberMe(res.username, res.password);
 
         setTimeout(function() {
-            var ok = document.getElementById('loaderOk');
-            if (ok) {
-                ok.classList.add('active');
-                ok.classList.add('show');
-            }
+            document.getElementById('loaderOk').classList.add('active');
+            document.getElementById('loaderOk').classList.add('show');
             ldrBurst(W / 2, H * 0.35, 90);
         }, 600);
 
         setTimeout(function() {
-            // ============================================================
-            // ✅ حذف کامل عناصر لودر، صفحه ورود و مودال‌ها از DOM
-            // ============================================================
-
-            // 1. حذف کامل صفحه ورود
-            var lp = document.getElementById('loginPage');
-            if (lp && lp.parentNode) lp.parentNode.removeChild(lp);
-
-            // 2. حذف کامل لودر اولیه
-            var nl = document.getElementById('newLoader');
-            if (nl && nl.parentNode) nl.parentNode.removeChild(nl);
-
-            // 3. حذف کامل لودر موفقیت
-            var ok = document.getElementById('loaderOk');
-            if (ok && ok.parentNode) ok.parentNode.removeChild(ok);
-
-            // 4. حذف کامل glow ها
-            document.querySelectorAll('.loaderGlow').forEach(function(el) {
-                if (el.parentNode) el.parentNode.removeChild(el);
-            });
-
-            // 5. حذف کامل canvas
-            var fx = document.getElementById('loaderFx');
-            if (fx && fx.parentNode) fx.parentNode.removeChild(fx);
-
-            // 6. بستن مودال‌ها در صورتی که باز باشن
-            var sm = document.getElementById('settingsModal');
-            if (sm) { sm.classList.remove('show'); sm.style.display = 'none'; }
-            var np = document.getElementById('notificationPanel');
-            if (np) { np.classList.remove('show'); np.style.display = 'none'; }
-
-            // ============================================================
-            // حالا برنامه اصلی رو بساز
-            // ============================================================
+            document.getElementById('newLoader').classList.add('away');
+            document.getElementById('loaderOk').classList.remove('show');
             const appContainer = document.getElementById('appContainer');
             appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
-
             renderPage('menu');
             updateVisitInfo();
             updateFloatingButtons();
             startKeepAlive();
 
+            // نمایش نوار پایین
             var mainNav = document.getElementById('mainBottomNav');
             if (mainNav) mainNav.style.display = 'flex';
 
@@ -531,8 +509,16 @@
                 if (currentUser) await forceUpdateData();
             }, 60 * 60 * 1000);
 
-            const member = members.find(function(m) { return m.id === currentUser.memberId; });
-            setTimeout(function() { if (member) checkAutoNotifications(member); }, 1000);
+            const member = members.find(m => m.id === currentUser.memberId);
+            setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
+
+            setTimeout(function() {
+                document.getElementById('newLoader').style.display = 'none';
+                document.getElementById('newLoader').classList.remove('active', 'away');
+                document.getElementById('loaderOk').classList.remove('active');
+                document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
+                if (ldrFx) ldrFx.classList.remove('active');
+            }, 700);
         }, 1800);
     }
 
@@ -549,7 +535,6 @@
         }, 250);
 
         var ldr = document.getElementById('newLoader');
-        if (!ldr) return;
         ldr.style.display = 'flex';
         ldr.classList.add('active');
         document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.add('active'); });
@@ -573,7 +558,6 @@
     function toggleServicesPanelV2() {
         const panel = document.getElementById('servicesPanelV2');
         const arrow = document.getElementById('servicesArrowV2');
-        if (!panel) return;
         if (panel.classList.contains('open')) {
             panel.classList.remove('open');
             if (arrow) arrow.style.transform = 'rotate(0deg)';
@@ -586,75 +570,64 @@
     function openDirectLink(url) { window.open(url, '_blank'); }
 
     // ============================================================
-    // تابع renderPage با Lazy Loading
+    // تابع renderPage (اصلاح‌شده)
     // ============================================================
-    async function renderPage(page) {
+    function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
-
-        if (window.LazyLoader && page !== 'menu' && page !== 'profile') {
-            if (LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
-                try {
-                    await LazyLoader.ensureSectionLoaded(page);
-                } catch (err) {
-                    content.style.display = 'block';
-                    content.innerHTML = '<div class="info-box" style="border-right-color:#ef4444;">❌ خطا در بارگذاری: ' + err.message + '</div>';
-                    return;
-                }
-            }
-        }
-
+        
         if (page === 'menu') {
+            // صفحه منو: محتوا مخفی (هدر جای آن را می‌گیرد)
             content.style.display = 'none';
             content.style.height = '0';
             content.style.minHeight = '0';
             content.style.overflow = 'hidden';
             renderMenuPage(content);
         } else {
+            // صفحات داخلی: محتوا نمایش داده شود
             content.style.display = 'block';
             content.style.height = 'auto';
             content.style.minHeight = 'calc(100vh - 200px)';
             content.style.overflow = 'visible';
-
+            
             var hdr = document.getElementById('mainHeader');
-            if (hdr) hdr.style.display = 'none';
-
+            if (hdr) {
+                hdr.style.display = 'none';
+            }
+            
             document.body.style.paddingBottom = '110px';
             document.body.style.paddingTop = '0';
-
+            
             renderContentPage(page, content);
         }
-
+        
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function renderContentPage(page, content) {
-        if (page === 'myFund') { if (typeof renderMyFundPage === 'function') renderMyFundPage(content); return; }
-        if (page === 'utilities') { if (typeof renderUtilitiesPage === 'function') renderUtilitiesPage(content); return; }
+        if (page === 'myFund') { renderMyFundPage(content); return; }
+        if (page === 'utilities') { renderUtilitiesPage(content); return; }
         let pageContent = '';
 
         switch (page) {
-            case 'profile':     pageContent = (typeof renderProfileContent === 'function') ? renderProfileContent() : '<div>خطا</div>'; break;
-            case 'dashboard':   pageContent = (typeof renderDashboardContent === 'function') ? renderDashboardContent() : '<div>خطا</div>'; break;
-            case 'sms':         pageContent = (typeof renderSmsContent === 'function') ? renderSmsContent() : '<div>خطا</div>'; break;
-            case 'club':        pageContent = (typeof renderClubContent === 'function') ? renderClubContent() : '<div>خطا</div>'; break;
-            case 'family':      pageContent = (typeof renderFamilyContent === 'function') ? renderFamilyContent() : '<div>خطا</div>'; break;
-            case 'familyInfo':  pageContent = (typeof renderFamilyInfoContent === 'function') ? renderFamilyInfoContent() : '<div>خطا</div>'; break;
-            case 'access':      pageContent = (typeof renderAccessContent === 'function') ? renderAccessContent() : '<div>خطا</div>'; break;
-            case 'infoStats':   pageContent = (typeof renderInfoStatsContent === 'function') ? renderInfoStatsContent() : '<div>خطا</div>'; break;
-            case 'manageCoins': pageContent = (typeof renderManageCoinsContent === 'function') ? renderManageCoinsContent() : '<div>خطا</div>'; break;
-            case 'reports':     pageContent = (typeof renderReportsContent === 'function') ? renderReportsContent() : '<div>خطا</div>'; break;
-            case 'requests':    pageContent = (typeof renderRequestsContent === 'function') ? renderRequestsContent() : '<div>خطا</div>'; break;
-            case 'support':     pageContent = (typeof renderSupportContent === 'function') ? renderSupportContent() : '<div>خطا</div>'; break;
-            default:            pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
+            case 'profile': pageContent = renderProfileContent(); break;
+            case 'dashboard': pageContent = renderDashboardContent(); break;
+            case 'sms': pageContent = renderSmsContent(); break;
+            case 'club': pageContent = renderClubContent(); break;
+            case 'family': pageContent = renderFamilyContent(); break;
+            case 'familyInfo': pageContent = renderFamilyInfoContent(); break;
+            case 'access': pageContent = renderAccessContent(); break;
+            case 'infoStats': pageContent = renderInfoStatsContent(); break;
+            case 'manageCoins': pageContent = renderManageCoinsContent(); break;
+            case 'reports': pageContent = renderReportsContent(); break;
+            case 'requests': pageContent = renderRequestsContent(); break;
+            case 'support': pageContent = renderSupportContent(); break;
+            default: pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
         }
 
         content.innerHTML = pageContent;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    window.renderPage = renderPage;
-    window.renderContentPage = renderContentPage;
 
     document.addEventListener('DOMContentLoaded', function() {
         loadRememberMe();
@@ -687,4 +660,4 @@
         </button>
     </div>
 </body>
-    </html>
+                </html>
