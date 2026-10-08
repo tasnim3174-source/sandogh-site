@@ -606,5 +606,27 @@ function renderContentPage(page, content) {
 
     console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
     </script>
+    <!-- ===== نوار پایین ===== -->
+<div class="bottom-nav" id="mainBottomNav" style="display:none;">
+    <button class="bottom-nav-btn" onclick="goToMenu()">
+        <i class="fas fa-home"></i>
+        <span>خانه</span>
+    </button>
+    <button class="bottom-nav-btn" onclick="handleLogoutFromNav()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>خروج</span>
+    </button>
+    <button class="bottom-nav-center" onclick="showBottomNavModal()">
+        <i class="fas fa-chart-pie"></i>
+    </button>
+    <button class="bottom-nav-btn" onclick="openSettings()">
+        <i class="fas fa-sliders-h"></i>
+        <span>تنظیمات</span>
+    </button>
+    <button class="bottom-nav-btn" onclick="showInfoNavModal()">
+        <i class="fas fa-info-circle"></i>
+        <span>اطلاعات</span>
+    </button>
+</div>
 </body>
 </html>
