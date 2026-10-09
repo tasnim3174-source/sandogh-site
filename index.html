@@ -289,6 +289,7 @@
     <script src="js/core/utils.js"></script>
     <script src="js/core/api.js"></script>
     <script src="js/core/cache.js"></script>
+    <script src="js/core/lazy-loader.js"></script>
     <script src="js/data/load-excel.js"></script>
     <script src="js/auth/login.js"></script>
     <script src="js/auth/forgot-password.js"></script>
@@ -330,7 +331,7 @@
 
     <script>
     // ============================================================
-    // متغیرهای لودر (اگر در globals.js نبودند، اینجا تعریف می‌شوند)
+    // متغیرهای لودر
     // ============================================================
     var ldrFx = null, ldrCx = null, W = 0, H = 0, dust = [], conf = [];
     var ldrStages = [
@@ -500,7 +501,6 @@
             updateFloatingButtons();
             startKeepAlive();
 
-            // نمایش نوار پایین
             var mainNav = document.getElementById('mainBottomNav');
             if (mainNav) mainNav.style.display = 'flex';
 
@@ -570,37 +570,51 @@
     function openDirectLink(url) { window.open(url, '_blank'); }
 
     // ============================================================
-    // تابع renderPage (اصلاح‌شده)
+    // تابع renderPage با پشتیبانی Lazy Loading
+    // (فقط چک می‌کند؛ اگر LazyLoader نبود، مثل قبل کار می‌کند)
     // ============================================================
     function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
-        
+
+        // اگر LazyLoader موجود بود و بخش نیاز به لود دارد
+        if (window.LazyLoader && page !== 'menu' && page !== 'profile' && LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
+            LazyLoader.ensureSectionLoaded(page).then(function() {
+                _renderPageNow(page, content);
+            }).catch(function(err) {
+                content.style.display = 'block';
+                content.innerHTML = '<div class="info-box" style="border-right-color:#ef4444;">❌ خطا در بارگذاری: ' + err.message + '</div>';
+            });
+            return;
+        }
+
+        _renderPageNow(page, content);
+    }
+
+    function _renderPageNow(page, content) {
         if (page === 'menu') {
-            // صفحه منو: محتوا مخفی (هدر جای آن را می‌گیرد)
             content.style.display = 'none';
             content.style.height = '0';
             content.style.minHeight = '0';
             content.style.overflow = 'hidden';
             renderMenuPage(content);
         } else {
-            // صفحات داخلی: محتوا نمایش داده شود
             content.style.display = 'block';
             content.style.height = 'auto';
             content.style.minHeight = 'calc(100vh - 200px)';
             content.style.overflow = 'visible';
-            
+
             var hdr = document.getElementById('mainHeader');
             if (hdr) {
                 hdr.style.display = 'none';
             }
-            
+
             document.body.style.paddingBottom = '110px';
             document.body.style.paddingTop = '0';
-            
+
             renderContentPage(page, content);
         }
-        
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -628,6 +642,10 @@
         content.innerHTML = pageContent;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // در معرض عموم
+    window.renderPage = renderPage;
+    window.renderContentPage = renderContentPage;
 
     document.addEventListener('DOMContentLoaded', function() {
         loadRememberMe();
@@ -660,4 +678,4 @@
         </button>
     </div>
 </body>
-                </html>
+    </html>
