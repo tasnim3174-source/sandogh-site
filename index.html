@@ -321,8 +321,8 @@
     var ldrStages = [
         { u: 25, t: 'اتصال به سرور اصلی' },
         { u: 50, t: 'احراز هویت و امنیت' },
-        { u: 78, t: 'همگام‌سازی' },
-        { u: 101, t: 'بارگذاری داشبورد مالی' }
+        { u: 78, t: 'بارگذاری اطلاعات' },
+        { u: 101, t: 'آماده‌سازی داشبورد' }
     ];
     var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
     var C = 414.7;
@@ -387,18 +387,31 @@
 
     function ldrTick() {
         if (ldrDone) return;
-        var maxProgress = 75;
+        var maxProgress = 60;
+        
+        // وقتی ورود موفق شد، پیشرفت رو ادامه بده
         if (loginDataReady) {
             if (loginResult && loginResult.success) {
-                maxProgress = 100;
+                maxProgress = 95;   // ← ۹۵٪ (نه ۱۰۰)، چون منتظر members هستیم
             } else {
                 ldrAbortWithError(loginResult ? loginResult.error : 'خطای نامشخص');
                 return;
             }
         }
+        
         if (ldrP >= maxProgress) {
+            // اگه به ۹۵٪ رسیدیم و login موفق بود، منتظر members بمون
             if (loginDataReady && loginResult && loginResult.success) {
-                ldrFinish();
+                // اگه members لود شده، برو به ۱۰۰
+                if (members && members.length > 0) {
+                    ldrP = 100;
+                    ldrRender();
+                    ldrFinish();
+                } else {
+                    // هنوز نه، ولی نمایش پیام عوض بشه
+                    document.getElementById('ldrStx').textContent = 'در حال دریافت اطلاعات کامل...';
+                    setTimeout(ldrTick, 300);
+                }
             } else if (!loginDataReady) {
                 document.getElementById('ldrStx').textContent = 'در حال دریافت اطلاعات...';
                 setTimeout(ldrTick, 300);
@@ -406,9 +419,9 @@
             return;
         }
         var hic = Math.random() < 0.06;
-        if (!hic) ldrP = Math.min(maxProgress, ldrP + (Math.random() * 5 + 2));
+        if (!hic) ldrP = Math.min(maxProgress, ldrP + (Math.random() * 4 + 2));
         ldrRender();
-        ldrTimer = setTimeout(ldrTick, hic ? (150 + Math.random() * 150) : (20 + Math.random() * 40));
+        ldrTimer = setTimeout(ldrTick, hic ? (150 + Math.random() * 150) : (25 + Math.random() * 45));
     }
 
     function ldrAbortWithError(message) {
@@ -435,38 +448,67 @@
         var res = loginResult;
         currentUser = res.user;
         
-        // ✅ members و transactions فعلاً خالی
-        members = [];
-        transactions = [];
+        // ✅ members و transactions از قبل لود شده (چون ldrTick منتظر موند)
         users = res.data.users || [];
 
-        // ✅ memberId رو از user بگیر
+        // ✅ memberId رو درست کن
         if (!currentUser.memberId) {
             currentUser.memberId = currentUser.id || currentUser.accountNumber || currentUser.username;
         }
 
+        // ✅ اگه memberId با id اعضا نمی‌خونه، با accountNumber ست کن
+        var foundMember = members.find(function(m) { 
+            return String(m.id) === String(currentUser.memberId); 
+        });
+        if (!foundMember) {
+            foundMember = members.find(function(m) {
+                return String(m.accountNumber) === String(currentUser.memberId) ||
+                       String(m.accountNumber) === String(currentUser.username);
+            });
+            if (foundMember) {
+                currentUser.memberId = foundMember.id;
+                console.log('✅ memberId اصلاح شد به: ' + foundMember.id);
+            }
+        }
+
+        // Map تراکنش‌ها
         transactionsByMember = new Map();
-        memberScores = {};
-        
-        window.__dataReady = false;
-        window.__bgProcessing = true;
+        if (transactions && transactions.length > 0) {
+            transactions.forEach(function(t) {
+                var id = String(t._memberId);
+                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                transactionsByMember.get(id).push(t);
+            });
+        }
+
+        // امتیاز اعضا
+        if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
+            members.forEach(function(m) {
+                try { memberScores[m.id] = calculateMemberScore(m); }
+                catch(e) { memberScores[m.id] = 0; }
+            });
+        }
+
+        window.__dataReady = true;
+        window.__bgProcessing = false;
 
         saveRememberMe(res.username, res.password);
 
-        // نمایش "کامل شد" سریع
+        // نمایش "کامل شد"
         setTimeout(function() {
             document.getElementById('loaderOk').classList.add('active');
             document.getElementById('loaderOk').classList.add('show');
             ldrBurst(W / 2, H * 0.35, 90);
-        }, 200);
+        }, 300);
 
+        // رفتن به منو
         setTimeout(function() {
             document.getElementById('newLoader').classList.add('away');
             document.getElementById('loaderOk').classList.remove('show');
+            
             const appContainer = document.getElementById('appContainer');
             appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
             
-            // ✅ منو رو فوراً نشون بده
             renderPage('menu');
             updateVisitInfo();
             updateFloatingButtons();
@@ -480,65 +522,15 @@
                 if (currentUser) await forceUpdateData();
             }, 60 * 60 * 1000);
 
-            // ============================================================
-            // ✅ در پس‌زمینه، اکسل‌های سنگین رو لود کن
-            // ============================================================
-            setTimeout(function() {
-                console.log('⏳ شروع لود داده‌های کامل در پس‌زمینه...');
-                var bgStart = Date.now();
+            // کارهای جانبی
+            try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
+            try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
+            try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
 
-                if (typeof loadMainDataWithCache !== 'function') {
-                    console.warn('⚠️ loadMainDataWithCache پیدا نشد');
-                    window.__bgProcessing = false;
-                    return;
-                }
-
-                loadMainDataWithCache(false).then(function(fullData) {
-                    console.log('✅ داده‌های کامل لود شد در ' + (Date.now() - bgStart) + 'ms');
-                    
-                    if (fullData.members && fullData.members.length > 0) {
-                        members = fullData.members;
-                    }
-                    if (fullData.transactions && fullData.transactions.length > 0) {
-                        transactions = fullData.transactions;
-                    }
-                    if (fullData.users && fullData.users.length > 0) {
-                        users = fullData.users;
-                    }
-
-                    transactionsByMember = new Map();
-                    if (transactions && transactions.length > 0) {
-                        transactions.forEach(function(t) {
-                            var id = String(t._memberId);
-                            if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                            transactionsByMember.get(id).push(t);
-                        });
-                    }
-
-                    if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
-                        members.forEach(function(m) {
-                            try { memberScores[m.id] = calculateMemberScore(m); }
-                            catch(e) { memberScores[m.id] = 0; }
-                        });
-                    }
-
-                    try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
-                    try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
-                    try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
-
-                    var member = members.find(function(m) { return m.id === currentUser.memberId; });
-                    if (member && typeof checkAutoNotifications === 'function') {
-                        setTimeout(function() { checkAutoNotifications(member); }, 500);
-                    }
-
-                    window.__dataReady = true;
-                    window.__bgProcessing = false;
-                    console.log('🎉 همه داده‌ها آماده است');
-                }).catch(function(err) {
-                    console.error('❌ خطا در لود داده‌های کامل:', err);
-                    window.__bgProcessing = false;
-                });
-            }, 100);
+            var member = members.find(function(m) { return m.id === currentUser.memberId; });
+            if (member && typeof checkAutoNotifications === 'function') {
+                setTimeout(function() { checkAutoNotifications(member); }, 1000);
+            }
 
             setTimeout(function() {
                 var nl = document.getElementById('newLoader');
@@ -547,8 +539,8 @@
                 if (ok) ok.classList.remove('active');
                 document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
                 if (ldrFx) ldrFx.classList.remove('active');
-            }, 300);
-        }, 600);
+            }, 700);
+        }, 1000);
     }
 
     function showLoaderAnimation() {
@@ -599,40 +591,13 @@
     function openDirectLink(url) { window.open(url, '_blank'); }
 
     // ============================================================
-    // تابع renderPage با Lazy Loading + انتظار برای داده‌ها
+    // تابع renderPage با Lazy Loading
     // ============================================================
     function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
 
-        var dataPages = ['dashboard', 'family', 'familyInfo', 'infoStats', 'reports', 'access', 'manageCoins'];
-        
-        if (window.__bgProcessing && dataPages.indexOf(page) !== -1) {
-            LazyLoader.showSectionLoader('در حال آماده‌سازی اطلاعات...');
-            
-            var waitInterval = setInterval(function() {
-                if (!window.__bgProcessing) {
-                    clearInterval(waitInterval);
-                    LazyLoader.hideSectionLoader();
-                    _actuallyRenderPage(page, content);
-                }
-            }, 200);
-            
-            setTimeout(function() {
-                clearInterval(waitInterval);
-                if (window.__bgProcessing) {
-                    LazyLoader.hideSectionLoader();
-                    _actuallyRenderPage(page, content);
-                }
-            }, 15000);
-            
-            return;
-        }
-
-        _actuallyRenderPage(page, content);
-    }
-
-    function _actuallyRenderPage(page, content) {
+        // اگه LazyLoader وجود داره و بخش نیاز به لود داره
         if (window.LazyLoader && page !== 'menu' && page !== 'profile' && LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
             LazyLoader.ensureSectionLoaded(page).then(function() {
                 _renderPageNow(page, content);
