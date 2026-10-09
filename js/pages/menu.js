@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - منوی اصلی
-   نسخه: 2.1 - با Lazy Loading
+   نسخه: 2.2 - با Lazy Loading + حالت انتظار برای members
    ============================================================ */
 
 // ============================================================
@@ -107,21 +107,82 @@ async function openTeenPiggy() {
 }
 
 // ============================================================
-// رندر صفحه منو
+// رندر صفحه منو (با حالت انتظار برای members)
 // ============================================================
 function renderMenuPage(content) {
+    // ============================================================
+    // ⚠️ چک: اگه members هنوز لود نشده، حالت انتظار نشون بده
+    // ============================================================
+    if (!members || members.length === 0) {
+        console.log('⏳ members خالیه، حالت انتظار...');
+        
+        content.style.display = 'block';
+        content.innerHTML = 
+            '<div style="display:flex;align-items:center;justify-content:center;min-height:70vh;flex-direction:column;gap:20px;padding:20px;">' +
+                '<div style="width:64px;height:64px;border:5px solid rgba(102,126,234,0.2);border-top-color:#667eea;border-radius:50%;animation:spinMenu 1s linear infinite;"></div>' +
+                '<p style="color:var(--text-secondary,#4a4a6a);font-size:1.05rem;font-weight:700;margin:0;">در حال آماده‌سازی منو...</p>' +
+                '<p style="color:var(--text-muted,#8888aa);font-size:0.85rem;margin:0;">لطفاً چند لحظه صبر کنید</p>' +
+                '<style>@keyframes spinMenu{to{transform:rotate(360deg)}}</style>' +
+            '</div>';
+        
+        // هر ۵۰۰ میلی‌ثانیه چک کن که members پر شده یا نه
+        if (window.__menuRetryInterval) {
+            clearInterval(window.__menuRetryInterval);
+        }
+        
+        window.__menuRetryInterval = setInterval(function() {
+            if (members && members.length > 0) {
+                clearInterval(window.__menuRetryInterval);
+                window.__menuRetryInterval = null;
+                console.log('✅ members آماده شد، منو دوباره ساخته می‌شه');
+                renderMenuPage(content);
+            }
+        }, 500);
+        
+        // بعد از ۱۵ ثانیه، اگه هنوز لود نشد، پیام خطا بده
+        setTimeout(function() {
+            if (window.__menuRetryInterval) {
+                clearInterval(window.__menuRetryInterval);
+                window.__menuRetryInterval = null;
+                content.innerHTML = 
+                    '<div style="text-align:center;padding:40px 20px;">' +
+                        '<p style="font-size:1.2rem;color:#ef4444;font-weight:700;">⚠️ خطا در بارگذاری اطلاعات</p>' +
+                        '<p style="color:var(--text-secondary);font-size:0.9rem;margin-top:10px;">لطفاً صفحه را رفرش کنید</p>' +
+                        '<button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;">🔄 رفرش</button>' +
+                    '</div>';
+            }
+        }, 15000);
+        
+        return;
+    }
+
+    // ============================================================
+    // حالا که members آماده است، منو رو بساز
+    // ============================================================
     const member = members.find(function(m) { return m.id === currentUser.memberId; });
-    if (!member) { content.innerHTML = '<div style="text-align:center;padding:30px;">خطا</div>'; return; }
+    if (!member) { 
+        console.warn('⚠️ member پیدا نشد. memberId:', currentUser.memberId, '| members:', members.length);
+        
+        // اگه member پیدا نشد ولی members خالیه، شاید memberId اشتباهه
+        content.style.display = 'block';
+        content.innerHTML = 
+            '<div style="text-align:center;padding:40px 20px;">' +
+                '<p style="font-size:1.1rem;color:#ef4444;font-weight:700;">⚠️ خطا در پیدا کردن اطلاعات کاربر</p>' +
+                '<p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px;">شناسه کاربر: ' + (currentUser.memberId || 'نامشخص') + '</p>' +
+                '<button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;">🔄 تلاش مجدد</button>' +
+            '</div>';
+        return; 
+    }
 
-    const sd = memberScores[member.id];
-    const greeting = getGreeting();
+    const sd = memberScores[member.id] || {};
+    const greeting = (typeof getGreeting === 'function') ? getGreeting() : 'خوش آمدید';
 
-    const famScores = computeFamilyScores();
+    const famScores = (typeof computeFamilyScores === 'function') ? computeFamilyScores() : [];
     const myRank = famScores.findIndex(function(f) { return f.code === member.heh1; }) + 1;
     const totalFam = famScores.length;
 
-    const t = getTodayShamsi();
-    const tn = shamsiDayNum(t.y, t.m, t.d);
+    const t = (typeof getTodayShamsi === 'function') ? getTodayShamsi() : { y: 1400, m: 1, d: 1 };
+    const tn = (typeof shamsiDayNum === 'function') ? shamsiDayNum(t.y, t.m, t.d) : 0;
 
     let isUserBirthday = false;
     let birthDay = 0;
@@ -153,7 +214,7 @@ function renderMenuPage(content) {
 
     const bdayCakeHtml = isUserBirthday ? '<span class="bdaycake" title="🎉 تولدتان مبارک!">🎂</span>' : '';
 
-    if (isUserBirthday) {
+    if (isUserBirthday && typeof showBirthdayWish === 'function') {
         const birthdayKey = 'bday_shown_' + member.id + '_' + t.y + '_' + t.m;
         if (!localStorage.getItem(birthdayKey)) {
             setTimeout(function() { showBirthdayWish(member, birthDay, t.m); }, 800);
@@ -161,8 +222,8 @@ function renderMenuPage(content) {
         }
     }
 
-    const isCouncil = hasCouncilOrAdminAccess();
-    const isHead = isHeadOfHousehold();
+    const isCouncil = (typeof hasCouncilOrAdminAccess === 'function') ? hasCouncilOrAdminAccess() : false;
+    const isHead = (typeof isHeadOfHousehold === 'function') ? isHeadOfHousehold() : false;
 
     const publicItems = [
         { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
@@ -295,13 +356,13 @@ function renderMenuPage(content) {
     content.innerHTML =
         '<div class="hdr" id="mainHeader">' +
             '<div class="greet" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
-                '<b>' + esc(member.firstName) + ' عزیز، خوش آمدید 👋</b>' +
+                '<b>' + ((typeof esc === 'function') ? esc(member.firstName) : member.firstName) + ' عزیز، خوش آمدید 👋</b>' +
                 '<span style="display:inline-flex;align-items:center;gap:7px;">' + bdayCakeHtml + '</span>' +
             '</div>' +
             '<div class="daterow">' +
                 '<span>📅 ' + new Date().toLocaleDateString('fa-IR') + '</span>' +
                 '<span class="clock" id="liveClock">🕐 --:--:--</span>' +
-                '<span>' + getPersianDayName() + '</span>' +
+                '<span>' + ((typeof getPersianDayName === 'function') ? getPersianDayName() : '') + '</span>' +
                 '<span class="hello">' + greeting + '</span>' +
             '</div>' +
             systemMessageHtml +
@@ -353,8 +414,8 @@ function renderMenuPage(content) {
         }
     }, 1000);
 
-    updateNotifBadge();
-    updateFloatingButtons();
+    if (typeof updateNotifBadge === 'function') updateNotifBadge();
+    if (typeof updateFloatingButtons === 'function') updateFloatingButtons();
 }
 
 // در معرض عموم
