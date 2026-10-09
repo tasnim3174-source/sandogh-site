@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - ورود و Remember Me
-   نسخه: 3.0 - استفاده از login-users.json (سبک و سریع)
+   نسخه: 3.1 - login-users.json + شروع لود داده‌های سنگین
    ============================================================ */
 
 // ============================================================
@@ -70,7 +70,7 @@ function showBottomNav() {
 }
 
 // ============================================================
-// ✅ تابع جدید: خواندن سبک login-users.json از GitHub
+// ✅ خواندن سبک login-users.json از GitHub
 // ============================================================
 async function fetchLoginUsers() {
     console.log('📥 خواندن login-users.json از GitHub...');
@@ -93,7 +93,45 @@ async function fetchLoginUsers() {
 }
 
 // ============================================================
-// تابع ورود اصلی (نسخه سبک)
+// ✅ شروع لود داده‌های سنگین در پس‌زمینه (بدون await)
+// ============================================================
+function startBackgroundDataLoad() {
+    if (typeof loadMainDataWithCache !== 'function') {
+        console.warn('⚠️ loadMainDataWithCache موجود نیست - پس‌زمینه لود نمی‌شه');
+        window.__bgProcessing = false;
+        return;
+    }
+    
+    console.log('⏳ شروع لود داده‌های سنگین در پس‌زمینه...');
+    var t0 = Date.now();
+    window.__bgProcessing = true;
+    window.__dataReady = false;
+    
+    loadMainDataWithCache(false).then(function(fullData) {
+        console.log('✅ داده‌های سنگین لود شد در ' + (Date.now() - t0) + 'ms');
+        
+        // ذخیره در متغیرهای سراسری
+        if (fullData.members && fullData.members.length > 0) {
+            window.__fullMembers = fullData.members;
+        }
+        if (fullData.transactions && fullData.transactions.length > 0) {
+            window.__fullTransactions = fullData.transactions;
+        }
+        if (fullData.users && fullData.users.length > 0) {
+            window.__fullUsers = fullData.users;
+        }
+        
+        window.__dataReady = true;
+        window.__bgProcessing = false;
+        console.log('🎉 همه داده‌ها آماده است');
+    }).catch(function(err) {
+        console.error('❌ خطا در لود داده‌های سنگین:', err);
+        window.__bgProcessing = false;
+    });
+}
+
+// ============================================================
+// تابع ورود اصلی (نسخه سبک + شروع پس‌زمینه)
 // ============================================================
 async function handleLogin() {
     hideBottomNav();
@@ -107,9 +145,13 @@ async function handleLogin() {
 
     loginDataReady = false;
     loginResult = null;
+    window.__bgProcessing = true;
 
     document.getElementById('loginPage').style.display = 'none';
     showLoaderAnimation();
+
+    // ✅ همین الان شروع کن به لود داده‌های سنگین در پس‌زمینه
+    startBackgroundDataLoad();
 
     try {
         var user = null;
@@ -133,7 +175,7 @@ async function handleLogin() {
         }
 
         // ============================================================
-        // ✅ مرحله ۲: از login-users.json (سبک) - نه از data.xlsx سنگین!
+        // ✅ مرحله ۲: از login-users.json (سبک)
         // ============================================================
         if (!user) {
             var loginUsers = await fetchLoginUsers();
@@ -145,7 +187,6 @@ async function handleLogin() {
             
             if (user) {
                 usersList = loginUsers;
-                // ذخیره در cache برای بار بعدی
                 saveUsersToCache(loginUsers);
             }
         }
@@ -158,29 +199,29 @@ async function handleLogin() {
                 success: true,
                 user: user,
                 data: { 
-                    members: [],        // ← خالی! در پس‌زمینه پر می‌شه
-                    transactions: [],   // ← خالی!
+                    members: [],
+                    transactions: [],
                     users: usersList || []
                 },
                 username: username,
                 password: password
             };
 
-            // ⚠️ این‌ها رو به تعویق بنداز (بعد از نمایش منو اجرا می‌شن)
+            // ⚠️ این‌ها رو به تعویق بنداز
             setTimeout(function() {
                 try {
                     if (typeof logUserLogin === 'function') {
                         logUserLogin(username, user.name || user.firstName || username);
                     }
                 } catch(e) {}
-            }, 2000);
+            }, 3000);
 
             setTimeout(function() {
                 try {
                     if (typeof awardDailyLogin === 'function') 
                         Promise.resolve(awardDailyLogin(user)).catch(function() {});
                 } catch(e) {}
-            }, 3000);
+            }, 4000);
 
         } else {
             loginResult = {
