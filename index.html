@@ -55,8 +55,8 @@
             <div class="steps">
                 <div class="stp" id="ldrS0"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v6H4zM4 13h16v6H4z"/><circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>اتصال به سرور</div>
                 <div class="stp" id="ldrS1"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>احراز هویت</div>
-                <div class="stp" id="ldrS2"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>بارگذاری اطلاعات</div>
-                <div class="stp" id="ldrS3"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>آماده‌سازی داشبورد</div>
+                <div class="stp" id="ldrS2"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>همگام‌سازی</div>
+                <div class="stp" id="ldrS3"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>داشبورد مالی</div>
             </div>
         </div>
         <div style="display:flex;align-items:center;justify-content:center;padding:16px 0 10px;min-height:116px;">
@@ -313,9 +313,6 @@
     // ============================================================
     window.__bgProcessing = false;
     window.__dataReady = false;
-    window.__fullMembers = null;
-    window.__fullTransactions = null;
-    window.__fullUsers = null;
 
     // ============================================================
     // متغیرهای لودر
@@ -390,12 +387,12 @@
 
     function ldrTick() {
         if (ldrDone) return;
-        
         var maxProgress = 60;
         
+        // وقتی ورود موفق شد، پیشرفت رو ادامه بده
         if (loginDataReady) {
             if (loginResult && loginResult.success) {
-                maxProgress = 100;
+                maxProgress = 95;   // ← ۹۵٪ (نه ۱۰۰)، چون منتظر members هستیم
             } else {
                 ldrAbortWithError(loginResult ? loginResult.error : 'خطای نامشخص');
                 return;
@@ -403,17 +400,24 @@
         }
         
         if (ldrP >= maxProgress) {
+            // اگه به ۹۵٪ رسیدیم و login موفق بود، منتظر members بمون
             if (loginDataReady && loginResult && loginResult.success) {
-                ldrP = 100;
-                ldrRender();
-                ldrFinish();
+                // اگه members لود شده، برو به ۱۰۰
+                if (members && members.length > 0) {
+                    ldrP = 100;
+                    ldrRender();
+                    ldrFinish();
+                } else {
+                    // هنوز نه، ولی نمایش پیام عوض بشه
+                    document.getElementById('ldrStx').textContent = 'در حال دریافت اطلاعات کامل...';
+                    setTimeout(ldrTick, 300);
+                }
             } else if (!loginDataReady) {
                 document.getElementById('ldrStx').textContent = 'در حال دریافت اطلاعات...';
                 setTimeout(ldrTick, 300);
             }
             return;
         }
-        
         var hic = Math.random() < 0.06;
         if (!hic) ldrP = Math.min(maxProgress, ldrP + (Math.random() * 4 + 2));
         ldrRender();
@@ -444,49 +448,60 @@
         var res = loginResult;
         currentUser = res.user;
         
-        // ✅ ساخت member موقت از login-users.json
-        var tempMember = {
-            id: currentUser.id || currentUser.accountNumber || currentUser.username,
-            firstName: currentUser.firstName || 'کاربر',
-            accountNumber: currentUser.accountNumber || currentUser.username,
-            phone1: currentUser.phone || currentUser.phone1 || '',
-            phone2: currentUser.phone2 || '',
-            heh1: currentUser.heh1 || '',
-            isCouncil: currentUser.role === 'council' || currentUser.role === 'admin',
-            balance: 0,
-            loanBalance: 0,
-            savingsStatus: 0,
-            paidInstallments: 0,
-            overdueInstallments: 0,
-            remainingInstallments: 0,
-            monthlySalary: 0,
-            active: true,
-            _isTemp: true
-        };
-        
-        members = [tempMember];
-        transactions = [];
+        // ✅ members و transactions از قبل لود شده (چون ldrTick منتظر موند)
         users = res.data.users || [];
-        
+
+        // ✅ memberId رو درست کن
         if (!currentUser.memberId) {
-            currentUser.memberId = tempMember.id;
+            currentUser.memberId = currentUser.id || currentUser.accountNumber || currentUser.username;
         }
-        
+
+        // ✅ اگه memberId با id اعضا نمی‌خونه، با accountNumber ست کن
+        var foundMember = members.find(function(m) { 
+            return String(m.id) === String(currentUser.memberId); 
+        });
+        if (!foundMember) {
+            foundMember = members.find(function(m) {
+                return String(m.accountNumber) === String(currentUser.memberId) ||
+                       String(m.accountNumber) === String(currentUser.username);
+            });
+            if (foundMember) {
+                currentUser.memberId = foundMember.id;
+                console.log('✅ memberId اصلاح شد به: ' + foundMember.id);
+            }
+        }
+
+        // Map تراکنش‌ها
         transactionsByMember = new Map();
-        memberScores = {};
-        memberScores[tempMember.id] = { score: 0, tier: 'برنزی', points: 0 };
-        
-        window.__dataReady = false;
-        window.__bgProcessing = true;
+        if (transactions && transactions.length > 0) {
+            transactions.forEach(function(t) {
+                var id = String(t._memberId);
+                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                transactionsByMember.get(id).push(t);
+            });
+        }
+
+        // امتیاز اعضا
+        if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
+            members.forEach(function(m) {
+                try { memberScores[m.id] = calculateMemberScore(m); }
+                catch(e) { memberScores[m.id] = 0; }
+            });
+        }
+
+        window.__dataReady = true;
+        window.__bgProcessing = false;
 
         saveRememberMe(res.username, res.password);
 
+        // نمایش "کامل شد"
         setTimeout(function() {
             document.getElementById('loaderOk').classList.add('active');
             document.getElementById('loaderOk').classList.add('show');
             ldrBurst(W / 2, H * 0.35, 90);
         }, 300);
 
+        // رفتن به منو
         setTimeout(function() {
             document.getElementById('newLoader').classList.add('away');
             document.getElementById('loaderOk').classList.remove('show');
@@ -507,83 +522,15 @@
                 if (currentUser) await forceUpdateData();
             }, 60 * 60 * 1000);
 
-            // ============================================================
-            // ✅ شروع لود data.xlsx در پس‌زمینه
-            // ============================================================
-            setTimeout(function() {
-                console.log('⏳ شروع لود data.xlsx (۵MB) در پس‌زمینه...');
-                var bgStart = Date.now();
-                
-                if (typeof loadMainDataWithCache === 'function') {
-                    loadMainDataWithCache(false).then(function(fullData) {
-                        console.log('✅ data.xlsx لود شد در ' + (Date.now() - bgStart) + 'ms');
-                        
-                        if (fullData.members && fullData.members.length > 0) {
-                            members = fullData.members;
-                            window.__fullMembers = members;
-                        }
-                        if (fullData.transactions && fullData.transactions.length > 0) {
-                            transactions = fullData.transactions;
-                            window.__fullTransactions = transactions;
-                        }
-                        if (fullData.users && fullData.users.length > 0) {
-                            users = fullData.users;
-                            window.__fullUsers = users;
-                        }
-                        
-                        // ✅ memberId واقعی رو پیدا کن
-                        var realMember = members.find(function(m) {
-                            return String(m.accountNumber) === String(currentUser.accountNumber) ||
-                                   String(m.accountNumber) === String(currentUser.username);
-                        });
-                        if (realMember) {
-                            currentUser.memberId = realMember.id;
-                            console.log('✅ memberId واقعی: ' + realMember.id);
-                        }
-                        
-                        // Map تراکنش‌ها
-                        transactionsByMember = new Map();
-                        if (transactions && transactions.length > 0) {
-                            transactions.forEach(function(t) {
-                                var id = String(t._memberId);
-                                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                                transactionsByMember.get(id).push(t);
-                            });
-                        }
-                        
-                        // امتیاز اعضا
-                        if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
-                            members.forEach(function(m) {
-                                try { memberScores[m.id] = calculateMemberScore(m); }
-                                catch(e) { memberScores[m.id] = 0; }
-                            });
-                        }
-                        
-                        // ✅ بازسازی منو با داده‌های واقعی
-                        console.log('🔄 بازسازی منو با داده‌های واقعی');
-                        if (typeof renderPage === 'function') {
-                            renderPage('menu');
-                        }
-                        
-                        // کارهای جانبی
-                        try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
-                        try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
-                        try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
-                        
-                        var rm = members.find(function(m) { return m.id === currentUser.memberId; });
-                        if (rm && typeof checkAutoNotifications === 'function') {
-                            setTimeout(function() { checkAutoNotifications(rm); }, 500);
-                        }
-                        
-                        window.__dataReady = true;
-                        window.__bgProcessing = false;
-                        console.log('🎉 همه داده‌ها آماده است');
-                    }).catch(function(err) {
-                        console.error('❌ خطا در لود data.xlsx:', err);
-                        window.__bgProcessing = false;
-                    });
-                }
-            }, 500);
+            // کارهای جانبی
+            try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
+            try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
+            try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
+
+            var member = members.find(function(m) { return m.id === currentUser.memberId; });
+            if (member && typeof checkAutoNotifications === 'function') {
+                setTimeout(function() { checkAutoNotifications(member); }, 1000);
+            }
 
             setTimeout(function() {
                 var nl = document.getElementById('newLoader');
@@ -650,6 +597,7 @@
         const content = document.getElementById('contentArea');
         if (!content) return;
 
+        // اگه LazyLoader وجود داره و بخش نیاز به لود داره
         if (window.LazyLoader && page !== 'menu' && page !== 'profile' && LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
             LazyLoader.ensureSectionLoaded(page).then(function() {
                 _renderPageNow(page, content);
