@@ -285,6 +285,9 @@
         </div>
     </div>
 
+    <!-- ============================================================
+         اسکریپت‌های هسته - همیشه لازم
+         ============================================================ -->
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
     <script src="js/core/api.js"></script>
@@ -302,32 +305,41 @@
     <script src="js/ui/bottom-nav.js"></script>
     <script src="js/pages/menu.js"></script>
     <script src="js/pages/profile.js"></script>
-    <script src="js/pages/dashboard.js"></script>
-    <script src="js/pages/sms.js"></script>
-    <script src="js/pages/support.js"></script>
-    <script src="js/pages/requests.js"></script>
-    <script src="js/pages/family.js"></script>
-    <script src="js/pages/family-info.js"></script>
-    <script src="js/pages/access.js"></script>
-    <script src="js/pages/stats.js"></script>
-    <script src="js/pages/manage-coins.js"></script>
-    <script src="js/pages/reports.js"></script>
-    <script src="js/script-services/club.js"></script>
-    <script src="js/script-services/quizzes.js"></script>
-    <script src="js/script-services/daily-reward.js"></script>
-    <script src="js/script-services/email-form.js"></script>
-    <script src="js/script-services/messaging.js"></script>
-    <script src="js/entertainment/games.js"></script>
-    <script src="js/entertainment/lady-section.js"></script>
-    <script src="js/entertainment/cooking.js"></script>
-    <script src="js/entertainment/teen-piggy.js"></script>
-    <script src="js/entertainment/toddler.js"></script>
-    <script src="js/entertainment/my-fund.js"></script>
-    <script src="js/entertainment/utilities.js"></script>
-    <script src="js/entertainment/calendar.js"></script>
-    <script src="js/entertainment/notes.js"></script>
-    <script src="js/entertainment/calculators.js"></script>
     <script src="shared/password-functions.js"></script>
+
+    <!-- ============================================================
+         ⚠️ اسکریپت‌های زیر به صورت Lazy بارگذاری می‌شن
+         توسط js/core/lazy-loader.js
+         ============================================================
+         صفحات:
+           - js/pages/dashboard.js
+           - js/pages/sms.js
+           - js/pages/support.js
+           - js/pages/requests.js
+           - js/pages/family.js
+           - js/pages/family-info.js
+           - js/pages/access.js
+           - js/pages/stats.js
+           - js/pages/manage-coins.js
+           - js/pages/reports.js
+         سرویس‌های اسکریپتی:
+           - js/script-services/club.js
+           - js/script-services/quizzes.js
+           - js/script-services/daily-reward.js
+           - js/script-services/email-form.js
+           - js/script-services/messaging.js
+         سرگرمی و بازی:
+           - js/entertainment/games.js
+           - js/entertainment/lady-section.js
+           - js/entertainment/cooking.js
+           - js/entertainment/teen-piggy.js
+           - js/entertainment/toddler.js
+           - js/entertainment/my-fund.js
+           - js/entertainment/utilities.js
+           - js/entertainment/calendar.js
+           - js/entertainment/notes.js
+           - js/entertainment/calculators.js
+         ============================================================ -->
 
     <script>
     // ============================================================
@@ -570,8 +582,7 @@
     function openDirectLink(url) { window.open(url, '_blank'); }
 
     // ============================================================
-    // تابع renderPage با پشتیبانی Lazy Loading
-    // (فقط چک می‌کند؛ اگر LazyLoader نبود، مثل قبل کار می‌کند)
+    // تابع renderPage با Lazy Loading
     // ============================================================
     function renderPage(page) {
         const content = document.getElementById('contentArea');
@@ -678,4 +689,4 @@
         </button>
     </div>
 </body>
-    </html>
+        </html>
