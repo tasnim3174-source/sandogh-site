@@ -1,7 +1,12 @@
 /* ============================================================
    صندوق اتحاد - ورود و Remember Me
-   نسخه: 2.0
+   نسخه: 3.0 - استفاده از login-users.json (سبک و سریع)
    ============================================================ */
+
+// ============================================================
+// آدرس فایل کاربران (سبک - فقط اطلاعات ورود)
+// ============================================================
+var LOGIN_USERS_URL = 'https://raw.githubusercontent.com/tasnim3174-source/sandogh-site/main/login-users.json';
 
 // ============================================================
 // ذخیره و بارگذاری Remember Me
@@ -65,10 +70,32 @@ function showBottomNav() {
 }
 
 // ============================================================
-// تابع ورود اصلی
+// ✅ تابع جدید: خواندن سبک login-users.json از GitHub
+// ============================================================
+async function fetchLoginUsers() {
+    console.log('📥 خواندن login-users.json از GitHub...');
+    var t0 = Date.now();
+    
+    var response = await fetch(LOGIN_USERS_URL, { cache: 'no-cache' });
+    
+    if (!response.ok) {
+        throw new Error('خطا در خواندن اطلاعات ورود (HTTP ' + response.status + ')');
+    }
+    
+    var users = await response.json();
+    
+    if (!Array.isArray(users)) {
+        throw new Error('اطلاعات ورود نامعتبر است');
+    }
+    
+    console.log('✅ ' + users.length + ' کاربر در ' + (Date.now() - t0) + 'ms');
+    return users;
+}
+
+// ============================================================
+// تابع ورود اصلی (نسخه سبک)
 // ============================================================
 async function handleLogin() {
-    // ✅ مخفی کردن نوار پایین هنگام لاگین
     hideBottomNav();
 
     const username = document.getElementById('loginUsername').value.trim();
@@ -85,66 +112,75 @@ async function handleLogin() {
     showLoaderAnimation();
 
     try {
-        // مرحله ۱: بررسی سریع از cache لوکال
-        let cachedUsers = loadUsersFromCache();
-        let user = null;
+        var user = null;
+        var usersList = null;
 
+        // ============================================================
+        // ✅ مرحله ۱: از cache لوکال (سریع‌ترین راه)
+        // ============================================================
+        var cachedUsers = loadUsersFromCache();
+        
         if (cachedUsers && cachedUsers.length > 0) {
-            user = cachedUsers.find(u =>
-                (u.username === username || u.accountNumber === username) &&
-                u.password === password
-            );
-        }
-
-        // مرحله ۲: اگر در cache نبود، از سرور بگیر
-        let data;
-        if (!user) {
-            data = await loadMainDataWithCache(false);
-            user = data.users.find(u =>
-                (u.username === username || u.accountNumber === username) &&
-                u.password === password
-            );
-
-            if (data.users && data.users.length > 0) {
-                const enrichedUsers = data.users.map(u => {
-                    const member = data.members ? data.members.find(m =>
-                        String(m.accountNumber) === String(u.username) ||
-                        String(m.accountNumber) === String(u.accountNumber)
-                    ) : null;
-
-                    return {
-                        accountNumber: u.accountNumber,
-                        username: u.username,
-                        password: u.password,
-                        firstName: u.firstName || (member ? member.firstName : ''),
-                        phone: u.phone || (member ? member.phone1 : ''),
-                        phone1: member ? member.phone1 : (u.phone1 || ''),
-                        phone2: member ? member.phone2 : (u.phone2 || ''),
-                        heh1: u.heh1 || (member ? member.heh1 : ''),
-                        isCouncil: u.isCouncil,
-                        familyCount: u.familyCount || 1
-                    };
-                });
-                saveUsersToCache(enrichedUsers);
+            user = cachedUsers.find(function(u) {
+                return (u.username === username || u.accountNumber === username) && 
+                       u.password === password;
+            });
+            
+            if (user) {
+                console.log('⚡ کاربر از cache پیدا شد');
+                usersList = cachedUsers;
             }
-        } else {
-            data = await loadMainDataWithCache(false);
         }
 
+        // ============================================================
+        // ✅ مرحله ۲: از login-users.json (سبک) - نه از data.xlsx سنگین!
+        // ============================================================
+        if (!user) {
+            var loginUsers = await fetchLoginUsers();
+            
+            user = loginUsers.find(function(u) {
+                return (u.username === username || u.accountNumber === username) && 
+                       u.password === password;
+            });
+            
+            if (user) {
+                usersList = loginUsers;
+                // ذخیره در cache برای بار بعدی
+                saveUsersToCache(loginUsers);
+            }
+        }
+
+        // ============================================================
+        // نتیجه
+        // ============================================================
         if (user) {
             loginResult = {
                 success: true,
                 user: user,
-                data: data,
+                data: { 
+                    members: [],        // ← خالی! در پس‌زمینه پر می‌شه
+                    transactions: [],   // ← خالی!
+                    users: usersList || []
+                },
                 username: username,
                 password: password
             };
 
-            logUserLogin(username, user.name || user.firstName || username);
+            // ⚠️ این‌ها رو به تعویق بنداز (بعد از نمایش منو اجرا می‌شن)
+            setTimeout(function() {
+                try {
+                    if (typeof logUserLogin === 'function') {
+                        logUserLogin(username, user.name || user.firstName || username);
+                    }
+                } catch(e) {}
+            }, 2000);
 
-            Promise.resolve(awardDailyLogin(user)).catch(function() {});
-            Promise.resolve(awardBirthday(user, data)).catch(function() {});
-            Promise.resolve(awardMonthlyPoints(user, data)).catch(function() {});
+            setTimeout(function() {
+                try {
+                    if (typeof awardDailyLogin === 'function') 
+                        Promise.resolve(awardDailyLogin(user)).catch(function() {});
+                } catch(e) {}
+            }, 3000);
 
         } else {
             loginResult = {
@@ -153,6 +189,7 @@ async function handleLogin() {
             };
         }
     } catch (error) {
+        console.error('خطای ورود:', error);
         loginResult = {
             success: false,
             error: 'خطا در اتصال: ' + error.message
@@ -184,6 +221,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ✅ اطمینان از مخفی بودن نوار پایین در صفحه لاگین
     hideBottomNav();
 });
