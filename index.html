@@ -309,39 +309,15 @@
 
     <!-- ============================================================
          ⚠️ اسکریپت‌های زیر به صورت Lazy بارگذاری می‌شن
-         توسط js/core/lazy-loader.js
-         ============================================================
-         صفحات:
-           - js/pages/dashboard.js
-           - js/pages/sms.js
-           - js/pages/support.js
-           - js/pages/requests.js
-           - js/pages/family.js
-           - js/pages/family-info.js
-           - js/pages/access.js
-           - js/pages/stats.js
-           - js/pages/manage-coins.js
-           - js/pages/reports.js
-         سرویس‌های اسکریپتی:
-           - js/script-services/club.js
-           - js/script-services/quizzes.js
-           - js/script-services/daily-reward.js
-           - js/script-services/email-form.js
-           - js/script-services/messaging.js
-         سرگرمی و بازی:
-           - js/entertainment/games.js
-           - js/entertainment/lady-section.js
-           - js/entertainment/cooking.js
-           - js/entertainment/teen-piggy.js
-           - js/entertainment/toddler.js
-           - js/entertainment/my-fund.js
-           - js/entertainment/utilities.js
-           - js/entertainment/calendar.js
-           - js/entertainment/notes.js
-           - js/entertainment/calculators.js
          ============================================================ -->
 
     <script>
+    // ============================================================
+    // فلگ‌های پردازش پس‌زمینه
+    // ============================================================
+    window.__bgProcessing = false;
+    window.__dataReady = false;
+
     // ============================================================
     // متغیرهای لودر
     // ============================================================
@@ -355,9 +331,6 @@
     var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
     var C = 414.7;
 
-    // ============================================================
-    // توابع لودر
-    // ============================================================
     function ldrResize() {
         if (!ldrFx) return;
         W = window.innerWidth; H = window.innerHeight;
@@ -469,6 +442,9 @@
         transactions = res.data.transactions || [];
         users = res.data.users;
 
+        // ============================================================
+        // کارهای سریع
+        // ============================================================
         if (!currentUser.memberId) {
             var foundMember = members.find(function(m) {
                 return String(m.accountNumber) === String(currentUser.username);
@@ -484,30 +460,27 @@
         }
 
         transactionsByMember = new Map();
-        transactions.forEach(t => {
-            const id = String(t._memberId);
-            if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-            transactionsByMember.get(id).push(t);
-        });
-
-        loadCoins();
-        loadNotifications();
-        loadGameScores();
-        members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
+        memberScores = {};
+        window.__dataReady = false;
+        window.__bgProcessing = true;
 
         saveRememberMe(res.username, res.password);
 
+        // ============================================================
+        // نمایش "کامل شد" و رفتن سریع به منو
+        // ============================================================
         setTimeout(function() {
             document.getElementById('loaderOk').classList.add('active');
             document.getElementById('loaderOk').classList.add('show');
             ldrBurst(W / 2, H * 0.35, 90);
-        }, 600);
+        }, 300);
 
         setTimeout(function() {
             document.getElementById('newLoader').classList.add('away');
             document.getElementById('loaderOk').classList.remove('show');
             const appContainer = document.getElementById('appContainer');
             appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
+            
             renderPage('menu');
             updateVisitInfo();
             updateFloatingButtons();
@@ -521,17 +494,58 @@
                 if (currentUser) await forceUpdateData();
             }, 60 * 60 * 1000);
 
-            const member = members.find(m => m.id === currentUser.memberId);
-            setTimeout(() => { if (member) checkAutoNotifications(member); }, 1000);
+            // ============================================================
+            // پردازش سنگین در پس‌زمینه
+            // ============================================================
+            setTimeout(function() {
+                console.log('⏳ شروع پردازش پس‌زمینه...');
+                var bgStart = Date.now();
 
+                // ۱. ساخت transactionsByMember
+                if (transactions && transactions.length > 0) {
+                    transactions.forEach(function(t) {
+                        const id = String(t._memberId);
+                        if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                        transactionsByMember.get(id).push(t);
+                    });
+                }
+
+                // ۲. محاسبه امتیاز همه اعضا
+                if (members && members.length > 0) {
+                    members.forEach(function(m) {
+                        try { memberScores[m.id] = calculateMemberScore(m); }
+                        catch(e) { memberScores[m.id] = 0; }
+                    });
+                }
+
+                console.log('✅ پردازش پس‌زمینه تمام شد در ' + (Date.now() - bgStart) + 'ms');
+
+                // ۳. کارهای جانبی
+                try { loadCoins(); } catch(e) {}
+                try { loadNotifications(); } catch(e) {}
+                try { loadGameScores(); } catch(e) {}
+
+                // ۴. اعلان‌ها
+                const member = members.find(function(m) { return m.id === currentUser.memberId; });
+                setTimeout(function() { if (member) checkAutoNotifications(member); }, 500);
+
+                // ============================================================
+                // ✅ اعلام آماده بودن
+                // ============================================================
+                window.__dataReady = true;
+                window.__bgProcessing = false;
+                console.log('🎉 داده‌ها کاملاً آماده است');
+            }, 100);
+
+            // حذف نهایی لودرها
             setTimeout(function() {
                 document.getElementById('newLoader').style.display = 'none';
                 document.getElementById('newLoader').classList.remove('active', 'away');
                 document.getElementById('loaderOk').classList.remove('active');
                 document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
                 if (ldrFx) ldrFx.classList.remove('active');
-            }, 700);
-        }, 1800);
+            }, 400);
+        }, 800);
     }
 
     function showLoaderAnimation() {
@@ -582,12 +596,42 @@
     function openDirectLink(url) { window.open(url, '_blank'); }
 
     // ============================================================
-    // تابع renderPage با Lazy Loading
+    // تابع renderPage با Lazy Loading + انتظار برای داده‌ها
     // ============================================================
     function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
 
+        // اگر پردازش پس‌زمینه در جریانه و کاربر روی بخش داده‌محور کلیک کرد، صبر کن
+        var dataPages = ['dashboard', 'family', 'familyInfo', 'infoStats', 'reports', 'access', 'manageCoins'];
+        
+        if (window.__bgProcessing && dataPages.indexOf(page) !== -1) {
+            LazyLoader.showSectionLoader('در حال آماده‌سازی اطلاعات...');
+            
+            var waitInterval = setInterval(function() {
+                if (!window.__bgProcessing) {
+                    clearInterval(waitInterval);
+                    LazyLoader.hideSectionLoader();
+                    _actuallyRenderPage(page, content);
+                }
+            }, 200);
+            
+            // حداکثر ۱۵ ثانیه صبر
+            setTimeout(function() {
+                clearInterval(waitInterval);
+                if (window.__bgProcessing) {
+                    LazyLoader.hideSectionLoader();
+                    _actuallyRenderPage(page, content);
+                }
+            }, 15000);
+            
+            return;
+        }
+
+        _actuallyRenderPage(page, content);
+    }
+
+    function _actuallyRenderPage(page, content) {
         // اگر LazyLoader موجود بود و بخش نیاز به لود دارد
         if (window.LazyLoader && page !== 'menu' && page !== 'profile' && LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
             LazyLoader.ensureSectionLoaded(page).then(function() {
@@ -654,7 +698,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // در معرض عموم
     window.renderPage = renderPage;
     window.renderContentPage = renderContentPage;
 
@@ -689,4 +732,4 @@
         </button>
     </div>
 </body>
-        </html>
+    </html>
