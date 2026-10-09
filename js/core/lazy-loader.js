@@ -1,46 +1,44 @@
 /* ============================================================
    صندوق اتحاد - Lazy Loader
    بارگذاری هوشمند فایل‌ها فقط هنگام نیاز
+   نسخه: 2.0 (با پیام‌های سرگرم‌کننده و نوار پیشرفت)
    ============================================================ */
 
 (function() {
   'use strict';
 
   // ============================================================
-  // نقشه وابستگی: هر صفحه چه فایل‌هایی نیاز دارد
+  // نقشه وابستگی: هر بخش چه فایل‌هایی نیاز دارد
   // ============================================================
   const SECTION_DEPS = {
-    // --- صفحات داده‌محور (نیاز به اکسل) ---
-    dashboard:      { scripts: ['js/pages/dashboard.js'],           message: 'لطفاً صبر کنید، صورتحساب در حال بارگذاری است...' },
-    sms:            { scripts: ['js/pages/sms.js'],                 message: 'لطفاً صبر کنید، سامانه‌های پیامکی در حال بارگذاری است...' },
-    requests:       { scripts: ['js/pages/requests.js'],            message: 'لطفاً صبر کنید، درخواست‌ها در حال بارگذاری است...' },
-    support:        { scripts: ['js/pages/support.js'],             message: 'لطفاً صبر کنید، پشتیبانی در حال بارگذاری است...' },
-    family:         { scripts: ['js/pages/family.js'],              message: 'لطفاً صبر کنید، اطلاعات خانواده در حال بارگذاری است...' },
-    familyInfo:     { scripts: ['js/pages/family-info.js'],         message: 'لطفاً صبر کنید، اطلاعات کلی خانواده در حال بارگذاری است...' },
-    access:         { scripts: ['js/pages/access.js'],              message: 'لطفاً صبر کنید، دسترسی‌ها در حال بارگذاری است...' },
-    infoStats:      { scripts: ['js/pages/stats.js'],               message: 'لطفاً صبر کنید، اطلاعات و آمار در حال بارگذاری است...' },
-    manageCoins:    { scripts: ['js/pages/manage-coins.js'],        message: 'لطفاً صبر کنید، مدیریت امتیازها در حال بارگذاری است...' },
-    reports:        { scripts: ['js/pages/reports.js'],             message: 'لطفاً صبر کنید، گزارش‌ها در حال بارگذاری است...' },
+    dashboard:      { scripts: ['js/pages/dashboard.js'],           message: 'در حال آماده‌سازی صورتحساب...' },
+    sms:            { scripts: ['js/pages/sms.js'],                 message: 'در حال آماده‌سازی سامانه‌های پیامکی...' },
+    requests:       { scripts: ['js/pages/requests.js'],            message: 'در حال آماده‌سازی درخواست‌ها...' },
+    support:        { scripts: ['js/pages/support.js'],             message: 'در حال آماده‌سازی پشتیبانی...' },
+    family:         { scripts: ['js/pages/family.js'],              message: 'در حال آماده‌سازی اطلاعات خانواده...' },
+    familyInfo:     { scripts: ['js/pages/family-info.js'],         message: 'در حال آماده‌سازی اطلاعات کلی خانواده...' },
+    access:         { scripts: ['js/pages/access.js'],              message: 'در حال آماده‌سازی دسترسی‌ها...' },
+    infoStats:      { scripts: ['js/pages/stats.js'],               message: 'در حال آماده‌سازی اطلاعات و آمار...' },
+    manageCoins:    { scripts: ['js/pages/manage-coins.js'],        message: 'در حال آماده‌سازی مدیریت امتیازها...' },
+    reports:        { scripts: ['js/pages/reports.js'],             message: 'در حال آماده‌سازی گزارش‌ها...' },
 
-    // --- سرویس‌های اسکریپتی ---
-    club:           { scripts: ['js/script-services/club.js'],        message: 'لطفاً صبر کنید، باشگاه مشتریان در حال بارگذاری است...' },
-    quizzes:        { scripts: ['js/script-services/quizzes.js'],     message: 'لطفاً صبر کنید، مسابقات در حال بارگذاری است...' },
-    dailyReward:    { scripts: ['js/script-services/daily-reward.js'],message: 'لطفاً صبر کنید، پاداش روزانه در حال بارگذاری است...' },
-    emailForm:      { scripts: ['js/script-services/email-form.js'],  message: 'لطفاً صبر کنید، فرم ایمیل در حال بارگذاری است...' },
-    messaging:      { scripts: ['js/script-services/messaging.js'],   message: 'لطفاً صبر کنید، پیام‌رسان در حال بارگذاری است...' },
-    survey:         { scripts: ['js/script-services/messaging.js'],   message: 'لطفاً صبر کنید، نظرسنجی در حال بارگذاری است...' },
+    club:           { scripts: ['js/script-services/club.js'],        message: 'در حال آماده‌سازی باشگاه مشتریان...' },
+    quizzes:        { scripts: ['js/script-services/quizzes.js'],     message: 'در حال آماده‌سازی مسابقات...' },
+    dailyReward:    { scripts: ['js/script-services/daily-reward.js'],message: 'در حال آماده‌سازی پاداش روزانه...' },
+    emailForm:      { scripts: ['js/script-services/email-form.js'],  message: 'در حال آماده‌سازی فرم ایمیل...' },
+    messaging:      { scripts: ['js/script-services/messaging.js'],   message: 'در حال آماده‌سازی پیام‌رسان...' },
+    survey:         { scripts: ['js/script-services/messaging.js'],   message: 'در حال آماده‌سازی نظرسنجی...' },
 
-    // --- سرگرمی و بازی ---
-    games:          { scripts: ['js/entertainment/games.js'],          message: 'لطفاً صبر کنید، بازی‌ها در حال بارگذاری است...' },
-    ladySection:    { scripts: ['js/entertainment/lady-section.js'],   message: 'لطفاً صبر کنید، بخش بانوان در حال بارگذاری است...' },
-    cooking:        { scripts: ['js/entertainment/cooking.js'],        message: 'لطفاً صبر کنید، آشپزی در حال بارگذاری است...' },
-    teenPiggy:      { scripts: ['js/entertainment/teen-piggy.js'],     message: 'لطفاً صبر کنید، قلک نوجوانان در حال بارگذاری است...' },
-    toddler:        { scripts: ['js/entertainment/toddler.js'],        message: 'لطفاً صبر کنید، بخش خردسالان در حال بارگذاری است...' },
-    myFund:         { scripts: ['js/entertainment/my-fund.js'],        message: 'لطفاً صبر کنید، صندوق من در حال بارگذاری است...' },
-    utilities:      { scripts: ['js/entertainment/utilities.js'],      message: 'لطفاً صبر کنید، برنامه‌های کاربردی در حال بارگذاری است...' },
-    calendar:       { scripts: ['js/entertainment/calendar.js'],       message: 'لطفاً صبر کنید، تقویم در حال بارگذاری است...' },
-    notes:          { scripts: ['js/entertainment/notes.js'],          message: 'لطفاً صبر کنید، یادداشت‌ها در حال بارگذاری است...' },
-    calculators:    { scripts: ['js/entertainment/calculators.js'],    message: 'لطفاً صبر کنید، ماشین‌حساب‌ها در حال بارگذاری است...' },
+    games:          { scripts: ['js/entertainment/games.js'],          message: 'در حال آماده‌سازی بازی‌ها...' },
+    ladySection:    { scripts: ['js/entertainment/lady-section.js'],   message: 'در حال آماده‌سازی بخش بانوان...' },
+    cooking:        { scripts: ['js/entertainment/cooking.js'],        message: 'در حال آماده‌سازی آشپزی...' },
+    teenPiggy:      { scripts: ['js/entertainment/teen-piggy.js'],     message: 'در حال آماده‌سازی قلک نوجوانان...' },
+    toddler:        { scripts: ['js/entertainment/toddler.js'],        message: 'در حال آماده‌سازی بخش خردسالان...' },
+    myFund:         { scripts: ['js/entertainment/my-fund.js'],        message: 'در حال آماده‌سازی صندوق من...' },
+    utilities:      { scripts: ['js/entertainment/utilities.js'],      message: 'در حال آماده‌سازی برنامه‌های کاربردی...' },
+    calendar:       { scripts: ['js/entertainment/calendar.js'],       message: 'در حال آماده‌سازی تقویم...' },
+    notes:          { scripts: ['js/entertainment/notes.js'],          message: 'در حال آماده‌سازی یادداشت‌ها...' },
+    calculators:    { scripts: ['js/entertainment/calculators.js'],    message: 'در حال آماده‌سازی ماشین‌حساب‌ها...' }
   };
 
   // ============================================================
@@ -48,6 +46,27 @@
   // ============================================================
   const loadedScripts = new Set();
   const loadingPromises = {};
+
+  // ============================================================
+  // پیام‌های سرگرم‌کننده
+  // ============================================================
+  const FUNNY_MESSAGES = [
+    '🔄 در حال آماده‌سازی اطلاعات...',
+    '📊 داریم جدول‌ها رو مرتب می‌کنیم...',
+    '💰 محاسبه صورتحساب در جریان است...',
+    '🎯 چند لحظه دیگه تمام می‌شه...',
+    '⚡ فقط چند ثانیه صبر کنید...',
+    '✨ در حال آماده‌سازی تجربه‌ی بهتر...',
+    '🎁 یه سورپرایز کوچیک داریم...',
+    '🚀 تقریباً آماده است...',
+    '☕ یه چای بنوشید تا آماده بشه...',
+    '🌟 اطلاعات ارزشمند در راه است...'
+  ];
+
+  let __msgInterval = null;
+  let __msgIndex = 0;
+  let __progressInterval = null;
+  let __progressValue = 0;
 
   // ============================================================
   // بارگذاری داینامیک یک فایل JS
@@ -78,6 +97,65 @@
   }
 
   // ============================================================
+  // پیام‌های سرگرم‌کننده
+  // ============================================================
+  function startFunnyMessages() {
+    stopFunnyMessages();
+    var el = document.getElementById('sectionLoaderMsg');
+    if (!el) return;
+    __msgIndex = 0;
+    __msgInterval = setInterval(function() {
+      __msgIndex = (__msgIndex + 1) % FUNNY_MESSAGES.length;
+      el.style.opacity = '0';
+      setTimeout(function() {
+        el.textContent = FUNNY_MESSAGES[__msgIndex];
+        el.style.opacity = '1';
+      }, 200);
+    }, 2500);
+  }
+
+  function stopFunnyMessages() {
+    if (__msgInterval) {
+      clearInterval(__msgInterval);
+      __msgInterval = null;
+    }
+  }
+
+  // ============================================================
+  // نوار پیشرفت
+  // ============================================================
+  function startProgressBar() {
+    stopProgressBar();
+    var bar = document.querySelector('.section-progress-bar');
+    if (!bar) return;
+    __progressValue = 0;
+    bar.style.width = '0%';
+    
+    __progressInterval = setInterval(function() {
+      if (__progressValue < 90) {
+        __progressValue += Math.random() * 3;
+        if (__progressValue > 90) __progressValue = 90;
+        bar.style.width = __progressValue + '%';
+      }
+    }, 300);
+  }
+
+  function stopProgressBar() {
+    var bar = document.querySelector('.section-progress-bar');
+    if (bar) {
+      bar.style.width = '100%';
+      setTimeout(function() { 
+        if (bar) bar.style.width = '0%'; 
+      }, 400);
+    }
+    if (__progressInterval) {
+      clearInterval(__progressInterval);
+      __progressInterval = null;
+    }
+    __progressValue = 0;
+  }
+
+  // ============================================================
   // نمایش/مخفی کردن لودر بخش
   // ============================================================
   function showSectionLoader(message) {
@@ -85,19 +163,30 @@
     if (!el) {
       el = document.createElement('div');
       el.id = 'sectionLoader';
-      el.innerHTML = `
-        <div class="section-loader-box">
-          <div class="section-spinner"></div>
-          <p id="sectionLoaderMsg"></p>
-        </div>
-      `;
+      el.innerHTML =
+        '<div class="section-loader-box">' +
+          '<div class="section-spinner"></div>' +
+          '<p id="sectionLoaderMsg" style="transition: opacity 0.3s;"></p>' +
+          '<div class="section-progress"><div class="section-progress-bar"></div></div>' +
+          '<p id="sectionLoaderHint">از این فرصت استفاده کنید و یه چای بنوشید ☕</p>' +
+        '</div>';
       document.body.appendChild(el);
     }
-    document.getElementById('sectionLoaderMsg').textContent = message || 'لطفاً صبر کنید...';
+    
+    var msgEl = document.getElementById('sectionLoaderMsg');
+    if (msgEl) {
+      msgEl.textContent = message || 'لطفاً صبر کنید...';
+      msgEl.style.opacity = '1';
+    }
+    
     el.classList.add('show');
+    startFunnyMessages();
+    startProgressBar();
   }
 
   function hideSectionLoader() {
+    stopFunnyMessages();
+    stopProgressBar();
     const el = document.getElementById('sectionLoader');
     if (el) el.classList.remove('show');
   }
@@ -107,13 +196,13 @@
   // ============================================================
   async function ensureSectionLoaded(section) {
     const config = SECTION_DEPS[section];
-    if (!config) return; // بخشی که نیازی به لود ندارد
+    if (!config) return;
 
     showSectionLoader(config.message);
 
     try {
-      for (const src of config.scripts) {
-        await loadScriptOnce(src);
+      for (let i = 0; i < config.scripts.length; i++) {
+        await loadScriptOnce(config.scripts[i]);
       }
     } catch (err) {
       hideSectionLoader();
@@ -133,7 +222,7 @@
     SECTION_DEPS: SECTION_DEPS,
     isLoaded: function(section) {
       const cfg = SECTION_DEPS[section];
-      return cfg ? cfg.scripts.every(s => loadedScripts.has(s)) : false;
+      return cfg ? cfg.scripts.every(function(s) { return loadedScripts.has(s); }) : false;
     }
   };
 
