@@ -286,7 +286,7 @@
     </div>
 
     <!-- ============================================================
-         اسکریپت‌های هسته - همیشه لازم
+         اسکریپت‌های هسته
          ============================================================ -->
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
@@ -307,10 +307,6 @@
     <script src="js/pages/profile.js"></script>
     <script src="shared/password-functions.js"></script>
 
-    <!-- ============================================================
-         ⚠️ اسکریپت‌های زیر به صورت Lazy بارگذاری می‌شن
-         ============================================================ -->
-
     <script>
     // ============================================================
     // فلگ‌های پردازش پس‌زمینه
@@ -325,7 +321,7 @@
     var ldrStages = [
         { u: 25, t: 'اتصال به سرور اصلی' },
         { u: 50, t: 'احراز هویت و امنیت' },
-        { u: 78, t: 'همگام‌سازی تراکنش‌ها' },
+        { u: 78, t: 'همگام‌سازی' },
         { u: 101, t: 'بارگذاری داشبورد مالی' }
     ];
     var ldrP = 0, ldrTimer = null, ldrDone = false, ldrSecs = 0, ldrSecT = null, ldrFi = 0, ldrStartTime = 0;
@@ -438,42 +434,31 @@
 
         var res = loginResult;
         currentUser = res.user;
-        members = res.data.members;
-        transactions = res.data.transactions || [];
-        users = res.data.users;
+        
+        // ✅ members و transactions فعلاً خالی
+        members = [];
+        transactions = [];
+        users = res.data.users || [];
 
-        // ============================================================
-        // کارهای سریع
-        // ============================================================
+        // ✅ memberId رو از user بگیر
         if (!currentUser.memberId) {
-            var foundMember = members.find(function(m) {
-                return String(m.accountNumber) === String(currentUser.username);
-            });
-            if (!foundMember) {
-                foundMember = members.find(function(m) {
-                    return String(m.karbari) === String(currentUser.username);
-                });
-            }
-            if (foundMember) {
-                currentUser.memberId = foundMember.id;
-            }
+            currentUser.memberId = currentUser.id || currentUser.accountNumber || currentUser.username;
         }
 
         transactionsByMember = new Map();
         memberScores = {};
+        
         window.__dataReady = false;
         window.__bgProcessing = true;
 
         saveRememberMe(res.username, res.password);
 
-        // ============================================================
-        // نمایش "کامل شد" و رفتن سریع به منو
-        // ============================================================
+        // نمایش "کامل شد" سریع
         setTimeout(function() {
             document.getElementById('loaderOk').classList.add('active');
             document.getElementById('loaderOk').classList.add('show');
             ldrBurst(W / 2, H * 0.35, 90);
-        }, 300);
+        }, 200);
 
         setTimeout(function() {
             document.getElementById('newLoader').classList.add('away');
@@ -481,6 +466,7 @@
             const appContainer = document.getElementById('appContainer');
             appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
             
+            // ✅ منو رو فوراً نشون بده
             renderPage('menu');
             updateVisitInfo();
             updateFloatingButtons();
@@ -495,57 +481,74 @@
             }, 60 * 60 * 1000);
 
             // ============================================================
-            // پردازش سنگین در پس‌زمینه
+            // ✅ در پس‌زمینه، اکسل‌های سنگین رو لود کن
             // ============================================================
             setTimeout(function() {
-                console.log('⏳ شروع پردازش پس‌زمینه...');
+                console.log('⏳ شروع لود داده‌های کامل در پس‌زمینه...');
                 var bgStart = Date.now();
 
-                // ۱. ساخت transactionsByMember
-                if (transactions && transactions.length > 0) {
-                    transactions.forEach(function(t) {
-                        const id = String(t._memberId);
-                        if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                        transactionsByMember.get(id).push(t);
-                    });
+                if (typeof loadMainDataWithCache !== 'function') {
+                    console.warn('⚠️ loadMainDataWithCache پیدا نشد');
+                    window.__bgProcessing = false;
+                    return;
                 }
 
-                // ۲. محاسبه امتیاز همه اعضا
-                if (members && members.length > 0) {
-                    members.forEach(function(m) {
-                        try { memberScores[m.id] = calculateMemberScore(m); }
-                        catch(e) { memberScores[m.id] = 0; }
-                    });
-                }
+                loadMainDataWithCache(false).then(function(fullData) {
+                    console.log('✅ داده‌های کامل لود شد در ' + (Date.now() - bgStart) + 'ms');
+                    
+                    if (fullData.members && fullData.members.length > 0) {
+                        members = fullData.members;
+                    }
+                    if (fullData.transactions && fullData.transactions.length > 0) {
+                        transactions = fullData.transactions;
+                    }
+                    if (fullData.users && fullData.users.length > 0) {
+                        users = fullData.users;
+                    }
 
-                console.log('✅ پردازش پس‌زمینه تمام شد در ' + (Date.now() - bgStart) + 'ms');
+                    transactionsByMember = new Map();
+                    if (transactions && transactions.length > 0) {
+                        transactions.forEach(function(t) {
+                            var id = String(t._memberId);
+                            if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                            transactionsByMember.get(id).push(t);
+                        });
+                    }
 
-                // ۳. کارهای جانبی
-                try { loadCoins(); } catch(e) {}
-                try { loadNotifications(); } catch(e) {}
-                try { loadGameScores(); } catch(e) {}
+                    if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
+                        members.forEach(function(m) {
+                            try { memberScores[m.id] = calculateMemberScore(m); }
+                            catch(e) { memberScores[m.id] = 0; }
+                        });
+                    }
 
-                // ۴. اعلان‌ها
-                const member = members.find(function(m) { return m.id === currentUser.memberId; });
-                setTimeout(function() { if (member) checkAutoNotifications(member); }, 500);
+                    try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
+                    try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
+                    try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
 
-                // ============================================================
-                // ✅ اعلام آماده بودن
-                // ============================================================
-                window.__dataReady = true;
-                window.__bgProcessing = false;
-                console.log('🎉 داده‌ها کاملاً آماده است');
+                    var member = members.find(function(m) { return m.id === currentUser.memberId; });
+                    if (member && typeof checkAutoNotifications === 'function') {
+                        setTimeout(function() { checkAutoNotifications(member); }, 500);
+                    }
+
+                    window.__dataReady = true;
+                    window.__bgProcessing = false;
+                    console.log('🎉 همه داده‌ها آماده است');
+                }).catch(function(err) {
+                    console.error('❌ خطا در لود داده‌های کامل:', err);
+                    window.__bgProcessing = false;
+                });
             }, 100);
 
-            // حذف نهایی لودرها
             setTimeout(function() {
-                document.getElementById('newLoader').style.display = 'none';
-                document.getElementById('newLoader').classList.remove('active', 'away');
-                document.getElementById('loaderOk').classList.remove('active');
+                var nl = document.getElementById('newLoader');
+                if (nl) { nl.style.display = 'none'; nl.classList.remove('active', 'away'); }
+                var ok = document.getElementById('loaderOk');
+                if (ok) ok.classList.remove('active');
                 document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
                 if (ldrFx) ldrFx.classList.remove('active');
-            }, 400);
-        }, 800);
+            }, 300);
+        }, 600);
     }
 
     function showLoaderAnimation() {
@@ -602,7 +605,6 @@
         const content = document.getElementById('contentArea');
         if (!content) return;
 
-        // اگر پردازش پس‌زمینه در جریانه و کاربر روی بخش داده‌محور کلیک کرد، صبر کن
         var dataPages = ['dashboard', 'family', 'familyInfo', 'infoStats', 'reports', 'access', 'manageCoins'];
         
         if (window.__bgProcessing && dataPages.indexOf(page) !== -1) {
@@ -616,7 +618,6 @@
                 }
             }, 200);
             
-            // حداکثر ۱۵ ثانیه صبر
             setTimeout(function() {
                 clearInterval(waitInterval);
                 if (window.__bgProcessing) {
@@ -632,7 +633,6 @@
     }
 
     function _actuallyRenderPage(page, content) {
-        // اگر LazyLoader موجود بود و بخش نیاز به لود دارد
         if (window.LazyLoader && page !== 'menu' && page !== 'profile' && LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
             LazyLoader.ensureSectionLoaded(page).then(function() {
                 _renderPageNow(page, content);
@@ -660,9 +660,7 @@
             content.style.overflow = 'visible';
 
             var hdr = document.getElementById('mainHeader');
-            if (hdr) {
-                hdr.style.display = 'none';
-            }
+            if (hdr) hdr.style.display = 'none';
 
             document.body.style.paddingBottom = '110px';
             document.body.style.paddingTop = '0';
@@ -674,24 +672,30 @@
     }
 
     function renderContentPage(page, content) {
-        if (page === 'myFund') { renderMyFundPage(content); return; }
-        if (page === 'utilities') { renderUtilitiesPage(content); return; }
+        if (page === 'myFund') { 
+            if (typeof renderMyFundPage === 'function') renderMyFundPage(content); 
+            return; 
+        }
+        if (page === 'utilities') { 
+            if (typeof renderUtilitiesPage === 'function') renderUtilitiesPage(content); 
+            return; 
+        }
         let pageContent = '';
 
         switch (page) {
-            case 'profile': pageContent = renderProfileContent(); break;
-            case 'dashboard': pageContent = renderDashboardContent(); break;
-            case 'sms': pageContent = renderSmsContent(); break;
-            case 'club': pageContent = renderClubContent(); break;
-            case 'family': pageContent = renderFamilyContent(); break;
-            case 'familyInfo': pageContent = renderFamilyInfoContent(); break;
-            case 'access': pageContent = renderAccessContent(); break;
-            case 'infoStats': pageContent = renderInfoStatsContent(); break;
-            case 'manageCoins': pageContent = renderManageCoinsContent(); break;
-            case 'reports': pageContent = renderReportsContent(); break;
-            case 'requests': pageContent = renderRequestsContent(); break;
-            case 'support': pageContent = renderSupportContent(); break;
-            default: pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
+            case 'profile':     pageContent = (typeof renderProfileContent === 'function') ? renderProfileContent() : '<div>خطا</div>'; break;
+            case 'dashboard':   pageContent = (typeof renderDashboardContent === 'function') ? renderDashboardContent() : '<div>خطا</div>'; break;
+            case 'sms':         pageContent = (typeof renderSmsContent === 'function') ? renderSmsContent() : '<div>خطا</div>'; break;
+            case 'club':        pageContent = (typeof renderClubContent === 'function') ? renderClubContent() : '<div>خطا</div>'; break;
+            case 'family':      pageContent = (typeof renderFamilyContent === 'function') ? renderFamilyContent() : '<div>خطا</div>'; break;
+            case 'familyInfo':  pageContent = (typeof renderFamilyInfoContent === 'function') ? renderFamilyInfoContent() : '<div>خطا</div>'; break;
+            case 'access':      pageContent = (typeof renderAccessContent === 'function') ? renderAccessContent() : '<div>خطا</div>'; break;
+            case 'infoStats':   pageContent = (typeof renderInfoStatsContent === 'function') ? renderInfoStatsContent() : '<div>خطا</div>'; break;
+            case 'manageCoins': pageContent = (typeof renderManageCoinsContent === 'function') ? renderManageCoinsContent() : '<div>خطا</div>'; break;
+            case 'reports':     pageContent = (typeof renderReportsContent === 'function') ? renderReportsContent() : '<div>خطا</div>'; break;
+            case 'requests':    pageContent = (typeof renderRequestsContent === 'function') ? renderRequestsContent() : '<div>خطا</div>'; break;
+            case 'support':     pageContent = (typeof renderSupportContent === 'function') ? renderSupportContent() : '<div>خطا</div>'; break;
+            default:            pageContent = '<div class="info-box">❌ بخش مورد نظر یافت نشد</div>';
         }
 
         content.innerHTML = pageContent;
@@ -709,7 +713,6 @@
     console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
     </script>
 
-    <!-- ===== نوار پایین ===== -->
     <div class="bottom-nav" id="mainBottomNav" style="display:none;">
         <button class="bottom-nav-btn" onclick="goToMenu()">
             <i class="fas fa-home"></i>
@@ -732,4 +735,4 @@
         </button>
     </div>
 </body>
-    </html>
+</html>
