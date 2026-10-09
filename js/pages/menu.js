@@ -364,3 +364,6 @@ window.openToddlerGames = openToddlerGames;
 window.openLadySection = openLadySection;
 window.openTeenPiggy = openTeenPiggy;
 window.renderMenuPage = renderMenuPage;
+function openAdminPanel() {
+    window.open('admin-final.html', '_blank');
+}
