@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - منوی اصلی
-   نسخه: 3.0 - با Lazy Loading + تشخیص قطعی شورا/سرپرست
+   نسخه: 3.1 - با Lazy Loading + تشخیص سریع شورا/سرپرست (Cache)
    ============================================================ */
 
 // ============================================================
@@ -104,12 +104,29 @@ async function openTeenPiggy() {
 }
 
 // ============================================================
-// ✅ تشخیص قطعی: عضو شورا + سرپرست خانوار
+// ✅ کش تشخیص دسترسی (برای جلوگیری از محاسبه مکرر - سریع‌تر)
 // ============================================================
+var __accessCache = {
+    memberId: null,
+    isCouncil: false,
+    isHead: false,
+    timestamp: 0,
+    CACHE_TTL: 300000   // ۵ دقیقه اعتبار
+};
+
 function checkAccessRights(member) {
-    var result = { isCouncil: false, isHead: false };
+    var result = { isCouncil: false, isHead: false, fromCache: false };
     
     if (!member) return result;
+    
+    // چک کش
+    if (__accessCache.memberId === member.id && 
+        (Date.now() - __accessCache.timestamp) < __accessCache.CACHE_TTL) {
+        result.isCouncil = __accessCache.isCouncil;
+        result.isHead = __accessCache.isHead;
+        result.fromCache = true;
+        return result;
+    }
     
     // ✅ شورا: چک کردن isCouncil
     var ic = member.isCouncil;
@@ -123,6 +140,18 @@ function checkAccessRights(member) {
     }
     result.isHead = (h === '1' || h === 'سرپرست' || h === 'بله' || h === 'آری' || 
                      h === 'سرپرست خانوار' || h === 'true' || h.indexOf('سرپرست') > -1);
+    
+    // ذخیره در کش
+    __accessCache.memberId = member.id;
+    __accessCache.isCouncil = result.isCouncil;
+    __accessCache.isHead = result.isHead;
+    __accessCache.timestamp = Date.now();
+    
+    console.log('🎯 تشخیص دسترسی (محاسبه جدید):', {
+        memberId: member.id,
+        isCouncil: result.isCouncil,
+        isHead: result.isHead
+    });
     
     return result;
 }
@@ -221,24 +250,30 @@ function renderMenuPage(content) {
     }
 
     // ============================================================
-    // ✅ تشخیص شورا و سرپرست
+    // ✅ تشخیص شورا و سرپرست (سریع با کش)
     // ============================================================
     var access = checkAccessRights(member);
     var isCouncil = access.isCouncil;
     var isHead = access.isHead;
     
-    // fallback به توابع قدیمی
-    if (!isCouncil && typeof hasCouncilOrAdminAccess === 'function') {
-        try { 
-            var r1 = hasCouncilOrAdminAccess();
-            if (r1 === true || r1 === 'true' || r1 === 1) isCouncil = true;
-        } catch(e) {}
-    }
-    if (!isHead && typeof isHeadOfHousehold === 'function') {
-        try { 
-            var r2 = isHeadOfHousehold();
-            if (r2 === true || r2 === 'true' || r2 === 1) isHead = true;
-        } catch(e) {}
+    // fallback به توابع قدیمی (فقط اگه هنوز false و کش نبود)
+    if (!access.fromCache) {
+        if (!isCouncil && typeof hasCouncilOrAdminAccess === 'function') {
+            try { 
+                var r1 = hasCouncilOrAdminAccess();
+                if (r1 === true || r1 === 'true' || r1 === 1) isCouncil = true;
+            } catch(e) {}
+        }
+        if (!isHead && typeof isHeadOfHousehold === 'function') {
+            try { 
+                var r2 = isHeadOfHousehold();
+                if (r2 === true || r2 === 'true' || r2 === 1) isHead = true;
+            } catch(e) {}
+        }
+        
+        // به‌روزرسانی کش با مقادیر نهایی
+        __accessCache.isCouncil = isCouncil;
+        __accessCache.isHead = isHead;
     }
     
     // لاگ
@@ -247,7 +282,8 @@ function renderMenuPage(content) {
         'member.isCouncil': member.isCouncil,
         'member.heh2': member.heh2,
         'isCouncil نهایی': isCouncil,
-        'isHead نهایی': isHead
+        'isHead نهایی': isHead,
+        'fromCache': access.fromCache
     });
 
     // ============================================================
@@ -426,7 +462,8 @@ function renderMenuPage(content) {
     }, 100);
 
     // ساعت زنده
-    setInterval(function() {
+    if (window.__menuClockInterval) clearInterval(window.__menuClockInterval);
+    window.__menuClockInterval = setInterval(function() {
         var clk = document.getElementById('liveClock');
         if (clk) {
             var now = new Date();
