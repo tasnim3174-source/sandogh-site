@@ -161,7 +161,7 @@ body::before {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: #0a1020;
+    background: linear-gradient(135deg, #0a1a0f 0%, #152e1b 50%, #0a1a0f 100%);;
     display: none;
     flex-direction: column;
     justify-content: space-between;
