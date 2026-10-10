@@ -11,7 +11,7 @@
   // نقشه وابستگی: هر بخش چه فایل‌هایی نیاز دارد
   // ============================================================
   const SECTION_DEPS = {
-    dashboard:      { scripts: ['js/pages/dashboard.js'],           message: 'در حال آماده‌سازی صورتحساب...' },
+    dashboard:      { scripts: ['js/pages/dashboard.js?v=101'],     message: 'در حال آماده‌سازی صورتحساب...' },
     sms:            { scripts: ['js/pages/sms.js'],                 message: 'در حال آماده‌سازی سامانه‌های پیامکی...' },
     requests:       { scripts: ['js/pages/requests.js'],            message: 'در حال آماده‌سازی درخواست‌ها...' },
     support:        { scripts: ['js/pages/support.js'],             message: 'در حال آماده‌سازی پشتیبانی...' },
