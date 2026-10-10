@@ -2501,7 +2501,7 @@ body, html {
 #dashboardStatementRoot .statement-tabs,
 div#dashboardStatementRoot > div.statement-tabs {
     position: fixed !important;
-    top: 70% !important;
+    top:80% !important;
     right: 0 !important;
     left: auto !important;
     bottom: auto !important;
