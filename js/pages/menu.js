@@ -234,15 +234,23 @@ function renderMenuPage(content) {
     if (currentUser.isHead === true) isHead = true;
 
     // روش ۲: از member
+       // روش ۲: از member
     if (member) {
         if (member.isCouncil === true) isCouncil = true;
-        if (member.heh2 === 'سرپرست' || member.heh2 === '1' || 
-            member.heh2 === 'بله' || member.heh2 === 'سرپرست خانوار') {
+        
+        // ✅ قبول کردن همه فرمت‌های heh2
+        var heh2v = String(member.heh2 || '').trim();
+        // "01" → "1"
+        if (heh2v.length === 2 && heh2v.charAt(0) === '0') {
+            heh2v = heh2v.substring(1);
+        }
+        if (heh2v === '1' || heh2v === 'سرپرست' || heh2v === 'بله' || 
+            heh2v === 'سرپرست خانوار' || heh2v === 'آری' || heh2v === 'true') {
             isHead = true;
         }
     }
-
     // روش ۳: از members (اگه لود شده) - با accountNumber
+        // روش ۳: از members (اگه لود شده) - با accountNumber
     if (members && members.length > 0 && currentUser.accountNumber) {
         var meInMembers = members.find(function(m) {
             return String(m.accountNumber) === String(currentUser.accountNumber) ||
@@ -250,8 +258,13 @@ function renderMenuPage(content) {
         });
         if (meInMembers) {
             if (meInMembers.isCouncil === true) isCouncil = true;
-            if (meInMembers.heh2 === 'سرپرست' || meInMembers.heh2 === '1' || 
-                meInMembers.heh2 === 'بله' || meInMembers.heh2 === 'سرپرست خانوار') {
+            
+            var heh2v2 = String(meInMembers.heh2 || '').trim();
+            if (heh2v2.length === 2 && heh2v2.charAt(0) === '0') {
+                heh2v2 = heh2v2.substring(1);
+            }
+            if (heh2v2 === '1' || heh2v2 === 'سرپرست' || heh2v2 === 'بله' || 
+                heh2v2 === 'سرپرست خانوار' || heh2v2 === 'آری' || heh2v2 === 'true') {
                 isHead = true;
             }
         }
