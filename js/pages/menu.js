@@ -222,8 +222,50 @@ function renderMenuPage(content) {
         }
     }
 
-    const isCouncil = (typeof hasCouncilOrAdminAccess === 'function') ? hasCouncilOrAdminAccess() : false;
-    const isHead = (typeof isHeadOfHousehold === 'function') ? isHeadOfHousehold() : false;
+        // ============================================================
+    // ✅ تشخیص شورا و سرپرست با چند روش (fallback)
+    // ============================================================
+    var isCouncil = false;
+    var isHead = false;
+
+    // روش ۱: از currentUser
+    if (currentUser.role === 'council' || currentUser.role === 'admin') isCouncil = true;
+    if (currentUser.isCouncil === true) isCouncil = true;
+    if (currentUser.isHead === true) isHead = true;
+
+    // روش ۲: از member
+    if (member) {
+        if (member.isCouncil === true) isCouncil = true;
+        if (member.heh2 === 'سرپرست' || member.heh2 === '1' || 
+            member.heh2 === 'بله' || member.heh2 === 'سرپرست خانوار') {
+            isHead = true;
+        }
+    }
+
+    // روش ۳: از members (اگه لود شده) - با accountNumber
+    if (members && members.length > 0 && currentUser.accountNumber) {
+        var meInMembers = members.find(function(m) {
+            return String(m.accountNumber) === String(currentUser.accountNumber) ||
+                   String(m.accountNumber) === String(currentUser.username);
+        });
+        if (meInMembers) {
+            if (meInMembers.isCouncil === true) isCouncil = true;
+            if (meInMembers.heh2 === 'سرپرست' || meInMembers.heh2 === '1' || 
+                meInMembers.heh2 === 'بله' || meInMembers.heh2 === 'سرپرست خانوار') {
+                isHead = true;
+            }
+        }
+    }
+
+    // روش ۴: fallback به توابع قدیمی (اگه وجود داشته باشن)
+    if (!isCouncil && typeof hasCouncilOrAdminAccess === 'function') {
+        try { isCouncil = hasCouncilOrAdminAccess(); } catch(e) {}
+    }
+    if (!isHead && typeof isHeadOfHousehold === 'function') {
+        try { isHead = isHeadOfHousehold(); } catch(e) {}
+    }
+
+    console.log('🔍 isCouncil:', isCouncil, '| isHead:', isHead, '| role:', currentUser.role, '| heh2:', currentUser.heh2);
 
     const publicItems = [
         { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
