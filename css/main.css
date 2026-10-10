@@ -2493,10 +2493,13 @@ body, html {
     color: #7dd3fc;
 }
 /* ============================================================
-   🎨 تب‌های صورتحساب - شناور عمودی سمت راست
+   🎨 تب‌های صورتحساب - شناور عمودی سمت راست (نسخه نهایی)
    ============================================================ */
 
-#dashboardStatementRoot .statement-tabs {
+/* specificity بالا با id + id + class */
+#dashboardStatementRoot > .statement-tabs,
+#dashboardStatementRoot .statement-tabs,
+div#dashboardStatementRoot > div.statement-tabs {
     position: fixed !important;
     top: 50% !important;
     right: 0 !important;
@@ -2516,9 +2519,18 @@ body, html {
     min-width: 170px !important;
     max-width: 200px !important;
     overflow: visible !important;
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
 }
 
-#dashboardStatementRoot .statement-tabs .statement-tab {
+#dashboardStatementRoot > .statement-tabs::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* دکمه‌های تب */
+#dashboardStatementRoot .statement-tabs .statement-tab,
+#dashboardStatementRoot > .statement-tabs > .statement-tab {
     width: 100% !important;
     text-align: right !important;
     padding: 10px 14px !important;
@@ -2530,6 +2542,7 @@ body, html {
     align-items: center !important;
     justify-content: flex-start !important;
     gap: 6px !important;
+    flex: 0 0 auto !important;
 }
 
 #dashboardStatementRoot .statement-tabs .statement-tab.active {
@@ -2544,6 +2557,7 @@ body, html {
 }
 
 @media (max-width: 600px) {
+    #dashboardStatementRoot > .statement-tabs,
     #dashboardStatementRoot .statement-tabs {
         min-width: 140px !important;
         max-width: 150px !important;
