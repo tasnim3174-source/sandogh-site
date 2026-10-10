@@ -2385,3 +2385,37 @@ body > *:last-child {
     background: var(--bg-primary) !important;   /* ← این باعث می‌شه باکس سفید بشه */
     min-height: 100vh !important;
 }
+/* ============================================================
+   🚨 حذف کامل باکس‌های اضافی
+   ============================================================ */
+
+/* app-page وقتی محتوا نداره */
+.app-page {
+    background: transparent !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* contentArea در هر حالتی که خالیه */
+#contentArea {
+    background: transparent !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* body نباید padding اضافی داشته باشه */
+body {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* appContainer */
+#appContainer {
+    background: transparent !important;
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
