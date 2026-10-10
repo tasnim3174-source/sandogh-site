@@ -2381,3 +2381,7 @@ body > *:last-child {
     color: #ffd700 !important;                          /* ← طلایی */
     border: 1px solid rgba(255, 215, 0, 0.4) !important;
 }
+#contentArea {
+    background: var(--bg-primary) !important;   /* ← این باعث می‌شه باکس سفید بشه */
+    min-height: 100vh !important;
+}
