@@ -2603,7 +2603,7 @@ div#dashboardStatementRoot > div.statement-tabs {
 /* در موبایل - حتی کوچیک‌تر */
 @media (max-width: 600px) {
     .summary-card {
-        padding: 8px 6px !important;
+        padding:6px 4px !important;
     }
     
     .summary-card .sc-label {
@@ -2611,7 +2611,7 @@ div#dashboardStatementRoot > div.statement-tabs {
     }
     
     .summary-card .sc-value {
-        font-size: 0.9rem !important;
+        font-size: 0.7rem !important;
     }
     
     .summary-grid {
