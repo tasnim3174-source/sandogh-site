@@ -386,7 +386,7 @@ function renderDashboardContent() {
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
 
-        return '<div id="dashboardStatementRoot">' +
+            return '<div id="dashboardStatementRoot">' +
         summaryBox +
         tabHtml +
         '<div class="statement-panel" data-statement-panel="allowance">' +
@@ -400,7 +400,6 @@ function renderDashboardContent() {
             statusHtml +
             loanInfoHtml +
             installmentPlanHtml +
-            allTxnsHtml +
         '</div>' +
         '<div class="statement-panel active" data-statement-panel="overview">' +
             statusHtml +
@@ -421,7 +420,6 @@ function renderDashboardContent() {
             allTxnsHtml +
         '</div>' +
     '</div>';
-
 // ============================================================
 // رندر جدول تراکنش‌ها
 // ============================================================
