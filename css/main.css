@@ -2650,3 +2650,13 @@ div#dashboardStatementRoot > div.statement-tabs {
 #newLoader > div:last-of-type {
     display: none !important;
 }
+/* ============================================================
+   🎨 پس‌زمینه اختصاصی صفحه بارگذاری
+   ============================================================ */
+
+/* صفحه بارگذاری - پس‌زمینه مستقل و متفاوت */
+#newLoader {
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%) !important;
+}
+
+/* اگه می‌خوای رنگ دیگه‌ای باشه، فقط این خط رو تغییر بده */
