@@ -386,7 +386,77 @@ function renderDashboardContent() {
             alert('✅ PDF دانلود شد!');
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
-
+    // ============================================================
+    // 🚀 دکمه شناور برای تب‌های صورتحساب (همه چیز در همین فایل)
+    // ============================================================
+    setTimeout(function() {
+        // حذف دکمه قبلی اگه هست
+        var oldBtn = document.getElementById('statementFloatBtn');
+        if (oldBtn) oldBtn.remove();
+        
+        // ساخت دکمه شناور
+        var floatBtn = document.createElement('button');
+        floatBtn.id = 'statementFloatBtn';
+        floatBtn.type = 'button';
+        floatBtn.innerHTML = '<i class="fas fa-bars" style="color:#1a1a2e;pointer-events:none;"></i>';
+        floatBtn.title = 'برو به تب‌های صورتحساب';
+        
+        // ✅ همه استایل‌ها اینجا
+        floatBtn.style.cssText = 
+            'position:fixed;' +
+            'bottom:110px;' +
+            'right:20px;' +
+            'width:56px;' +
+            'height:56px;' +
+            'border-radius:50%;' +
+            'background:linear-gradient(135deg,#ffc94d,#d97706);' +
+            'border:3px solid #ffd700;' +
+            'cursor:pointer;' +
+            'display:flex;' +
+            'align-items:center;' +
+            'justify-content:center;' +
+            'font-size:1.3rem;' +
+            'z-index:9999;' +
+            'box-shadow:0 4px 20px rgba(255,201,77,0.6);' +
+            'transition:all 0.3s ease;' +
+            'touch-action:manipulation;' +
+            'padding:0;';
+        
+        document.body.appendChild(floatBtn);
+        
+        // رویداد کلیک - اسکرول به تب‌ها + هایلایت
+        floatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            var tabs = document.querySelector('#dashboardStatementRoot .statement-tabs');
+            
+            if (tabs) {
+                // اسکرول نرم
+                tabs.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // هایلایت زرد
+                tabs.style.transition = 'all 0.3s ease';
+                tabs.style.boxShadow = '0 0 0 8px rgba(255,201,77,0.4), 0 8px 30px rgba(255,201,77,0.6)';
+                tabs.style.transform = 'scale(1.03)';
+                
+                setTimeout(function() {
+                    tabs.style.boxShadow = '';
+                    tabs.style.transform = '';
+                }, 1500);
+            }
+        });
+        
+        // جلوگیری از مخفی موندن در صفحات دیگه
+        if (typeof currentPage !== 'undefined' && currentPage !== 'dashboard') {
+            floatBtn.style.display = 'none';
+        }
+        
+        console.log('✅ دکمه شناور تب‌های صورتحساب اضافه شد');
+    }, 300);
     return '<div id="dashboardStatementRoot">' +
         summaryBox +
         tabHtml +
