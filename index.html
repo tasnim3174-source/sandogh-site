@@ -445,14 +445,18 @@
         currentUser = res.user;
         
         // ✅ ساخت member موقت از login-users.json
-        var tempMember = {
+                var tempMember = {
             id: currentUser.id || currentUser.accountNumber || currentUser.username,
             firstName: currentUser.firstName || 'کاربر',
             accountNumber: currentUser.accountNumber || currentUser.username,
             phone1: currentUser.phone || currentUser.phone1 || '',
             phone2: currentUser.phone2 || '',
             heh1: currentUser.heh1 || '',
-            isCouncil: currentUser.role === 'council' || currentUser.role === 'admin',
+            heh2: currentUser.heh2 || '',
+            isCouncil: currentUser.isCouncil === true || 
+                       currentUser.role === 'council' || 
+                       currentUser.role === 'admin',
+            isHead: currentUser.isHead === true,
             balance: 0,
             loanBalance: 0,
             savingsStatus: 0,
