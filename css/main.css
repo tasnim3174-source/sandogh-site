@@ -2436,3 +2436,59 @@ body, html {
 #contentArea > * {
     background: var(--bg-primary) !important;
 }
+/* ============================================================
+   🎨 تبدیل متن "خدمات آنلاین" به باکس (مثل بخش شورا)
+   ============================================================ */
+
+.script-services-divider {
+    /* ظاهر باکس */
+    display: block;
+    grid-column: 1 / -1;
+    width: 100%;
+    box-sizing: border-box;
+    
+    /* فاصله */
+    margin: 20px 0 14px 0;
+    padding: 14px 18px;
+    
+    /* پس‌زمینه و حاشیه - مثل باکس شورا */
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(14, 165, 233, 0.08));
+    border: 2px solid #38bdf8;
+    border-radius: 16px;
+    
+    /* متن */
+    color: #38bdf8;
+    text-align: center;
+    font-weight: 900;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    
+    /* سایه */
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.15);
+    
+    /* موقعیت */
+    position: relative;
+}
+
+/* آیکن ابر داخل باکس */
+.script-services-divider i {
+    margin-left: 6px;
+    color: #38bdf8;
+}
+
+/* متن توضیحی کوچک زیر عنوان */
+.script-services-divider span {
+    display: block;
+    margin-top: 6px;
+    color: #a8b6d2;
+    font-size: 0.65rem;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+/* در حالت دارک تم */
+[data-theme="dark"] .script-services-divider {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(14, 165, 233, 0.12));
+    border-color: #0ea5e9;
+    color: #7dd3fc;
+}
