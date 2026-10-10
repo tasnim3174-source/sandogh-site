@@ -2386,51 +2386,27 @@ body > *:last-child {
     min-height: 100vh !important;
 }
 /* ============================================================
-   🚨 حذف کامل باکس‌های اضافی و باکس سفید پایین
+   🚨 حذف باکس سفید پایین - نسخه نهایی قطعی
    ============================================================ */
 
-/* body و html بدون padding اضافی */
+/* پس‌زمینه body و html تیره (مثل هدر) */
 body, html {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
-    background: var(--bg-primary) !important;
+    min-height: 100vh !important;
 }
 
-/* appContainer */
-#appContainer {
-    background: transparent !important;
-    min-height: 0 !important;
-    height: auto !important;
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* app-page */
-.app-page {
-    background: transparent !important;
-    min-height: 0 !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/* contentArea */
+/* contentArea - شفاف */
 #contentArea {
     background: transparent !important;
     min-height: 0 !important;
-    height: auto !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
 }
 
-/* contentArea وقتی خالیه */
-#contentArea:empty {
-    display: none !important;
-    height: 0 !important;
-    min-height: 0 !important;
-}
-
-/* contentArea وقتی مخفی شده */
+/* وقتی contentArea خالیه یا مخفی */
+#contentArea:empty,
 #contentArea[style*="display: none"],
 #contentArea[style*="display:none"] {
     display: none !important;
@@ -2438,4 +2414,25 @@ body, html {
     min-height: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
+}
+
+/* app-page - شفاف */
+.app-page {
+    background: transparent !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* appContainer - شفاف */
+#appContainer {
+    background: transparent !important;
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* محتوای صفحات داخلی - پس‌زمینه روشن */
+#contentArea > * {
+    background: var(--bg-primary) !important;
 }
