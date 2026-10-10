@@ -2570,3 +2570,51 @@ div#dashboardStatementRoot > div.statement-tabs {
         font-size: 0.6rem !important;
     }
 }
+/* ============================================================
+   🎨 خلاصه حساب - باکس‌های کوچیک‌تر بدون آیکن
+   ============================================================ */
+
+/* حذف آیکن‌های خلاصه حساب */
+.summary-card .sc-icon {
+    display: none !important;
+}
+
+/* کوچیک‌تر کردن باکس‌ها */
+.summary-card {
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+}
+
+/* کوچیک‌تر کردن فونت‌ها */
+.summary-card .sc-label {
+    font-size: 0.6rem !important;
+    margin-bottom: 2px !important;
+}
+
+.summary-card .sc-value {
+    font-size: 1rem !important;
+}
+
+/* فاصله کمتر بین باکس‌ها */
+.summary-grid {
+    gap: 6px !important;
+}
+
+/* در موبایل - حتی کوچیک‌تر */
+@media (max-width: 600px) {
+    .summary-card {
+        padding: 8px 6px !important;
+    }
+    
+    .summary-card .sc-label {
+        font-size: 0.55rem !important;
+    }
+    
+    .summary-card .sc-value {
+        font-size: 0.9rem !important;
+    }
+    
+    .summary-grid {
+        gap: 5px !important;
+    }
+}
