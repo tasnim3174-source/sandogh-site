@@ -2342,3 +2342,42 @@ body > *:last-child {
     background: linear-gradient(135deg, #1a1a2e, #2a2a4a) !important;
     /* ↑ این گرادیان فعلیه - می‌تونی عوض کنی */
 }
+/* ============================================================
+   🎨 شخصی‌سازی تاریخ و روز هفته در هدر
+   ============================================================ */
+
+/* رنگ کلی متن‌های تاریخ و روز */
+.hdr .daterow {
+    color: #cdd8ec !important;   /* ← رنگ پایه (نقره‌ای روشن) */
+    font-weight: 700;
+}
+
+/* رنگ تاریخ شمسی 📅 */
+.hdr .daterow > span:first-child {
+    color: #3ee6a8 !important;   /* ← سبز فیروزه‌ای */
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(62, 230, 168, 0.4);
+}
+
+/* رنگ روز هفته (شنبه، یکشنبه، ...) */
+.hdr .daterow > span:nth-child(3) {
+    color: #f093fb !important;   /* ← صورتی بنفش */
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(240, 147, 251, 0.4);
+}
+
+/* رنگ ساعت 🕐 */
+.hdr .daterow .clock {
+    background: rgba(79, 172, 254, 0.15) !important;   /* ← آبی کم‌رنگ */
+    color: #4facfe !important;                          /* ← آبی روشن */
+    border: 1px solid rgba(79, 172, 254, 0.3) !important;
+    font-weight: 800;
+    text-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+}
+
+/* رنگ greeting (سلام، صبح بخیر، ...) */
+.hdr .daterow .hello {
+    background: rgba(255, 215, 0, 0.2) !important;
+    color: #ffd700 !important;                          /* ← طلایی */
+    border: 1px solid rgba(255, 215, 0, 0.4) !important;
+}
