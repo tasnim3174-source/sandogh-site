@@ -2618,3 +2618,35 @@ div#dashboardStatementRoot > div.statement-tabs {
         gap: 5px !important;
     }
 }
+/* ============================================================
+   🎨 خلوت کردن صفحه بارگذاری
+   ============================================================ */
+
+/* ۱. حذف نشان رمزنگاری */
+#newLoader .loaderTop {
+    display: none !important;
+}
+
+/* ۲. حذف آیکن بزرگ زرد */
+#newLoader .emb {
+    display: none !important;
+}
+
+/* ۸. حذف انیمیشن نوارهای زرد (اکولایزر) */
+#newLoader .faSlot,
+#newLoader .fa-dots,
+#newLoader .fa-dna,
+#newLoader .fa-pole {
+    display: none !important;
+}
+
+/* فاصله مناسب بعد از حذف آیکن */
+#newLoader .loaderCenter {
+    gap: 14px;
+    padding-top: 20px;
+}
+
+/* فاصله مناسب قبل از footer */
+#newLoader > div:last-of-type {
+    display: none !important;
+}
