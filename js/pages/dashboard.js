@@ -318,13 +318,12 @@ function renderDashboardContent() {
             '</div>' +
         '</div>';
 
-    const tabHtml =
+        const tabHtml =
         '<div class="statement-tabs" role="tablist">' +
-            '<button type="button" class="statement-tab active" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری و پس‌انداز</button>' +
+            '<button type="button" class="statement-tab" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری و پس‌انداز</button>' +
             '<button type="button" class="statement-tab" data-statement-tab="loan" onclick="switchDashboardTab(\'loan\')">🏦 تسهیلات</button>' +
-            '<button type="button" class="statement-tab" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 حساب شما از یک نگاه</button>' +
+            '<button type="button" class="statement-tab active" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 حساب شما از یک نگاه</button>' +
         '</div>';
-
     window.switchDashboardTab = function(tab) {
         var root = document.getElementById('dashboardStatementRoot');
         if (!root) return;
@@ -387,10 +386,10 @@ function renderDashboardContent() {
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
 
-    return '<div id="dashboardStatementRoot">' +
+        return '<div id="dashboardStatementRoot">' +
         summaryBox +
         tabHtml +
-        '<div class="statement-panel active" data-statement-panel="allowance">' +
+        '<div class="statement-panel" data-statement-panel="allowance">' +
             allowanceSummaryHtml +
             warningsHtml +
             lastTxHtml +
@@ -403,7 +402,7 @@ function renderDashboardContent() {
             installmentPlanHtml +
             allTxnsHtml +
         '</div>' +
-        '<div class="statement-panel" data-statement-panel="overview">' +
+        '<div class="statement-panel active" data-statement-panel="overview">' +
             statusHtml +
             '<div class="dashboard-section">' +
                 '<h3><i class="fas fa-eye" style="color:var(--gradient-start);"></i> حساب شما از یک نگاه</h3>' +
@@ -422,7 +421,6 @@ function renderDashboardContent() {
             allTxnsHtml +
         '</div>' +
     '</div>';
-}
 
 // ============================================================
 // رندر جدول تراکنش‌ها
