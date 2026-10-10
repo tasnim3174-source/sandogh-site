@@ -2492,3 +2492,67 @@ body, html {
     border-color: #0ea5e9;
     color: #7dd3fc;
 }
+/* ============================================================
+   🎨 تب‌های صورتحساب - شناور عمودی سمت راست
+   ============================================================ */
+
+#dashboardStatementRoot .statement-tabs {
+    position: fixed !important;
+    top: 50% !important;
+    right: 0 !important;
+    left: auto !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    padding: 10px 8px !important;
+    margin: 0 !important;
+    background: linear-gradient(135deg, #1e1b4b, #312e81) !important;
+    border: 2px solid rgba(255, 201, 77, 0.4) !important;
+    border-right: none !important;
+    border-radius: 16px 0 0 16px !important;
+    z-index: 9999 !important;
+    box-shadow: -8px 0 30px rgba(0, 0, 0, 0.5) !important;
+    min-width: 170px !important;
+    max-width: 200px !important;
+    overflow: visible !important;
+}
+
+#dashboardStatementRoot .statement-tabs .statement-tab {
+    width: 100% !important;
+    text-align: right !important;
+    padding: 10px 14px !important;
+    font-size: 0.72rem !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+}
+
+#dashboardStatementRoot .statement-tabs .statement-tab.active {
+    background: linear-gradient(135deg, #ffc94d, #d97706) !important;
+    color: #1a1a2e !important;
+    font-weight: 900 !important;
+    box-shadow: 0 4px 15px rgba(255, 201, 77, 0.5) !important;
+}
+
+#dashboardStatementRoot .statement-tabs .statement-tab:hover {
+    transform: translateX(-4px) !important;
+}
+
+@media (max-width: 600px) {
+    #dashboardStatementRoot .statement-tabs {
+        min-width: 140px !important;
+        max-width: 150px !important;
+        padding: 8px 6px !important;
+        gap: 5px !important;
+    }
+    
+    #dashboardStatementRoot .statement-tabs .statement-tab {
+        padding: 8px 10px !important;
+        font-size: 0.6rem !important;
+    }
+}
