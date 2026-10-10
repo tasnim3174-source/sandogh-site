@@ -2386,19 +2386,18 @@ body > *:last-child {
     min-height: 100vh !important;
 }
 /* ============================================================
-   🚨 حذف کامل باکس‌های اضافی
+   🚨 حذف کامل باکس‌های اضافی و باکس سفید پایین
    ============================================================ */
 
-/* app-page وقتی محتوا نداره */
-.app-page {
-    background: transparent !important;
-    min-height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
+/* body و html بدون padding اضافی */
+body, html {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    background: var(--bg-primary) !important;
 }
 
-/* contentArea در هر حالتی که خالیه */
-#contentArea {
+/* appContainer */
+#appContainer {
     background: transparent !important;
     min-height: 0 !important;
     height: auto !important;
@@ -2406,16 +2405,37 @@ body > *:last-child {
     margin-bottom: 0 !important;
 }
 
-/* body نباید padding اضافی داشته باشه */
-body {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-}
-
-/* appContainer */
-#appContainer {
+/* app-page */
+.app-page {
     background: transparent !important;
     min-height: 0 !important;
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* contentArea */
+#contentArea {
+    background: transparent !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+/* contentArea وقتی خالیه */
+#contentArea:empty {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+}
+
+/* contentArea وقتی مخفی شده */
+#contentArea[style*="display: none"],
+#contentArea[style*="display:none"] {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
