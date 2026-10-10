@@ -28,69 +28,139 @@ if ('serviceWorker' in navigator) {
 </head>
 <body>
 
-    <div class="loaderGlow g1"></div>
-    <div class="loaderGlow g2"></div>
-    <canvas id="loaderFx"></canvas>
+   <div class="loaderGlow g1"></div>
+<div class="loaderGlow g2"></div>
+<canvas id="loaderFx"></canvas>
 
-    <div id="newLoader">
-        <div class="loaderTop" style="justify-content:center;">
-            <div class="badge"><span class="dot"></span> رمزنگاری AES-256</div>
-        </div>
-        <div class="loaderCenter">
-            <div class="emb">
-                <svg class="ring" id="ldrRing" viewBox="0 0 150 150">
-                    <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffc94d"/><stop offset="1" stop-color="#3ee6a8"/></linearGradient></defs>
-                    <circle class="rb" cx="75" cy="75" r="66"/>
-                    <circle class="rf" id="ldrRf" cx="75" cy="75" r="66"/>
+<div id="newLoader">
+    <div class="loaderCenter">
+        <!-- آیکن مرکزی مدرن -->
+        <div class="emb">
+            <svg class="ring" id="ldrRing" viewBox="0 0 150 150">
+                <defs>
+                    <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#ffc94d"/>
+                        <stop offset="1" stop-color="#3ee6a8"/>
+                    </linearGradient>
+                </defs>
+                <circle class="rb" cx="75" cy="75" r="66"/>
+                <circle class="rf" id="ldrRf" cx="75" cy="75" r="66"/>
+            </svg>
+            <div class="orb"><i></i></div>
+            <div class="core" id="ldrCore">
+                <svg viewBox="0 0 96 96" fill="none">
+                    <defs>
+                        <linearGradient id="vg" x1="0" y1="0" x2="1" y2="1">
+                            <stop offset="0" stop-color="#ffe08a"/>
+                            <stop offset="1" stop-color="#ffc94d"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="14" y="12" width="68" height="62" rx="11" stroke="url(#vg)" stroke-width="3.5"/>
+                    <circle cx="48" cy="43" r="17" stroke="url(#vg)" stroke-width="3.5"/>
+                    <circle cx="48" cy="43" r="6" fill="url(#vg)"/>
+                    <path d="M48 22v7M48 57v7M27 43h7M62 43h7" stroke="url(#vg)" stroke-width="3.5" stroke-linecap="round"/>
+                    <path d="M24 74v8M72 74v8" stroke="url(#vg)" stroke-width="5" stroke-linecap="round"/>
                 </svg>
-                <div class="orb"><i></i></div>
-                <div class="core" id="ldrCore">
-                    <svg viewBox="0 0 96 96" fill="none">
-                        <defs><linearGradient id="vg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#ffc94d"/></linearGradient></defs>
-                        <rect x="14" y="12" width="68" height="62" rx="11" stroke="url(#vg)" stroke-width="3.5"/>
-                        <circle cx="48" cy="43" r="17" stroke="url(#vg)" stroke-width="3.5"/>
-                        <circle cx="48" cy="43" r="6" fill="url(#vg)"/>
-                        <path d="M48 22v7M48 57v7M27 43h7M62 43h7" stroke="url(#vg)" stroke-width="3.5" stroke-linecap="round"/>
-                        <path d="M24 74v8M72 74v8" stroke="url(#vg)" stroke-width="5" stroke-linecap="round"/>
+            </div>
+        </div>
+        
+        <!-- پیام خوش‌آمد -->
+        <p class="wlc">به سیستم حسابداری صندوق اتحاد خوش آمدید 🌟</p>
+        
+        <!-- درصد -->
+        <div class="pct">
+            <span id="ldrPct">۰</span>
+            <span class="sg">٪</span>
+        </div>
+        
+        <!-- وضعیت -->
+        <div class="stt">
+            <span id="ldrStx">آماده‌سازی</span>
+            <span class="dts"><i>.</i><i>.</i><i>.</i></span>
+        </div>
+        
+        <!-- نوار پیشرفت -->
+        <div class="barw">
+            <div class="bar">
+                <div class="fill" id="ldrFill"></div>
+            </div>
+        </div>
+        
+        <!-- چهار مرحله -->
+        <div class="steps">
+            <div class="stp" id="ldrS0">
+                <span class="ic">
+                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M4 5h16v6H4zM4 13h16v6H4z"/>
+                        <circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/>
+                        <circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/>
                     </svg>
-                </div>
+                    <span class="sn"></span>
+                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.5l4.5 4.5L19 7"/>
+                    </svg>
+                </span>
+                اتصال به سرور
             </div>
-            <h1 id="secretTitle" class="ttl" style="display:none;color:#fff;-webkit-text-fill-color:#fff;background:none;cursor:default;">سیستم حسابداری <span class="gr">صندوق اتحاد</span></h1>
-            <p class="wlc" style="font-weight:900;font-size:1.3rem;">به سیستم حسابداری صندوق اتحاد خوش آمدید 🌟</p>
-            <div class="pct"><span id="ldrPct">۰</span><span class="sg">٪</span></div>
-            <div class="stt"><span id="ldrStx">آماده‌سازی</span><span class="dts"><i>.</i><i>.</i><i>.</i></span></div>
-            <div class="barw"><div class="bar"><div class="fill" id="ldrFill"></div></div></div>
-            <div class="steps">
-                <div class="stp" id="ldrS0"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v6H4zM4 13h16v6H4z"/><circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>اتصال به سرور</div>
-                <div class="stp" id="ldrS1"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>احراز هویت</div>
-                <div class="stp" id="ldrS2"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>بارگذاری اطلاعات</div>
-                <div class="stp" id="ldrS3"><span class="ic"><svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="sn"></span><svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>آماده‌سازی داشبورد</div>
+            <div class="stp" id="ldrS1">
+                <span class="ic">
+                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                    <span class="sn"></span>
+                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.5l4.5 4.5L19 7"/>
+                    </svg>
+                </span>
+                احراز هویت
+            </div>
+            <div class="stp" id="ldrS2">
+                <span class="ic">
+                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                        <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/>
+                    </svg>
+                    <span class="sn"></span>
+                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.5l4.5 4.5L19 7"/>
+                    </svg>
+                </span>
+                بارگذاری اطلاعات
+            </div>
+            <div class="stp" id="ldrS3">
+                <span class="ic">
+                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="4" y="4" width="7" height="7" rx="1.5"/>
+                        <rect x="13" y="4" width="7" height="7" rx="1.5"/>
+                        <rect x="4" y="13" width="7" height="7" rx="1.5"/>
+                        <rect x="13" y="13" width="7" height="7" rx="1.5"/>
+                    </svg>
+                    <span class="sn"></span>
+                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12.5l4.5 4.5L19 7"/>
+                    </svg>
+                </span>
+                آماده‌سازی داشبورد
             </div>
         </div>
-        <div style="display:flex;align-items:center;justify-content:center;padding:16px 0 10px;min-height:116px;">
-            <div class="faSlot fa-dots"><span></span><span></span><span></span></div>
-            <div class="faSlot fa-dna"><i class="a"></i><i class="b"></i></div>
-            <div class="faSlot fa-pole" style="display:flex;align-items:flex-end;gap:9px;height:90px;">
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.3s ease-in-out infinite;animation-delay:0s"></i>
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.6s ease-in-out infinite;animation-delay:.18s"></i>
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.2s ease-in-out infinite;animation-delay:.36s"></i>
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.7s ease-in-out infinite;animation-delay:.54s"></i>
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.4s ease-in-out infinite;animation-delay:.72s"></i>
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.6s ease-in-out infinite;animation-delay:.9s"></i>
-                <i style="display:block;width:10px;height:100%;border-radius:6px;background:linear-gradient(180deg,#ffe9a3,#ffd700 40%,#ff9d00);transform-origin:bottom;box-shadow:0 0 14px rgba(255,215,0,.35);animation:ldrEq 1.3s ease-in-out infinite;animation-delay:1.08s"></i>
-            </div>
-        </div>
-        <style>@keyframes ldrEq{0%,100%{transform:scaleY(.25);opacity:.75}50%{transform:scaleY(1);opacity:1}}</style>
-        <div class="loaderBot"><span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span></div>
     </div>
+    
+    <!-- زمان سپری شده -->
+    <div class="loaderBot">
+        <span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span>
+    </div>
+</div>
 
-    <div id="loaderOk">
-        <div class="okc">
-            <svg class="bck" viewBox="0 0 110 110"><circle cx="55" cy="55" r="48"/><path d="M34 57l14 14 28-32"/></svg>
-            <h2>بارگذاری کامل شد ✅</h2>
-            <p>شما وارد سیستم شدید 🎉</p>
-        </div>
+<div id="loaderOk">
+    <div class="okc">
+        <svg class="bck" viewBox="0 0 110 110">
+            <circle cx="55" cy="55" r="48"/>
+            <path d="M34 57l14 14 28-32"/>
+        </svg>
+        <h2>بارگذاری کامل شد ✅</h2>
+        <p>شما وارد سیستم شدید 🎉</p>
     </div>
+</div>
 
     <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
