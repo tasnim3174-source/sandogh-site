@@ -419,8 +419,9 @@ function renderDashboardContent() {
             approvedHtml +
             miniSmsHtml +
             allTxnsHtml +
-        '</div>' +
+               '</div>' +
     '</div>';
+}
 
 // ============================================================
 // رندر جدول تراکنش‌ها
