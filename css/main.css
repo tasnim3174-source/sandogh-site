@@ -3449,3 +3449,40 @@ div#dashboardStatementRoot > div.statement-tabs {
     .msg-title { font-size: 1rem; }
     .msg-send-btn { font-size: 0.88rem; padding: 12px; }
 }
+/* ═══════════════════════════════════════════════════════════
+   🎨 افزایش ارتفاع نوار پایین
+   ═══════════════════════════════════════════════════════════ */
+
+.bottom-nav {
+    height: 75px !important;              /* قبلاً احتمالاً ۶۰px بود */
+    padding: 8px 0 !important;
+    padding-bottom: env(safe-area-inset-bottom, 8px) !important;
+}
+
+.bottom-nav-btn {
+    padding: 8px 4px !important;
+    gap: 4px !important;
+}
+
+.bottom-nav-btn i {
+    font-size: 1.3rem !important;         /* آیکن‌ها بزرگ‌تر */
+}
+
+.bottom-nav-btn span {
+    font-size: 0.75rem !important;        /* متن بزرگ‌تر */
+}
+
+.bottom-nav-center {
+    width: 60px !important;
+    height: 60px !important;
+    margin-top: -22px !important;         /* مرکز کمی بالاتر */
+}
+
+.bottom-nav-center i {
+    font-size: 1.5rem !important;
+}
+
+/* فاصله‌ی مناسب از پایین برای بدنه */
+body {
+    padding-bottom: 85px !important;
+}
