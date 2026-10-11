@@ -678,7 +678,21 @@ if ('serviceWorker' in navigator) {
                     if (rm && typeof checkAutoNotifications === 'function') {
                         setTimeout(function() { checkAutoNotifications(rm); }, 500);
                     }
+                                        // ✅ بازسازی منو با داده‌های واقعی
+                    console.log('🔄 بازسازی منو با داده‌های واقعی');
+                    if (typeof renderPage === 'function') {
+                        renderPage('menu');
+                    }
                     
+                    // ✅ ریست کش دسترسی (برای اطمینان)
+                    if (typeof __accessCache !== 'undefined') {
+                        __accessCache.memberId = null;
+                        __accessCache.timestamp = 0;
+                    }
+                    
+                    window.__dataReady = true;
+                    window.__bgProcessing = false;
+                    console.log('🎉 همه داده‌ها آماده است');
                     window.__dataReady = true;
                     window.__bgProcessing = false;
                     console.log('🎉 همه داده‌ها آماده است');
