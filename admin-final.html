@@ -112,6 +112,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="11" data-role="all" onclick="showTab(11)">📊 گزارش‌گیری</div>
     <div class="menu-item" data-tab="12" data-role="all" onclick="showTab(12)">🔐 اطلاعات کاربری اعضا</div>
     <div class="menu-item" data-tab="13" data-role="all" onclick="showTab(13)">📤 آپلود فایل اکسل</div>
+    <div class="menu-item" data-tab="14" data-role="all" onclick="showTab(14)">📨 درخواست‌های اعضا</div>
   </div>
 
   <div class="main-content">
@@ -299,55 +300,40 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
   </div>
 </div>
 
-    <div id="sec12" style="display:none">
-      <div class="box">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-          <h3 style="color:#ffd700;margin:0">🔐 اطلاعات کاربری اعضا</h3>
-          <div style="display:flex;gap:6px;flex-wrap:wrap">
-            <button onclick="loadUsersInfo()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-weight:700">🔄 به‌روزرسانی</button>
-            <button onclick="downloadUsersExcel()" style="padding:8px 16px;border-radius:12px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">📥 دانلود Excel</button>
-          </div>
-        </div>
-        
-        <div class="stats" id="usersStats" style="margin-bottom:14px">
-          <div class="stat"><b id="usTotal">0</b><span>کل کاربران</span></div>
-          <div class="stat"><b id="usChanged">0</b><span>تغییر رمز داده</span></div>
-          <div class="stat"><b id="usCouncil">0</b><span>عضو شورا</span></div>
-          <div class="stat"><b id="usRegular">0</b><span>عضو عادی</span></div>
-        </div>
-        
-        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-          <input type="text" id="usersSearch" placeholder="🔍 جستجو (نام، شماره حساب، نام کاربری...)" 
-                 style="flex:1;min-width:200px;padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none;font-family:tahoma"
-                 oninput="renderUsersTable()">
-          <select id="usersRoleFilter" onchange="renderUsersTable()" 
-                  style="padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
-            <option value="all" style="background:#1a1a2e">همه نقش‌ها</option>
-            <option value="council" style="background:#1a1a2e">فقط شورا</option>
-            <option value="regular" style="background:#1a1a2e">فقط عادی</option>
-          </select>
-          <select id="usersPwdFilter" onchange="renderUsersTable()" 
-                  style="padding:11px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
-            <option value="all" style="background:#1a1a2e">همه رمزها</option>
-            <option value="default" style="background:#1a1a2e">رمز پیش‌فرض (= کاربری)</option>
-            <option value="changed" style="background:#1a1a2e">رمز تغییر یافته</option>
-          </select>
-        </div>
-        
-        <div class="tw" id="usersTableContainer">
-          <div class="loader">در حال بارگذاری...</div>
-        </div>
-        
-        <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-            <h4 style="color:#ffd700;margin:0">📜 تاریخچه تغییرات رمز</h4>
-            <button onclick="loadPasswordLog()" style="padding:6px 12px;border-radius:10px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-size:.8rem">🔄 به‌روزرسانی</button>
-          </div>
-          <div id="passwordLogContainer" style="max-height:300px;overflow:auto;border-radius:12px;border:1px solid rgba(255,255,255,.08)">
-            <div class="loader">در حال بارگذاری...</div>
-          </div>
-        </div>
-      </div>
+<div id="sec14" style="display:none">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <h3 style="color:#ffd700;margin:0">📨 درخواست‌های اعضا</h3>
+      <button class="refresh" onclick="loadMemberRequests()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+    </div>
+    
+    <!-- آمار -->
+    <div class="stats" id="memberRequestsStats" style="margin-bottom:14px">
+      <div class="stat"><b id="mrTotal">0</b><span>کل درخواست‌ها</span></div>
+      <div class="stat"><b id="mrPending">0</b><span>⏳ در انتظار</span></div>
+      <div class="stat"><b id="mrResolved">0</b><span>✅ پاسخ داده شده</span></div>
+      <div class="stat"><b id="mrToday">0</b><span>📅 امروز</span></div>
+    </div>
+    
+    <!-- فیلترها -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <select id="mrTypeFilter" onchange="renderMemberRequests()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+        <option value="all" style="background:#1a1a2e">📋 همه انواع</option>
+        <option value="general" style="background:#1a1a2e">📋 درخواست‌های عمومی</option>
+        <option value="password" style="background:#1a1a2e">🔐 تغییر رمز</option>
+        <option value="purchase" style="background:#1a1a2e">🛍️ خرید</option>
+      </select>
+      <select id="mrStatusFilter" onchange="renderMemberRequests()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+        <option value="all" style="background:#1a1a2e">📋 همه وضعیت‌ها</option>
+        <option value="pending" style="background:#1a1a2e">⏳ در انتظار</option>
+        <option value="resolved" style="background:#1a1a2e">✅ پاسخ داده شده</option>
+      </select>
+      <input type="text" id="mrSearch" placeholder="🔍 جستجو (نام، شماره، عنوان...)" oninput="renderMemberRequests()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
+    </div>
+    
+    <!-- لیست درخواست‌ها -->
+    <div id="memberRequestsList">
+      <div class="loader">در حال بارگذاری...</div>
     </div>
   </div>
 </div>
@@ -558,7 +544,7 @@ function showTab(n){
   var sec11 = document.getElementById('sec11'); if (sec11) sec11.style.display = 'none';
   var sec12 = document.getElementById('sec12'); if (sec12) sec12.style.display = 'none';
   var sec13 = document.getElementById('sec13'); if (sec13) sec13.style.display = 'none';
-
+var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = 'none';
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
   items.forEach(function(item){
@@ -597,6 +583,12 @@ function showTab(n){
       sec13.style.display = 'block';
     }
   }
+  else if (n === 14) {
+    if (sec14) {
+        sec14.style.display = 'block';
+    }
+    loadMemberRequests();
+}
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
 
@@ -1689,7 +1681,190 @@ function showAdminUploadStatus(msg, type) {
     status.style.borderRight = '3px solid ' + c.border;
     status.innerHTML = msg;
 }
+// ============================================================
+// 🆕 تب ۱۴: درخواست‌های اعضا
+// ============================================================
 
+var allMemberRequests = [];
+
+function loadMemberRequests() {
+    document.getElementById('memberRequestsList').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+    
+    fetch(URL + '?action=getAllMemberRequests&key=' + encodeURIComponent(KEY) + '&_=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (!d.ok || !d.requests) {
+                document.getElementById('memberRequestsList').innerHTML = 
+                    '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت درخواست‌ها</div>';
+                return;
+            }
+            allMemberRequests = d.requests;
+            updateMemberRequestsStats();
+            renderMemberRequests();
+        })
+        .catch(function(e) {
+            document.getElementById('memberRequestsList').innerHTML = 
+                '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در اتصال</div>';
+        });
+}
+
+function updateMemberRequestsStats() {
+    var total = allMemberRequests.length;
+    var pending = 0, resolved = 0, today = 0;
+    var todayStr = new Date().toDateString();
+    
+    allMemberRequests.forEach(function(r) {
+        if (r.status === 'pending') pending++;
+        else if (r.status === 'resolved' || r.status === 'answered') resolved++;
+        
+        try {
+            var d = new Date(r.timestamp);
+            if (d.toDateString() === todayStr) today++;
+        } catch(e) {}
+    });
+    
+    document.getElementById('mrTotal').textContent = total;
+    document.getElementById('mrPending').textContent = pending;
+    document.getElementById('mrResolved').textContent = resolved;
+    document.getElementById('mrToday').textContent = today;
+}
+
+function renderMemberRequests() {
+    var typeFilter = document.getElementById('mrTypeFilter').value;
+    var statusFilter = document.getElementById('mrStatusFilter').value;
+    var q = (document.getElementById('mrSearch').value || '').trim().toLowerCase();
+    
+    var filtered = allMemberRequests.filter(function(r) {
+        if (typeFilter !== 'all' && r.type !== typeFilter) return false;
+        
+        if (statusFilter === 'pending') {
+            if (r.status !== 'pending') return false;
+        } else if (statusFilter === 'resolved') {
+            if (r.status === 'pending') return false;
+        }
+        
+        if (q) {
+            var searchStr = String(
+                (r.name || '') + ' ' + 
+                (r.user || '') + ' ' + 
+                (r.accountNumber || '') + ' ' + 
+                (r.title || '') + ' ' + 
+                (r.code || '')
+            ).toLowerCase();
+            if (searchStr.indexOf(q) < 0) return false;
+        }
+        
+        return true;
+    });
+    
+    if (filtered.length === 0) {
+        document.getElementById('memberRequestsList').innerHTML = 
+            '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 درخواستی یافت نشد</div>';
+        return;
+    }
+    
+    var html = '';
+    filtered.forEach(function(r) {
+        var dt = r.timestamp ? new Date(r.timestamp) : null;
+        var dateStr = dt ? fmtFull(dt) : '-';
+        
+        var statusTag = r.status === 'pending' 
+            ? '<span class="pending-tag">⏳ در انتظار</span>' 
+            : '<span class="approved-tag">✅ پاسخ داده شده</span>';
+        
+        var typeColor = r.type === 'password' ? '#8b5cf6' : (r.type === 'purchase' ? '#f59e0b' : '#3b82f6');
+        var typeLabel = r.typeLabel || '📋 عمومی';
+        
+        html += '<div class="req-card" style="border-right:3px solid ' + typeColor + ';">';
+        html += '<div class="req-head">';
+        html += '<div>';
+        html += '<div style="font-weight:800;color:#ffd700;font-size:.9rem">👤 ' + (r.name || 'ناشناس') + ' <span style="font-size:.7rem;color:' + typeColor + '">' + typeLabel + '</span></div>';
+        html += '<div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px">کد: ' + (r.user || '-') + ' | حساب: ' + (r.accountNumber || '-') + ' | 📅 ' + dateStr + '</div>';
+        if (r.phone) html += '<div style="font-size:.7rem;color:rgba(255,255,255,.5)">📱 ' + r.phone + '</div>';
+        html += '</div>';
+        html += statusTag;
+        html += '</div>';
+        
+        html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin:8px 0;font-size:.85rem;line-height:1.7">';
+        html += '<b style="color:#fff">📋 ' + escapeHtmlAdmin(r.title || '') + '</b>';
+        if (r.code) html += ' <span style="color:rgba(255,255,255,.4);font-size:.75rem">(کد: ' + r.code + ')</span>';
+        html += '</div>';
+        
+        if (r.reply && r.reply.trim() && r.status !== 'pending') {
+            html += '<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:8px;margin:8px 0;font-size:.82rem;line-height:1.7">';
+            html += '<b style="color:#22c55e">💬 پاسخ شورا:</b><br>' + escapeHtmlAdmin(r.reply);
+            html += '</div>';
+        }
+        
+        if (r.status === 'pending') {
+            html += '<div id="mrReply_' + r.id + '" style="display:none;margin-top:8px">';
+            html += '<textarea id="mrTA_' + r.id + '" placeholder="✍️ پاسخ خود را بنویسید..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none"></textarea>';
+            html += '<div style="display:flex;gap:6px;margin-top:6px">';
+            html += '<button onclick="submitMemberRequestReply(\'' + r.id + '\',\'' + r.type + '\')" style="flex:2;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer;font-family:tahoma">📨 ثبت و ارسال پاسخ</button>';
+            html += '<button onclick="cancelMemberRequestReply(\'' + r.id + '\')" style="flex:1;padding:10px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-family:tahoma">❌ لغو</button>';
+            html += '</div>';
+            html += '</div>';
+            html += '<div class="req-actions">';
+            html += '<button onclick="openMemberRequestReply(\'' + r.id + '\')" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff">✍️ پاسخ دادن</button>';
+            html += '</div>';
+        }
+        
+        html += '</div>';
+    });
+    
+    document.getElementById('memberRequestsList').innerHTML = html;
+}
+
+function openMemberRequestReply(id) {
+    var box = document.getElementById('mrReply_' + id);
+    if (box) {
+        box.style.display = 'block';
+        var ta = document.getElementById('mrTA_' + id);
+        if (ta) ta.focus();
+    }
+}
+
+function cancelMemberRequestReply(id) {
+    var box = document.getElementById('mrReply_' + id);
+    if (box) box.style.display = 'none';
+}
+
+function submitMemberRequestReply(id, type) {
+    var ta = document.getElementById('mrTA_' + id);
+    if (!ta) return;
+    var reply = ta.value.trim();
+    
+    if (reply.length < 2) {
+        alert('⚠️ لطفاً پاسخ را بنویسید');
+        return;
+    }
+    
+    if (!confirm('پاسخ ثبت و برای عضو ارسال شود؟')) return;
+    
+    fetch(URL + '?action=resolveMemberRequest&key=' + encodeURIComponent(KEY) 
+        + '&id=' + encodeURIComponent(id) 
+        + '&type=' + encodeURIComponent(type)
+        + '&reply=' + encodeURIComponent(reply)
+        + '&status=resolved'
+        + '&replyBy=' + encodeURIComponent((window.__councilUser && window.__councilUser.name) || 'شورا'))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                alert('✅ پاسخ با موفقیت ثبت شد');
+                loadMemberRequests();
+            } else {
+                alert('❌ خطا: ' + (d.error || 'نامشخص'));
+            }
+        })
+        .catch(function() { alert('❌ خطا در اتصال'); });
+}
+
+function escapeHtmlAdmin(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function(c) {
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+    }).replace(/\n/g, '<br>');
+}
 console.log('✅ تب اطلاعات کاربری آماده است');
 </script>
 </body>
