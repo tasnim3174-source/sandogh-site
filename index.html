@@ -194,7 +194,7 @@ if ('serviceWorker' in navigator) {
                     </div>
                     <p style="color:var(--text-secondary);font-size:0.65rem;">سطح امنیت شما با رمز عبور است.</p>
                 </div>
-                <button class="btn-small danger-btn" style="font-size:0.7rem;padding:6px 14px;min-height:30px;" onclick="closeSettings(); openChangePasswordModal()">تغییر رمز عبور</button>
+<button class="btn-small danger-btn" style="font-size:0.7rem;padding:6px 14px;min-height:30px;" onclick="closeSettings(); sendPasswordChangeSms()">📱 درخواست تغییر رمز پیامکی</button><button class="btn-small danger-btn" style="font-size:0.7rem;padding:6px 14px;min-height:30px;" onclick="closeSettings(); openChangePasswordModal()">تغییر رمز عبور</button>
             </div>
         </div>
     </div>
@@ -902,5 +902,78 @@ if (ringEl) ringEl.classList.remove('okc');
             <span>اطلاعات</span>
         </button>
     </div>
+    <script>
+/* ============================================================
+   درخواست تغییر رمز پیامکی
+   ============================================================ */
+function sendPasswordChangeSms() {
+    var FUND_PHONE = '09138944709';
+    
+    if (!confirm('🔐 درخواست تغییر رمز عبور\n\n' +
+                 'درخواست شما به شورای صندوق ارسال می‌شود.\n\n' +
+                 'پس از تأیید، رمز جدید به شما اعلام خواهد شد.\n\n' +
+                 'ادامه می‌دهید؟')) {
+        return;
+    }
+    
+    // پیدا کردن member
+    var member = null;
+    if (typeof members !== 'undefined' && members && typeof currentUser !== 'undefined' && currentUser) {
+        member = members.find(function(m) {
+            return String(m.id) === String(currentUser.memberId) ||
+                   String(m.accountNumber) === String(currentUser.accountNumber);
+        });
+    }
+    
+    var userName = (member && member.firstName) || (currentUser && currentUser.firstName) || 'کاربر';
+    var userCode = (currentUser && (currentUser.username || currentUser.accountNumber)) || '';
+    var userPhone = (member && (member.phone1 || member.phone)) || (currentUser && currentUser.phone1) || '';
+    var accountNumber = (member && member.accountNumber) || (currentUser && currentUser.accountNumber) || '';
+    
+    // متن پیامک
+    var smsText = '🔐 درخواست تغییر رمز عبور\n' +
+                  'شماره کاربری: ' + userCode + '\n' +
+                  'نام: ' + userName + '\n' +
+                  'تلفن تماس: ' + userPhone + '\n' +
+                  'تاریخ: ' + new Date().toLocaleDateString('fa-IR');
+    
+    // ۱. ثبت در سرور
+    try {
+        var url = ADMIN_URL + '?action=submitMemberRequest'
+            + '&user=' + encodeURIComponent(userCode)
+            + '&name=' + encodeURIComponent(userName)
+            + '&accountNumber=' + encodeURIComponent(accountNumber)
+            + '&phone=' + encodeURIComponent(userPhone)
+            + '&code=PWD'
+            + '&title=' + encodeURIComponent('درخواست تغییر رمز عبور')
+            + '&type=password';
+        
+        fetch(url, { cache: 'no-cache' })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+                if (d.ok) console.log('✅ درخواست تغییر رمز در سرور ثبت شد');
+                else console.warn('⚠️ خطا:', d.error);
+            })
+            .catch(function(e) { console.warn('⚠️ خطا:', e); });
+    } catch(e) {
+        console.warn('خطا:', e);
+    }
+    
+    // ۲. باز کردن اپ پیامک
+    window.location.href = 'sms:' + FUND_PHONE + '?body=' + encodeURIComponent(smsText);
+    
+    // ۳. Toast تأیید
+    setTimeout(function() {
+        if (typeof showSimpleToast === 'function') {
+            showSimpleToast('✅', 'پیامک آماده شد', 
+                'لطفاً پیام را برای شماره <b>' + FUND_PHONE + '</b> ارسال کنید.<br><br>' +
+                'پس از تأیید شورا، رمز جدید اعلام می‌شود.', 
+                '#10b981');
+        }
+    }, 1500);
+}
+
+window.sendPasswordChangeSms = sendPasswordChangeSms;
+</script>
 </body>
 </html>
