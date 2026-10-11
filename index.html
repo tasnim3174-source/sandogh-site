@@ -571,15 +571,7 @@ if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
         ldrRender();
         var ringEl = document.getElementById('ldrRing');
 if (ringEl) ringEl.classList.add('okc');
-// ✅ فعال کردن صفحه خوش‌آمد
-setTimeout(function() {
-    var okEl = document.getElementById('loaderOk');
-    if (okEl) {
-        okEl.classList.add('active');
-        okEl.classList.add('show');
-        console.log('✅ صفحه خوش‌آمد فعال شد');
-    }
-    
+
     // آپدیت تاریخ و ساعت
     if (typeof updateOkDateTime === 'function') {
         updateOkDateTime();
