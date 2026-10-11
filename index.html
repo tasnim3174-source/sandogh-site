@@ -28,65 +28,59 @@ if ('serviceWorker' in navigator) {
 </head>
 <body>
 
-   <div class="loaderGlow g1"></div>
+  <div class="loaderGlow g1"></div>
 <div class="loaderGlow g2"></div>
 <canvas id="loaderFx"></canvas>
 
 <div id="newLoader">
+    <div class="loader-particles" id="loaderParticles"></div>
+    
     <div class="loaderCenter">
-        <!-- آیکن مرکزی -->
+        
         <div class="emb">
-            <svg class="ring" id="ldrRing" viewBox="0 0 150 150">
-                <defs>
-                    <linearGradient id="rg" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#ffc94d"/>
-                        <stop offset="1" stop-color="#3ee6a8"/>
-                    </linearGradient>
-                </defs>
-                <circle class="rb" cx="75" cy="75" r="66"/>
-                <circle class="rf" id="ldrRf" cx="75" cy="75" r="66"/>
-            </svg>
-            <div class="orb"><i></i></div>
-            <div class="core" id="ldrCore">
-                <svg viewBox="0 0 96 96" fill="none">
-                    <defs>
-                        <linearGradient id="vg" x1="0" y1="0" x2="1" y2="1">
-                            <stop offset="0" stop-color="#ffe08a"/>
-                            <stop offset="1" stop-color="#ffc94d"/>
-                        </linearGradient>
-                    </defs>
-                    <rect x="14" y="12" width="68" height="62" rx="11" stroke="url(#vg)" stroke-width="3.5"/>
-                    <circle cx="48" cy="43" r="17" stroke="url(#vg)" stroke-width="3.5"/>
-                    <circle cx="48" cy="43" r="6" fill="url(#vg)"/>
-                    <path d="M48 22v7M48 57v7M27 43h7M62 43h7" stroke="url(#vg)" stroke-width="3.5" stroke-linecap="round"/>
-                    <path d="M24 74v8M72 74v8" stroke="url(#vg)" stroke-width="5" stroke-linecap="round"/>
-                </svg>
+            <div class="emb-glow"></div>
+            <div class="coin">
+                <div class="coin-face">
+                    <svg viewBox="0 0 100 100" fill="none">
+                        <defs>
+                            <radialGradient id="coinGrad" cx="0.3" cy="0.3">
+                                <stop offset="0" stop-color="#ffe08a"/>
+                                <stop offset="0.5" stop-color="#ffc94d"/>
+                                <stop offset="1" stop-color="#b8860b"/>
+                            </radialGradient>
+                        </defs>
+                        <circle cx="50" cy="50" r="46" fill="url(#coinGrad)"/>
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>
+                        <circle cx="50" cy="50" r="34" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+                        <text x="50" y="42" font-family="B Titr, Tahoma" font-size="14" font-weight="900" fill="#8b6914" text-anchor="middle">صندوق</text>
+                        <text x="50" y="66" font-family="B Titr, Tahoma" font-size="18" font-weight="900" fill="#6b4e0a" text-anchor="middle">اتحاد</text>
+                    </svg>
+                </div>
+                <div class="coin-shine"></div>
             </div>
         </div>
-
-        <!-- پیام خوش‌آمد -->
+        
         <p class="wlc">به سیستم حسابداری صندوق اتحاد خوش آمدید 🌟</p>
-
-        <!-- درصد -->
+        
         <div class="pct">
             <span id="ldrPct">۰</span>
             <span class="sg">٪</span>
         </div>
-
-        <!-- وضعیت -->
+        
         <div class="stt">
+            <span class="stt-dot"></span>
             <span id="ldrStx">آماده‌سازی</span>
             <span class="dts"><i>.</i><i>.</i><i>.</i></span>
         </div>
-
-        <!-- نوار پیشرفت -->
+        
         <div class="barw">
             <div class="bar">
-                <div class="fill" id="ldrFill"></div>
+                <div class="fill" id="ldrFill">
+                    <div class="fill-shine"></div>
+                </div>
             </div>
         </div>
-
-        <!-- چهار مرحله -->
+        
         <div class="steps">
             <div class="stp" id="ldrS0">
                 <span class="ic">
@@ -100,7 +94,7 @@ if ('serviceWorker' in navigator) {
                         <path d="M5 12.5l4.5 4.5L19 7"/>
                     </svg>
                 </span>
-                اتصال به سرور
+                <span class="stp-txt">اتصال به سرور</span>
             </div>
             <div class="stp" id="ldrS1">
                 <span class="ic">
@@ -113,7 +107,7 @@ if ('serviceWorker' in navigator) {
                         <path d="M5 12.5l4.5 4.5L19 7"/>
                     </svg>
                 </span>
-                احراز هویت
+                <span class="stp-txt">احراز هویت</span>
             </div>
             <div class="stp" id="ldrS2">
                 <span class="ic">
@@ -125,7 +119,7 @@ if ('serviceWorker' in navigator) {
                         <path d="M5 12.5l4.5 4.5L19 7"/>
                     </svg>
                 </span>
-                بارگذاری اطلاعات
+                <span class="stp-txt">بارگذاری اطلاعات</span>
             </div>
             <div class="stp" id="ldrS3">
                 <span class="ic">
@@ -140,14 +134,19 @@ if ('serviceWorker' in navigator) {
                         <path d="M5 12.5l4.5 4.5L19 7"/>
                     </svg>
                 </span>
-                آماده‌سازی داشبورد
+                <span class="stp-txt">آماده‌سازی داشبورد</span>
             </div>
         </div>
     </div>
-
-    <!-- زمان سپری شده -->
+    
     <div class="loaderBot">
-        <span class="time">⏱ زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span>
+        <div class="time-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2" stroke-linecap="round"/>
+            </svg>
+            <span>زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span>
+        </div>
     </div>
 </div>
 
@@ -161,7 +160,6 @@ if ('serviceWorker' in navigator) {
         <p>شما وارد سیستم شدید 🎉</p>
     </div>
 </div>
-
     <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
             <button class="settings-close" onclick="closeSettings()">✕</button>
@@ -496,7 +494,8 @@ if ('serviceWorker' in navigator) {
     function ldrRender() {
         document.getElementById('ldrPct').textContent = ldrFa(Math.round(ldrP));
         document.getElementById('ldrFill').style.width = ldrP + '%';
-        document.getElementById('ldrRf').style.strokeDashoffset = C * (1 - ldrP / 100);
+       var rfEl = document.getElementById('ldrRf');
+if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
         var act = 3;
         for (var i = 0; i < ldrStages.length; i++) { if (ldrP < ldrStages[i].u) { act = i; break; } }
         for (i = 0; i < 4; i++) {
@@ -561,7 +560,8 @@ if ('serviceWorker' in navigator) {
         ldrDone = true;
         clearInterval(ldrSecT);
         ldrRender();
-        document.getElementById('ldrRing').classList.add('okc');
+        var ringEl = document.getElementById('ldrRing');
+if (ringEl) ringEl.classList.add('okc');
 
         var res = loginResult;
         currentUser = res.user;
