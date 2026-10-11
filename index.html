@@ -770,7 +770,8 @@ if (ringEl) ringEl.classList.add('okc');
         var core = document.getElementById('ldrCore');
         if (core) { core.onclick = function(e) { ldrBurst(e.clientX, e.clientY, 20); }; }
         ldrP = 0; ldrDone = false; ldrSecs = 0; ldrFi = 0;
-        document.getElementById('ldrRing').classList.remove('okc');
+       var ringEl = document.getElementById('ldrRing');
+if (ringEl) ringEl.classList.remove('okc');
         ldrRender();
         setTimeout(ldrTick, 500);
     }
