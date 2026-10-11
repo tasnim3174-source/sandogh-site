@@ -375,6 +375,43 @@ function fmtFull(d){ return fmtDate(d) + ' - ساعت ' + fmtTime(d); }
 // ============================================================
 // 🔒 چک دسترسی (با توکن)
 // ============================================================
+  function check() {
+    // ✅ چک توکن امنیتی
+    try {
+        var token = localStorage.getItem('admin_access_token');
+        if (token) {
+            var data = JSON.parse(decodeURIComponent(escape(atob(token))));
+            var age = Date.now() - data.timestamp;
+            
+            if (age <= 5 * 60 * 1000 && data.isCouncil) {
+                console.log('✅ توکن معتبر');
+                isCouncil = true;
+                window.__councilUser = {
+                    id: data.memberId,
+                    name: data.firstName,
+                    accountNumber: data.accountNumber,
+                    username: data.username
+                };
+                
+                setTimeout(function() {
+                    try { localStorage.removeItem('admin_access_token'); } catch(e) {}
+                }, 1500);
+                
+                enterDashboard();
+                return;
+            }
+        }
+    } catch(e) {
+        console.error('خطا در چک توکن:', e.message);
+    }
+    
+    // ⬇️ کد اصلی check() خودت (چک رمز)
+    // ... دست نزن ...
+    
+    var u = document.getElementById('cuser').value.trim();
+    var p = document.getElementById('pass').value.trim();
+    // ...
+}
 function check() {
     // ✅ چک کن توکن در localStorage هست
     var token = null;
