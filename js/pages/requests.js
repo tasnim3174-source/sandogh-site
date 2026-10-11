@@ -137,7 +137,7 @@ async function loadMyRequests() {
     list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);">در حال بارگذاری...</div>';
     
     try {
-var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;var uid = currentUser.memberId || currentUser.username || currentUser.accountNumber;
+var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
         var url = ADMIN_URL + '?action=getMyMemberRequests&user=' + encodeURIComponent(uid);
         var res = await fetch(url, { cache: 'no-cache' });
         var data = await res.json();
