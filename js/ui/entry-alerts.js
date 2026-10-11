@@ -73,7 +73,6 @@ async function runEntryAlerts() {
     await new Promise(function(r) { setTimeout(r, 2000); });
     
     try {
-        // پیدا کردن member
         var member = null;
         if (typeof members !== 'undefined' && members && currentUser) {
             member = members.find(function(m) {
@@ -91,10 +90,7 @@ async function runEntryAlerts() {
         
         console.log('👤 member پیدا شد:', member.firstName);
         
-        // ۱. هشدارها
         await showLocalAlerts(member);
-        
-        // ۲. امتیازهای روزانه
         await awardLocalPoints(member);
         
         try { localStorage.setItem(storageKey, '1'); } catch(e) {}
@@ -108,12 +104,12 @@ async function runEntryAlerts() {
 }
 
 /* ────────────────────────────────────────────────────────────
-   ۱. نمایش هشدارها (محلی)
+   ۱. نمایش هشدارها
    ──────────────────────────────────────────────────────────── */
 async function showLocalAlerts(member) {
     var alerts = [];
     
-    // ─── هشدار ۱: حساب غیرفعال ───
+    // هشدار ۱: حساب غیرفعال
     if (member.active === false) {
         alerts.push({
             icon: '🚫',
@@ -123,7 +119,7 @@ async function showLocalAlerts(member) {
         });
     }
     
-    // ─── هشدار ۲: قسط معوقه ───
+    // هشدار ۲: قسط معوقه
     var overdue = Number(member.overdueInstallments || 0);
     if (overdue > 0) {
         alerts.push({
@@ -134,7 +130,7 @@ async function showLocalAlerts(member) {
         });
     }
     
-    // ─── هشدار ۳: موجودی کم ───
+    // هشدار ۳: موجودی کم
     var balance = Number(member.balance || 0);
     var LOW_BALANCE = 35338016;
     if (balance < LOW_BALANCE) {
@@ -147,11 +143,11 @@ async function showLocalAlerts(member) {
         });
     }
     
-    // ─── هشدار ۴: عدم ثبت نحوه ارسال صورتحساب ───
-    // چک کن توی statementEmails (اگه لود شده)
-    var hasStatementPref = false;
+    // هشدار ۴: عدم ثبت نحوه ارسال صورتحساب
+    var hasStatementPref = true;
     try {
-        if (typeof statementEmails !== 'undefined' && statementEmails) {
+        if (typeof statementEmails !== 'undefined' && statementEmails && Array.isArray(statementEmails)) {
+            hasStatementPref = false;
             for (var i = 0; i < statementEmails.length; i++) {
                 if (String(statementEmails[i].user) === String(member.id)) {
                     var s = statementEmails[i];
@@ -161,13 +157,8 @@ async function showLocalAlerts(member) {
                     break;
                 }
             }
-        } else {
-            // اگه statementEmails لود نشده، بی‌خیال شو
-            hasStatementPref = true;
         }
-    } catch(e) {
-        hasStatementPref = true;
-    }
+    } catch(e) {}
     
     if (!hasStatementPref) {
         alerts.push({
@@ -178,7 +169,6 @@ async function showLocalAlerts(member) {
         });
     }
     
-    // ─── نمایش هشدارها ───
     if (alerts.length === 0) {
         console.log('📭 هیچ هشداری نیست');
         return;
@@ -201,7 +191,7 @@ async function showLocalAlerts(member) {
 }
 
 /* ────────────────────────────────────────────────────────────
-   ۲. امتیازهای روزانه (محلی)
+   ۲. امتیازهای روزانه
    ──────────────────────────────────────────────────────────── */
 async function awardLocalPoints(member) {
     var userId = member.id || member.accountNumber;
@@ -209,9 +199,8 @@ async function awardLocalPoints(member) {
     var today = getTodayShamsiStr();
     
     var awards = [];
-    var totalPoints = 0;
     
-    // ─── ورود روزانه: ۱ ───
+    // ورود روزانه: ۱
     awards.push({
         reason: 'ورود روزانه',
         points: 1,
@@ -219,7 +208,7 @@ async function awardLocalPoints(member) {
         icon: '📅'
     });
     
-    // ─── بدون قسط معوقه: ۵ ───
+    // بدون قسط معوقه: ۵
     var overdue = Number(member.overdueInstallments || 0);
     if (overdue === 0) {
         awards.push({
@@ -230,7 +219,7 @@ async function awardLocalPoints(member) {
         });
     }
     
-    // ─── موجودی مناسب: ۱۰ ───
+    // موجودی مناسب: ۱۰
     var balance = Number(member.balance || 0);
     var LOW_BALANCE = 35338016;
     if (balance >= LOW_BALANCE) {
@@ -242,7 +231,7 @@ async function awardLocalPoints(member) {
         });
     }
     
-    // ─── تولد: ۲۰ ───
+    // تولد: ۲۰
     var isBirthday = false;
     if (member.birthDateShamsi) {
         try {
@@ -276,7 +265,7 @@ async function awardLocalPoints(member) {
         });
     }
     
-    // ─── تکمیل پروفایل: ۳ ───
+    // تکمیل پروفایل: ۳
     var hasProfile = member.phone1 && member.heh1 && member.firstName;
     if (hasProfile) {
         awards.push({
@@ -287,14 +276,13 @@ async function awardLocalPoints(member) {
         });
     }
     
-    // ─── ارسال امتیازها به سرور (بدون انتظار طولانی) ───
+    // ارسال امتیازها به سرور (بدون انتظار)
     var earnedPoints = 0;
     
     for (var i = 0; i < awards.length; i++) {
         var a = awards[i];
         earnedPoints += a.points;
         
-        // ارسال به سرور ولی بدون انتظار
         (function(award) {
             var url = ADMIN_URL + '?action=addPoints'
                 + '&user=' + encodeURIComponent(userId)
@@ -318,7 +306,6 @@ async function awardLocalPoints(member) {
         })(a);
     }
     
-    // ─── نمایش پیام امتیاز ───
     await new Promise(function(r) { setTimeout(r, 1000); });
     
     if (typeof showSimpleToast === 'function') {
@@ -364,3 +351,4 @@ async function awardLocalPoints(member) {
 window.runEntryAlerts = runEntryAlerts;
 window.showLocalAlerts = showLocalAlerts;
 window.awardLocalPoints = awardLocalPoints;
+window.getTodayShamsiStr = getTodayShamsiStr;
