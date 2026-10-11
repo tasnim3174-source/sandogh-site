@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - هشدارها و امتیازهای ورود
-   نسخه: 1.0
+   نسخه: 2.0 - محلی (بدون API)
    ============================================================ */
 
 window.__entryAlertsState = {
@@ -9,7 +9,42 @@ window.__entryAlertsState = {
 };
 
 /* ────────────────────────────────────────────────────────────
-   تابع اصلی: با ورود کاربر صدا زده می‌شه
+   تابع دریافت تاریخ شمسی
+   ──────────────────────────────────────────────────────────── */
+function getTodayShamsiStr() {
+    if (typeof getTodayShamsi === 'function') {
+        try {
+            var t = getTodayShamsi();
+            if (t && t.y && t.m && t.d) {
+                return t.y + '/' + String(t.m).padStart(2, '0') + '/' + String(t.d).padStart(2, '0');
+            }
+        } catch(e) {}
+    }
+    
+    try {
+        var now = new Date();
+        var faDate = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit'
+        }).format(now);
+        
+        var parts = faDate.replace(/[۰-۹]/g, function(d) {
+            return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        }).split('/');
+        
+        if (parts.length === 3) {
+            return parts[0] + '/' + parts[1] + '/' + parts[2];
+        }
+        return faDate;
+    } catch(e) {
+        var d = new Date();
+        return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate();
+    }
+}
+
+/* ────────────────────────────────────────────────────────────
+   تابع اصلی
    ──────────────────────────────────────────────────────────── */
 async function runEntryAlerts() {
     if (window.__entryAlertsState.running) return;
@@ -19,8 +54,7 @@ async function runEntryAlerts() {
     
     window.__entryAlertsState.running = true;
     
-    // یه بار در روز فقط
-    var today = new Date().toLocaleDateString('fa-IR');
+    var today = getTodayShamsiStr();
     var userCode = currentUser.username || currentUser.id || currentUser.accountNumber;
     var storageKey = 'entry_alerts_' + userCode + '_' + today;
     
@@ -36,97 +70,148 @@ async function runEntryAlerts() {
     
     console.log('🚀 شروع هشدارهای ورود...');
     
-    // صبر کوتاه تا همه چیز لود بشه
-    await new Promise(function(r) { setTimeout(r, 2500); });
+    await new Promise(function(r) { setTimeout(r, 2000); });
     
     try {
+        // پیدا کردن member
+        var member = null;
+        if (typeof members !== 'undefined' && members && currentUser) {
+            member = members.find(function(m) {
+                return String(m.id) === String(currentUser.memberId) ||
+                       String(m.accountNumber) === String(currentUser.accountNumber) ||
+                       String(m.accountNumber) === String(currentUser.username);
+            });
+        }
+        
+        if (!member) {
+            console.warn('⚠️ member پیدا نشد');
+            window.__entryAlertsState.running = false;
+            return;
+        }
+        
+        console.log('👤 member پیدا شد:', member.firstName);
+        
         // ۱. هشدارها
-        await showEntryAlerts();
+        await showLocalAlerts(member);
         
         // ۲. امتیازهای روزانه
-        await awardDailyPoints();
+        await awardLocalPoints(member);
         
-        // ذخیره که امروز نشون داده شده
         try { localStorage.setItem(storageKey, '1'); } catch(e) {}
         
         window.__entryAlertsState.shown = true;
     } catch(e) {
-        console.error('❌ خطا در هشدارهای ورود:', e);
+        console.error('❌ خطا:', e);
     } finally {
         window.__entryAlertsState.running = false;
     }
 }
 
 /* ────────────────────────────────────────────────────────────
-   ۱. نمایش هشدارها
+   ۱. نمایش هشدارها (محلی)
    ──────────────────────────────────────────────────────────── */
-async function showEntryAlerts() {
-    var userCode = currentUser.username || currentUser.id || currentUser.accountNumber;
-    if (!userCode) return;
+async function showLocalAlerts(member) {
+    var alerts = [];
     
-    try {
-        var url = ADMIN_URL + '?action=getUserAlerts&user=' + encodeURIComponent(userCode);
-        var res = await fetch(url, { cache: 'no-cache' });
-        var data = await res.json();
-        
-        if (!data || !data.ok || !data.alerts || data.alerts.length === 0) {
-            console.log('📭 هیچ هشداری نیست');
-            return;
-        }
-        
-        console.log('🔔 ' + data.alerts.length + ' هشدار پیدا شد');
-        
-        // هر هشدار رو با تأخیر نشون بده
-        for (var i = 0; i < data.alerts.length; i++) {
-            var alert = data.alerts[i];
-            
-            await new Promise(function(r) { 
-                setTimeout(r, i === 0 ? 500 : 3500); 
-            });
-            
-            if (typeof showSimpleToast === 'function') {
-                showSimpleToast(
-                    alert.icon || '⚠️',
-                    alert.title || 'هشدار',
-                    alert.message || '',
-                    alert.borderColor || '#ffd700'
-                );
-            }
-        }
-        
-        // صبر کن تا هشدارها دیده بشن
-        await new Promise(function(r) { setTimeout(r, 2000); });
-        
-    } catch(e) {
-        console.error('❌ خطا در getUserAlerts:', e);
-    }
-}
-
-/* ────────────────────────────────────────────────────────────
-   ۲. امتیازهای روزانه
-   ──────────────────────────────────────────────────────────── */
-async function awardDailyPoints() {
-    var member = null;
-    if (typeof members !== 'undefined' && members && currentUser) {
-        member = members.find(function(m) {
-            return String(m.id) === String(currentUser.memberId) ||
-                   String(m.accountNumber) === String(currentUser.accountNumber);
+    // ─── هشدار ۱: حساب غیرفعال ───
+    if (member.active === false) {
+        alerts.push({
+            icon: '🚫',
+            title: 'حساب غیرفعال',
+            message: 'حساب شما غیرفعال است. لطفاً با <b>شورای صندوق</b> تماس بگیرید.',
+            borderColor: '#ef4444'
         });
     }
     
-    if (!member) {
-        console.log('⚠️ member پیدا نشد - امتیازها رد شد');
+    // ─── هشدار ۲: قسط معوقه ───
+    var overdue = Number(member.overdueInstallments || 0);
+    if (overdue > 0) {
+        alerts.push({
+            icon: '⚠️',
+            title: 'قسط معوقه',
+            message: 'شما <b>' + overdue + ' قسط معوقه</b> دارید. لطفاً هرچه سریع‌تر پرداخت کنید.',
+            borderColor: '#ef4444'
+        });
+    }
+    
+    // ─── هشدار ۳: موجودی کم ───
+    var balance = Number(member.balance || 0);
+    var LOW_BALANCE = 35338016;
+    if (balance < LOW_BALANCE) {
+        var diff = LOW_BALANCE - balance;
+        alerts.push({
+            icon: '💰',
+            title: 'کسری موجودی',
+            message: 'موجودی حساب شما کمتر از حد نصاب است.<br>کسری: <b>' + Number(diff).toLocaleString('fa-IR') + ' ریال</b><br>لطفاً شارژ کنید.',
+            borderColor: '#f59e0b'
+        });
+    }
+    
+    // ─── هشدار ۴: عدم ثبت نحوه ارسال صورتحساب ───
+    // چک کن توی statementEmails (اگه لود شده)
+    var hasStatementPref = false;
+    try {
+        if (typeof statementEmails !== 'undefined' && statementEmails) {
+            for (var i = 0; i < statementEmails.length; i++) {
+                if (String(statementEmails[i].user) === String(member.id)) {
+                    var s = statementEmails[i];
+                    if (s.wantEmail || s.wantSms || s.wantIta || s.wantSite) {
+                        hasStatementPref = true;
+                    }
+                    break;
+                }
+            }
+        } else {
+            // اگه statementEmails لود نشده، بی‌خیال شو
+            hasStatementPref = true;
+        }
+    } catch(e) {
+        hasStatementPref = true;
+    }
+    
+    if (!hasStatementPref) {
+        alerts.push({
+            icon: '📬',
+            title: 'ثبت نحوه ارسال صورتحساب',
+            message: 'شما هنوز نحوه دریافت صورتحساب را ثبت نکرده‌اید.<br>لطفاً به بخش <b>ثبت نحوه ارسال صورتحساب</b> در منو بروید.',
+            borderColor: '#3b82f6'
+        });
+    }
+    
+    // ─── نمایش هشدارها ───
+    if (alerts.length === 0) {
+        console.log('📭 هیچ هشداری نیست');
         return;
     }
     
+    console.log('🔔 ' + alerts.length + ' هشدار');
+    
+    for (var j = 0; j < alerts.length; j++) {
+        var a = alerts[j];
+        await new Promise(function(r) {
+            setTimeout(r, j === 0 ? 500 : 3500);
+        });
+        
+        if (typeof showSimpleToast === 'function') {
+            showSimpleToast(a.icon, a.title, a.message, a.borderColor);
+        }
+    }
+    
+    await new Promise(function(r) { setTimeout(r, 1500); });
+}
+
+/* ────────────────────────────────────────────────────────────
+   ۲. امتیازهای روزانه (محلی)
+   ──────────────────────────────────────────────────────────── */
+async function awardLocalPoints(member) {
     var userId = member.id || member.accountNumber;
     var userName = member.firstName || '';
-    var today = new Date().toLocaleDateString('fa-IR');
+    var today = getTodayShamsiStr();
     
     var awards = [];
     var totalPoints = 0;
     
-    // ─── ۱. ورود روزانه: ۱ امتیاز ───
+    // ─── ورود روزانه: ۱ ───
     awards.push({
         reason: 'ورود روزانه',
         points: 1,
@@ -134,9 +219,9 @@ async function awardDailyPoints() {
         icon: '📅'
     });
     
-    // ─── ۲. بدون قسط معوقه: ۵ امتیاز ───
-    var overdueCount = Number(member.overdueInstallments || 0);
-    if (overdueCount === 0) {
+    // ─── بدون قسط معوقه: ۵ ───
+    var overdue = Number(member.overdueInstallments || 0);
+    if (overdue === 0) {
         awards.push({
             reason: 'بدون قسط معوقه',
             points: 5,
@@ -145,7 +230,7 @@ async function awardDailyPoints() {
         });
     }
     
-    // ─── ۳. موجودی بالا: ۱۰ امتیاز ───
+    // ─── موجودی مناسب: ۱۰ ───
     var balance = Number(member.balance || 0);
     var LOW_BALANCE = 35338016;
     if (balance >= LOW_BALANCE) {
@@ -157,32 +242,26 @@ async function awardDailyPoints() {
         });
     }
     
-    // ─── ۴. تولد: ۲۰ امتیاز ───
+    // ─── تولد: ۲۰ ───
     var isBirthday = false;
     if (member.birthDateShamsi) {
         try {
             var bd = String(member.birthDateShamsi).trim();
-            var today_sh = new Date();
-            // اگه تابع getTodayShamsi وجود داره
             var ts = (typeof getTodayShamsi === 'function') ? getTodayShamsi() : null;
             if (ts) {
-                var bMonth = 0;
+                var bMonth = 0, bDay = 0;
                 if (bd.indexOf('/') > -1) {
-                    bMonth = +bd.split('/')[1];
+                    var parts = bd.split('/');
+                    if (parts.length >= 3) {
+                        bMonth = +parts[1];
+                        bDay = +parts[2];
+                    }
                 } else if (bd.length === 8) {
                     bMonth = +bd.substring(4, 6);
+                    bDay = +bd.substring(6, 8);
                 }
-                if (bMonth === ts.m) {
-                    // چک کن روز تولد هم هست
-                    var bDay = 0;
-                    if (bd.indexOf('/') > -1) {
-                        bDay = +bd.split('/')[2];
-                    } else if (bd.length === 8) {
-                        bDay = +bd.substring(6, 8);
-                    }
-                    if (bDay === ts.d) {
-                        isBirthday = true;
-                    }
+                if (bMonth === ts.m && bDay === ts.d) {
+                    isBirthday = true;
                 }
             }
         } catch(e) {}
@@ -197,7 +276,7 @@ async function awardDailyPoints() {
         });
     }
     
-    // ─── ۵. تکمیل پروفایل: ۳ امتیاز ───
+    // ─── تکمیل پروفایل: ۳ ───
     var hasProfile = member.phone1 && member.heh1 && member.firstName;
     if (hasProfile) {
         awards.push({
@@ -208,78 +287,56 @@ async function awardDailyPoints() {
         });
     }
     
-    // ─── ارسال امتیازها به سرور ───
-    var successCount = 0;
+    // ─── ارسال امتیازها به سرور (بدون انتظار طولانی) ───
     var earnedPoints = 0;
     
     for (var i = 0; i < awards.length; i++) {
         var a = awards[i];
-        try {
+        earnedPoints += a.points;
+        
+        // ارسال به سرور ولی بدون انتظار
+        (function(award) {
             var url = ADMIN_URL + '?action=addPoints'
                 + '&user=' + encodeURIComponent(userId)
                 + '&name=' + encodeURIComponent(userName)
-                + '&reason=' + encodeURIComponent(a.reason)
-                + '&points=' + a.points
-                + '&uniqueKey=' + encodeURIComponent(a.key);
+                + '&reason=' + encodeURIComponent(award.reason)
+                + '&points=' + award.points
+                + '&uniqueKey=' + encodeURIComponent(award.key);
             
-            var res = await fetch(url, { cache: 'no-cache' });
-            var data = await res.json();
-            
-            if (data.ok) {
-                successCount++;
-                earnedPoints += a.points;
-                console.log('✅ ' + a.icon + ' ' + a.reason + ': +' + a.points);
-            } else if (data.already) {
-                console.log('⏭️ ' + a.reason + ': قبلاً ثبت شده');
-            }
-        } catch(e) {
-            console.error('❌ خطا در ' + a.reason + ':', e);
-        }
+            fetch(url, { cache: 'no-cache' })
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data.ok) {
+                        console.log('✅ ' + award.icon + ' ' + award.reason + ': +' + award.points);
+                    } else if (data.already) {
+                        console.log('⏭️ ' + award.reason + ': قبلاً ثبت شده');
+                    }
+                })
+                .catch(function(e) { 
+                    console.warn('⚠️ خطا در ' + award.reason, e);
+                });
+        })(a);
     }
-    
-    // ─── گرفتن مجموع امتیاز ───
-    var totalPoints = 0;
-    try {
-        var pres = await fetch(ADMIN_URL + '?action=getPoints', { cache: 'no-cache' });
-        var pdata = await pres.json();
-        if (pdata && pdata.points) {
-            for (var j = 0; j < pdata.points.length; j++) {
-                if (String(pdata.points[j].user) === String(userId)) {
-                    totalPoints = Number(pdata.points[j].points || 0);
-                    break;
-                }
-            }
-        }
-    } catch(e) {}
     
     // ─── نمایش پیام امتیاز ───
     await new Promise(function(r) { setTimeout(r, 1000); });
     
-    if (earnedPoints > 0) {
+    if (typeof showSimpleToast === 'function') {
         var msg = '🎉 تبریک! امروز <b>' + earnedPoints + ' امتیاز</b> گرفتی!<br><br>';
-        msg += '📊 مجموع امتیازات: <b>' + totalPoints + '</b><br><br>';
         msg += '🎁 برای دریافت جایزه، به بخش <b>امتیازات و فروشگاه</b> برو!';
         
-        if (typeof showSimpleToast === 'function') {
-            showSimpleToast('🎉', 'امتیاز جدید!', msg, '#10b981');
-        }
-    } else {
-        var msg2 = '📊 مجموع امتیازات شما: <b>' + totalPoints + '</b><br><br>';
-        msg2 += '🎁 برای دریافت جایزه، به بخش <b>امتیازات و فروشگاه</b> برو!';
-        
-        if (typeof showSimpleToast === 'function') {
-            showSimpleToast('⭐', 'امتیازات شما', msg2, '#ffd700');
-        }
+        showSimpleToast('⭐', 'امتیازات روزانه', msg, '#ffd700');
     }
+    
+    console.log('💰 ' + earnedPoints + ' امتیاز امروز');
 }
 
 /* ────────────────────────────────────────────────────────────
-   اجرای خودکار با ورود کاربر
+   اجرای خودکار
    ──────────────────────────────────────────────────────────── */
 (function autoRun() {
-    // هر ۱ ثانیه چک کن کاربر لاگین شده و منو آماده شده
     var attempts = 0;
-    var maxAttempts = 60; // ۶۰ ثانیه
+    var maxAttempts = 60;
     
     var timer = setInterval(function() {
         attempts++;
@@ -289,13 +346,12 @@ async function awardDailyPoints() {
             currentUser && 
             typeof members !== 'undefined' && 
             members && 
-            members.length > 0 &&
-            typeof renderMenuPage === 'function'
+            members.length > 0
         );
         
         if (ready) {
             clearInterval(timer);
-            console.log('✅ شرایط آماده - اجرای هشدارهای ورود');
+            console.log('✅ شرایط آماده');
             setTimeout(runEntryAlerts, 1500);
         }
         
@@ -305,7 +361,6 @@ async function awardDailyPoints() {
     }, 1000);
 })();
 
-// در معرض عموم
 window.runEntryAlerts = runEntryAlerts;
-window.showEntryAlerts = showEntryAlerts;
-window.awardDailyPoints = awardDailyPoints;
+window.showLocalAlerts = showLocalAlerts;
+window.awardLocalPoints = awardLocalPoints;
