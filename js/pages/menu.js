@@ -504,17 +504,19 @@ function openAdminPanel() {
         return;
     }
     
-    // ✅ یه توکن موقت بساز (۵ دقیقه اعتبار)
-    var token = btoa(JSON.stringify({
+    // ✅ توکن با پشتیبانی از Unicode (فارسی)
+    var tokenData = {
         memberId: member.id,
         accountNumber: member.accountNumber,
         username: currentUser.username,
         firstName: member.firstName,
-        password: currentUser.password || member.ramz || '',
         isCouncil: true,
         isAdmin: currentUser.role === 'admin',
         timestamp: Date.now()
-    }));
+    };
+    
+    // ✅ تبدیل به Base64 با پشتیبانی Unicode
+    var token = btoa(unescape(encodeURIComponent(JSON.stringify(tokenData))));
     
     // ذخیره در localStorage
     try {
@@ -530,5 +532,4 @@ function openAdminPanel() {
     window.open('admin-final.html', '_blank');
 }
 
-// در معرض عموم
 window.openAdminPanel = openAdminPanel;
