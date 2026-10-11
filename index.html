@@ -571,7 +571,20 @@ if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
         ldrRender();
         var ringEl = document.getElementById('ldrRing');
 if (ringEl) ringEl.classList.add('okc');
-
+// ✅ فعال کردن صفحه خوش‌آمد
+setTimeout(function() {
+    var okEl = document.getElementById('loaderOk');
+    if (okEl) {
+        okEl.classList.add('active');
+        okEl.classList.add('show');
+        console.log('✅ صفحه خوش‌آمد فعال شد');
+    }
+    
+    // آپدیت تاریخ و ساعت
+    if (typeof updateOkDateTime === 'function') {
+        updateOkDateTime();
+    }
+}, 300);
         var res = loginResult;
         currentUser = res.user;
         
@@ -981,6 +994,43 @@ function sendPasswordChangeSms() {
 }
 
 window.sendPasswordChangeSms = sendPasswordChangeSms;
+</script>
+    <script>
+/* ============================================================
+   آپدیت تاریخ و ساعت صفحه خوش‌آمد
+   ============================================================ */
+function updateOkDateTime() {
+    var dtEl = document.getElementById('okDateTime');
+    if (!dtEl) return;
+    
+    var now = new Date();
+    
+    var dateStr;
+    try {
+        dateStr = new Intl.DateTimeFormat('fa-IR-u-ca-persian', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }).format(now);
+    } catch(e) {
+        dateStr = now.toLocaleDateString('fa-IR');
+    }
+    
+    var timeStr = String(now.getHours()).padStart(2, '0') + ':' +
+                  String(now.getMinutes()).padStart(2, '0') + ':' +
+                  String(now.getSeconds()).padStart(2, '0');
+    
+    var dateEl = dtEl.querySelector('.ok-date');
+    var timeEl = dtEl.querySelector('.ok-time');
+    
+    if (dateEl) dateEl.textContent = '📅 ' + dateStr;
+    if (timeEl) timeEl.textContent = '🕐 ' + timeStr;
+}
+
+setInterval(updateOkDateTime, 1000);
+updateOkDateTime();
+window.updateOkDateTime = updateOkDateTime;
 </script>
 </body>
 </html>
