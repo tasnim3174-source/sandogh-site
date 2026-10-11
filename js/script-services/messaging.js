@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - سیستم پیام‌رسانی
-   نسخه: 3.0
+   نسخه: 3.1
    ============================================================ */
 
 window.__messagingState = window.__messagingState || {
@@ -15,39 +15,78 @@ function openMessagingMenu() {
     renderMessagingUI();
 }
 
+/* ─── تشخیص شورا (از چند منبع) ─── */
+function checkIsCouncil() {
+    var isCouncil = false;
+    var isHead = false;
+
+    // ۱. از currentUser
+    if (currentUser) {
+        if (currentUser.isCouncil === true) isCouncil = true;
+        if (currentUser.isHead === true) isHead = true;
+        if (currentUser.role === 'council' || currentUser.role === 'admin') isCouncil = true;
+    }
+
+    // ۲. از members (منبع اصلی)
+    if (typeof members !== 'undefined' && members && currentUser) {
+        var myId = currentUser.memberId || currentUser.id;
+        var myAcc = currentUser.accountNumber || currentUser.username;
+
+        for (var i = 0; i < members.length; i++) {
+            var m = members[i];
+            if (String(m.id) === String(myId) || 
+                String(m.accountNumber) === String(myAcc)) {
+                if (m.isCouncil === true) isCouncil = true;
+                if (m.isHead === true) isHead = true;
+                break;
+            }
+        }
+    }
+
+    return { isCouncil: isCouncil, isHead: isHead };
+}
+
 /* ─── رندر UI اصلی ─── */
 function renderMessagingUI() {
-    var isCouncil = currentUser && (currentUser.isCouncil === true);
-    
+    var role = checkIsCouncil();
+    var isCouncil = role.isCouncil;
+
+    console.log('🔍 تشخیص شورا:', {
+        isCouncil: isCouncil,
+        isHead: role.isHead,
+        currentUserId: currentUser ? currentUser.memberId : 'none',
+        membersCount: typeof members !== 'undefined' ? (members ? members.length : 0) : 'undefined'
+    });
+
     var modal = document.getElementById('messagingModal');
     if (modal) modal.remove();
-    
+
     modal = document.createElement('div');
     modal.id = 'messagingModal';
     modal.className = 'msg-modal';
-    
+
     var html = '<div class="msg-container">';
-    
+
     // هدر
     html += '<div class="msg-header">';
     html += '<div class="msg-title">📨 سیستم پیام‌رسانی</div>';
     html += '<button class="msg-close" onclick="closeMessagingMenu()">✕</button>';
     html += '</div>';
-    
+
     // تب‌ها
     html += '<div class="msg-tabs">';
     html += '<button class="msg-tab active" id="msgTabSend" onclick="switchMsgTab(\'send\')">📤 ارسال پیام</button>';
     html += '<button class="msg-tab" id="msgTabInbox" onclick="switchMsgTab(\'inbox\')">📬 پاسخ‌ها <span class="msg-badge" id="msgInboxBadge"></span></button>';
-    
+
     if (isCouncil) {
         html += '<button class="msg-tab" id="msgTabCouncil" onclick="switchMsgTab(\'council\')">👥 پیام‌های اعضا</button>';
     }
-    
+
     html += '</div>';
-    
+
     // محتوای تب‌ها
     html += '<div class="msg-body">';
-    
+
     // تب ارسال
     html += '<div class="msg-panel active" id="msgPanelSend">';
     html += '<div class="msg-field">';
@@ -60,14 +99,14 @@ function renderMessagingUI() {
     html += '</button>';
     html += '<div class="msg-hint">💡 پیام شما پس از ارسال، برای شورای صندوق ارسال می‌شود</div>';
     html += '</div>';
-    
+
     // تب پاسخ‌ها
     html += '<div class="msg-panel" id="msgPanelInbox">';
     html += '<div id="msgRepliesList" class="msg-list">';
     html += '<div class="msg-empty">در حال بارگذاری...</div>';
     html += '</div>';
     html += '</div>';
-    
+
     // تب شورا
     if (isCouncil) {
         html += '<div class="msg-panel" id="msgPanelCouncil">';
@@ -76,17 +115,17 @@ function renderMessagingUI() {
         html += '</div>';
         html += '</div>';
     }
-    
+
     html += '</div>'; // msg-body
     html += '</div>'; // msg-container
     modal.innerHTML = html;
     document.body.appendChild(modal);
-    
+
     // بستن با کلیک بیرون
     modal.addEventListener('click', function(e) {
         if (e.target === modal) closeMessagingMenu();
     });
-    
+
     // شمارنده کاراکتر
     var txt = document.getElementById('msgText');
     if (txt) {
@@ -94,7 +133,7 @@ function renderMessagingUI() {
             document.getElementById('msgCharCount').textContent = txt.value.length;
         });
     }
-    
+
     // بستن با ESC
     document.addEventListener('keydown', function escHandler(e) {
         if (e.key === 'Escape') {
@@ -102,7 +141,7 @@ function renderMessagingUI() {
             document.removeEventListener('keydown', escHandler);
         }
     });
-    
+
     // لود پاسخ‌ها
     loadMyReplies();
 }
@@ -117,17 +156,23 @@ function closeMessagingMenu() {
 function switchMsgTab(tab) {
     document.querySelectorAll('.msg-tab').forEach(function(t) { t.classList.remove('active'); });
     document.querySelectorAll('.msg-panel').forEach(function(p) { p.classList.remove('active'); });
-    
+
     if (tab === 'send') {
-        document.getElementById('msgTabSend').classList.add('active');
-        document.getElementById('msgPanelSend').classList.add('active');
+        var tabEl = document.getElementById('msgTabSend');
+        var panelEl = document.getElementById('msgPanelSend');
+        if (tabEl) tabEl.classList.add('active');
+        if (panelEl) panelEl.classList.add('active');
     } else if (tab === 'inbox') {
-        document.getElementById('msgTabInbox').classList.add('active');
-        document.getElementById('msgPanelInbox').classList.add('active');
+        var tabEl2 = document.getElementById('msgTabInbox');
+        var panelEl2 = document.getElementById('msgPanelInbox');
+        if (tabEl2) tabEl2.classList.add('active');
+        if (panelEl2) panelEl2.classList.add('active');
         loadMyReplies();
     } else if (tab === 'council') {
-        document.getElementById('msgTabCouncil').classList.add('active');
-        document.getElementById('msgPanelCouncil').classList.add('active');
+        var tabEl3 = document.getElementById('msgTabCouncil');
+        var panelEl3 = document.getElementById('msgPanelCouncil');
+        if (tabEl3) tabEl3.classList.add('active');
+        if (panelEl3) panelEl3.classList.add('active');
         loadCouncilMessages();
     }
 }
@@ -137,28 +182,28 @@ async function sendMessageToCouncilUI() {
     var txt = document.getElementById('msgText');
     var btn = document.getElementById('msgSendBtn');
     if (!txt || !btn) return;
-    
+
     var message = txt.value.trim();
     if (message.length < 5) {
         showSimpleToast('⚠️', 'خطا', 'پیام باید حداقل ۵ کاراکتر باشد', '#ef4444');
         return;
     }
-    
+
     btn.disabled = true;
     btn.innerHTML = '<span>⏳</span> در حال ارسال...';
-    
+
     try {
         var uid = currentUser.memberId || currentUser.username || '';
         var uname = currentUser.firstName || currentUser.name || 'کاربر';
-        
+
         var url = ADMIN_URL + '?action=sendMessageToCouncil'
             + '&user=' + encodeURIComponent(uid)
             + '&name=' + encodeURIComponent(uname)
             + '&message=' + encodeURIComponent(message);
-        
+
         var res = await fetch(url, { cache: 'no-cache' });
         var data = await res.json();
-        
+
         if (data.ok) {
             showSimpleToast('✅', 'ارسال شد', data.msg || 'پیام شما با موفقیت ارسال شد', '#10b981');
             txt.value = '';
@@ -178,23 +223,23 @@ async function sendMessageToCouncilUI() {
 async function loadMyReplies() {
     var list = document.getElementById('msgRepliesList');
     if (!list) return;
-    
+
     list.innerHTML = '<div class="msg-empty">در حال بارگذاری...</div>';
-    
+
     try {
         var uid = currentUser.memberId || currentUser.username || '';
         var url = ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(uid);
         var res = await fetch(url, { cache: 'no-cache' });
         var data = await res.json();
-        
+
         var replies = (data && data.replies) || [];
         window.__messagingState.replies = replies;
-        
+
         if (replies.length === 0) {
             list.innerHTML = '<div class="msg-empty">📭 هنوز پاسخی دریافت نکرده‌اید</div>';
             return;
         }
-        
+
         var html = '';
         replies.forEach(function(r) {
             var date = formatMsgDate(r.replyAt);
@@ -207,12 +252,12 @@ async function loadMyReplies() {
             html += '</div>';
         });
         list.innerHTML = html;
-        
+
         // علامت‌گذاری به عنوان دیده‌شده
         var uid2 = currentUser.memberId || currentUser.username || '';
         fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(uid2), { cache: 'no-cache' })
             .then(function() { updateInboxBadge(); });
-        
+
     } catch (e) {
         list.innerHTML = '<div class="msg-empty">❌ خطا در بارگذاری</div>';
     }
@@ -222,27 +267,27 @@ async function loadMyReplies() {
 async function loadCouncilMessages() {
     var list = document.getElementById('msgCouncilList');
     if (!list) return;
-    
+
     list.innerHTML = '<div class="msg-empty">در حال بارگذاری...</div>';
-    
+
     try {
         var url = ADMIN_URL + '?action=getCouncilMessages&key=admin12345';
         var res = await fetch(url, { cache: 'no-cache' });
         var data = await res.json();
-        
+
         var messages = (data && data.messages) || [];
-        
+
         if (messages.length === 0) {
             list.innerHTML = '<div class="msg-empty">📭 هیچ پیامی دریافت نشده</div>';
             return;
         }
-        
+
         var html = '';
         messages.forEach(function(m) {
             var date = formatMsgDate(m.timestamp);
             var status = m.status === 'answered' ? '✅ پاسخ داده شده' : '⏳ در انتظار پاسخ';
             var statusClass = m.status === 'answered' ? 'msg-status-done' : 'msg-status-pending';
-            
+
             html += '<div class="msg-council-item">';
             html += '<div class="msg-council-head">';
             html += '<div><b>👤 ' + escapeHtml(m.name || 'ناشناس') + '</b>';
@@ -250,27 +295,27 @@ async function loadCouncilMessages() {
             html += '<div class="msg-council-date">' + date + '</div>';
             html += '</div>';
             html += '<div class="msg-council-text">' + escapeHtml(m.message) + '</div>';
-            
+
             if (m.reply) {
                 html += '<div class="msg-council-reply"><b>پاسخ شما:</b> ' + escapeHtml(m.reply) + '</div>';
             }
-            
+
             html += '<div class="msg-council-footer">';
             html += '<span class="' + statusClass + '">' + status + '</span>';
             if (m.status !== 'answered') {
                 html += '<button class="msg-reply-btn" onclick="openReplyBox(\'' + m.id + '\')">✍️ پاسخ دادن</button>';
             }
             html += '</div>';
-            
+
             html += '<div class="msg-reply-box" id="replyBox_' + m.id + '" style="display:none">';
             html += '<textarea placeholder="پاسخ خود را بنویسید..."></textarea>';
             html += '<button onclick="submitReply(\'' + m.id + '\')">ارسال پاسخ</button>';
             html += '</div>';
-            
+
             html += '</div>';
         });
         list.innerHTML = html;
-        
+
     } catch (e) {
         list.innerHTML = '<div class="msg-empty">❌ خطا در بارگذاری</div>';
     }
@@ -288,22 +333,22 @@ async function submitReply(messageId) {
     if (!box) return;
     var txt = box.querySelector('textarea');
     var reply = txt.value.trim();
-    
+
     if (reply.length < 3) {
         showSimpleToast('⚠️', 'خطا', 'پاسخ باید حداقل ۳ کاراکتر باشد', '#ef4444');
         return;
     }
-    
+
     try {
         var url = ADMIN_URL + '?action=replyToMember'
             + '&key=admin12345'
             + '&messageId=' + encodeURIComponent(messageId)
             + '&reply=' + encodeURIComponent(reply)
             + '&replyBy=' + encodeURIComponent(currentUser.firstName || 'شورا');
-        
+
         var res = await fetch(url, { cache: 'no-cache' });
         var data = await res.json();
-        
+
         if (data.ok) {
             showSimpleToast('✅', 'ارسال شد', 'پاسخ شما ثبت شد', '#10b981');
             loadCouncilMessages();
