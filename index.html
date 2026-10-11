@@ -613,115 +613,126 @@ if ('serviceWorker' in navigator) {
             ldrBurst(W / 2, H * 0.35, 90);
         }, 300);
 
+               // ============================================================
+        // ✅ منتظر بمون تا members واقعی لود بشه، بعد منو رو بساز
+        // ============================================================
         setTimeout(function() {
-            document.getElementById('newLoader').classList.add('away');
-            document.getElementById('loaderOk').classList.remove('show');
+            var __waitAttempts = 0;
+            var __maxWait = 60;   // حداکثر ۱۵ ثانیه
             
-            const appContainer = document.getElementById('appContainer');
-            appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
-            
-            renderPage('menu');
-            updateVisitInfo();
-            updateFloatingButtons();
-            startKeepAlive();
-
-            var mainNav = document.getElementById('mainBottomNav');
-            if (mainNav) mainNav.style.display = 'flex';
-
-            if (autoUpdateInterval) clearInterval(autoUpdateInterval);
-            autoUpdateInterval = setInterval(async function() {
-                if (currentUser) await forceUpdateData();
-            }, 60 * 60 * 1000);
-
-            // ============================================================
             // ✅ شروع لود data.xlsx در پس‌زمینه
-            // ============================================================
-            setTimeout(function() {
-                console.log('⏳ شروع لود data.xlsx (۵MB) در پس‌زمینه...');
-                var bgStart = Date.now();
-                
-                if (typeof loadMainDataWithCache === 'function') {
-                    loadMainDataWithCache(false).then(function(fullData) {
-                        console.log('✅ data.xlsx لود شد در ' + (Date.now() - bgStart) + 'ms');
-                        
-                        if (fullData.members && fullData.members.length > 0) {
-                            members = fullData.members;
-                            window.__fullMembers = members;
-                        }
-                        if (fullData.transactions && fullData.transactions.length > 0) {
-                            transactions = fullData.transactions;
-                            window.__fullTransactions = transactions;
-                        }
-                        if (fullData.users && fullData.users.length > 0) {
-                            users = fullData.users;
-                            window.__fullUsers = users;
-                        }
-                        
-                        // ✅ memberId واقعی رو پیدا کن
-                        var realMember = members.find(function(m) {
-                            return String(m.accountNumber) === String(currentUser.accountNumber) ||
-                                   String(m.accountNumber) === String(currentUser.username);
-                        });
-                        if (realMember) {
-                            currentUser.memberId = realMember.id;
-                            console.log('✅ memberId واقعی: ' + realMember.id);
-                        }
-                        
-                        // Map تراکنش‌ها
-                        transactionsByMember = new Map();
-                        if (transactions && transactions.length > 0) {
-                            transactions.forEach(function(t) {
-                                var id = String(t._memberId);
-                                if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
-                                transactionsByMember.get(id).push(t);
-                            });
-                        }
-                        
-                        // امتیاز اعضا
-                        if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
-                            members.forEach(function(m) {
-                                try { memberScores[m.id] = calculateMemberScore(m); }
-                                catch(e) { memberScores[m.id] = 0; }
-                            });
-                        }
-                        
-                        // ✅ بازسازی منو با داده‌های واقعی
-                        console.log('🔄 بازسازی منو با داده‌های واقعی');
-                        if (typeof renderPage === 'function') {
-                            renderPage('menu');
-                        }
-                        
-                        // کارهای جانبی
-                        try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
-                        try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
-                        try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
-                        
-                        var rm = members.find(function(m) { return m.id === currentUser.memberId; });
-                        if (rm && typeof checkAutoNotifications === 'function') {
-                            setTimeout(function() { checkAutoNotifications(rm); }, 500);
-                        }
-                        
-                        window.__dataReady = true;
-                        window.__bgProcessing = false;
-                        console.log('🎉 همه داده‌ها آماده است');
-                    }).catch(function(err) {
-                        console.error('❌ خطا در لود data.xlsx:', err);
-                        window.__bgProcessing = false;
+            console.log('⏳ شروع لود data.xlsx در پس‌زمینه...');
+            var bgStart = Date.now();
+            
+            if (typeof loadMainDataWithCache === 'function') {
+                loadMainDataWithCache(false).then(function(fullData) {
+                    console.log('✅ data.xlsx لود شد در ' + (Date.now() - bgStart) + 'ms');
+                    
+                    if (fullData.members && fullData.members.length > 0) {
+                        members = fullData.members;
+                        window.__fullMembers = members;
+                    }
+                    if (fullData.transactions && fullData.transactions.length > 0) {
+                        transactions = fullData.transactions;
+                        window.__fullTransactions = transactions;
+                    }
+                    if (fullData.users && fullData.users.length > 0) {
+                        users = fullData.users;
+                        window.__fullUsers = users;
+                    }
+                    
+                    // memberId واقعی
+                    var realMember = members.find(function(m) {
+                        return String(m.accountNumber) === String(currentUser.accountNumber) ||
+                               String(m.accountNumber) === String(currentUser.username);
                     });
-                }
-            }, 500);
+                    if (realMember) {
+                        currentUser.memberId = realMember.id;
+                        console.log('✅ memberId واقعی: ' + realMember.id);
+                    }
+                    
+                    // Map تراکنش‌ها
+                    transactionsByMember = new Map();
+                    if (transactions && transactions.length > 0) {
+                        transactions.forEach(function(t) {
+                            var id = String(t._memberId);
+                            if (!transactionsByMember.has(id)) transactionsByMember.set(id, []);
+                            transactionsByMember.get(id).push(t);
+                        });
+                    }
+                    
+                    // امتیاز اعضا
+                    if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
+                        members.forEach(function(m) {
+                            try { memberScores[m.id] = calculateMemberScore(m); }
+                            catch(e) { memberScores[m.id] = 0; }
+                        });
+                    }
+                    
+                    // کارهای جانبی
+                    try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
+                    try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
+                    try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
+                    
+                    var rm = members.find(function(m) { return m.id === currentUser.memberId; });
+                    if (rm && typeof checkAutoNotifications === 'function') {
+                        setTimeout(function() { checkAutoNotifications(rm); }, 500);
+                    }
+                    
+                    window.__dataReady = true;
+                    window.__bgProcessing = false;
+                    console.log('🎉 همه داده‌ها آماده است');
+                }).catch(function(err) {
+                    console.error('❌ خطا در لود data.xlsx:', err);
+                    window.__bgProcessing = false;
+                });
+            }
+            
+            // ✅ چک هر ۲۵۰ms: members آماده شد؟
+            var __waitInterval = setInterval(function() {
+                __waitAttempts++;
+                
+                var hasRealMembers = (window.__fullMembers && window.__fullMembers.length > 1) ||
+                                     (members && members.length > 1);
+                
+                if (hasRealMembers || __waitAttempts >= __maxWait) {
+                    clearInterval(__waitInterval);
+                    
+                    console.log('✅ آماده! members: ' + (members ? members.length : 0) + ' | حالا منو ساخته می‌شه');
+                    
+                    // حالا لودر رو ببند و منو رو بساز
+                    document.getElementById('newLoader').classList.add('away');
+                    document.getElementById('loaderOk').classList.remove('show');
+                    
+                    const appContainer = document.getElementById('appContainer');
+                    appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
+                    
+                    renderPage('menu');
+                    updateVisitInfo();
+                    updateFloatingButtons();
+                    startKeepAlive();
 
-            setTimeout(function() {
-                var nl = document.getElementById('newLoader');
-                if (nl) { nl.style.display = 'none'; nl.classList.remove('active', 'away'); }
-                var ok = document.getElementById('loaderOk');
-                if (ok) ok.classList.remove('active');
-                document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
-                if (ldrFx) ldrFx.classList.remove('active');
-            }, 700);
+                    var mainNav = document.getElementById('mainBottomNav');
+                    if (mainNav) mainNav.style.display = 'flex';
+
+                    if (autoUpdateInterval) clearInterval(autoUpdateInterval);
+                    autoUpdateInterval = setInterval(async function() {
+                        if (currentUser) await forceUpdateData();
+                    }, 60 * 60 * 1000);
+
+                    // حذف نهایی لودرها
+                    setTimeout(function() {
+                        var nl = document.getElementById('newLoader');
+                        if (nl) { nl.style.display = 'none'; nl.classList.remove('active', 'away'); }
+                        var ok = document.getElementById('loaderOk');
+                        if (ok) ok.classList.remove('active');
+                        document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
+                        if (ldrFx) ldrFx.classList.remove('active');
+                    }, 400);
+                }
+            }, 250);
         }, 1000);
     }
-
     function showLoaderAnimation() {
         ldrStartTime = Date.now();
         ldrSecs = 0;
