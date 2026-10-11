@@ -1,8 +1,19 @@
 /* ============================================================
    صندوق اتحاد - نمایش رمز عبور
-   نسخه: 2.0
+   نسخه: 3.0 - با محدودیت تلاش + لاگ + تاریخچه + بدون پیش‌فرض
    ============================================================ */
 
+// ============================================================
+// متغیرهای محدودیت تلاش
+// ============================================================
+var __spAttempts = 0;
+var __spLockedUntil = 0;
+var __spLockDuration = 60000;   // ۱ دقیقه
+var __spMaxAttempts = 3;
+
+// ============================================================
+// باز کردن مودال نمایش رمز
+// ============================================================
 function openShowPasswordModal() {
     var old = document.getElementById('showPasswordModal');
     if (old) old.remove();
@@ -45,6 +56,7 @@ function openShowPasswordModal() {
             
             '<div id="spResult" style="display:none;margin-bottom:16px;"></div>' +
             '<div id="spStatus" style="display:none;padding:10px 14px;border-radius:10px;margin-bottom:14px;font-size:0.8rem;text-align:center;line-height:1.7;"></div>' +
+            '<div id="spHistory" style="display:none;margin-bottom:14px;padding:10px 12px;background:#f8fafc;border-radius:10px;font-size:0.7rem;color:#666;line-height:1.7;border:1px dashed #e0e7ff;"></div>' +
             
             '<div style="display:flex;gap:10px;">' +
                 '<button onclick="closeShowPasswordModal()" style="flex:1;padding:13px;border:2px solid #e0e7ff;background:#f8fafc;color:#1a1a2e;border-radius:12px;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:bold;">انصراف</button>' +
@@ -53,47 +65,120 @@ function openShowPasswordModal() {
         '</div>';
 
     document.body.appendChild(modal);
+    
+    // ✅ چک کن اگه کاربر قفل بود، پیام نشون بده
+    if (Date.now() < __spLockedUntil) {
+        var remaining = Math.ceil((__spLockedUntil - Date.now()) / 1000);
+        showSPStatus('⛔ به دلیل تلاش‌های ناموفق، لطفاً ' + remaining + ' ثانیه صبر کنید', 'error');
+    }
+    
     setTimeout(function() {
         var inp = document.getElementById('spPhone');
         if (inp) inp.focus();
     }, 100);
 }
 
+// ============================================================
+// بستن مودال
+// ============================================================
 function closeShowPasswordModal() {
     var modal = document.getElementById('showPasswordModal');
     if (modal) modal.remove();
 }
 
+// ============================================================
+// تأیید هویت و نمایش رمز
+// ============================================================
 function verifyAndShowPassword() {
+    // ✅ چک قفل
+    if (Date.now() < __spLockedUntil) {
+        var remaining = Math.ceil((__spLockedUntil - Date.now()) / 1000);
+        showSPStatus('⛔ لطفاً ' + remaining + ' ثانیه صبر کنید', 'error');
+        return;
+    }
+    
     var phone = document.getElementById('spPhone').value.trim();
-    var familyCount = parseInt(document.getElementById('spFamilyCount').value);
+    var familyCountRaw = document.getElementById('spFamilyCount').value.trim();
     var resultBox = document.getElementById('spResult');
     var member = members.find(function(m) { return m.id === currentUser.memberId; });
 
     if (!member) { showSPStatus('❌ اطلاعات عضو یافت نشد', 'error'); return; }
     if (!phone) { showSPStatus('⚠️ لطفاً شماره موبایل را وارد کنید', 'warning'); return; }
-    if (!familyCount || familyCount < 1) { showSPStatus('⚠️ لطفاً تعداد اعضای خانواده را وارد کنید', 'warning'); return; }
+    if (!familyCountRaw) { showSPStatus('⚠️ لطفاً تعداد اعضای خانواده را وارد کنید', 'warning'); return; }
+    
+    var familyCount = parseInt(familyCountRaw);
+    if (!familyCount || familyCount < 1) { showSPStatus('⚠️ تعداد اعضای خانواده نامعتبر است', 'warning'); return; }
 
+    // ✅ تبدیل اعداد فارسی به انگلیسی
     var normalizedPhone = phone.replace(/[۰-۹]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); });
     var phone1 = String(member.phone1 || '').replace(/[۰-۹]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); });
     var phone2 = String(member.phone2 || '').replace(/[۰-۹]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); });
 
+    // ✅ چک شماره موبایل
     if (normalizedPhone !== phone1 && normalizedPhone !== phone2) {
-        showSPStatus('❌ شماره موبایل مطابقت ندارد', 'error');
+        __spAttempts++;
+        
+        if (__spAttempts >= __spMaxAttempts) {
+            __spLockedUntil = Date.now() + __spLockDuration;
+            __spAttempts = 0;
+            
+            // لاگ تلاش ناموفق
+            logPasswordAttempt(false);
+            
+            showSPStatus('⛔ ۳ تلاش ناموفق. لطفاً ۱ دقیقه صبر کنید.', 'error');
+            
+            // غیرفعال کردن دکمه
+            var btn = document.getElementById('spVerifyBtn');
+            if (btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.innerHTML = '⛔ قفل شده';
+            }
+            return;
+        }
+        
+        showSPStatus('❌ شماره موبایل مطابقت ندارد (' + (__spMaxAttempts - __spAttempts) + ' تلاش باقی‌مانده)', 'error');
         return;
     }
 
+    // ✅ چک تعداد اعضای خانواده
     var realFamilyCount = 1;
     if (member.heh1) {
         realFamilyCount = members.filter(function(m) { return m.heh1 === member.heh1; }).length;
         if (realFamilyCount === 0) realFamilyCount = 1;
     }
+    
     if (familyCount !== realFamilyCount) {
-        showSPStatus('❌ تعداد اعضای خانواده مطابقت ندارد (عدد صحیح: ' + realFamilyCount + ')', 'error');
+        __spAttempts++;
+        
+        if (__spAttempts >= __spMaxAttempts) {
+            __spLockedUntil = Date.now() + __spLockDuration;
+            __spAttempts = 0;
+            
+            logPasswordAttempt(false);
+            
+            showSPStatus('⛔ ۳ تلاش ناموفق. لطفاً ۱ دقیقه صبر کنید.', 'error');
+            
+            var btn2 = document.getElementById('spVerifyBtn');
+            if (btn2) {
+                btn2.disabled = true;
+                btn2.style.opacity = '0.5';
+                btn2.innerHTML = '⛔ قفل شده';
+            }
+            return;
+        }
+        
+        showSPStatus('❌ تعداد اعضای خانواده مطابقت ندارد (' + (__spMaxAttempts - __spAttempts) + ' تلاش باقی‌مانده)', 'error');
         return;
     }
 
+    // ✅ هویت تأیید شد
     showSPStatus('✅ هویت شما تأیید شد', 'success');
+    
+    // ریست تلاش‌ها
+    __spAttempts = 0;
+    
+    // نمایش رمز
     resultBox.style.display = 'block';
     resultBox.innerHTML = 
         '<div style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(5,150,105,0.05));border:2px solid #10b981;border-radius:14px;padding:16px;text-align:center;">' +
@@ -104,11 +189,81 @@ function verifyAndShowPassword() {
             '<div style="font-size:1.2rem;color:#10b981;font-weight:bold;font-family:monospace;direction:ltr;background:rgba(16,185,129,0.1);padding:8px 16px;border-radius:8px;display:inline-block;">' + (currentUser.password || '---') + '</div>' +
         '</div>';
 
-    document.getElementById('spVerifyBtn').disabled = true;
-    document.getElementById('spVerifyBtn').innerHTML = '✅ تأیید شد';
-    document.getElementById('spVerifyBtn').style.opacity = '0.6';
+    // غیرفعال کردن دکمه
+    var verifyBtn = document.getElementById('spVerifyBtn');
+    if (verifyBtn) {
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '✅ تأیید شد';
+        verifyBtn.style.opacity = '0.6';
+    }
+    
+    // ✅ لاگ تلاش موفق
+    logPasswordAttempt(true);
+    
+    // ✅ نمایش تاریخچه
+    showSPHistory();
 }
 
+// ============================================================
+// لاگ تلاش‌ها (ذخیره در localStorage)
+// ============================================================
+function logPasswordAttempt(success) {
+    try {
+        var log = JSON.parse(localStorage.getItem('password_view_log') || '[]');
+        log.push({
+            username: currentUser.username,
+            memberId: currentUser.memberId,
+            success: success,
+            timestamp: Date.now(),
+            userAgent: navigator.userAgent.substring(0, 100)
+        });
+        // فقط ۵۰ تا آخر
+        if (log.length > 50) log = log.slice(-50);
+        localStorage.setItem('password_view_log', JSON.stringify(log));
+        
+        console.log('🔐 لاگ نمایش رمز:', success ? '✅ موفق' : '❌ ناموفق', 'برای', currentUser.username);
+    } catch(e) {
+        console.warn('⚠️ خطا در لاگ:', e.message);
+    }
+}
+
+// ============================================================
+// نمایش تاریخچه نمایش رمز
+// ============================================================
+function showSPHistory() {
+    try {
+        var log = JSON.parse(localStorage.getItem('password_view_log') || '[]');
+        
+        // آخرین نمایش‌های موفق برای همین کاربر
+        var userViews = log.filter(function(entry) {
+            return entry.username === currentUser.username && entry.success === true;
+        });
+        
+        var hist = document.getElementById('spHistory');
+        if (!hist) return;
+        
+        if (userViews.length > 0) {
+            // آخرین نمایش (قبل از الان)
+            var lastView = userViews[userViews.length - 2] || userViews[userViews.length - 1];
+            var date = new Date(lastView.timestamp).toLocaleString('fa-IR');
+            var count = userViews.length;
+            
+            hist.style.display = 'block';
+            hist.innerHTML = 
+                '📅 <b>آخرین نمایش رمز:</b> ' + date + '<br>' +
+                '🔢 <b>تعداد کل نمایش‌ها:</b> ' + count + ' بار';
+        } else {
+            hist.style.display = 'block';
+            hist.innerHTML = '📅 <b>اولین نمایش رمز شما</b>';
+        }
+    } catch(e) {
+        console.warn('⚠️ خطا در تاریخچه:', e.message);
+    }
+}
+
+// ============================================================
+// نمایش پیام وضعیت
+// ============================================================
 function showSPStatus(message, type) {
     var box = document.getElementById('spStatus');
     if (!box) return;
@@ -123,3 +278,21 @@ function showSPStatus(message, type) {
     box.style.color = c.color;
     box.textContent = message;
 }
+
+// ============================================================
+// ریست قفل (برای تست یا ادمین)
+// ============================================================
+function resetPasswordLock() {
+    __spAttempts = 0;
+    __spLockedUntil = 0;
+    try {
+        localStorage.removeItem('password_view_log');
+    } catch(e) {}
+    console.log('✅ قفل و لاگ ریست شد');
+}
+
+// در معرض عموم
+window.openShowPasswordModal = openShowPasswordModal;
+window.closeShowPasswordModal = closeShowPasswordModal;
+window.verifyAndShowPassword = verifyAndShowPassword;
+window.resetPasswordLock = resetPasswordLock;
