@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - صورتحساب و داشبورد
-   نسخه: 2.0
+   نسخه: 2.1 (فونت‌های بزرگ و خوانا برای موبایل)
    ============================================================ */
 
 function renderDashboardContent() {
@@ -45,7 +45,7 @@ function renderDashboardContent() {
 
     const summaryBox = `
         <div class="dashboard-section summary-section">
-            <h3 style="font-size:0.95rem;margin-bottom:12px;">
+            <h3 style="font-size:1.15rem;margin-bottom:14px;">
                 <i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب
             </h3>
             <div class="summary-grid">
@@ -63,7 +63,7 @@ function renderDashboardContent() {
                     <span class="sc-icon"><i class="fas fa-chart-line"></i></span>
                     <div class="sc-label">پیشرفت اقساط</div>
                     <div class="sc-value">${progressPercent}%</div>
-                    <div style="width:100%;height:5px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:6px;">
+                    <div style="width:100%;height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:8px;">
                         <div style="width:${progressPercent}%;height:100%;background:linear-gradient(90deg,var(--gold-color),#d97706);border-radius:99px;transition:width 0.5s ease;"></div>
                     </div>
                 </div>
@@ -167,12 +167,12 @@ function renderDashboardContent() {
                         <span class="remaining">${remainingCount} باقیمانده</span>
                     </div>
                 </div>
-                <div style="font-size:0.65rem;color:var(--text-secondary);margin-bottom:8px;display:flex;flex-direction:column;gap:4px;">
+                <div style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:10px;display:flex;flex-direction:column;gap:6px;line-height:1.7;">
                     <div>📅 تاریخ دریافت وام: <strong style="color:var(--text-primary);">${esc(member.loanReceiveDate || '---')}</strong></div>
                     <div>🔢 تعداد کل اقساط: <strong style="color:var(--text-primary);">${totalInstallments}</strong></div>
                     <div>💰 مبلغ هر قسط: <strong style="color:var(--text-primary);">${member.installmentAmount ? fmtNum(member.installmentAmount) : '---'}</strong></div>
                 </div>
-                <div class="installment-table-wrapper" style="max-height:250px;overflow-y:auto;">
+                <div class="installment-table-wrapper" style="max-height:300px;overflow-y:auto;">
                     <table>
                         <thead>
                             <tr>
@@ -217,7 +217,7 @@ function renderDashboardContent() {
     if (topFiveTxns.length > 0) {
         lastTxHtml = `
             <div class="dashboard-section" style="border-right-color:var(--orange-color);">
-                <h3 style="color:var(--orange-color);font-size:0.9rem;"><i class="fas fa-receipt" style="color:var(--orange-color);"></i> ۵ تراکنش آخر</h3>
+                <h3 style="color:var(--orange-color);font-size:1.05rem;"><i class="fas fa-receipt" style="color:var(--orange-color);"></i> ۵ تراکنش آخر</h3>
                 <div class="mini-excel-wrapper">
                     <table>
                         <thead><tr><th>شناسه</th><th>تاریخ</th><th>مقرری</th><th>موجودی</th></tr></thead>
@@ -252,10 +252,10 @@ function renderDashboardContent() {
         const desc = latestTx['توضیحات'] || '---';
 
         miniSmsHtml = `
-            <div class="dashboard-section" style="border-right-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.04),rgba(13,148,136,0.04));margin-top:8px;">
-                <h3 style="font-size:0.85rem;color:var(--text-primary);margin-bottom:6px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
-                <div style="font-size:0.55rem;color:var(--text-muted);margin-bottom:4px;">ID تراکنش: ${id}</div>
-                <div class="mini-sms-box-right" style="font-size:0.55rem;padding:8px 12px;">
+            <div class="dashboard-section" style="border-right-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.04),rgba(13,148,136,0.04));margin-top:10px;">
+                <h3 style="font-size:1.05rem;color:var(--text-primary);margin-bottom:8px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">ID تراکنش: ${id}</div>
+                <div class="mini-sms-box-right" style="font-size:0.9rem;padding:12px 14px;line-height:1.9;">
                     <div><span class="sms-label">نام:</span> <span class="sms-value">${member.firstName}</span></div>
                     <div><span class="sms-label">شماره حساب:</span> <span class="sms-value">${member.accountNumber}</span></div>
                     <div><span class="sms-label">تاریخ تراکنش:</span> <span class="sms-value">${transactionDate}</span></div>
@@ -276,16 +276,16 @@ function renderDashboardContent() {
 
     const allTxnsHtml = `
         <div class="dashboard-section">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
-                <h3 style="font-size:0.9rem;margin:0;"><i class="fas fa-file-invoice" style="color:#ec4899;"></i> صورتحساب کامل (${memberTxns.length} تراکنش)</h3>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    <button class="btn-small excel-btn" onclick="downloadExcel()" style="font-size:0.65rem;padding:6px 14px;min-height:32px;"><i class="fas fa-file-excel"></i> Excel</button>
-                    <button class="btn-small pdf-btn" onclick="downloadPDF()" style="font-size:0.65rem;padding:6px 14px;min-height:32px;"><i class="fas fa-file-pdf"></i> PDF</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                <h3 style="font-size:1.05rem;margin:0;"><i class="fas fa-file-invoice" style="color:#ec4899;"></i> صورتحساب کامل (${memberTxns.length} تراکنش)</h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-small excel-btn" onclick="downloadExcel()" style="font-size:0.85rem;padding:8px 16px;min-height:38px;"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn-small pdf-btn" onclick="downloadPDF()" style="font-size:0.85rem;padding:8px 16px;min-height:38px;"><i class="fas fa-file-pdf"></i> PDF</button>
                 </div>
             </div>
             <div class="filter-bar">
-                <input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()" style="font-size:0.65rem;padding:6px 10px;min-height:30px;">
-                <button class="btn-small info-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()" style="min-height:30px;padding:6px 12px;font-size:0.6rem;">پاک کردن</button>
+                <input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()" style="font-size:0.9rem;padding:8px 12px;min-height:38px;">
+                <button class="btn-small info-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()" style="min-height:38px;padding:8px 14px;font-size:0.85rem;">پاک کردن</button>
             </div>
             <div id="txExcelContainer"></div>
         </div>
@@ -297,13 +297,13 @@ function renderDashboardContent() {
     }, 200);
 
     const statusHtml =
-        '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:12px 14px;">' +
-            '<div style="display:flex;align-items:center;gap:12px;flex-wrap:nowrap;">' +
-                '<span style="font-size:1.8rem;flex-shrink:0;">' + (overdueInstallments > 0 ? '🔴' : (hasActiveLoan ? '🟡' : '🟢')) + '</span>' +
+        '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:14px 16px;">' +
+            '<div style="display:flex;align-items:center;gap:14px;flex-wrap:nowrap;">' +
+                '<span style="font-size:2.2rem;flex-shrink:0;">' + (overdueInstallments > 0 ? '🔴' : (hasActiveLoan ? '🟡' : '🟢')) + '</span>' +
                 '<div style="flex:1;min-width:0;">' +
-                    '<div style="font-weight:900;color:' + paymentColor + ';font-size:1.05rem;line-height:1.4;">' + paymentStatus + '</div>' +
-                    '<div style="font-size:0.72rem;color:var(--text-secondary);margin-top:2px;">تعداد اقساط: ' + totalInstallments + ' (پرداخت شده: ' + paidInstallments + ')</div>' +
-                    (member.loanBalance > 0 ? '<div style="font-size:0.72rem;color:var(--text-secondary);margin-top:2px;">مانده وام: ' + fmtNum(member.loanBalance || 0) + '</div>' : '') +
+                    '<div style="font-weight:900;color:' + paymentColor + ';font-size:1.25rem;line-height:1.5;">' + paymentStatus + '</div>' +
+                    '<div style="font-size:0.95rem;color:var(--text-secondary);margin-top:4px;line-height:1.7;">تعداد اقساط: ' + totalInstallments + ' (پرداخت شده: ' + paidInstallments + ')</div>' +
+                    (member.loanBalance > 0 ? '<div style="font-size:0.95rem;color:var(--text-secondary);margin-top:4px;line-height:1.7;">مانده وام: ' + fmtNum(member.loanBalance || 0) + '</div>' : '') +
                 '</div>' +
             '</div>' +
         '</div>' +
@@ -386,28 +386,26 @@ function renderDashboardContent() {
             alert('✅ PDF دانلود شد!');
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
+
     // ============================================================
-    // 🚀 دکمه شناور برای تب‌های صورتحساب (همه چیز در همین فایل)
+    // 🚀 دکمه شناور برای تب‌های صورتحساب
     // ============================================================
     setTimeout(function() {
-        // حذف دکمه قبلی اگه هست
         var oldBtn = document.getElementById('statementFloatBtn');
         if (oldBtn) oldBtn.remove();
-        
-        // ساخت دکمه شناور
+
         var floatBtn = document.createElement('button');
         floatBtn.id = 'statementFloatBtn';
         floatBtn.type = 'button';
         floatBtn.innerHTML = '<i class="fas fa-bars" style="color:#1a1a2e;pointer-events:none;"></i>';
         floatBtn.title = 'برو به تب‌های صورتحساب';
-        
-        // ✅ همه استایل‌ها اینجا
-        floatBtn.style.cssText = 
+
+        floatBtn.style.cssText =
             'position:fixed;' +
-            'bottom:200 px;' +
+            'bottom:200px;' +
             'right:20px;' +
-            'width:56px;' +
-            'height:56px;' +
+            'width:60px;' +
+            'height:60px;' +
             'border-radius:50%;' +
             'background:linear-gradient(135deg,#ffc94d,#d97706);' +
             'border:3px solid #ffd700;' +
@@ -415,48 +413,45 @@ function renderDashboardContent() {
             'display:flex;' +
             'align-items:center;' +
             'justify-content:center;' +
-            'font-size:1.3rem;' +
+            'font-size:1.5rem;' +
             'z-index:9999;' +
             'box-shadow:0 4px 20px rgba(255,201,77,0.6);' +
             'transition:all 0.3s ease;' +
             'touch-action:manipulation;' +
             'padding:0;';
-        
+
         document.body.appendChild(floatBtn);
-        
-        // رویداد کلیک - اسکرول به تب‌ها + هایلایت
+
         floatBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             var tabs = document.querySelector('#dashboardStatementRoot .statement-tabs');
-            
+
             if (tabs) {
-                // اسکرول نرم
-                tabs.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
+                tabs.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
                 });
-                
-                // هایلایت زرد
+
                 tabs.style.transition = 'all 0.3s ease';
                 tabs.style.boxShadow = '0 0 0 8px rgba(255,201,77,0.4), 0 8px 30px rgba(255,201,77,0.6)';
                 tabs.style.transform = 'scale(1.03)';
-                
+
                 setTimeout(function() {
                     tabs.style.boxShadow = '';
                     tabs.style.transform = '';
                 }, 1500);
             }
         });
-        
-        // جلوگیری از مخفی موندن در صفحات دیگه
+
         if (typeof currentPage !== 'undefined' && currentPage !== 'dashboard') {
             floatBtn.style.display = 'none';
         }
-        
+
         console.log('✅ دکمه شناور تب‌های صورتحساب اضافه شد');
     }, 300);
+
     return '<div id="dashboardStatementRoot">' +
         summaryBox +
         tabHtml +
@@ -501,7 +496,7 @@ function renderExcelTransactions(txns, containerId) {
     const container = document.getElementById(containerId);
     if (!container) return;
     if (!txns || txns.length === 0) {
-        container.innerHTML = '<p style="text-align:center;padding:12px;color:var(--text-secondary);font-size:0.75rem;">هیچ تراکنشی ثبت نشده</p>';
+        container.innerHTML = '<p style="text-align:center;padding:16px;color:var(--text-secondary);font-size:1rem;">هیچ تراکنشی ثبت نشده</p>';
         return;
     }
 
@@ -533,7 +528,7 @@ function renderExcelTransactions(txns, containerId) {
 
     let html = '<div class="excel-table-wrapper"><table class="excel-table"><thead><tr><th>فیلد</th>';
     uniqueTxns.forEach((tx, idx) => {
-        html += `<th>تراکنش ${idx + 1}<br><small style="font-size:0.45rem;opacity:0.9;">ID: ${esc(tx['ID'] || '')}</small></th>`;
+        html += `<th>تراکنش ${idx + 1}<br><small style="font-size:0.7rem;opacity:0.9;">ID: ${esc(tx['ID'] || '')}</small></th>`;
     });
     html += '</tr></thead><tbody>';
 
