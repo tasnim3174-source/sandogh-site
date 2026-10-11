@@ -488,3 +488,29 @@ window.openLadySection = openLadySection;
 window.openTeenPiggy = openTeenPiggy;
 window.renderMenuPage = renderMenuPage;
 window.checkAccessRights = checkAccessRights;
+// ============================================================
+// 🛠️ باز کردن پنل مدیر
+// ============================================================
+function openAdminPanel() {
+    console.log('🛠️ باز کردن پنل مدیر...');
+    
+    // آدرس پنل مدیر
+    var adminUrl = 'admin-final.html';
+    
+    // باز کردن در تب جدید
+    try {
+        var newWindow = window.open(adminUrl, '_blank');
+        
+        if (!newWindow) {
+            alert('⚠️ لطفاً اجازه باز شدن پنجره جدید (پاپ‌آپ) را بدهید');
+        } else {
+            console.log('✅ پنل مدیر باز شد');
+        }
+    } catch (e) {
+        console.error('❌ خطا در باز کردن پنل:', e);
+        alert('❌ خطا در باز کردن پنل مدیر');
+    }
+}
+
+// در معرض عموم
+window.openAdminPanel = openAdminPanel;
