@@ -2619,38 +2619,6 @@ div#dashboardStatementRoot > div.statement-tabs {
     }
 }
 /* ============================================================
-   🎨 خلوت کردن صفحه بارگذاری
-   ============================================================ */
-
-/* ۱. حذف نشان رمزنگاری */
-#newLoader .loaderTop {
-    display: none !important;
-}
-
-/* ۲. حذف آیکن بزرگ زرد */
-#newLoader .emb {
-    display: none !important;
-}
-
-/* ۸. حذف انیمیشن نوارهای زرد (اکولایزر) */
-#newLoader .faSlot,
-#newLoader .fa-dots,
-#newLoader .fa-dna,
-#newLoader .fa-pole {
-    display: none !important;
-}
-
-/* فاصله مناسب بعد از حذف آیکن */
-#newLoader .loaderCenter {
-    gap: 14px;
-    padding-top: 20px;
-}
-
-/* فاصله مناسب قبل از footer */
-#newLoader > div:last-of-type {
-    display: none !important;
-}
-/* ============================================================
    🎨 پس‌زمینه اختصاصی صفحه بارگذاری
    ============================================================ */
 
@@ -2659,7 +2627,6 @@ div#dashboardStatementRoot > div.statement-tabs {
     background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%) !important;
 }
 
-/* اگه می‌خوای رنگ دیگه‌ای باشه، فقط این خط رو تغییر بده */
 /* ═══════════════════════════════════════════════════════════
    🎨 استایل‌های جدید لودر (سکه طلایی + پارتکل)
    ═══════════════════════════════════════════════════════════ */
@@ -2689,6 +2656,7 @@ div#dashboardStatementRoot > div.statement-tabs {
     z-index: 2;
     animation: coinSpin 4s linear infinite;
     filter: drop-shadow(0 6px 18px rgba(255,201,77,0.55));
+    transform-style: preserve-3d;
 }
 @keyframes coinSpin {
     0%   { transform: rotateY(0deg); }
@@ -2703,7 +2671,6 @@ div#dashboardStatementRoot > div.statement-tabs {
     backface-visibility: hidden;
     position: relative;
 }
-
 .coin-face svg {
     width: 100%;
     height: 100%;
