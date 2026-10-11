@@ -404,7 +404,7 @@ function renderDashboardContent() {
         // ✅ همه استایل‌ها اینجا
         floatBtn.style.cssText = 
             'position:fixed;' +
-            'bottom:130px;' +
+            'bottom:150px;' +
             'right:20px;' +
             'width:56px;' +
             'height:56px;' +
