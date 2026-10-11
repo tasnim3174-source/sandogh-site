@@ -607,11 +607,8 @@ if (ringEl) ringEl.classList.add('okc');
 
         saveRememberMe(res.username, res.password);
 
-        setTimeout(function() {
-            document.getElementById('loaderOk').classList.add('active');
-            document.getElementById('loaderOk').classList.add('show');
-            ldrBurst(W / 2, H * 0.35, 90);
-        }, 300);
+        // ✅ صفحه loaderOk رو باز نمی‌کنیم - صفحه لودر اصلی بمونه
+// فقط صبر می‌کنیم تا data.xlsx لود بشه (کد پایین‌تر این کارو می‌کنه)
 
                // ============================================================
         // ✅ منتظر بمون تا members واقعی لود بشه، بعد منو رو بساز
