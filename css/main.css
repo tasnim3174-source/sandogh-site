@@ -3630,4 +3630,14 @@ body {
     .ok-welcome-icon  { font-size: 3rem; }
     .ok-datetime      { font-size: 0.95rem; gap: 10px; }
     .ok-enter-msg     { font-size: 1.3rem; }
+   /* ═══════════════════════════════════════════════════════════
+   🎨 مخفی کردن پس‌زمینه لاگین بعد از ورود
+   ═══════════════════════════════════════════════════════════ */
+.login-bg-animated {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    visibility: hidden !important;
+    z-index: -999 !important;
+}
 }
