@@ -489,27 +489,45 @@ window.openTeenPiggy = openTeenPiggy;
 window.renderMenuPage = renderMenuPage;
 window.checkAccessRights = checkAccessRights;
 // ============================================================
-// 🛠️ باز کردن پنل مدیر
+// 🛠️ باز کردن پنل مدیر (با توکن امنیتی)
 // ============================================================
 function openAdminPanel() {
     console.log('🛠️ باز کردن پنل مدیر...');
     
-    // آدرس پنل مدیر
-    var adminUrl = 'admin-final.html';
+    // چک کن عضو شوراست
+    var member = members ? members.find(function(m) { 
+        return String(m.id) === String(currentUser.memberId); 
+    }) : null;
     
-    // باز کردن در تب جدید
-    try {
-        var newWindow = window.open(adminUrl, '_blank');
-        
-        if (!newWindow) {
-            alert('⚠️ لطفاً اجازه باز شدن پنجره جدید (پاپ‌آپ) را بدهید');
-        } else {
-            console.log('✅ پنل مدیر باز شد');
-        }
-    } catch (e) {
-        console.error('❌ خطا در باز کردن پنل:', e);
-        alert('❌ خطا در باز کردن پنل مدیر');
+    if (!member || member.isCouncil !== true) {
+        alert('🔒 فقط اعضای شورا و مدیر دسترسی دارند');
+        return;
     }
+    
+    // ✅ یه توکن موقت بساز (۵ دقیقه اعتبار)
+    var token = btoa(JSON.stringify({
+        memberId: member.id,
+        accountNumber: member.accountNumber,
+        username: currentUser.username,
+        firstName: member.firstName,
+        password: currentUser.password || member.ramz || '',
+        isCouncil: true,
+        isAdmin: currentUser.role === 'admin',
+        timestamp: Date.now()
+    }));
+    
+    // ذخیره در localStorage
+    try {
+        localStorage.setItem('admin_access_token', token);
+        console.log('✅ توکن ساخته شد');
+    } catch(e) {
+        console.error('خطا در ذخیره توکن:', e);
+        alert('❌ خطا در ساخت توکن دسترسی');
+        return;
+    }
+    
+    // باز کردن پنل
+    window.open('admin-final.html', '_blank');
 }
 
 // در معرض عموم
