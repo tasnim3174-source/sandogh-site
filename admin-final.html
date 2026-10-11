@@ -372,24 +372,104 @@ function fmtDate(d){
 function fmtTime(d){ return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
 function fmtFull(d){ return fmtDate(d) + ' - ساعت ' + fmtTime(d); }
 
-function check(){
-  var uname = document.getElementById('cuser').value.trim();
-  var pass = document.getElementById('pass').value;
-  var err = document.getElementById('err');
-  err.style.display = 'none';
-  err.style.color = '#ff6b6b';
-  if(!uname && pass === KEY){ isCouncil = false; enterDashboard(); return; }
-  if(!uname || !pass){ err.textContent = '❌ مدیر: فقط رمز مدیر | شورا: شماره کاربری + رمز'; err.style.display = 'block'; return; }
-  err.textContent = '⏳ در حال بررسی...'; err.style.color = '#fbbf24'; err.style.display = 'block';
-  fetch(URL + '?action=councilLogin&user=' + encodeURIComponent(uname) + '&pass=' + encodeURIComponent(pass))
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.ok && d.isCouncil){ isCouncil = true; window.__councilUser = { id: d.id, name: d.name }; enterDashboard(); }
-      else if(d.ok && !d.isCouncil){ err.textContent = '❌ این حساب عضو شورا نیست'; err.style.display = 'block'; }
-      else { err.textContent = '❌ شماره کاربری یا رمز اشتباه است'; err.style.display = 'block'; }
-    }).catch(function(){ err.textContent = '❌ خطا در ارتباط با سرور'; err.style.display = 'block'; });
+// ============================================================
+// 🔒 چک دسترسی (با توکن)
+// ============================================================
+function check() {
+    // ✅ چک کن توکن در localStorage هست
+    var token = null;
+    try {
+        token = localStorage.getItem('admin_access_token');
+    } catch(e) {}
+    
+    if (!token) {
+        // اگه توکن نبود، از روش قدیمی (رمز) استفاده کن
+        var u = document.getElementById('cuser').value.trim();
+        var p = document.getElementById('pass').value.trim();
+        
+        if (!u || !p) {
+            document.getElementById('err').style.display = 'block';
+            document.getElementById('err').textContent = '❌ لطفاً از طریق برنامه اصلی وارد شوید';
+            return;
+        }
+        
+        // ... کد چک رمز قدیمی (که خودت داری) ...
+        return;
+    }
+    
+    // ✅ توکن رو دیکد کن
+    try {
+        var data = JSON.parse(atob(token));
+        var now = Date.now();
+        var age = now - data.timestamp;
+        
+        // توکن ۵ دقیقه اعتبار
+        if (age > 5 * 60 * 1000) {
+            alert('⏰ توکن منقضی شده!\n\nلطفاً از برنامه اصلی دوباره وارد شوید.');
+            try { localStorage.removeItem('admin_access_token'); } catch(e) {}
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        if (!data.isCouncil) {
+            alert('🔒 فقط اعضای شورا دسترسی دارند');
+            try { localStorage.removeItem('admin_access_token'); } catch(e) {}
+            window.location.href = 'index.html';
+            return;
+        }
+        
+        // ✅ توکن معتبر → ورود
+        window.__adminData = data;
+        window.__isAdmin = data.isAdmin === true;
+        
+        console.log('✅ خوش آمدید ' + (data.firstName || data.username));
+        
+        // نمایش پنل
+        showDash();
+        
+        // حذف توکن بعد از استفاده (یک‌بار مصرف)
+        setTimeout(function() {
+            try { localStorage.removeItem('admin_access_token'); } catch(e) {}
+        }, 1000);
+        
+    } catch(e) {
+        alert('🔒 توکن نامعتبر');
+        try { localStorage.removeItem('admin_access_token'); } catch(e) {}
+        window.location.href = 'index.html';
+    }
 }
 
+// ============================================================
+// نمایش پنل بعد از تأیید
+// ============================================================
+function showDash() {
+    var loginEl = document.getElementById('login');
+    var dashEl = document.getElementById('dash');
+    
+    if (loginEl) loginEl.style.display = 'none';
+    if (dashEl) dashEl.style.display = 'block';
+    
+    // اگه عضو شوراست، بنر نشون بده
+    if (!window.__isAdmin && window.__adminData) {
+        var banner = document.getElementById('councilBanner');
+        if (banner) banner.style.display = 'block';
+        
+        // مخفی کردن کنترل‌های ادمین
+        var controls = document.getElementById('adminControls');
+        if (controls) controls.style.display = 'none';
+    }
+    
+    // بارگذاری داده‌ها (اگه تابع init داری)
+    if (typeof init === 'function') {
+        try { init(); } catch(e) { console.error('خطا در init:', e); }
+    }
+    if (typeof loadAll === 'function') {
+        try { loadAll(); } catch(e) { console.error('خطا در loadAll:', e); }
+    }
+}
+
+window.check = check;
+window.showDash = showDash;
 function enterDashboard(){
   document.getElementById('login').style.display = 'none';
   document.getElementById('dash').style.display = 'block';
