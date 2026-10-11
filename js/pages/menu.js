@@ -57,7 +57,7 @@ async function openScriptService(tabName) {
             else alert('⚠️ فرم ایمیل هنوز آماده نیست');
             break;
         case 'messaging':
-            if (typeof openMessaging === 'function') openMessaging();
+            if (typeof openMessagingMenu === 'function') openMessagingMenu();;
             else alert('⚠️ پیام‌رسان هنوز آماده نیست');
             break;
         case 'survey':
