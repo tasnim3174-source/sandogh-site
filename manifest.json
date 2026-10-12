@@ -1,17 +1,28 @@
 {
-  "background_color": "#05df21",
-  "dir": "ltr",
-  "display": "standalone",
   "name": "صندوق اتحاد",
-  "orientation": "portrait",
-  "scope": "/",
   "short_name": "صندوق",
-  "start_url": "/",
-  "theme_color": "#667eea",
   "description": "سیستم حسابداری صندوق",
   "lang": "fa",
-  "prefer_related_applications": true,
-  "categories": [
-    "business"
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a1a2e",
+  "theme_color": "#f59e0b",
+  "categories": ["business", "finance"],
+  "icons": [
+    {
+      "src": "logo1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ]
 }
