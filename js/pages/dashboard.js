@@ -45,7 +45,7 @@ function renderDashboardContent() {
 
     const summaryBox = `
         <div class="dashboard-section summary-section">
-            <h3 style="font-size:1.15rem;margin-bottom:14px;">
+            <h3 style="font-size:1.60rem;margin-bottom:14px;">
                 <i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب
             </h3>
             <div class="summary-grid">
