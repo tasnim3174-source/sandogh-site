@@ -25,6 +25,68 @@ if ('serviceWorker' in navigator) {
     });
 }
 </script>
+   <head>
+    <!-- کدهای قبلی -->
+    
+    <!-- ⬇️⬇️⬇️ این رو اضافه کن ⬇️⬇️⬇️ -->
+    <style>
+        /* اعداد خلاصه حساب - بزرگ و بولد */
+        .summary-section .summary-title {
+            font-size: 1.5rem !important;
+            font-weight: 900 !important;
+            margin-bottom: 18px !important;
+        }
+
+        .summary-section .summary-grid {
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 14px !important;
+        }
+
+        .summary-section .summary-card {
+            padding: 18px 12px !important;
+            border-radius: 16px !important;
+            text-align: center !important;
+        }
+
+        .summary-section .sc-label {
+            font-size: 1.05rem !important;
+            font-weight: 800 !important;
+            line-height: 1.8 !important;
+            margin: 8px 0 !important;
+        }
+
+        .summary-section .sc-value {
+            font-size: 1.8rem !important;
+            font-weight: 900 !important;
+            line-height: 1.7 !important;
+        }
+
+        .summary-section .sc-icon {
+            font-size: 1.8rem !important;
+            margin-bottom: 4px !important;
+        }
+
+        /* موبایل */
+        @media (max-width: 600px) {
+            .summary-section .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 12px !important;
+            }
+            .summary-section .sc-value {
+                font-size: 1.6rem !important;
+            }
+            .summary-section .sc-label {
+                font-size: 1rem !important;
+            }
+            .summary-section .sc-icon {
+                font-size: 1.6rem !important;
+            }
+        }
+    </style>
+    <!-- ⬆️⬆️⬆️ تا اینجا ⬆️⬆️⬆️ -->
+    
+</head> 
 </head>
 <body>
 
