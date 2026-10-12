@@ -1,8 +1,11 @@
 // sw.js
-const CACHE_NAME = 'sandogh-cache-v1';
+const CACHE_NAME = 'sandogh-cache-v2';
 const urlsToCache = [
-  '/',
-  '/index.html'
+  './',
+  './index.html',
+  './manifest.json',
+  './logo.png',
+  './logo1.png'
 ];
 
 self.addEventListener('install', event => {
@@ -14,6 +17,7 @@ self.addEventListener('install', event => {
       })
       .catch(err => console.error('❌ خطا در کش:', err))
   );
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', event => {
@@ -23,7 +27,7 @@ self.addEventListener('activate', event => {
         cacheNames.filter(name => name !== CACHE_NAME)
           .map(name => caches.delete(name))
       );
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
@@ -35,7 +39,7 @@ self.addEventListener('fetch', event => {
           return response;
         }
         return fetch(event.request).catch(() => {
-          return caches.match('/index.html');
+          return caches.match('./index.html');
         });
       })
   );
