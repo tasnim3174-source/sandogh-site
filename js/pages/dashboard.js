@@ -288,14 +288,15 @@ function renderDashboardContent() {
                 <input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()" style="font-size:0.9rem;padding:8px 12px;min-height:38px;">
                 <button class="btn-small info-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()" style="min-height:38px;padding:8px 14px;font-size:0.85rem;">پاک کردن</button>
             </div>
-            <div id="txExcelContainer"></div>
+            <div class="tx-excel-container"></div>
         </div>
     `;
 
-    setTimeout(function() {
-        var container = document.getElementById('txExcelContainer');
-        if (container) renderExcelTransactions(memberTxns, 'txExcelContainer');
-    }, 200);
+   setTimeout(function() {
+    document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+        renderExcelTransactions(memberTxns, el);
+    });
+}, 200);
 
     const statusHtml =
         '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:14px 16px;">' +
@@ -326,19 +327,23 @@ function renderDashboardContent() {
         '<button type="button" class="statement-tab active" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 یک نگاه</button>' +
     '</div>';
     window.switchDashboardTab = function(tab) {
-        var root = document.getElementById('dashboardStatementRoot');
-        if (!root) return;
-        root.querySelectorAll('.statement-tab').forEach(function(btn) {
-            btn.classList.toggle('active', btn.getAttribute('data-statement-tab') === tab);
+    var root = document.getElementById('dashboardStatementRoot');
+    if (!root) return;
+    root.querySelectorAll('.statement-tab').forEach(function(btn) {
+        btn.classList.toggle('active', btn.getAttribute('data-statement-tab') === tab);
+    });
+    root.querySelectorAll('.statement-panel').forEach(function(panel) {
+        panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
+    });
+    // رندر مجدد جدول‌ها در پنل فعال
+    setTimeout(function() {
+        document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+            if (el.offsetParent !== null) {
+                renderExcelTransactions(memberTxns, el);
+            }
         });
-        root.querySelectorAll('.statement-panel').forEach(function(panel) {
-            panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
-        });
-        if (tab === 'overview') {
-            var c = document.getElementById('txExcelContainer');
-            if (c && memberTxns) renderExcelTransactions(memberTxns, 'txExcelContainer');
-        }
-    };
+    }, 50);
+};
 
     window.downloadExcel = function() {
         const m = members.find(function(x) { return x.id === currentUser.memberId; });
@@ -423,6 +428,7 @@ function renderDashboardContent() {
             approvedHtml +
             miniSmsHtml +
             allTxnsHtml +
+            allTxnsHtml +
         '</div>' +
     '</div>';
 }
@@ -430,8 +436,10 @@ function renderDashboardContent() {
 // ============================================================
 // رندر جدول تراکنش‌ها
 // ============================================================
-function renderExcelTransactions(txns, containerId) {
-    const container = document.getElementById(containerId);
+function renderExcelTransactions(txns, containerOrId) {
+    const container = typeof containerOrId === 'string'
+        ? document.getElementById(containerOrId)
+        : containerOrId;
     if (!container) return;
     if (!txns || txns.length === 0) {
         container.innerHTML = '<p style="text-align:center;padding:16px;color:var(--text-secondary);font-size:1rem;">هیچ تراکنشی ثبت نشده</p>';
@@ -492,7 +500,10 @@ function filterExcelTransactions() {
     const search = document.getElementById('searchTx')?.value?.toLowerCase() || '';
     const member = members.find(m => m.id === currentUser.memberId);
     const allTxns = (transactionsByMember.get(String(member?.id)) || []).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
-    if (!search) { renderExcelTransactions(allTxns, 'txExcelContainer'); return; }
-    const filtered = allTxns.filter(tx => Object.values(tx).some(val => String(val).toLowerCase().includes(search)));
-    renderExcelTransactions(filtered, 'txExcelContainer');
+    const filtered = search
+        ? allTxns.filter(tx => Object.values(tx).some(val => String(val).toLowerCase().includes(search)))
+        : allTxns;
+    document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+        renderExcelTransactions(filtered, el);
+    });
 }
