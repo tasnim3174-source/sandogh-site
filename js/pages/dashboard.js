@@ -386,10 +386,11 @@ function renderDashboardContent() {
             alert('✅ PDF دانلود شد!');
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
+
     // ============================================================
-    // 🚀 رندر نهایی داشبورد
+    // 🚀 دکمه شناور برای تب‌های صورتحساب
     // ============================================================
-    return '<div id="dashboardStatementRoot">' +
+        return '<div id="dashboardStatementRoot">' +
         summaryBox +
         tabHtml +
         '<div class="statement-panel active" data-statement-panel="allowance">' +
@@ -425,7 +426,8 @@ function renderDashboardContent() {
         '</div>' +
     '</div>';
 }
-    // ============================================================
+
+// ============================================================
 // رندر جدول تراکنش‌ها
 // ============================================================
 function renderExcelTransactions(txns, containerId) {
