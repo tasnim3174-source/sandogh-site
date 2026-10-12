@@ -1,11 +1,10 @@
 /* ============================================================
    صندوق اتحاد - صورتحساب و داشبورد
-   نسخه: 3.0 (فونت‌های بزرگ، بولد و ریسپانسیو برای موبایل)
+   نسخه: 2.1 (فونت‌های بزرگ و خوانا برای موبایل)
    ============================================================ */
 
 function renderDashboardContent() {
-    // ✅ اصلاح: مقایسه با String برای جلوگیری از خطای type mismatch
-    const member = members.find(m => String(m.id) === String(currentUser.memberId));
+    const member = members.find(m => m.id === currentUser.memberId);
     if (!member) return '<div style="text-align:center;padding:30px;">خطا</div>';
 
     const memberTxns = (transactionsByMember.get(String(member.id)) || [])
@@ -44,51 +43,49 @@ function renderDashboardContent() {
 
     const waitingLoanCount = window.WAITING_LOAN_COUNT || 0;
 
-    // ============================================================
-    // خلاصه حساب - طراحی زیبا و ریسپانسیو
-    // ============================================================
     const summaryBox = `
-        <div class="dashboard-section summary-section">
-            <h3 class="summary-title">
-                <i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب
-            </h3>
-            <div class="summary-grid">
-                <div class="summary-card sc-balance">
-                    <span class="sc-icon"><i class="fas fa-wallet"></i></span>
-                    <div class="sc-label">موجودی</div>
-                    <div class="sc-value">${fmtNum(balance)}</div>
-                </div>
-                <div class="summary-card sc-debt">
-                    <span class="sc-icon"><i class="fas fa-hand-holding-usd"></i></span>
-                    <div class="sc-label">بدهی</div>
-                    <div class="sc-value">${fmtNum(member?.loanBalance || 0)}</div>
-                </div>
-                <div class="summary-card sc-progress">
-                    <span class="sc-icon"><i class="fas fa-chart-line"></i></span>
-                    <div class="sc-label">پیشرفت اقساط</div>
-                    <div class="sc-value">${progressPercent}%</div>
-                    <div class="sc-progress-bar">
-                        <div class="sc-progress-fill" style="width:${progressPercent}%;"></div>
-                    </div>
-                </div>
-                <div class="summary-card sc-overdue" style="--card-accent: #8b5cf6;">
-                    <span class="sc-icon"><i class="fas fa-piggy-bank"></i></span>
-                    <div class="sc-label">وضعیت پس‌انداز</div>
-                    <div class="sc-value ${savingsStatusFromTx >= 0 ? 'sc-green' : 'sc-red'}">${fmtNum(Math.round(savingsStatusFromTx))}</div>
-                </div>
-                <div class="summary-card sc-overdue">
-                    <span class="sc-icon"><i class="fas fa-exclamation-triangle"></i></span>
-                    <div class="sc-label">اقساط معوقه</div>
-                    <div class="sc-value ${overdueInstallments > 0 ? 'sc-red' : 'sc-green'}">${overdueInstallments}</div>
-                </div>
-                <div class="summary-card sc-overdue" style="--card-accent: #8b5cf6;">
-                    <span class="sc-icon"><i class="fas fa-users-clock"></i></span>
-                    <div class="sc-label">افراد در نوبت وام</div>
-                    <div class="sc-value sc-purple">${waitingLoanCount}</div>
+    <div class="dashboard-section summary-section">
+        <h3 class="summary-title">
+            <i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب
+        </h3>
+        <div class="summary-grid">
+            <div class="summary-card sc-balance">
+                <span class="sc-icon"><i class="fas fa-wallet"></i></span>
+                <div class="sc-label">موجودی</div>
+                <div class="sc-value">${fmtNum(balance)}</div>
+            </div>
+            <div class="summary-card sc-debt">
+                <span class="sc-icon"><i class="fas fa-hand-holding-usd"></i></span>
+                <div class="sc-label">بدهی</div>
+                <div class="sc-value">${fmtNum(member?.loanBalance || 0)}</div>
+            </div>
+            <div class="summary-card sc-progress">
+                <span class="sc-icon"><i class="fas fa-chart-line"></i></span>
+                <div class="sc-label">پیشرفت اقساط</div>
+                <div class="sc-value">${progressPercent}%</div>
+                <div class="sc-progress-bar">
+                    <div class="sc-progress-fill" style="width:${progressPercent}%;"></div>
                 </div>
             </div>
+            <div class="summary-card sc-overdue" style="--card-accent: #8b5cf6;">
+                <span class="sc-icon"><i class="fas fa-piggy-bank"></i></span>
+                <div class="sc-label">وضعیت پس‌انداز</div>
+                <div class="sc-value ${savingsStatusFromTx >= 0 ? 'sc-green' : 'sc-red'}">${fmtNum(Math.round(savingsStatusFromTx))}</div>
+            </div>
+            <div class="summary-card sc-overdue">
+                <span class="sc-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                <div class="sc-label">اقساط معوقه</div>
+                <div class="sc-value ${overdueInstallments > 0 ? 'sc-red' : 'sc-green'}">${overdueInstallments}</div>
+            </div>
+            <div class="summary-card sc-overdue" style="--card-accent: #8b5cf6;">
+                <span class="sc-icon"><i class="fas fa-users-clock"></i></span>
+                <div class="sc-label">افراد در نوبت وام</div>
+                <div class="sc-value sc-purple">${waitingLoanCount}</div>
+            </div>
         </div>
-    `;
+    </div>
+`;
+
 
     let adminHtml = '';
     if (currentUser.role === 'admin') {
@@ -257,9 +254,9 @@ function renderDashboardContent() {
 
         miniSmsHtml = `
             <div class="dashboard-section" style="border-right-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.04),rgba(13,148,136,0.04));margin-top:10px;">
-                <h3 style="font-size:1.1rem;color:var(--text-primary);margin-bottom:8px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
-                <div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:6px;">ID تراکنش: ${id}</div>
-                <div class="mini-sms-box-right">
+                <h3 style="font-size:1.05rem;color:var(--text-primary);margin-bottom:8px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">ID تراکنش: ${id}</div>
+                <div class="mini-sms-box-right" style="font-size:0.9rem;padding:12px 14px;line-height:1.9;">
                     <div><span class="sms-label">نام:</span> <span class="sms-value">${member.firstName}</span></div>
                     <div><span class="sms-label">شماره حساب:</span> <span class="sms-value">${member.accountNumber}</span></div>
                     <div><span class="sms-label">تاریخ تراکنش:</span> <span class="sms-value">${transactionDate}</span></div>
@@ -280,16 +277,16 @@ function renderDashboardContent() {
 
     const allTxnsHtml = `
         <div class="dashboard-section">
-            <div class="tx-header-bar">
-                <h3><i class="fas fa-file-invoice" style="color:#ec4899;"></i> صورتحساب کامل (${memberTxns.length} تراکنش)</h3>
-                <div class="tx-btn-group">
-                    <button class="btn-small excel-btn" onclick="downloadExcel()"><i class="fas fa-file-excel"></i> Excel</button>
-                    <button class="btn-small pdf-btn" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                <h3 style="font-size:1.05rem;margin:0;"><i class="fas fa-file-invoice" style="color:#ec4899;"></i> صورتحساب کامل (${memberTxns.length} تراکنش)</h3>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-small excel-btn" onclick="downloadExcel()" style="font-size:0.85rem;padding:8px 16px;min-height:38px;"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn-small pdf-btn" onclick="downloadPDF()" style="font-size:0.85rem;padding:8px 16px;min-height:38px;"><i class="fas fa-file-pdf"></i> PDF</button>
                 </div>
             </div>
             <div class="filter-bar">
-                <input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()">
-                <button class="btn-small info-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()">پاک کردن</button>
+                <input type="text" id="searchTx" placeholder="جستجو..." oninput="filterExcelTransactions()" style="font-size:0.9rem;padding:8px 12px;min-height:38px;">
+                <button class="btn-small info-btn" onclick="document.getElementById('searchTx').value='';filterExcelTransactions()" style="min-height:38px;padding:8px 14px;font-size:0.85rem;">پاک کردن</button>
             </div>
             <div id="txExcelContainer"></div>
         </div>
@@ -345,7 +342,7 @@ function renderDashboardContent() {
     };
 
     window.downloadExcel = function() {
-        const m = members.find(function(x) { return String(x.id) === String(currentUser.memberId); });
+        const m = members.find(function(x) { return x.id === currentUser.memberId; });
         if (!m) { alert('❌ اطلاعات کاربر یافت نشد'); return; }
         const mTxns = (transactionsByMember.get(String(m.id)) || []).sort(function(a, b) { return (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0); });
         if (mTxns.length === 0) { alert('❌ هیچ تراکنشی وجود ندارد'); return; }
@@ -360,7 +357,7 @@ function renderDashboardContent() {
     };
 
     window.downloadPDF = function() {
-        var m = members.find(function(x) { return String(x.id) === String(currentUser.memberId); });
+        var m = members.find(function(x) { return x.id === currentUser.memberId; });
         if (!m) { alert('❌ اطلاعات کاربر یافت نشد'); return; }
         var mTxns = (transactionsByMember.get(String(m.id)) || []).sort(function(a, b) { return (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0); });
         if (mTxns.length === 0) { alert('❌ هیچ تراکنشی وجود ندارد'); return; }
@@ -391,7 +388,9 @@ function renderDashboardContent() {
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
 
-    // دکمه شناور
+    // ============================================================
+    // 🚀 دکمه شناور برای تب‌های صورتحساب
+    // ============================================================
     setTimeout(function() {
         var oldBtn = document.getElementById('statementFloatBtn');
         if (oldBtn) oldBtn.remove();
@@ -403,23 +402,43 @@ function renderDashboardContent() {
         floatBtn.title = 'برو به تب‌های صورتحساب';
 
         floatBtn.style.cssText =
-            'position:fixed;bottom:200px;right:20px;width:60px;height:60px;border-radius:50%;' +
-            'background:linear-gradient(135deg,#ffc94d,#d97706);border:3px solid #ffd700;' +
-            'cursor:pointer;display:flex;align-items:center;justify-content:center;' +
-            'font-size:1.5rem;z-index:9999;box-shadow:0 4px 20px rgba(255,201,77,0.6);' +
-            'transition:all 0.3s ease;touch-action:manipulation;padding:0;';
+            'position:fixed;' +
+            'bottom:200px;' +
+            'right:20px;' +
+            'width:60px;' +
+            'height:60px;' +
+            'border-radius:50%;' +
+            'background:linear-gradient(135deg,#ffc94d,#d97706);' +
+            'border:3px solid #ffd700;' +
+            'cursor:pointer;' +
+            'display:flex;' +
+            'align-items:center;' +
+            'justify-content:center;' +
+            'font-size:1.5rem;' +
+            'z-index:9999;' +
+            'box-shadow:0 4px 20px rgba(255,201,77,0.6);' +
+            'transition:all 0.3s ease;' +
+            'touch-action:manipulation;' +
+            'padding:0;';
 
         document.body.appendChild(floatBtn);
 
         floatBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+
             var tabs = document.querySelector('#dashboardStatementRoot .statement-tabs');
+
             if (tabs) {
-                tabs.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                tabs.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
                 tabs.style.transition = 'all 0.3s ease';
                 tabs.style.boxShadow = '0 0 0 8px rgba(255,201,77,0.4), 0 8px 30px rgba(255,201,77,0.6)';
                 tabs.style.transform = 'scale(1.03)';
+
                 setTimeout(function() {
                     tabs.style.boxShadow = '';
                     tabs.style.transform = '';
@@ -430,6 +449,8 @@ function renderDashboardContent() {
         if (typeof currentPage !== 'undefined' && currentPage !== 'dashboard') {
             floatBtn.style.display = 'none';
         }
+
+        console.log('✅ دکمه شناور تب‌های صورتحساب اضافه شد');
     }, 300);
 
     return '<div id="dashboardStatementRoot">' +
@@ -532,7 +553,7 @@ function renderExcelTransactions(txns, containerId) {
 
 function filterExcelTransactions() {
     const search = document.getElementById('searchTx')?.value?.toLowerCase() || '';
-    const member = members.find(m => String(m.id) === String(currentUser.memberId));
+    const member = members.find(m => m.id === currentUser.memberId);
     const allTxns = (transactionsByMember.get(String(member?.id)) || []).sort((a, b) => (parseInt(b._transactionId) || 0) - (parseInt(a._transactionId) || 0));
     if (!search) { renderExcelTransactions(allTxns, 'txExcelContainer'); return; }
     const filtered = allTxns.filter(tx => Object.values(tx).some(val => String(val).toLowerCase().includes(search)));
