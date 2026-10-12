@@ -88,8 +88,11 @@ if ('serviceWorker' in navigator) {
     /* ============================================================
    ✅ نوار تب‌های شناور افقی - پایین صفحه، بالای هدر
    ============================================================ */
+/* ============================================================
+   ✅ نوار تب‌های شناور افقی - پایین صفحه
+   ============================================================ */
 
-/* پاک‌سازی CSS قدیمی + نوار افقی */
+/* override کردن CSS قدیمی */
 #dashboardStatementRoot > .statement-tabs,
 #dashboardStatementRoot .statement-tabs,
 div#dashboardStatementRoot > div.statement-tabs,
@@ -98,9 +101,9 @@ div#dashboardStatementRoot > div.statement-tabs,
     position: fixed !important;
     top: auto !important;
     right: auto !important;
-    bottom:160px !important;
+    bottom: 160px !important;
     left: 50% !important;
-    inset: auto auto 90px 50% !important;
+    inset: auto auto 160px 50% !important;    /* ← هر دو 160px */
     transform: translateX(-50%) !important;
     display: flex !important;
     flex-direction: row !important;
@@ -127,17 +130,17 @@ div#dashboardStatementRoot > div.statement-tabs,
     white-space: nowrap !important;
 }
 
-#dashboardStatementRoot > .statement-tabs::-webkit-scrollbar,
-#dashboardStatementRoot .statement-tabs::-webkit-scrollbar,
-.statement-tabs-floating::-webkit-scrollbar {
-    display: none;
-}
-
-.statement-tab {
+/* تب‌ها - override کردن CSS قدیمی (width: 100% و متن راست) */
+#dashboardStatementRoot .statement-tabs .statement-tab,
+#dashboardStatementRoot > .statement-tabs > .statement-tab,
+.statement-tab,
+.statement-tabs-floating .statement-tab {
     flex: 0 0 auto !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    width: auto !important;
+    text-align: center !important;
     font-size: 0.92rem !important;
     font-weight: 800 !important;
     padding: 10px 16px !important;
@@ -149,20 +152,31 @@ div#dashboardStatementRoot > div.statement-tabs,
     transition: all 0.25s ease;
     white-space: nowrap !important;
     line-height: 1.4;
+    transform: none !important;
 }
 
-.statement-tab:hover {
+#dashboardStatementRoot > .statement-tabs::-webkit-scrollbar,
+#dashboardStatementRoot .statement-tabs::-webkit-scrollbar,
+.statement-tabs-floating::-webkit-scrollbar {
+    display: none;
+}
+
+/* hover */
+.statement-tab:hover,
+#dashboardStatementRoot .statement-tabs .statement-tab:hover {
     background: rgba(245, 158, 11, 0.15) !important;
     color: #ffc94d !important;
+    transform: none !important;
 }
 
-.statement-tab.active {
+/* active */
+.statement-tab.active,
+#dashboardStatementRoot .statement-tabs .statement-tab.active {
     background: linear-gradient(135deg, #ffc94d, #d97706) !important;
     color: #1a1a2e !important;
     box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
     font-weight: 900 !important;
 }
-
 /* فاصله پایین داشبورد تا تب‌ها روی محتوا نیفتن */
 #dashboardStatementRoot {
     padding-bottom: 90px !important;
