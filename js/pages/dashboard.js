@@ -44,47 +44,48 @@ function renderDashboardContent() {
     const waitingLoanCount = window.WAITING_LOAN_COUNT || 0;
 
     const summaryBox = `
-        <div class="dashboard-section summary-section">
-            <h3 style="font-size:1.60rem;margin-bottom:14px;">
-                <i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب
-            </h3>
-            <div class="summary-grid">
-                <div class="summary-card sc-balance">
-                    <span class="sc-icon"><i class="fas fa-wallet"></i></span>
-                    <div class="sc-label">موجودی</div>
-                    <div class="sc-value">${fmtNum(balance)}</div>
-                </div>
-                <div class="summary-card sc-debt">
-                    <span class="sc-icon"><i class="fas fa-hand-holding-usd"></i></span>
-                    <div class="sc-label">بدهی</div>
-                    <div class="sc-value">${fmtNum(member?.loanBalance || 0)}</div>
-                </div>
-                <div class="summary-card sc-progress">
-                    <span class="sc-icon"><i class="fas fa-chart-line"></i></span>
-                    <div class="sc-label">پیشرفت اقساط</div>
-                    <div class="sc-value">${progressPercent}%</div>
-                    <div style="width:100%;height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:8px;">
-                        <div style="width:${progressPercent}%;height:100%;background:linear-gradient(90deg,var(--gold-color),#d97706);border-radius:99px;transition:width 0.5s ease;"></div>
-                    </div>
-                </div>
-                <div class="summary-card sc-overdue" style="border-right-color: #8b5cf6;">
-                    <span class="sc-icon"><i class="fas fa-piggy-bank"></i></span>
-                    <div class="sc-label">وضعیت پس‌انداز</div>
-                    <div class="sc-value" style="color:${savingsStatusFromTx >= 0 ? '#10b981' : '#ef4444'};">${fmtNum(Math.round(savingsStatusFromTx))}</div>
-                </div>
-                <div class="summary-card sc-overdue">
-                    <span class="sc-icon"><i class="fas fa-exclamation-triangle"></i></span>
-                    <div class="sc-label">اقساط معوقه</div>
-                    <div class="sc-value" style="color:${overdueInstallments > 0 ? '#ef4444' : '#10b981'};">${overdueInstallments}</div>
-                </div>
-                <div class="summary-card sc-overdue" style="border-right-color: #8b5cf6;">
-                    <span class="sc-icon"><i class="fas fa-users-clock"></i></span>
-                    <div class="sc-label">افراد در نوبت وام</div>
-                    <div class="sc-value" style="color:#8b5cf6;">${waitingLoanCount}</div>
+    <div class="dashboard-section summary-section">
+        <h3 class="summary-title">
+            <i class="fas fa-file-invoice" style="color:#14b8a6;"></i> خلاصه حساب
+        </h3>
+        <div class="summary-grid">
+            <div class="summary-card sc-balance">
+                <span class="sc-icon"><i class="fas fa-wallet"></i></span>
+                <div class="sc-label">موجودی</div>
+                <div class="sc-value">${fmtNum(balance)}</div>
+            </div>
+            <div class="summary-card sc-debt">
+                <span class="sc-icon"><i class="fas fa-hand-holding-usd"></i></span>
+                <div class="sc-label">بدهی</div>
+                <div class="sc-value">${fmtNum(member?.loanBalance || 0)}</div>
+            </div>
+            <div class="summary-card sc-progress">
+                <span class="sc-icon"><i class="fas fa-chart-line"></i></span>
+                <div class="sc-label">پیشرفت اقساط</div>
+                <div class="sc-value">${progressPercent}%</div>
+                <div class="sc-progress-bar">
+                    <div class="sc-progress-fill" style="width:${progressPercent}%;"></div>
                 </div>
             </div>
+            <div class="summary-card sc-overdue" style="--card-accent: #8b5cf6;">
+                <span class="sc-icon"><i class="fas fa-piggy-bank"></i></span>
+                <div class="sc-label">وضعیت پس‌انداز</div>
+                <div class="sc-value ${savingsStatusFromTx >= 0 ? 'sc-green' : 'sc-red'}">${fmtNum(Math.round(savingsStatusFromTx))}</div>
+            </div>
+            <div class="summary-card sc-overdue">
+                <span class="sc-icon"><i class="fas fa-exclamation-triangle"></i></span>
+                <div class="sc-label">اقساط معوقه</div>
+                <div class="sc-value ${overdueInstallments > 0 ? 'sc-red' : 'sc-green'}">${overdueInstallments}</div>
+            </div>
+            <div class="summary-card sc-overdue" style="--card-accent: #8b5cf6;">
+                <span class="sc-icon"><i class="fas fa-users-clock"></i></span>
+                <div class="sc-label">افراد در نوبت وام</div>
+                <div class="sc-value sc-purple">${waitingLoanCount}</div>
+            </div>
         </div>
-    `;
+    </div>
+`;
+
 
     let adminHtml = '';
     if (currentUser.role === 'admin') {
