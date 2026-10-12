@@ -388,46 +388,6 @@ function renderDashboardContent() {
     };
 
     // ============================================================
-    // 🚀 دکمه شناور برای تب‌های صورتحساب
-    // ============================================================
-        return '<div id="dashboardStatementRoot">' +
-        summaryBox +
-        tabHtml +
-        '<div class="statement-panel active" data-statement-panel="allowance">' +
-            allowanceSummaryHtml +
-            warningsHtml +
-            lastTxHtml +
-            approvedHtml +
-            miniSmsHtml +
-        '</div>' +
-        '<div class="statement-panel" data-statement-panel="loan">' +
-            statusHtml +
-            loanInfoHtml +
-            installmentPlanHtml +
-            allTxnsHtml +
-        '</div>' +
-        '<div class="statement-panel" data-statement-panel="overview">' +
-            statusHtml +
-            '<div class="dashboard-section">' +
-                '<h3><i class="fas fa-eye" style="color:var(--gradient-start);"></i> حساب شما از یک نگاه</h3>' +
-                '<div class="stats-grid">' +
-                    '<div class="stat-card"><div class="stat-icon">👤</div><div class="stat-value">' + esc(member.firstName || '---') + '</div><div class="stat-label">عضو صندوق</div></div>' +
-                    '<div class="stat-card"><div class="stat-icon">🧾</div><div class="stat-value">' + memberTxns.length + '</div><div class="stat-label">تعداد تراکنش‌ها</div></div>' +
-                    '<div class="stat-card"><div class="stat-icon">💳</div><div class="stat-value">' + fmtNum(balance) + '</div><div class="stat-label">موجودی</div></div>' +
-                    '<div class="stat-card"><div class="stat-icon">📉</div><div class="stat-value red">' + fmtNum(member.loanBalance || 0) + '</div><div class="stat-label">مانده بدهی وام</div></div>' +
-                '</div>' +
-            '</div>' +
-            loanInfoHtml +
-            installmentPlanHtml +
-            lastTxHtml +
-            approvedHtml +
-            miniSmsHtml +
-            allTxnsHtml +
-        '</div>' +
-    '</div>';
-}
-
-// ============================================================
 // رندر جدول تراکنش‌ها
 // ============================================================
 function renderExcelTransactions(txns, containerId) {
