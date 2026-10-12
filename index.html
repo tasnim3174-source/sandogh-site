@@ -86,96 +86,119 @@ if ('serviceWorker' in navigator) {
     }
 
     /* ============================================================
-       ✅ نوار تب‌های شناور افقی - بالای هدر پایین
-       ============================================================ */
+   ✅ نوار تب‌های شناور افقی - پایین صفحه، بالای هدر
+   ============================================================ */
+
+/* پاک‌سازی CSS قدیمی + نوار افقی */
+#dashboardStatementRoot > .statement-tabs,
+#dashboardStatementRoot .statement-tabs,
+div#dashboardStatementRoot > div.statement-tabs,
+.statement-tabs,
+.statement-tabs-floating {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 90px !important;
+    left: 50% !important;
+    inset: auto auto 90px 50% !important;
+    transform: translateX(-50%) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-flow: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 6px 8px !important;
+    margin: 0 !important;
+    background: rgba(26, 26, 46, 0.92) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 2px solid rgba(245, 158, 11, 0.5) !important;
+    border-radius: 50px !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.25) !important;
+    z-index: 9998 !important;
+    max-width: calc(100% - 24px) !important;
+    min-width: auto !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    white-space: nowrap !important;
+}
+
+#dashboardStatementRoot > .statement-tabs::-webkit-scrollbar,
+#dashboardStatementRoot .statement-tabs::-webkit-scrollbar,
+.statement-tabs-floating::-webkit-scrollbar {
+    display: none;
+}
+
+.statement-tab {
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 0.92rem !important;
+    font-weight: 800 !important;
+    padding: 10px 16px !important;
+    border-radius: 40px !important;
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap !important;
+    line-height: 1.4;
+}
+
+.statement-tab:hover {
+    background: rgba(245, 158, 11, 0.15) !important;
+    color: #ffc94d !important;
+}
+
+.statement-tab.active {
+    background: linear-gradient(135deg, #ffc94d, #d97706) !important;
+    color: #1a1a2e !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+    font-weight: 900 !important;
+}
+
+/* فاصله پایین داشبورد تا تب‌ها روی محتوا نیفتن */
+#dashboardStatementRoot {
+    padding-bottom: 90px !important;
+}
+
+/* ============================================================
+   موبایل
+   ============================================================ */
+@media (max-width: 600px) {
+    #dashboardStatementRoot > .statement-tabs,
+    #dashboardStatementRoot .statement-tabs,
     .statement-tabs-floating {
-        position: fixed !important;
-        bottom: 90px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex !important;
-        flex-direction: row !important;
-        justify-content: center;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 8px;
-        background: rgba(26, 26, 46, 0.92);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border: 2px solid rgba(245, 158, 11, 0.5);
-        border-radius: 50px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.25);
-        z-index: 9998;
-        max-width: calc(100% - 24px);
-        overflow-x: auto;
-        overflow-y: hidden;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
-        white-space: nowrap;
-    }
-
-    .statement-tabs-floating::-webkit-scrollbar {
-        display: none;
-    }
-
-    .statement-tabs-floating .statement-tab {
-        flex: 0 0 auto;
-        font-size: 0.92rem !important;
-        font-weight: 800 !important;
-        padding: 10px 16px !important;
+        bottom: 78px !important;
+        inset: auto auto 78px 50% !important;
+        padding: 5px 6px !important;
+        gap: 4px !important;
         border-radius: 40px !important;
-        border: none !important;
-        background: transparent !important;
-        color: rgba(255, 255, 255, 0.7) !important;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        white-space: nowrap;
-        line-height: 1.4;
+        max-width: calc(100% - 16px) !important;
     }
 
-    .statement-tabs-floating .statement-tab:hover {
-        background: rgba(245, 158, 11, 0.15) !important;
-        color: #ffc94d !important;
+    .statement-tab {
+        font-size: 0.78rem !important;
+        padding: 9px 11px !important;
     }
 
-    .statement-tabs-floating .statement-tab.active {
-        background: linear-gradient(135deg, #ffc94d, #d97706) !important;
-        color: #1a1a2e !important;
-        box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
-        font-weight: 900 !important;
-    }
-
-    /* فاصله پایین داشبورد تا تب‌ها روی محتوا نیفتن */
     #dashboardStatementRoot {
-        padding-bottom: 90px;
+        padding-bottom: 80px !important;
     }
+}
 
-    /* موبایل */
-    @media (max-width: 600px) {
-        .statement-tabs-floating {
-            bottom: 78px;
-            padding: 5px 6px;
-            gap: 4px;
-            border-radius: 40px;
-            max-width: calc(100% - 16px);
-        }
-
-        .statement-tabs-floating .statement-tab {
-            font-size: 0.78rem !important;
-            padding: 9px 11px !important;
-        }
-
-        #dashboardStatementRoot {
-            padding-bottom: 80px;
-        }
+@media (max-width: 360px) {
+    .statement-tab {
+        font-size: 0.7rem !important;
+        padding: 8px 8px !important;
     }
-
-    @media (max-width: 360px) {
-        .statement-tabs-floating .statement-tab {
-            font-size: 0.7rem !important;
-            padding: 8px 8px !important;
-        }
-    }
+}
 </style>
 </head>
 <body>
