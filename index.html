@@ -29,67 +29,156 @@ if ('serviceWorker' in navigator) {
     <!-- کدهای قبلی -->
     
     <!-- ⬇️⬇️⬇️ این رو اضافه کن ⬇️⬇️⬇️ -->
-    <style>
-        /* اعداد خلاصه حساب - بزرگ و بولد */
-        .summary-section .summary-title {
-            font-size: 1.7rem !important;
-            font-weight: 800 !important;
-            margin-bottom: 18px !important;
-        }
+   
+<style>
+    /* اعداد خلاصه حساب - بزرگ و بولد */
+    .summary-section .summary-title {
+        font-size: 1.7rem !important;
+        font-weight: 800 !important;
+        margin-bottom: 18px !important;
+    }
 
+    .summary-section .summary-grid {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px !important;
+    }
+
+    .summary-section .summary-card {
+        padding: 18px 12px !important;
+        border-radius: 16px !important;
+        text-align: center !important;
+    }
+
+    .summary-section .sc-label {
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        line-height: 1.8 !important;
+        margin: 8px 0 !important;
+    }
+
+    .summary-section .sc-value {
+        font-size: 1.7rem !important;
+        font-weight: 800 !important;
+        line-height: 1.7 !important;
+    }
+
+    .summary-section .sc-icon {
+        font-size: 1.7rem !important;
+        margin-bottom: 4px !important;
+    }
+
+    /* موبایل */
+    @media (max-width: 600px) {
         .summary-section .summary-grid {
-            display: grid !important;
-            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-            gap: 14px !important;
+            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            gap: 12px !important;
         }
-
-        .summary-section .summary-card {
-            padding: 18px 12px !important;
-            border-radius: 16px !important;
-            text-align: center !important;
-        }
-
-        .summary-section .sc-label {
-            font-size: 1.05rem !important;
-            font-weight: 800 !important;
-            line-height: 1.8 !important;
-            margin: 8px 0 !important;
-        }
-
         .summary-section .sc-value {
             font-size: 1.7rem !important;
-            font-weight: 800 !important;
-            line-height: 1.7 !important;
         }
-
+        .summary-section .sc-label {
+            font-size: 1rem !important;
+        }
         .summary-section .sc-icon {
-            font-size: 1.7rem !important;
-            margin-bottom: 4px !important;
+            font-size: 1.6rem !important;
+        }
+    }
+
+    /* ============================================================
+       ✅ نوار تب‌های شناور افقی - بالای هدر پایین
+       ============================================================ */
+    .statement-tabs-floating {
+        position: fixed !important;
+        bottom: 90px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 8px;
+        background: rgba(26, 26, 46, 0.92);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 2px solid rgba(245, 158, 11, 0.5);
+        border-radius: 50px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.25);
+        z-index: 9998;
+        max-width: calc(100% - 24px);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        white-space: nowrap;
+    }
+
+    .statement-tabs-floating::-webkit-scrollbar {
+        display: none;
+    }
+
+    .statement-tabs-floating .statement-tab {
+        flex: 0 0 auto;
+        font-size: 0.92rem !important;
+        font-weight: 800 !important;
+        padding: 10px 16px !important;
+        border-radius: 40px !important;
+        border: none !important;
+        background: transparent !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+        line-height: 1.4;
+    }
+
+    .statement-tabs-floating .statement-tab:hover {
+        background: rgba(245, 158, 11, 0.15) !important;
+        color: #ffc94d !important;
+    }
+
+    .statement-tabs-floating .statement-tab.active {
+        background: linear-gradient(135deg, #ffc94d, #d97706) !important;
+        color: #1a1a2e !important;
+        box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+        font-weight: 900 !important;
+    }
+
+    /* فاصله پایین داشبورد تا تب‌ها روی محتوا نیفتن */
+    #dashboardStatementRoot {
+        padding-bottom: 90px;
+    }
+
+    /* موبایل */
+    @media (max-width: 600px) {
+        .statement-tabs-floating {
+            bottom: 78px;
+            padding: 5px 6px;
+            gap: 4px;
+            border-radius: 40px;
+            max-width: calc(100% - 16px);
         }
 
-        /* موبایل */
-        @media (max-width: 600px) {
-            .summary-section .summary-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-                gap: 12px !important;
-            }
-            .summary-section .sc-value {
-                font-size:1.7rem !important;
-            }
-            .summary-section .sc-label {
-                font-size: 1rem !important;
-            }
-            .summary-section .sc-icon {
-                font-size: 1.6rem !important;
-            }
+        .statement-tabs-floating .statement-tab {
+            font-size: 0.78rem !important;
+            padding: 9px 11px !important;
         }
-    </style>
-    <!-- ⬆️⬆️⬆️ تا اینجا ⬆️⬆️⬆️ -->
-    
-</head> 
+
+        #dashboardStatementRoot {
+            padding-bottom: 80px;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .statement-tabs-floating .statement-tab {
+            font-size: 0.7rem !important;
+            padding: 8px 8px !important;
+        }
+    }
+</style>
 </head>
 <body>
-
  <div class="loaderGlow g1"></div>
 <div class="loaderGlow g2"></div>
 <canvas id="loaderFx"></canvas>
