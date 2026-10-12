@@ -319,13 +319,12 @@ function renderDashboardContent() {
             '</div>' +
         '</div>';
 
-    const tabHtml =
-        '<div class="statement-tabs" role="tablist">' +
-            '<button type="button" class="statement-tab active" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری و پس‌انداز</button>' +
-            '<button type="button" class="statement-tab" data-statement-tab="loan" onclick="switchDashboardTab(\'loan\')">🏦 تسهیلات</button>' +
-            '<button type="button" class="statement-tab" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 حساب شما از یک نگاه</button>' +
-        '</div>';
-
+   const tabHtml =
+    '<div class="statement-tabs statement-tabs-floating" role="tablist">' +
+        '<button type="button" class="statement-tab active" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری</button>' +
+        '<button type="button" class="statement-tab" data-statement-tab="loan" onclick="switchDashboardTab(\'loan\')">🏦 تسهیلات</button>' +
+        '<button type="button" class="statement-tab" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 یک نگاه</button>' +
+    '</div>';
     window.switchDashboardTab = function(tab) {
         var root = document.getElementById('dashboardStatementRoot');
         if (!root) return;
@@ -391,69 +390,7 @@ function renderDashboardContent() {
     // ============================================================
     // 🚀 دکمه شناور برای تب‌های صورتحساب
     // ============================================================
-    setTimeout(function() {
-        var oldBtn = document.getElementById('statementFloatBtn');
-        if (oldBtn) oldBtn.remove();
-
-        var floatBtn = document.createElement('button');
-        floatBtn.id = 'statementFloatBtn';
-        floatBtn.type = 'button';
-        floatBtn.innerHTML = '<i class="fas fa-bars" style="color:#1a1a2e;pointer-events:none;"></i>';
-        floatBtn.title = 'برو به تب‌های صورتحساب';
-
-        floatBtn.style.cssText =
-            'position:fixed;' +
-            'bottom:200px;' +
-            'right:20px;' +
-            'width:60px;' +
-            'height:60px;' +
-            'border-radius:50%;' +
-            'background:linear-gradient(135deg,#ffc94d,#d97706);' +
-            'border:3px solid #ffd700;' +
-            'cursor:pointer;' +
-            'display:flex;' +
-            'align-items:center;' +
-            'justify-content:center;' +
-            'font-size:1.5rem;' +
-            'z-index:9999;' +
-            'box-shadow:0 4px 20px rgba(255,201,77,0.6);' +
-            'transition:all 0.3s ease;' +
-            'touch-action:manipulation;' +
-            'padding:0;';
-
-        document.body.appendChild(floatBtn);
-
-        floatBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            var tabs = document.querySelector('#dashboardStatementRoot .statement-tabs');
-
-            if (tabs) {
-                tabs.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-
-                tabs.style.transition = 'all 0.3s ease';
-                tabs.style.boxShadow = '0 0 0 8px rgba(255,201,77,0.4), 0 8px 30px rgba(255,201,77,0.6)';
-                tabs.style.transform = 'scale(1.03)';
-
-                setTimeout(function() {
-                    tabs.style.boxShadow = '';
-                    tabs.style.transform = '';
-                }, 1500);
-            }
-        });
-
-        if (typeof currentPage !== 'undefined' && currentPage !== 'dashboard') {
-            floatBtn.style.display = 'none';
-        }
-
-        console.log('✅ دکمه شناور تب‌های صورتحساب اضافه شد');
-    }, 300);
-
-    return '<div id="dashboardStatementRoot">' +
+        return '<div id="dashboardStatementRoot">' +
         summaryBox +
         tabHtml +
         '<div class="statement-panel active" data-statement-panel="allowance">' +
