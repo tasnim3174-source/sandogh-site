@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیام‌رسان - صندوق اتحاد</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            direction: rtl;
+            padding-bottom: 80px;
+        }
+
+        /* هدر */
+        .header {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            padding: 16px 20px;
+            box-shadow: 0 4px 20px rgba(139,92,246,0.4);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .header h1 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .header-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        .header-btn:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* تب‌ها */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            background: rgba(0,0,0,0.2);
+            padding: 4px;
+            border-radius: 50px;
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 8px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.7);
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+        }
+        .tab.active {
+            background: #fff;
+            color: #8b5cf6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .tab-badge {
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: 900;
+            min-width: 20px;
+            text-align: center;
+        }
+        .tab.active .tab-badge {
+            background: #8b5cf6;
+        }
+
+        /* جستجو */
+        .search-bar {
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.15);
+            display: none;
+        }
+        .search-bar.show { display: block; }
+        .search-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: inherit;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(139,92,246,0.1);
+        }
+        .search-input::placeholder { color: #9ca3af; }
+
+        /* کانتینر پیام‌ها */
+        .messages-container {
+            padding: 16px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        .messages-container.hidden { display: none; }
+
+        /* سکشن */
+        .section-title {
+            color: #9ca3af;
+            font-size: 0.75rem;
+            font-weight: 800;
+            margin: 14px 4px 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-title i { color: #8b5cf6; }
+
+        /* کارت پیام */
+        .message-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            border-right: 4px solid transparent;
+        }
+        .message-card:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(139,92,246,0.4);
+        }
+        .message-card.unread {
+            border-right-color: #ef4444;
+            background: rgba(239,68,68,0.05);
+        }
+        .message-card.urgent {
+            border-right-color: #f59e0b;
+            background: rgba(245,158,11,0.05);
+        }
+        .message-card.replied {
+            border-right-color: #10b981;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .message-sender {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+        .sender-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: #fff;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+        .sender-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .sender-name {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 2px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .sender-meta {
+            font-size: 0.65rem;
+            color: #9ca3af;
+        }
+        .message-time {
+            font-size: 0.65rem;
+            color: #9ca3af;
+            flex-shrink: 0;
+            margin-right: 4px;
+        }
+
+        .message-subject {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #ffc94d;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .message-subject .badge {
+            background: rgba(255,201,77,0.2);
+            color: #ffc94d;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.6rem;
+            font-weight: 800;
+        }
+        .message-subject .badge.urgent {
+            background: rgba(239,68,68,0.2);
+            color: #ef4444;
+        }
+        .message-subject .badge.anonymous {
+            background: rgba(139,92,246,0.2);
+            color: #8b5cf6;
+        }
+
+        .message-preview {
+            font-size: 0.75rem;
+            color: #9ca3af;
+            line-height: 1.7;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-clamp: 2;
+        }
+
+        .message-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(255,255,255,0.08);
+        }
+        .message-status {
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .message-status.new {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+        }
+        .message-status.read {
+            background: rgba(59,130,246,0.15);
+            color: #3b82f6;
+        }
+        .message-status.replied {
+            background: rgba(16,185,129,0.15);
+            color: #10b981;
+        }
+        .message-status.closed {
+            background: rgba(156,163,175,0.15);
+            color: #9ca3af;
+        }
+
+        .message-replies-count {
+            font-size: 0.65rem;
+            color: #9ca3af;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* حالت خالی */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 14px;
+            opacity: 0.5;
+        }
+        .empty-state .title {
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+            color: #9ca3af;
+        }
+        .empty-state .desc {
+            font-size: 0.8rem;
+            line-height: 1.7;
+        }
+
+        /* دکمه شناور ارسال پیام */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(139,92,246,0.5);
+            transition: all 0.3s;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(139,92,246,0.7);
+        }
+
+        /* مودال */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .modal-box {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid rgba(139,92,246,0.4);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .modal-title {
+            color: #8b5cf6;
+            font-size: 1.1rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-close {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* فرم */
+        .form-field {
+            margin-bottom: 12px;
+        }
+        .form-field label {
+            display: block;
+            color: #d1d5db;
+            font-size: 0.78rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .form-field label .required { color: #ef4444; }
+        .form-field input[type="text"],
+        .form-field textarea,
+        .form-field select {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .form-field input:focus,
+        .form-field textarea:focus,
+        .form-field select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: rgba(139,92,246,0.08);
+        }
+        .form-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .form-field select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        .checkbox-field {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .checkbox-field input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #8b5cf6;
+        }
+        .checkbox-field label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.8rem;
+            color: #d1d5db;
+            font-weight: 700;
+        }
+        .checkbox-field .hint {
+            font-size: 0.65rem;
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 900;
+            cursor: pointer;
+            font-family: inherit;
+            box-shadow: 0 4px 15px rgba(139,92,246,0.4);
+            transition: all 0.3s;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .submit-btn:active { transform: scale(0.97); }
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* توست */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            box-shadow: 0 10px 30px rgba(16,185,129,0.5);
+            z-index: 99999;
+            opacity: 0;
+            transition: all 0.4s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 10px 30px rgba(239,68,68,0.5);
+        }
+
+        /* ریپلای‌ها */
+        .replies-container {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+        }
+        .reply-item {
+            background: rgba(139,92,246,0.08);
+            border-right: 3px solid #8b5cf6;
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+        }
+        .reply-item.mine {
+            background: rgba(16,185,129,0.08);
+            border-right-color: #10b981;
+        }
+        .reply-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 0.7rem;
+        }
+        .reply-author {
+            font-weight: 800;
+            color: #8b5cf6;
+        }
+        .reply-item.mine .reply-author { color: #10b981; }
+        .reply-time { color: #9ca3af; font-size: 0.65rem; }
+        .reply-text {
+            font-size: 0.78rem;
+            color: #d1d5db;
+            line-height: 1.8;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .detail-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+        .detail-btn.primary {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+        }
+        .detail-btn.danger {
+            background: rgba(239,68,68,0.15);
+            color: #ef4444;
+            border: 2px solid rgba(239,68,68,0.3);
+        }
+
+        /* حالت آفلاین */
+        .offline-badge {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            background: rgba(239,68,68,0.9);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            z-index: 9998;
+            display: none;
+        }
+        .offline-badge.show { display: block; }
+    </style>
+</head>
+<body>
+
+<!-- هدر -->
+<div class="header">
+    <div class="header-top">
+        <h1><i class="fas fa-envelope"></i> پیام‌رسان</h1>
+        <div class="header-actions">
+            <button class="header-btn" onclick="toggleSearch()" title="جستجو">
+                <i class="fas fa-search"></i>
+            </button>
+            <button class="header-btn" onclick="loadMessages()" title="بروزرسانی">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button class="header-btn" onclick="window.close()" title="بستن">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab active" data-tab="council" onclick="switchTab('council')">
+            <i class="fas fa-crown"></i>
+            <span>به شورا</span>
+            <span class="tab-badge" id="badge-council" style="display:none;">0</span>
+        </button>
+        <button class="tab" data-tab="members" onclick="switchTab('members')">
+            <i class="fas fa-users"></i>
+            <span>به اعضا</span>
+            <span class="tab-badge" id="badge-members" style="display:none;">0</span>
+        </button>
+    </div>
+</div>
+
+<!-- جستجو -->
+<div class="search-bar" id="searchBar">
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 جستجو در پیام‌ها..." oninput="filterMessages()">
+</div>
+
+<!-- کانتینر پیام‌ها -->
+<div class="messages-container" id="messagesContainer">
+    <!-- لیست پیام‌ها -->
+    <div id="messagesList"></div>
+</div>
+
+<!-- FAB -->
+<button class="fab" onclick="openComposeModal()" title="پیام جدید">
+    <i class="fas fa-plus"></i>
+</button>
+
+<!-- مودال ارسال پیام جدید -->
+<div class="modal-overlay" id="composeModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title" id="composeTitle">
+                <i class="fas fa-pen"></i> پیام جدید
+            </div>
+            <button class="modal-close" onclick="closeComposeModal()">✕</button>
+        </div>
+
+        <form id="composeForm" onsubmit="sendMessage(event)">
+            <div class="form-field" id="recipientField" style="display:none;">
+                <label>گیرنده <span class="required">*</span></label>
+                <select id="recipientSelect">
+                    <option value="">در حال بارگذاری...</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>عنوان <span class="required">*</span></label>
+                <input type="text" id="subjectInput" placeholder="موضوع پیام..." maxlength="100" required>
+            </div>
+
+            <div class="form-field">
+                <label>نوع پیام <span class="required">*</span></label>
+                <select id="typeSelect" required>
+                    <option value="suggestion">💡 پیشنهاد</option>
+                    <option value="complaint">📢 شکایت</option>
+                    <option value="request">📋 درخواست</option>
+                    <option value="question">❓ سوال</option>
+                    <option value="info">ℹ️ اطلاع‌رسانی</option>
+                    <option value="other">📝 سایر</option>
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label>متن پیام <span class="required">*</span></label>
+                <textarea id="messageInput" placeholder="متن پیام خود را اینجا بنویسید..." maxlength="2000" required></textarea>
+            </div>
+
+            <div class="checkbox-field">
+                <input type="checkbox" id="urgentCheck">
+                <label for="urgentCheck">
+                    ⚠️ پیام فوری
+                    <span class="hint">(اولویت بالا)</span>
+                </label>
+            </div>
+
+            <div class="checkbox-field" id="anonymousField">
+                <input type="checkbox" id="anonymousCheck">
+                <label for="anonymousCheck">
+                    👤 ارسال ناشناس
+                    <span class="hint">(نام شما نمایش داده نمی‌شود)</span>
+                </label>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <i class="fas fa-paper-plane"></i>
+                <span>ارسال پیام</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- مودال نمایش پیام -->
+<div class="modal-overlay" id="viewModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-envelope-open"></i> مشاهده پیام
+            </div>
+            <button class="modal-close" onclick="closeViewModal()">✕</button>
+        </div>
+        <div id="viewContent"></div>
+    </div>
+</div>
+
+<!-- مودال پاسخ -->
+<div class="modal-overlay" id="replyModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-title">
+                <i class="fas fa-reply"></i> پاسخ
+            </div>
+            <button class="modal-close" onclick="closeReplyModal()">✕</button>
+        </div>
+        <form onsubmit="sendReply(event)">
+            <div class="form-field">
+                <label>متن پاسخ <span class="required">*</span></label>
+                <textarea id="replyInput" placeholder="پاسخ خود را بنویسید..." required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-paper-plane"></i>
+                <span>ارسال پاسخ</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- توست -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastText">عملیات موفق</span>
+</div>
+
+<!-- نشانگر آفلاین -->
+<div class="offline-badge" id="offlineBadge">
+    <i class="fas fa-wifi"></i> حالت آفلاین
+</div>
+
+<script>
+// ============================================================
+// تنظیمات
+// ============================================================
+var API_URL = ''; // TODO: به Apps Script وصل کن
+var STORAGE_KEY = 'sandogh_messages_v1';
+var REFRESH_INTERVAL = 30000; // ۳۰ ثانیه
+var currentTab = 'council';
+var currentUser = null;
+var currentMember = null;
+var allMessages = [];
+var searchMode = false;
+var currentMessageId = null;
+var replyParentId = null;
+
+// ============================================================
+// راه‌اندازی
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📨 پیام‌رسان بارگذاری شد');
+    
+    // خواندن اطلاعات کاربر از localStorage
+    try {
+        var userStr = localStorage.getItem('currentUser');
+        if (userStr) {
+            currentUser = JSON.parse(userStr);
+            console.log('👤 کاربر:', currentUser.firstName || currentUser.username);
+        }
+        
+        // خواندن members از cache
+        var membersStr = localStorage.getItem('sandogh_members_cache');
+        var membersList = null;
+        if (membersStr) {
+            try {
+                membersList = JSON.parse(membersStr);
+            } catch(e) {}
+        }
+        
+        // اگه نبود، از sessionStorage
+        if (!membersList) {
+            var sess = sessionStorage.getItem('sandogh_data_v2');
+            if (sess) {
+                try {
+                    var data = JSON.parse(sess);
+                    membersList = data.members;
+                } catch(e) {}
+            }
+        }
+        
+        if (membersList && currentUser) {
+            currentMember = membersList.find(function(m) {
+                return String(m.accountNumber) === String(currentUser.accountNumber) ||
+                       String(m.id) === String(currentUser.memberId);
+            });
+        }
+        
+        if (!currentUser) {
+            alert('❌ لطفاً اول وارد برنامه شوید');
+            window.close();
+            return;
+        }
+        
+        console.log('✅ اطلاعات کاربر لود شد');
+        
+    } catch(e) {
+        console.error('خطا:', e);
+    }
+    
+    loadMessages();
+    updateRecipientList();
+    setInterval(loadMessages, REFRESH_INTERVAL);
+    updateOnlineStatus();
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+});
+
+function updateOnlineStatus() {
+    var badge = document.getElementById('offlineBadge');
+    if (navigator.onLine) {
+        badge.classList.remove('show');
+    } else {
+        badge.classList.add('show');
+    }
+}
+
+// ============================================================
+// تغییر تب
+// ============================================================
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(function(t) {
+        t.classList.toggle('active', t.getAttribute('data-tab') === tab);
+    });
+    renderMessages();
+}
+
+// ============================================================
+// جستجو
+// ============================================================
+function toggleSearch() {
+    searchMode = !searchMode;
+    var bar = document.getElementById('searchBar');
+    bar.classList.toggle('show', searchMode);
+    if (searchMode) {
+        document.getElementById('searchInput').focus();
+    } else {
+        document.getElementById('searchInput').value = '';
+        renderMessages();
+    }
+}
+
+function filterMessages() {
+    renderMessages();
+}
+
+// ============================================================
+// بارگذاری پیام‌ها
+// ============================================================
+function loadMessages() {
+    try {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            allMessages = JSON.parse(stored);
+        } else {
+            allMessages = [];
+            saveMessages();
+        }
+        renderMessages();
+        updateBadges();
+    } catch(e) {
+        console.error('خطا در لود پیام‌ها:', e);
+        allMessages = [];
+        renderMessages();
+    }
+}
+
+function saveMessages() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(allMessages));
+    } catch(e) {
+        console.error('خطا در ذخیره:', e);
+    }
+}
+
+// ============================================================
+// رندر پیام‌ها
+// ============================================================
+function renderMessages() {
+    var list = document.getElementById('messagesList');
+    var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    
+    // فیلتر بر اساس تب
+    var filtered = allMessages.filter(function(msg) {
+        if (msg.type !== currentTab) return false;
+        
+        // چک کن کاربر مرتبطه
+        var isSender = String(msg.from_id) === String(currentUser.accountNumber) ||
+                       String(msg.from_id) === String(currentUser.memberId);
+        var isRecipient = String(msg.to_id) === String(currentUser.accountNumber) ||
+                          String(msg.to_id) === String(currentUser.memberId) ||
+                          (currentTab === 'council' && (msg.to_id === 'council' || msg.to_id === 'admin'));
+        
+        if (!isSender && !isRecipient) return false;
+        
+        // فیلتر جستجو
+        if (searchTerm) {
+            var haystack = (msg.subject + ' ' + msg.message + ' ' + msg.from_name + ' ' + msg.to_name).toLowerCase();
+            if (haystack.indexOf(searchTerm) === -1) return false;
+        }
+        
+        return true;
+    });
+    
+    // مرتب‌سازی بر اساس تاریخ
+    filtered.sort(function(a, b) {
+        return (b.created_at || 0) - (a.created_at || 0);
+    });
+    
+    if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty-state">' +
+            '<i class="fas fa-inbox"></i>' +
+            '<div class="title">پیامی وجود ندارد</div>' +
+            '<div class="desc">' + (searchTerm ? 'نتیجه‌ای برای جستجوی شما یافت نشد' : 'برای ارسال پیام جدید، روی دکمه + پایین کلیک کنید') + '</div>' +
+            '</div>';
+        return;
+    }
+    
+    // گروه‌بندی: دریافتی و ارسالی
+    var received = [];
+    var sent = [];
+    
+    filtered.forEach(function(msg) {
+        var isSender = String(msg.from_id) === String(currentUser.accountNumber) ||
+                       String(msg.from_id) === String(currentUser.memberId);
+        if (isSender) sent.push(msg);
+        else received.push(msg);
+    });
+    
+    var html = '';
+    
+    if (received.length > 0) {
+        html += '<div class="section-title"><i class="fas fa-inbox"></i> پیام‌های دریافتی (' + received.length + ')</div>';
+        received.forEach(function(msg) { html += renderMessageCard(msg, false); });
+    }
+    
+    if (sent.length > 0) {
+        html += '<div class="section-title" style="margin-top:20px;"><i class="fas fa-paper-plane"></i> پیام‌های ارسالی (' + sent.length + ')</div>';
+        sent.forEach(function(msg) { html += renderMessageCard(msg, true); });
+    }
+    
+    list.innerHTML = html;
+}
+
+function renderMessageCard(msg, isSent) {
+    var isUnread = !isSent && msg.status === 'new';
+    var isUrgent = msg.is_urgent === true;
+    var isReplied = msg.status === 'replied';
+    
+    var classes = 'message-card';
+    if (isUnread) classes += ' unread';
+    if (isUrgent) classes += ' urgent';
+    if (isReplied) classes += ' replied';
+    
+    var replies = allMessages.filter(function(m) { return m.parent_id === msg.id; });
+    
+    var typeLabels = {
+        suggestion: '💡 پیشنهاد',
+        complaint: '📢 شکایت',
+        request: '📋 درخواست',
+        question: '❓ سوال',
+        info: 'ℹ️ اطلاع‌رسانی',
+        other: '📝 سایر'
+    };
+    
+    var timeStr = formatTime(msg.created_at);
+    var avatar = (msg.from_name || '؟').charAt(0);
+    
+    return '<div class="' + classes + '" onclick="openMessage(\'' + msg.id + '\')">' +
+        '<div class="message-header">' +
+            '<div class="message-sender">' +
+                '<div class="sender-avatar">' + avatar + '</div>' +
+                '<div class="sender-info">' +
+                    '<div class="sender-name">' + (isSent ? 'به: ' + (msg.to_name || 'نامشخص') : 'از: ' + (msg.from_name || 'ناشناس')) + '</div>' +
+                    '<div class="sender-meta">' + (typeLabels[msg.type_msg] || '') + '</div>' +
+                '</div>' +
+            '</div>' +
+            '<div class="message-time">' + timeStr + '</div>' +
+        '</div>' +
+        '<div class="message-subject">' +
+            (msg.is_urgent ? '<span class="badge urgent">⚠️ فوری</span>' : '') +
+            (msg.is_anonymous ? '<span class="badge anonymous">👤 ناشناس</span>' : '') +
+            escapeHtml(msg.subject || '(بدون عنوان)') +
+        '</div>' +
+        '<div class="message-preview">' + escapeHtml(msg.message || '') + '</div>' +
+        '<div class="message-footer">' +
+            '<span class="message-status ' + (msg.status || 'new') + '">' + getStatusLabel(msg.status) + '</span>' +
+            (replies.length > 0 ? '<span class="message-replies-count"><i class="fas fa-comments"></i> ' + replies.length + ' پاسخ</span>' : '') +
+        '</div>' +
+    '</div>';
+}
+
+function getStatusLabel(status) {
+    switch(status) {
+        case 'new': return '<i class="fas fa-circle"></i> جدید';
+        case 'read': return '<i class="fas fa-check"></i> خوانده شده';
+        case 'replied': return '<i class="fas fa-check-double"></i> پاسخ داده شده';
+        case 'closed': return '<i class="fas fa-lock"></i> بسته شده';
+        default: return '<i class="fas fa-circle"></i> جدید';
+    }
+}
+
+function formatTime(timestamp) {
+    if (!timestamp) return '';
+    var now = Date.now();
+    var diff = now - timestamp;
+    var seconds = Math.floor(diff / 1000);
+    var minutes = Math.floor(seconds / 60);
+    var hours = Math.floor(minutes / 60);
+    var days = Math.floor(hours / 24);
+    
+    if (seconds < 60) return 'همین الان';
+    if (minutes < 60) return minutes + ' دقیقه پیش';
+    if (hours < 24) return hours + ' ساعت پیش';
+    if (days < 7) return days + ' روز پیش';
+    
+    var d = new Date(timestamp);
+    return d.toLocaleDateString('fa-IR');
+}
+
+function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text || '';
+    return div.innerHTML;
+}
+
+// ============================================================
+// نمایش پیام
+// ============================================================
+function openMessage(id) {
+    var msg = allMessages.find(function(m) { return m.id === id; });
+    if (!msg) return;
+    
+    currentMessageId = id;
+    
+    // علامت‌گذاری به عنوان خوانده شده
+    if (msg.status === 'new' && String(msg.from_id) !== String(currentUser.accountNumber)) {
+        msg.status = 'read';
+        msg.read_at = Date.now();
+        saveMessages();
+        updateBadges();
+    }
+    
+    var replies = allMessages.filter(function(m) { return m.parent_id === id; })
+        .sort(function(a, b) { return (a.created_at || 0) - (b.created_at || 0); });
+    
+    var isMine = String(msg.from_id) === String(currentUser.accountNumber) ||
+                 String(msg.from_id) === String(currentUser.memberId);
+    
+    var html = '<div style="margin-bottom:14px;">' +
+        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
+            '<div class="sender-avatar" style="width:44px;height:44px;font-size:1rem;">' + (msg.from_name || '؟').charAt(0) + '</div>' +
+            '<div>' +
+                '<div style="font-weight:900;font-size:0.9rem;">' + (msg.is_anonymous ? '👤 ناشناس' : escapeHtml(msg.from_name || 'ناشناس')) + '</div>' +
+                '<div style="font-size:0.7rem;color:#9ca3af;">' + formatTime(msg.created_at) + '</div>' +
+            '</div>' +
+        '</div>' +
+        '<div style="background:rgba(139,92,246,0.08);border-right:3px solid #8b5cf6;border-radius:10px;padding:12px;">' +
+            '<div style="font-weight:900;font-size:0.9rem;color:#ffc94d;margin-bottom:8px;">' + escapeHtml(msg.subject) + '</div>' +
+            '<div style="font-size:0.82rem;color:#d1d5db;line-height:1.9;white-space:pre-wrap;">' + escapeHtml(msg.message) + '</div>' +
+        '</div>' +
+    '</div>';
+    
+    if (replies.length > 0) {
+        html += '<div class="replies-container">';
+        html += '<div style="font-size:0.75rem;color:#9ca3af;font-weight:800;margin-bottom:8px;"><i class="fas fa-comments"></i> پاسخ‌ها (' + replies.length + ')</div>';
+        replies.forEach(function(r) {
+            var replyMine = String(r.from_id) === String(currentUser.accountNumber) ||
+                            String(r.from_id) === String(currentUser.memberId);
+            html += '<div class="reply-item ' + (replyMine ? 'mine' : '') + '">' +
+                '<div class="reply-header">' +
+                    '<span class="reply-author">' + escapeHtml(r.from_name || 'ناشناس') + '</span>' +
+                    '<span class="reply-time">' + formatTime(r.created_at) + '</span>' +
+                '</div>' +
+                '<div class="reply-text">' + escapeHtml(r.message) + '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+    }
+    
+    html += '<div class="detail-actions">' +
+        '<button class="detail-btn primary" onclick="openReplyModal(\'' + id + '\')"><i class="fas fa-reply"></i> پاسخ</button>' +
+        (isMine ? '<button class="detail-btn danger" onclick="deleteMessage(\'' + id + '\')"><i class="fas fa-trash"></i> حذف</button>' : '') +
+    '</div>';
+    
+    document.getElementById('viewContent').innerHTML = html;
+    document.getElementById('viewModal').classList.add('show');
+}
+
+function closeViewModal() {
+    document.getElementById('viewModal').classList.remove('show');
+    renderMessages();
+}
+
+// ============================================================
+// مودال ارسال پیام
+// ============================================================
+function openComposeModal() {
+    document.getElementById('composeModal').classList.add('show');
+    document.getElementById('composeForm').reset();
+    
+    // اگه تب اعضا، فیلد گیرنده رو نشون بده
+    var recipientField = document.getElementById('recipientField');
+    if (currentTab === 'members') {
+        recipientField.style.display = 'block';
+        document.getElementById('anonymousField').style.display = 'none';
+    } else {
+        recipientField.style.display = 'none';
+        document.getElementById('anonymousField').style.display = 'flex';
+    }
+    
+    document.getElementById('composeTitle').innerHTML = currentTab === 'council' 
+        ? '<i class="fas fa-crown"></i> پیام به شورا'
+        : '<i class="fas fa-users"></i> پیام به اعضا';
+}
+
+function closeComposeModal() {
+    document.getElementById('composeModal').classList.remove('show');
+}
+
+// ============================================================
+// ارسال پیام
+// ============================================================
+function sendMessage(event) {
+    event.preventDefault();
+    
+    var subject = document.getElementById('subjectInput').value.trim();
+    var message = document.getElementById('messageInput').value.trim();
+    var type = document.getElementById('typeSelect').value;
+    var isUrgent = document.getElementById('urgentCheck').checked;
+    var isAnonymous = currentTab === 'council' && document.getElementById('anonymousCheck').checked;
+    var recipientId = document.getElementById('recipientSelect').value;
+    
+    if (!subject || !message) {
+        showToast('لطفاً عنوان و متن پیام را وارد کنید', 'error');
+        return;
+    }
+    
+    if (currentTab === 'members' && !recipientId) {
+        showToast('لطفاً گیرنده را انتخاب کنید', 'error');
+        return;
+    }
+    
+    var fromName = isAnonymous ? 'ناشناس' : (currentMember ? currentMember.firstName : (currentUser.firstName || 'کاربر'));
+    
+    var newMsg = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        from_id: currentUser.accountNumber || currentUser.memberId,
+        from_name: fromName,
+        to_id: currentTab === 'council' ? 'council' : recipientId,
+        to_name: currentTab === 'council' ? 'شورای صندوق' : getRecipientName(recipientId),
+        type: currentTab,
+        type_msg: type,
+        subject: subject,
+        message: message,
+        parent_id: null,
+        is_anonymous: isAnonymous,
+        is_urgent: isUrgent,
+        status: 'new',
+        created_at: Date.now(),
+        read_at: null
+    };
+    
+    allMessages.push(newMsg);
+    saveMessages();
+    
+    // اگه API هست، بفرست
+    if (API_URL) {
+        sendToAPI(newMsg);
+    }
+    
+    showToast('✅ پیام با موفقیت ارسال شد');
+    closeComposeModal();
+    renderMessages();
+    updateBadges();
+}
+
+function sendReply(event) {
+    event.preventDefault();
+    var text = document.getElementById('replyInput').value.trim();
+    if (!text) return;
+    
+    var parent = allMessages.find(function(m) { return m.id === replyParentId; });
+    if (!parent) return;
+    
+    var replyMsg = {
+        id: 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+        from_id: currentUser.accountNumber || currentUser.memberId,
+        from_name: currentMember ? currentMember.firstName : (currentUser.firstName || 'کاربر'),
+        to_id: parent.from_id,
+        to_name: parent.from_name,
+        type: parent.type,
+        type_msg: 'reply',
+        subject: 'پاسخ: ' + parent.subject,
+        message: text,
+        parent_id: parent.id,
+        is_anonymous: false,
+        is_urgent: false,
+        status: 'replied',
+        created_at: Date.now()
+    };
+    
+    allMessages.push(replyMsg);
+    
+    // به‌روزرسانی وضعیت والد
+    parent.status = 'replied';
+    
+    saveMessages();
+    
+    if (API_URL) {
+        sendToAPI(replyMsg);
+    }
+    
+    showToast('✅ پاسخ ارسال شد');
+    closeReplyModal();
+    closeViewModal();
+    renderMessages();
+}
+
+function openReplyModal(id) {
+    replyParentId = id;
+    document.getElementById('replyInput').value = '';
+    document.getElementById('replyModal').classList.add('show');
+}
+
+function closeReplyModal() {
+    document.getElementById('replyModal').classList.remove('show');
+}
+
+// ============================================================
+// حذف پیام
+// ============================================================
+function deleteMessage(id) {
+    if (!confirm('آیا از حذف این پیام مطمئن هستید؟')) return;
+    
+    allMessages = allMessages.filter(function(m) {
+        return m.id !== id && m.parent_id !== id;
+    });
+    saveMessages();
+    showToast('🗑️ پیام حذف شد');
+    closeViewModal();
+    renderMessages();
+    updateBadges();
+}
+
+// ============================================================
+// لیست گیرندگان (برای تب اعضا)
+// ============================================================
+function updateRecipientList() {
+    var select = document.getElementById('recipientSelect');
+    if (!select) return;
+    
+    var membersStr = localStorage.getItem('sandogh_members_cache');
+    var membersList = null;
+    if (membersStr) {
+        try { membersList = JSON.parse(membersStr); } catch(e) {}
+    }
+    if (!membersList) {
+        var sess = sessionStorage.getItem('sandogh_data_v2');
+        if (sess) {
+            try {
+                var data = JSON.parse(sess);
+                membersList = data.members;
+            } catch(e) {}
+        }
+    }
+    
+    if (!membersList || membersList.length === 0) {
+        select.innerHTML = '<option value="">در حال بارگذاری...</option>';
+        return;
+    }
+    
+    var html = '<option value="">انتخاب گیرنده...</option>';
+    membersList.forEach(function(m) {
+        if (String(m.id) === String(currentUser.memberId) ||
+            String(m.accountNumber) === String(currentUser.accountNumber)) return;
+        
+        html += '<option value="' + m.id + '">' + m.firstName + ' - ' + m.accountNumber + '</option>';
+    });
+    select.innerHTML = html;
+}
+
+function getRecipientName(id) {
+    var membersStr = localStorage.getItem('sandogh_members_cache');
+    var membersList = null;
+    if (membersStr) {
+        try { membersList = JSON.parse(membersStr); } catch(e) {}
+    }
+    if (!membersList) {
+        var sess = sessionStorage.getItem('sandogh_data_v2');
+        if (sess) {
+            try {
+                var data = JSON.parse(sess);
+                membersList = data.members;
+            } catch(e) {}
+        }
+    }
+    if (!membersList) return 'کاربر';
+    var m = membersList.find(function(x) { return String(x.id) === String(id); });
+    return m ? m.firstName : 'کاربر';
+}
+
+// ============================================================
+// badge‌ها
+// ============================================================
+function updateBadges() {
+    ['council', 'members'].forEach(function(tab) {
+        var unread = allMessages.filter(function(m) {
+            return m.type === tab &&
+                   m.status === 'new' &&
+                   String(m.from_id) !== String(currentUser.accountNumber) &&
+                   (m.to_id === 'council' || 
+                    String(m.to_id) === String(currentUser.accountNumber) ||
+                    String(m.to_id) === String(currentUser.memberId));
+        }).length;
+        
+        var badge = document.getElementById('badge-' + tab);
+        if (badge) {
+            if (unread > 0) {
+                badge.textContent = unread;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+    });
+}
+
+// ============================================================
+// API (برای بعد)
+// ============================================================
+function sendToAPI(msg) {
+    if (!API_URL) return;
+    
+    fetch(API_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'sendMessage', message: msg })
+    }).then(function() {
+        console.log('✅ پیام به API ارسال شد');
+    }).catch(function(err) {
+        console.error('❌ خطا در ارسال به API:', err);
+    });
+}
+
+// ============================================================
+// توست
+// ============================================================
+function showToast(text, type) {
+    var toast = document.getElementById('toast');
+    document.getElementById('toastText').textContent = text;
+    toast.className = 'toast' + (type === 'error' ? ' error' : '') + ' show';
+    
+    setTimeout(function() {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// ============================================================
+// در معرض عموم
+// ============================================================
+window.switchTab = switchTab;
+window.toggleSearch = toggleSearch;
+window.filterMessages = filterMessages;
+window.loadMessages = loadMessages;
+window.openComposeModal = openComposeModal;
+window.closeComposeModal = closeComposeModal;
+window.openMessage = openMessage;
+window.closeViewModal = closeViewModal;
+window.openReplyModal = openReplyModal;
+window.closeReplyModal = closeReplyModal;
+window.sendMessage = sendMessage;
+window.sendReply = sendReply;
+window.deleteMessage = deleteMessage;
+
+console.log('✅ پیام‌رسان آماده است');
+</script>
+</body>
+</html>
