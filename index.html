@@ -885,7 +885,7 @@
 
         setTimeout(function() {
             var __waitAttempts = 0;
-            var __maxWait = 60;
+            var __maxWait = 300;
 
             console.log('⏳ شروع لود data.xlsx در پس‌زمینه...');
             var bgStart = Date.now();
@@ -989,7 +989,7 @@
                         });
                     }
 
-                    if (members.length <= 1 && __waitAttempts < __maxWait) {
+                    if (members.length < 10 && __waitAttempts < __maxWait) {
                         console.log('⏳ صبر برای members کامل (' + members.length + ') - تلاش ' + __waitAttempts);
                         return;
                     }
