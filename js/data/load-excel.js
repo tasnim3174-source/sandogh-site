@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - بارگذاری داده از اکسل
-   نسخه: 2.0
+   نسخه: 2.1 (با کش بهینه sessionStorage)
    ============================================================ */
 
 // ============================================================
@@ -45,19 +45,6 @@ function clearUsersCache() {
     try {
         localStorage.removeItem('sandogh_users_cache');
     } catch (e) {}
-}
-
-function getMainDataFromCache() {
-    try {
-        const cached = localStorage.getItem('sandogh_data_v2');
-        const cachedTime = localStorage.getItem('sandogh_data_time_v2');
-        if (!cached || !cachedTime) return null;
-        const age = Date.now() - parseInt(cachedTime);
-        if (age > 60 * 60 * 1000) return null;
-        return JSON.parse(cached);
-    } catch (e) {
-        return null;
-    }
 }
 
 // ============================================================
@@ -440,7 +427,7 @@ async function loadMainData() {
 }
 
 // ============================================================
-// بارگذاری با کش
+// بارگذاری با کش (sessionStorage - حجم بیشتر + پاک خودکار)
 // ============================================================
 async function loadMainDataWithCache(forceRefresh = false) {
     const CACHE_KEY = 'sandogh_data_v2';
@@ -458,20 +445,23 @@ async function loadMainDataWithCache(forceRefresh = false) {
                 }
             }
         } catch (e) { 
-            sessionStorage.removeItem(CACHE_KEY); 
-            sessionStorage.removeItem(CACHE_TIME_KEY); 
+            try {
+                sessionStorage.removeItem(CACHE_KEY); 
+                sessionStorage.removeItem(CACHE_TIME_KEY); 
+            } catch(err) {}
         }
     }
     
     console.log('📥 داده از گیت‌هاب دانلود می‌شود...');
     const data = await loadMainData();
     
+    // ✅ تلاش برای کش، ولی اگه خطا داد، ادامه بده (کرش نکن)
     try {
         sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
         sessionStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
         console.log('💾 داده در sessionStorage ذخیره شد');
     } catch (e) {
-        console.warn('⚠️ خطا در ذخیره:', e.message);
+        console.warn('⚠️ کش نشد (حجم بزرگ)، ولی داده لود شد:', e.message);
     }
     
     return data;
@@ -483,8 +473,13 @@ async function loadMainDataWithCache(forceRefresh = false) {
 async function forceUpdateData() {
     if (!currentUser) return;
     try {
-        localStorage.removeItem('sandogh_data_v2');
-        localStorage.removeItem('sandogh_data_time_v2');
+        try {
+            localStorage.removeItem('sandogh_data_v2');
+            localStorage.removeItem('sandogh_data_time_v2');
+            sessionStorage.removeItem('sandogh_data_v2');
+            sessionStorage.removeItem('sandogh_data_time_v2');
+        } catch(e) {}
+        
         const data = await loadMainDataWithCache(true);
         members = data.members;
         transactions = data.transactions || [];
@@ -497,7 +492,10 @@ async function forceUpdateData() {
         });
         members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
 
-        localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
+        try {
+            localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
+        } catch(e) {}
+        
         if (currentPage) renderPage(currentPage);
         showToast({ type: 'success', title: 'بروزرسانی موفق', message: 'اطلاعات به‌روز شد.' });
     } catch (e) {
@@ -554,19 +552,13 @@ async function parseOneExcelFromAppsScript(url) {
         return { members: [], transactions: [], users: [] };
     }
 }
+
 /* ============================================================
    🟢 Lazy Data Loading - بارگذاری تنبل داده‌های بخش‌ها
-   این بخش به انتهای فایل load-excel.js اضافه شود
    ============================================================ */
 
-// کش داده‌های تنبل
 var _lazyDataCache = {};
 
-/**
- * بارگذاری داده یک بخش به صورت تنبل
- * @param {string} sectionName - نام بخش
- * @returns {Promise<any>} داده‌های بخش
- */
 async function loadLazyData(sectionName) {
     if (_lazyDataCache[sectionName]) {
         console.log('📦 Lazy data from cache:', sectionName);
@@ -596,8 +588,6 @@ async function loadLazyData(sectionName) {
     }
 
     try {
-        // ⚠️ از تابع موجود در فایل خودت استفاده کن
-        // اگر اسم تابع فرق داره، این خط رو عوض کن
         var data = null;
         if (typeof readExcelFile === 'function') {
             data = await readExcelFile(fileName);
@@ -624,9 +614,6 @@ async function loadLazyData(sectionName) {
     }
 }
 
-/**
- * پاک کردن کش داده تنبل
- */
 function invalidateLazyData(sectionName) {
     if (sectionName) {
         delete _lazyDataCache[sectionName];
@@ -636,7 +623,6 @@ function invalidateLazyData(sectionName) {
     console.log('🗑️ Lazy data cache invalidated:', sectionName || 'all');
 }
 
-// در معرض عموم
 window.DataLoader = {
     loadLazyData: loadLazyData,
     invalidateLazyData: invalidateLazyData
