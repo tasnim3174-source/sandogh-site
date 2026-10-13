@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نصب برنامه صندوق اتحاد</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f59e0b">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Tahoma, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container { max-width: 500px; width: 100%; text-align: center; }
+        .logo { font-size: 5rem; margin-bottom: 20px; animation: bounce 2s infinite; }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #ffc94d, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { color: #9ca3af; margin-bottom: 30px; line-height: 1.7; font-size: 1rem; }
+        
+        .option-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 16px;
+            text-align: right;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+        .option-card:hover { transform: translateY(-4px); }
+        .option-card.pwa { border-color: rgba(16,185,129,0.4); }
+        .option-card.pwa:hover { border-color: rgba(16,185,129,0.8); }
+        .option-card.apk { border-color: rgba(59,130,246,0.4); }
+        .option-card.apk:hover { border-color: rgba(59,130,246,0.8); }
+        
+        .option-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .option-icon { font-size: 2.5rem; flex-shrink: 0; }
+        .option-title { font-size: 1.15rem; font-weight: 900; }
+        .option-title.pwa { color: #10b981; }
+        .option-title.apk { color: #3b82f6; }
+        .option-desc {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            line-height: 1.8;
+            margin-bottom: 14px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 99px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            margin-right: 6px;
+        }
+        .badge.pwa { background: rgba(16,185,129,0.2); color: #10b981; }
+        .badge.apk { background: rgba(59,130,246,0.2); color: #3b82f6; }
+        
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+        .action-btn:active { transform: scale(0.97); }
+        .action-btn.pwa {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(16,185,129,0.4);
+        }
+        .action-btn.apk {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+        }
+        
+        .ios-guide {
+            display: none;
+            margin-top: 12px;
+            padding: 14px;
+            background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            text-align: right;
+            line-height: 1.9;
+        }
+        .ios-guide strong { color: #f59e0b; display: block; margin-bottom: 6px; }
+        
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #6b7280;
+            line-height: 1.7;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        .back-link:hover {
+            color: #f59e0b;
+            border-color: rgba(245,158,11,0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">📲</div>
+    <h1>صندوق اتحاد</h1>
+    <p class="subtitle">برای نصب برنامه، یکی از دو روش زیر رو انتخاب کن</p>
+    
+    <!-- گزینه PWA -->
+    <div class="option-card pwa" id="pwaCard">
+        <div class="option-header">
+            <span class="option-icon">⚡</span>
+            <div>
+                <div class="option-title pwa">
+                    نصب سریع
+                    <span class="badge pwa">پیشنهادی</span>
+                </div>
+            </div>
+        </div>
+        <div class="option-desc">
+            ✅ بدون دانلود<br>
+            ✅ آپدیت خودکار<br>
+            ✅ نصب با یه کلیک<br>
+            ✅ کارکرد آفلاین
+        </div>
+        <button class="action-btn pwa" id="pwaBtn">
+            <span style="font-size:1.2rem;">📲</span>
+            نصب سریع
+        </button>
+        <div class="ios-guide" id="iosGuide">
+            <strong>📱 راهنمای نصب روی آیفون:</strong>
+            ۱. روی دکمه <b>اشتراک‌گذاری</b> (⬆️ مربع با فلش) پایین صفحه ضربه بزن<br>
+            ۲. گزینه <b>«Add to Home Screen»</b> رو انتخاب کن<br>
+            ۳. روی <b>«Add»</b> بزن تا نصب بشه ✅
+        </div>
+    </div>
+    
+    <!-- گزینه APK -->
+    <div class="option-card apk">
+        <div class="option-header">
+            <span class="option-icon">📦</span>
+            <div>
+                <div class="option-title apk">
+                    دانلود فایل APK
+                    <span class="badge apk">اندروید</span>
+                </div>
+            </div>
+        </div>
+        <div class="option-desc">
+            ✅ فایل نصبی کامل<br>
+            ✅ نصب راحت‌تر روی اندروید<br>
+            ✅ بدون نیاز به مرورگر<br>
+            ✅ مستقل از سایت
+        </div>
+        <a href="app.apk" download class="action-btn apk">
+            <span style="font-size:1.2rem;">⬇️</span>
+            دانلود APK
+        </a>
+    </div>
+    
+    <div class="footer-note">
+        💡 اگه با نصب سریع مشکل داشتی، فایل APK رو دانلود کن
+    </div>
+    
+    <a href="index.html" class="back-link">← بازگشت به برنامه</a>
+</div>
+
+<script>
+window.deferredPrompt = null;
+var isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+var isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
+                       || window.navigator.standalone === true;
+
+// اگه نصب شده، پیام بده
+if (isStandaloneMode) {
+    document.getElementById('pwaCard').style.display = 'none';
+}
+
+// رویداد beforeinstallprompt
+window.addEventListener('beforeinstallprompt', function(e) {
+    e.preventDefault();
+    window.deferredPrompt = e;
+});
+
+// دکمه نصب PWA
+document.getElementById('pwaBtn').addEventListener('click', async function() {
+    // iOS
+    if (isIOSDevice) {
+        document.getElementById('iosGuide').style.display = 'block';
+        return;
+    }
+    
+    // اندروید/دسکتاپ
+    if (!window.deferredPrompt) {
+        alert('برای نصب:\n\n۱. منوی مرورگر (سه نقطه) رو باز کن\n۲. گزینه «Install app» یا «افزودن به صفحه اصلی» رو انتخاب کن');
+        return;
+    }
+    
+    window.deferredPrompt.prompt();
+    var choice = await window.deferredPrompt.userChoice;
+    
+    if (choice.outcome === 'accepted') {
+        document.getElementById('pwaCard').style.display = 'none';
+    }
+    window.deferredPrompt = null;
+});
+
+// نمایش راهنما برای iOS
+if (isIOSDevice && !isStandaloneMode) {
+    var btn = document.getElementById('pwaBtn');
+    if (btn) btn.textContent = '📱 راهنمای نصب';
+}
+</script>
+
+</body>
+</html>
