@@ -332,13 +332,19 @@ function renderMenuPage(content) {
 
     // آیتم‌های عمومی
     publicItems.forEach(function(item) {
-        var blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
-        gridHtml += '<div class="grid-menu-item' + blinkClass + '" data-tab="' + item.tab + '" onclick="selectMenuItem(\'' + item.tab + '\')">' +
-            '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
-            '<i class="fas ' + item.icon + '"></i></div>' +
-            '<div class="menu-label">' + item.label + '</div>' +
-            '<span class="menu-badge">0</span></div>';
-    });
+    var blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
+    
+    // 🆕 چک کن اگه external بود، در تب جدید باز کن
+    var onclickAction = item.external 
+        ? 'window.open(\'guide.html\', \'_blank\')' 
+        : 'selectMenuItem(\'' + item.tab + '\')';
+    
+    gridHtml += '<div class="grid-menu-item' + blinkClass + '" data-tab="' + item.tab + '" onclick="' + onclickAction + '">' +
+        '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+        '<i class="fas ' + item.icon + '"></i></div>' +
+        '<div class="menu-label">' + item.label + '</div>' +
+        '<span class="menu-badge">0</span></div>';
+});
 
     // جداکننده سرویس‌های اسکریپتی
     gridHtml += '<div class="script-services-divider"><i class="fas fa-cloud"></i> خدمات آنلاین و متصل به اسکریپت <span>☁️ اطلاعات این بخش فقط هنگام ورود به آن بارگذاری می‌شود</span></div>';
