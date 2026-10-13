@@ -32,7 +32,7 @@
             background-clip: text;
         }
         .subtitle { color: #9ca3af; margin-bottom: 30px; line-height: 1.7; font-size: 1rem; }
-        
+
         .option-card {
             background: rgba(255,255,255,0.05);
             border: 2px solid rgba(255,255,255,0.1);
@@ -47,7 +47,7 @@
         .option-card.pwa:hover { border-color: rgba(16,185,129,0.8); }
         .option-card.apk { border-color: rgba(59,130,246,0.4); }
         .option-card.apk:hover { border-color: rgba(59,130,246,0.8); }
-        
+
         .option-header {
             display: flex;
             align-items: center;
@@ -74,7 +74,7 @@
         }
         .badge.pwa { background: rgba(16,185,129,0.2); color: #10b981; }
         .badge.apk { background: rgba(59,130,246,0.2); color: #3b82f6; }
-        
+
         .action-btn {
             width: 100%;
             padding: 14px;
@@ -102,7 +102,7 @@
             color: #fff;
             box-shadow: 0 6px 20px rgba(59,130,246,0.4);
         }
-        
+
         .ios-guide {
             display: none;
             margin-top: 12px;
@@ -115,28 +115,32 @@
             line-height: 1.9;
         }
         .ios-guide strong { color: #f59e0b; display: block; margin-bottom: 6px; }
-        
+
         .footer-note {
             margin-top: 20px;
             font-size: 0.8rem;
             color: #6b7280;
             line-height: 1.7;
         }
-        
+
         .back-link {
             display: inline-block;
             margin-top: 20px;
             color: #9ca3af;
             text-decoration: none;
             font-size: 0.9rem;
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: 1px solid rgba(255,255,255,0.15);
             border-radius: 10px;
             transition: all 0.3s;
+            background: transparent;
+            font-family: inherit;
+            cursor: pointer;
         }
         .back-link:hover {
             color: #f59e0b;
             border-color: rgba(245,158,11,0.4);
+            background: rgba(245,158,11,0.05);
         }
     </style>
 </head>
@@ -146,7 +150,7 @@
     <div class="logo">📲</div>
     <h1>صندوق اتحاد</h1>
     <p class="subtitle">برای نصب برنامه، یکی از دو روش زیر رو انتخاب کن</p>
-    
+
     <!-- گزینه PWA -->
     <div class="option-card pwa" id="pwaCard">
         <div class="option-header">
@@ -166,16 +170,16 @@
         </div>
         <button class="action-btn pwa" id="pwaBtn">
             <span style="font-size:1.2rem;">📲</span>
-            نصب سریع
+            <span id="pwaBtnText">نصب سریع</span>
         </button>
-        <div class="ios-guide" id="iosGuide">
+        <div class="ios-guide" id="iosGuide" style="display:none;">
             <strong>📱 راهنمای نصب روی آیفون:</strong>
             ۱. روی دکمه <b>اشتراک‌گذاری</b> (⬆️ مربع با فلش) پایین صفحه ضربه بزن<br>
             ۲. گزینه <b>«Add to Home Screen»</b> رو انتخاب کن<br>
             ۳. روی <b>«Add»</b> بزن تا نصب بشه ✅
         </div>
     </div>
-    
+
     <!-- گزینه APK -->
     <div class="option-card apk">
         <div class="option-header">
@@ -198,70 +202,113 @@
             دانلود APK
         </a>
     </div>
-    
+
     <div class="footer-note">
         💡 اگه با نصب سریع مشکل داشتی، فایل APK رو دانلود کن
     </div>
-    
-    <button onclick="goBack()" class="back-link" style="background:transparent; border:1px solid rgba(255,255,255,0.15); cursor:pointer; font-family:inherit; font-size:0.9rem; color:#9ca3af; padding:8px 16px; border-radius:10px;">✕ بستن و بازگشت</button>
+
+    <button class="back-link" onclick="goBackToApp()">✕ بستن و بازگشت به برنامه</button>
 </div>
 
 <script>
+// ============================================================
+// تنظیمات اولیه
+// ============================================================
 window.deferredPrompt = null;
+
 var isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-var isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches 
+var isAndroidDevice = /Android/.test(navigator.userAgent);
+var isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
                        || window.navigator.standalone === true;
 
+// ============================================================
 // اگه نصب شده، پیام بده
+// ============================================================
 if (isStandaloneMode) {
-    document.getElementById('pwaCard').style.display = 'none';
+    var pwaCard = document.getElementById('pwaCard');
+    if (pwaCard) {
+        pwaCard.innerHTML = '<div style="text-align:center; padding:20px; color:#10b981; font-weight:800; font-size:1.1rem;">✅ برنامه قبلاً نصب شده</div>';
+    }
 }
 
-// رویداد beforeinstallprompt
+// ============================================================
+// رویداد beforeinstallprompt (اندروید/دسکتاپ)
+// ============================================================
 window.addEventListener('beforeinstallprompt', function(e) {
     e.preventDefault();
     window.deferredPrompt = e;
+    console.log('✅ beforeinstallprompt فعال شد');
 });
 
+// ============================================================
 // دکمه نصب PWA
-document.getElementById('pwaBtn').addEventListener('click', async function() {
-    // iOS
-    if (isIOSDevice) {
-        document.getElementById('iosGuide').style.display = 'block';
-        return;
-    }
-    
-    // اندروید/دسکتاپ
-    if (!window.deferredPrompt) {
-        alert('برای نصب:\n\n۱. منوی مرورگر (سه نقطه) رو باز کن\n۲. گزینه «Install app» یا «افزودن به صفحه اصلی» رو انتخاب کن');
-        return;
-    }
-    
-    window.deferredPrompt.prompt();
-    var choice = await window.deferredPrompt.userChoice;
-    
-    if (choice.outcome === 'accepted') {
-        document.getElementById('pwaCard').style.display = 'none';
-    }
-    window.deferredPrompt = null;
-});
-
-// نمایش راهنما برای iOS
-if (isIOSDevice && !isStandaloneMode) {
-    var btn = document.getElementById('pwaBtn');
-    if (btn) btn.textContent = '📱 راهنمای نصب';
-}
-</script>
-<script>
-    function goBack() {
-        // اگه از یه صفحه دیگه اومده
-        if (window.history.length > 1) {
-            window.history.back();
-        } else {
-            // مستقیم برو به منو
-            window.location.href = 'index.html';
+// ============================================================
+var pwaBtn = document.getElementById('pwaBtn');
+if (pwaBtn) {
+    pwaBtn.addEventListener('click', async function() {
+        // iOS - راهنما نشون بده
+        if (isIOSDevice) {
+            var guide = document.getElementById('iosGuide');
+            if (guide) guide.style.display = 'block';
+            return;
         }
+        
+        // اندروید/دسکتاپ - اگه deferredPrompt هست
+        if (window.deferredPrompt) {
+            window.deferredPrompt.prompt();
+            var choice = await window.deferredPrompt.userChoice;
+            
+            if (choice.outcome === 'accepted') {
+                console.log('✅ کاربر نصب رو قبول کرد');
+                var card = document.getElementById('pwaCard');
+                if (card) card.style.display = 'none';
+            } else {
+                console.log('❌ کاربر نصب رو رد کرد');
+            }
+            window.deferredPrompt = null;
+            return;
+        }
+        
+        // اگه deferredPrompt نیست (مرورگر پشتیبانی نمی‌کنه)
+        var msg = 'برای نصب برنامه:\n\n';
+        if (isAndroidDevice) {
+            msg += '۱. منوی مرورگر (سه نقطه) رو باز کن\n';
+            msg += '۲. گزینه «Install app» یا «Add to Home screen» رو انتخاب کن\n\n';
+            msg += 'یا از دکمه «دانلود APK» استفاده کن.';
+        } else {
+            msg += 'از دکمه «دانلود APK» استفاده کن.';
+        }
+        alert(msg);
+    });
+}
+
+// ============================================================
+// تشخیص iOS - تغییر متن دکمه
+// ============================================================
+if (isIOSDevice && !isStandaloneMode) {
+    var btnText = document.getElementById('pwaBtnText');
+    if (btnText) btnText.textContent = 'راهنمای نصب';
+}
+
+// ============================================================
+// دکمه بازگشت
+// ============================================================
+function goBackToApp() {
+    // اگه از یه صفحه‌ای اومده
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        // مستقیم برو به منو
+        window.location.href = 'index.html';
     }
+}
+
+// ============================================================
+// لاگ
+// ============================================================
+console.log('📱 دستگاه:', isIOSDevice ? 'iOS' : (isAndroidDevice ? 'Android' : 'Desktop'));
+console.log('📲 حالت نصب:', isStandaloneMode ? 'نصب شده ✅' : 'نصب نشده');
 </script>
+
 </body>
 </html>
