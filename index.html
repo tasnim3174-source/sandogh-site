@@ -1210,6 +1210,33 @@ window.sendPasswordChangeSms = sendPasswordChangeSms;
     #bottomNavDirect button.green {
         color: #10b981 !important;
     }
+           #bottomNavDirect button.green {
+        color: #10b981 !important;
+    }
+
+    /* ============================================================
+       کم کردن فاصله پایین محتوا
+       ============================================================ */
+    body,
+    html,
+    html body {
+        padding-bottom:60px !important;
+    }
+    
+    body > :last-child {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+    
+    /* برای موبایل - ارتفاع نوار پایین */
+    @media (max-width: 768px) {
+        body,
+        html,
+        html body {
+            padding-bottom: 75px !important;
+        }
+    }
+</style>
 </style>
 
 <div id="bottomNavDirect">
