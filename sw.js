@@ -1,5 +1,5 @@
 // sw.js
-const CACHE_NAME = 'sandogh-cache-v900';
+const CACHE_NAME = 'sandogh-cache-v950';
 const urlsToCache = [
   './',
   './index.html',
