@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>راهنمای استفاده از برنامه صندوق اتحاد</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 600px; margin: 0 auto; padding-bottom: 30px; }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #ffc94d, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+            font-weight: 900;
+        }
+        .subtitle {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+        }
+
+        /* تب‌ها */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.05);
+            padding: 5px;
+            border-radius: 50px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        .tab {
+            flex: 1;
+            padding: 10px 4px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.6);
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #ffc94d, #d97706);
+            color: #1a1a2e;
+            box-shadow: 0 4px 14px rgba(245,158,11,0.5);
+        }
+
+        .panel { display: none; animation: fadeIn 0.4s; }
+        .panel.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* کارت */
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 12px;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .step-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffc94d, #d97706);
+            color: #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .step-title {
+            font-size: 0.95rem;
+            font-weight: 900;
+            color: #ffc94d;
+        }
+
+        .step-text {
+            color: #d1d5db;
+            font-size: 0.85rem;
+            line-height: 1.9;
+            margin-bottom: 10px;
+        }
+        .step-text strong {
+            color: #ffc94d;
+        }
+
+        .tip-box {
+            background: rgba(139,92,246,0.1);
+            border-right: 4px solid #8b5cf6;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.78rem;
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-top: 10px;
+        }
+        .tip-box i { color: #8b5cf6; margin-left: 4px; }
+
+        .warn-box {
+            background: rgba(245,158,11,0.1);
+            border-right: 4px solid #f59e0b;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 0.78rem;
+            color: #d1d5db;
+            line-height: 1.7;
+            margin-top: 10px;
+        }
+        .warn-box i { color: #f59e0b; margin-left: 4px; }
+
+        /* تصویر شبیه‌سازی موبایل */
+        .phone-mockup {
+            width: 240px;
+            height: 460px;
+            margin: 0 auto 16px;
+            background: #0a0a15;
+            border-radius: 36px;
+            padding: 10px;
+            box-shadow: 0 0 0 3px #2a2a3e, 0 0 0 5px #1a1a2e, 0 20px 50px rgba(0,0,0,0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .phone-notch {
+            width: 90px;
+            height: 18px;
+            background: #0a0a15;
+            border-radius: 0 0 18px 18px;
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 28px;
+            position: relative;
+            overflow: hidden;
+            padding: 26px 10px 10px;
+        }
+
+        /* منوی پایین شبیه‌سازی */
+        .mock-bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #1a1a2e;
+            border-top: 2px solid #ffc94d;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            direction: rtl;
+        }
+        .mock-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.55rem;
+            color: #fff;
+            flex: 1;
+        }
+        .mock-nav-item i {
+            font-size: 1.1rem;
+        }
+        .mock-nav-item.gold i {
+            color: #ffc94d;
+            font-size: 1.4rem;
+        }
+        .mock-nav-item.green i {
+            color: #10b981;
+        }
+        .mock-nav-item.highlight {
+            animation: highlightPulse 1.5s infinite;
+            background: rgba(16,185,129,0.2);
+            border-radius: 12px;
+            padding: 4px;
+        }
+        .mock-nav-item.highlight i {
+            color: #10b981;
+        }
+        @keyframes highlightPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
+            50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+        }
+
+        /* منوی اصلی شبیه‌سازی */
+        .mock-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 8px;
+        }
+        .mock-menu-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px 4px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .mock-menu-card .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            margin: 0 auto 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        .mock-menu-card .label {
+            font-size: 0.5rem;
+            color: #1a1a2e;
+            font-weight: 800;
+            line-height: 1.3;
+        }
+        .mock-menu-card.target {
+            animation: targetPulse 1.5s infinite;
+            box-shadow: 0 0 0 3px #ffc94d;
+        }
+        @keyframes targetPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* فروشگاه شبیه‌سازی */
+        .mock-shop {
+            padding: 10px;
+        }
+        .mock-points {
+            background: linear-gradient(135deg, rgba(255,201,77,0.2), rgba(217,119,6,0.1));
+            border: 2px solid rgba(255,201,77,0.4);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .mock-points .label { font-size: 0.6rem; color: #9ca3af; }
+        .mock-points .value { font-size: 1.2rem; color: #ffc94d; font-weight: 900; }
+
+        .mock-shop-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 3px;
+            border-radius: 20px;
+        }
+        .mock-shop-tab {
+            flex: 1;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.55rem;
+            font-weight: 800;
+            color: rgba(255,255,255,0.5);
+            border-radius: 16px;
+        }
+        .mock-shop-tab.active {
+            background: linear-gradient(135deg, #6d5dd3, #5b4dc4);
+            color: #fff;
+        }
+
+        .mock-shop-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+        .mock-shop-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 8px 6px;
+            text-align: center;
+            color: #1a1a2e;
+        }
+        .mock-shop-item .icon { font-size: 1.3rem; margin-bottom: 4px; }
+        .mock-shop-item .name { font-size: 0.5rem; font-weight: 800; margin-bottom: 3px; line-height: 1.3; }
+        .mock-shop-item .price { font-size: 0.5rem; color: #f59e0b; font-weight: 900; }
+        .mock-shop-item .buy-btn {
+            background: #10b981;
+            color: #fff;
+            font-size: 0.5rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-top: 4px;
+            display: inline-block;
+            font-weight: 800;
+        }
+        .mock-shop-item.target {
+            animation: targetPulse 1.5s infinite;
+            box-shadow: 0 0 0 3px #ffc94d;
+        }
+
+        /* فرم ارسال پیام شبیه‌سازی */
+        .mock-form {
+            padding: 10px;
+        }
+        .mock-form-field {
+            background: rgba(255,255,255,0.06);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            color: #9ca3af;
+            font-size: 0.65rem;
+        }
+        .mock-form-field.target {
+            animation: targetPulse 1.5s infinite;
+            border-color: #8b5cf6;
+        }
+        .mock-form-field.filled {
+            color: #fff;
+            background: rgba(139,92,246,0.1);
+        }
+        .mock-send-btn {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            margin-top: 6px;
+        }
+        .mock-send-btn.target {
+            animation: targetPulse 1.5s infinite;
+        }
+        .mock-send-btn.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .replay-btn {
+            display: block;
+            margin: 14px auto 0;
+            padding: 9px 22px;
+            background: rgba(255,201,77,0.15);
+            color: #ffc94d;
+            border: 2px solid rgba(255,201,77,0.4);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        .replay-btn:hover { background: rgba(255,201,77,0.25); }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 14px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffc94d, #d97706);
+            border-radius: 99px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
+        .status-text {
+            text-align: center;
+            color: #ffc94d;
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            min-height: 22px;
+        }
+
+        .footer-note {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.7rem;
+            margin-top: 20px;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📚 راهنمای استفاده</h1>
+    <p class="subtitle">آموزش گام‌به‌گام برنامه صندوق اتحاد</p>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="install" onclick="switchTab('install')">📲 نصب</button>
+        <button class="tab" data-tab="message" onclick="switchTab('message')">💬 ارسال پیام</button>
+        <button class="tab" data-tab="shop" onclick="switchTab('shop')">🎁 امتیازات</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- تب ۱: نصب برنامه -->
+    <!-- ============================================================ -->
+    <div class="panel active" id="panel-install">
+        <div class="progress-bar"><div class="progress-fill" id="installProgress"></div></div>
+        <div class="status-text" id="installStatus">آماده‌سازی...</div>
+
+        <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="installScreen">
+                <!-- منوی پایین -->
+                <div class="mock-bottom-nav" style="bottom:0;">
+                    <div class="mock-nav-item">
+                        <i class="fas fa-home"></i>
+                        <span>خانه</span>
+                    </div>
+                    <div class="mock-nav-item">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>خروج</span>
+                    </div>
+                    <div class="mock-nav-item gold">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="mock-nav-item">
+                        <i class="fas fa-sliders-h"></i>
+                        <span>تنظیمات</span>
+                    </div>
+                    <div class="mock-nav-item green highlight" id="installBtnHighlight">
+                        <i class="fas fa-download"></i>
+                        <span>نصب برنامه</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۱</div>
+                <div class="step-title">پیدا کردن دکمه نصب</div>
+            </div>
+            <div class="step-text">
+                در <strong>پایین صفحه برنامه</strong>، روی دکمه <strong>«📲 نصب برنامه»</strong> (سبز رنگ در پایین راست) کلیک کنید.
+            </div>
+            <div class="tip-box">
+                <i class="fas fa-info-circle"></i>
+                این دکمه در نوار پایین، کنار «خانه» و «تنظیمات» قرار دارد.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۲</div>
+                <div class="step-title">انتخاب روش نصب</div>
+            </div>
+            <div class="step-text">
+                پس از کلیک، به صفحه نصب می‌روید. دو گزینه دارید:
+                <br><br>
+                <strong>⚡ نصب سریع (پیشنهادی)</strong> — بدون دانلود<br>
+                <strong>📦 دانلود فایل APK</strong> — برای اندروید
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۳</div>
+                <div class="step-title">تأیید نصب</div>
+            </div>
+            <div class="step-text">
+                روی <strong>«نصب سریع»</strong> بزنید. مرورگر پنجره‌ای باز می‌کند که از شما می‌پرسد آیا می‌خواهید نصب کنید. روی <strong>«نصب»</strong> کلیک کنید.
+            </div>
+            <div class="warn-box">
+                <i class="fas fa-lightbulb"></i>
+                در صورت نبود این پنجره، از منوی مرورگر (سه‌نقطه بالا) گزینه «Install app» یا «افزودن به صفحه اصلی» را انتخاب کنید.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">✓</div>
+                <div class="step-title">نصب کامل شد!</div>
+            </div>
+            <div class="step-text">
+                حالا آیکون <strong>صندوق اتحاد</strong> روی صفحه اصلی گوشی شماست. با کلیک روی آن، برنامه در حالت تمام‌صفحه باز می‌شود.
+            </div>
+        </div>
+
+        <button class="replay-btn" onclick="startInstallAnimation()">🔄 پخش مجدد انیمیشن</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- تب ۲: ارسال پیام به شورا -->
+    <!-- ============================================================ -->
+    <div class="panel" id="panel-message">
+        <div class="progress-bar"><div class="progress-fill" id="messageProgress"></div></div>
+        <div class="status-text" id="messageStatus">آماده‌سازی...</div>
+
+        <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="messageScreen">
+                <div style="padding: 5px 0;">
+                    <!-- منوی اصلی با کارت‌ها -->
+                    <div class="mock-menu-grid">
+                        <div class="mock-menu-card">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-gift"></i></div>
+                            <div class="label">پاداش روزانه</div>
+                        </div>
+                        <div class="mock-menu-card">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-star"></i></div>
+                            <div class="label">امتیازات و فروشگاه</div>
+                        </div>
+                        <div class="mock-menu-card">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#3b82f6,#2563eb);"><i class="fas fa-envelope"></i></div>
+                            <div class="label">ثبت صورتحساب</div>
+                        </div>
+                        <div class="mock-menu-card">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#ec4899,#db2777);"><i class="fas fa-chart-bar"></i></div>
+                            <div class="label">نظرسنجی</div>
+                        </div>
+                        <div class="mock-menu-card target" id="msgCardTarget">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);"><i class="fas fa-paper-plane"></i></div>
+                            <div class="label">ارسال پیام</div>
+                        </div>
+                        <div class="mock-menu-card">
+                            <div class="icon-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-trophy"></i></div>
+                            <div class="label">مسابقات</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mock-bottom-nav">
+                    <div class="mock-nav-item"><i class="fas fa-home"></i><span>خانه</span></div>
+                    <div class="mock-nav-item"><i class="fas fa-sign-out-alt"></i><span>خروج</span></div>
+                    <div class="mock-nav-item gold"><i class="fas fa-chart-pie"></i></div>
+                    <div class="mock-nav-item"><i class="fas fa-sliders-h"></i><span>تنظیمات</span></div>
+                    <div class="mock-nav-item green"><i class="fas fa-download"></i><span>نصب برنامه</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۱</div>
+                <div class="step-title">ورود به بخش ارسال پیام</div>
+            </div>
+            <div class="step-text">
+                از <strong>منوی اصلی</strong>، روی کارت بنفش <strong>«✉️ ارسال پیام»</strong> کلیک کنید.
+            </div>
+            <div class="tip-box">
+                <i class="fas fa-info-circle"></i>
+                این کارت در ردیف دوم منو قرار دارد، کنار «نظرسنجی» و «مسابقات».
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۲</div>
+                <div class="step-title">تکمیل فرم پیام</div>
+            </div>
+            <div class="step-text">
+                فرمی باز می‌شود با این فیلدها:
+                <br>• <strong>عنوان پیام</strong> — موضوع کلی
+                <br>• <strong>نوع پیام</strong> — پیشنهاد / شکایت / درخواست / سوال
+                <br>• <strong>متن پیام</strong> — توضیحات کامل
+                <br>• <strong>ارسال ناشناس</strong> — در صورت تمایل
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۳</div>
+                <div class="step-title">ارسال به شورا</div>
+            </div>
+            <div class="step-text">
+                روی دکمه بنفش <strong>«📤 ارسال پیام»</strong> کلیک کنید. پیام شما به‌طور مستقیم به شورای صندوق ارسال می‌شود.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">✓</div>
+                <div class="step-title">پیام ارسال شد</div>
+            </div>
+            <div class="step-text">
+                پس از ارسال، پیام <strong>«✅ با موفقیت ارسال شد»</strong> نمایش داده می‌شود. شورا در اسرع وقت پیام شما را بررسی می‌کند.
+            </div>
+            <div class="tip-box">
+                <i class="fas fa-gift"></i>
+                با ارسال هر پیام، <strong>+۵ امتیاز</strong> به شما تعلق می‌گیرد.
+            </div>
+        </div>
+
+        <button class="replay-btn" onclick="startMessageAnimation()">🔄 پخش مجدد انیمیشن</button>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- تب ۳: امتیازات و فروشگاه -->
+    <!-- ============================================================ -->
+    <div class="panel" id="panel-shop">
+        <div class="progress-bar"><div class="progress-fill" id="shopProgress"></div></div>
+        <div class="status-text" id="shopStatus">آماده‌سازی...</div>
+
+        <div class="phone-mockup">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="shopScreen">
+                <div class="mock-shop">
+                    <div class="mock-points">
+                        <div class="label">⭐ امتیاز شما</div>
+                        <div class="value">۱</div>
+                    </div>
+                    <div class="mock-shop-tabs">
+                        <div class="mock-shop-tab active">فروشگاه</div>
+                        <div class="mock-shop-tab">خریدها</div>
+                        <div class="mock-shop-tab">تاریخچه</div>
+                    </div>
+                    <div class="mock-shop-grid">
+                        <div class="mock-shop-item">
+                            <div class="icon">💳</div>
+                            <div class="name">شارژ سیم کارت</div>
+                            <div class="price">⭐ ۲۰۰ امتیاز</div>
+                            <div class="buy-btn">خرید</div>
+                        </div>
+                        <div class="mock-shop-item">
+                            <div class="icon">🌐</div>
+                            <div class="name">بسته اینترنت</div>
+                            <div class="price">⭐ ۳۰۰ امتیاز</div>
+                            <div class="buy-btn">خرید</div>
+                        </div>
+                        <div class="mock-shop-item">
+                            <div class="icon">📚</div>
+                            <div class="name">کتاب</div>
+                            <div class="price">⭐ ۵۰۰ امتیاز</div>
+                            <div class="buy-btn">خرید</div>
+                        </div>
+                        <div class="mock-shop-item">
+                            <div class="icon">🔬</div>
+                            <div class="name">میکروسکوپ</div>
+                            <div class="price">⭐ ۱۵۰۰ امتیاز</div>
+                            <div class="buy-btn">خرید</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mock-bottom-nav">
+                    <div class="mock-nav-item"><i class="fas fa-home"></i><span>خانه</span></div>
+                    <div class="mock-nav-item"><i class="fas fa-sign-out-alt"></i><span>خروج</span></div>
+                    <div class="mock-nav-item gold"><i class="fas fa-chart-pie"></i></div>
+                    <div class="mock-nav-item"><i class="fas fa-sliders-h"></i><span>تنظیمات</span></div>
+                    <div class="mock-nav-item green"><i class="fas fa-download"></i><span>نصب برنامه</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۱</div>
+                <div class="step-title">ورود به بخش امتیازات</div>
+            </div>
+            <div class="step-text">
+                از <strong>منوی اصلی</strong>، روی کارت نارنجی <strong>«⭐ امتیازات و فروشگاه»</strong> کلیک کنید.
+            </div>
+            <div class="tip-box">
+                <i class="fas fa-info-circle"></i>
+                این کارت در ردیف اول منو، کنار «پاداش روزانه» قرار دارد.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۲</div>
+                <div class="step-title">مشاهده امتیاز و لیست جوایز</div>
+            </div>
+            <div class="step-text">
+                بالای صفحه، <strong>امتیاز فعلی شما</strong> نمایش داده می‌شود. در پایین، <strong>لیست جوایز</strong> با قیمت هر کدام (به امتیاز) قرار دارد.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">۳</div>
+                <div class="step-title">انتخاب و خرید جایزه</div>
+            </div>
+            <div class="step-text">
+                روی دکمه <strong>«خرید»</strong> کنار جایزه مورد نظر کلیک کنید. اگر امتیاز کافی داشته باشید، خرید انجام می‌شود.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">✓</div>
+                <div class="step-title">پیگیری از تب تاریخچه</div>
+            </div>
+            <div class="step-text">
+                بعد از خرید، از تب <strong>«تاریخچه»</strong> می‌توانید تمام خریدها و کسب امتیازهای خود را مشاهده کنید.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="step-header">
+                <div class="step-num">💡</div>
+                <div class="step-title">چطور امتیاز بگیرم؟</div>
+            </div>
+            <div class="step-text" style="line-height:2.2;">
+                ✨ ورود روزانه: <strong>+۱۰ امتیاز</strong><br>
+                💰 پرداخت به موقع اقساط: <strong>+۵۰ امتیاز</strong><br>
+                📝 شرکت در نظرسنجی: <strong>+۲۰ امتیاز</strong><br>
+                📤 ارسال پیام به شورا: <strong>+۵ امتیاز</strong><br>
+                🎯 دعوت از دوستان: <strong>+۱۰۰ امتیاز</strong>
+            </div>
+        </div>
+
+        <button class="replay-btn" onclick="startShopAnimation()">🔄 پخش مجدد انیمیشن</button>
+    </div>
+
+    <div class="footer-note">
+        📞 در صورت بروز مشکل با پشتیبانی تماس بگیرید
+    </div>
+</div>
+
+<script>
+// ============================================================
+// تغییر تب
+// ============================================================
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+
+    document.querySelector('.tab[data-tab="' + tab + '"]').classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+
+    if (tab === 'install') startInstallAnimation();
+    else if (tab === 'message') startMessageAnimation();
+    else if (tab === 'shop') startShopAnimation();
+}
+
+// ============================================================
+// انیمیشن نصب
+// ============================================================
+var installTimeouts = [];
+function startInstallAnimation() {
+    installTimeouts.forEach(t => clearTimeout(t));
+    installTimeouts = [];
+
+    var highlight = document.getElementById('installBtnHighlight');
+    var progress = document.getElementById('installProgress');
+    var status = document.getElementById('installStatus');
+
+    if (highlight) highlight.classList.add('highlight');
+    if (progress) progress.style.width = '0%';
+
+    installTimeouts.push(setTimeout(() => {
+        status.textContent = '👆 روی دکمه «📲 نصب برنامه» در پایین صفحه بزن';
+        progress.style.width = '33%';
+    }, 500));
+
+    installTimeouts.push(setTimeout(() => {
+        status.textContent = '✅ دکمه پیدا شد! کلیک کن';
+        progress.style.width = '66%';
+    }, 2500));
+
+    installTimeouts.push(setTimeout(() => {
+        status.textContent = '🎉 حالا برو مرحله ۲ رو بخون';
+        progress.style.width = '100%';
+    }, 4500));
+}
+
+// ============================================================
+// انیمیشن ارسال پیام
+// ============================================================
+var messageTimeouts = [];
+function startMessageAnimation() {
+    messageTimeouts.forEach(t => clearTimeout(t));
+    messageTimeouts = [];
+
+    var target = document.getElementById('msgCardTarget');
+    var progress = document.getElementById('messageProgress');
+    var status = document.getElementById('messageStatus');
+
+    if (progress) progress.style.width = '0%';
+
+    messageTimeouts.push(setTimeout(() => {
+        status.textContent = '👆 روی کارت «✉️ ارسال پیام» بزن';
+        progress.style.width = '33%';
+    }, 500));
+
+    messageTimeouts.push(setTimeout(() => {
+        status.textContent = '✅ کارت ارسال پیام مشخص شد';
+        progress.style.width = '66%';
+    }, 2500));
+
+    messageTimeouts.push(setTimeout(() => {
+        status.textContent = '📝 فرم پیام رو پر کن و ارسال کن';
+        progress.style.width = '100%';
+    }, 4500));
+}
+
+// ============================================================
+// انیمیشن فروشگاه
+// ============================================================
+var shopTimeouts = [];
+function startShopAnimation() {
+    shopTimeouts.forEach(t => clearTimeout(t));
+    shopTimeouts = [];
+
+    var progress = document.getElementById('shopProgress');
+    var status = document.getElementById('shopStatus');
+
+    if (progress) progress.style.width = '0%';
+
+    shopTimeouts.push(setTimeout(() => {
+        status.textContent = '👆 روی کارت «⭐ امتیازات و فروشگاه» بزن';
+        progress.style.width = '33%';
+    }, 500));
+
+    shopTimeouts.push(setTimeout(() => {
+        status.textContent = '⭐ امتیازت رو ببین و جایزه انتخاب کن';
+        progress.style.width = '66%';
+    }, 2500));
+
+    shopTimeouts.push(setTimeout(() => {
+        status.textContent = '🎁 روی دکمه «خرید» بزن';
+        progress.style.width = '100%';
+    }, 4500));
+}
+
+// ============================================================
+// شروع خودکار
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(startInstallAnimation, 500);
+});
+
+console.log('✅ راهنمای صندوق اتحاد آماده است');
+</script>
+</body>
+</html>
