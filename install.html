@@ -203,7 +203,7 @@
         💡 اگه با نصب سریع مشکل داشتی، فایل APK رو دانلود کن
     </div>
     
-    <a href="index.html" class="back-link">← بازگشت به برنامه</a>
+    <button onclick="goBack()" class="back-link" style="background:transparent; border:1px solid rgba(255,255,255,0.15); cursor:pointer; font-family:inherit; font-size:0.9rem; color:#9ca3af; padding:8px 16px; border-radius:10px;">✕ بستن و بازگشت</button>
 </div>
 
 <script>
@@ -252,6 +252,16 @@ if (isIOSDevice && !isStandaloneMode) {
     if (btn) btn.textContent = '📱 راهنمای نصب';
 }
 </script>
-
+<script>
+    function goBack() {
+        // اگه از یه صفحه دیگه اومده
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // مستقیم برو به منو
+            window.location.href = 'index.html';
+        }
+    }
+</script>
 </body>
 </html>
