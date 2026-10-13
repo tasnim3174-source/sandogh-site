@@ -293,12 +293,13 @@ function renderMenuPage(content) {
     // آیتم‌های منو
     // ============================================================
     var publicItems = [
-        { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
-        { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
-        { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
-        { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
-        { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' }
-    ];
+    { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
+    { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
+    { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
+    { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
+    { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
+    { tab: 'guide', label: '📚 راهنمای استفاده', icon: 'fa-book', color: '#10b981', external: true }
+];
 
     var specialBoxItems = [
         { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4' },
