@@ -408,8 +408,8 @@ function renderDashboardContent() {
     // 🚀 دکمه شناور برای تب‌های صورتحساب
     // ============================================================
        return '<div id="dashboardStatementRoot">' +
-    installBannerHtml +              ← ✅ این خط اضافه شد
-    summaryBox +
+    installBannerHtml +             
+          summaryBox +
         tabHtml +
         '<div class="statement-panel" data-statement-panel="allowance">' +
             allowanceSummaryHtml +
