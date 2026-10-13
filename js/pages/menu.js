@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - منوی اصلی
-   نسخه: 3.1 - با Lazy Loading + تشخیص سریع شورا/سرپرست (Cache)
+   نسخه: 3.2 - با لینک به پیام‌رسان مستقل
    ============================================================ */
 
 // ============================================================
@@ -57,12 +57,9 @@ async function openScriptService(tabName) {
             else alert('⚠️ فرم ایمیل هنوز آماده نیست');
             break;
         case 'messaging':
-    if (typeof openMessagingMenu === 'function') {
-        openMessagingMenu();
-    } else {
-        alert('⚠️ پیام‌رسان هنوز آماده نیست');
-    }
-    break;
+            // 🆕 باز کردن پیام‌رسان مستقل در تب جدید
+            window.open('messages.html', '_blank');
+            break;
         case 'survey':
             if (typeof openSurvey === 'function') openSurvey();
             else alert('⚠️ نظرسنجی هنوز آماده نیست');
@@ -107,14 +104,14 @@ async function openTeenPiggy() {
 }
 
 // ============================================================
-// ✅ کش تشخیص دسترسی (برای جلوگیری از محاسبه مکرر - سریع‌تر)
+// ✅ کش تشخیص دسترسی
 // ============================================================
 var __accessCache = {
     memberId: null,
     isCouncil: false,
     isHead: false,
     timestamp: 0,
-    CACHE_TTL: 300000   // ۵ دقیقه اعتبار
+    CACHE_TTL: 300000
 };
 
 function checkAccessRights(member) {
@@ -122,7 +119,6 @@ function checkAccessRights(member) {
     
     if (!member) return result;
     
-    // چک کش
     if (__accessCache.memberId === member.id && 
         (Date.now() - __accessCache.timestamp) < __accessCache.CACHE_TTL) {
         result.isCouncil = __accessCache.isCouncil;
@@ -131,26 +127,22 @@ function checkAccessRights(member) {
         return result;
     }
     
-    // ✅ شورا: چک کردن isCouncil
     var ic = member.isCouncil;
     result.isCouncil = (ic === true || ic === 'true' || ic === 1 || ic === '1');
     
-    // ✅ سرپرست: چک کردن heh2
     var h = String(member.heh2 || '').trim();
-    // تبدیل "01" به "1"
     while (h.length > 1 && h.charAt(0) === '0') {
         h = h.substring(1);
     }
     result.isHead = (h === '1' || h === 'سرپرست' || h === 'بله' || h === 'آری' || 
                      h === 'سرپرست خانوار' || h === 'true' || h.indexOf('سرپرست') > -1);
     
-    // ذخیره در کش
     __accessCache.memberId = member.id;
     __accessCache.isCouncil = result.isCouncil;
     __accessCache.isHead = result.isHead;
     __accessCache.timestamp = Date.now();
     
-    console.log('🎯 تشخیص دسترسی (محاسبه جدید):', {
+    console.log('🎯 تشخیص دسترسی:', {
         memberId: member.id,
         isCouncil: result.isCouncil,
         isHead: result.isHead
@@ -163,9 +155,8 @@ function checkAccessRights(member) {
 // رندر صفحه منو
 // ============================================================
 function renderMenuPage(content) {
-    // چک: اگه members هنوز لود نشده، حالت انتظار
     if (!members || members.length === 0) {
-        console.log('⏳ members خالیه، حالت انتظار...');
+        console.log('⏳ members خالیه...');
         
         content.style.display = 'block';
         content.innerHTML = 
@@ -182,7 +173,7 @@ function renderMenuPage(content) {
             if (members && members.length > 0) {
                 clearInterval(window.__menuRetryInterval);
                 window.__menuRetryInterval = null;
-                console.log('✅ members آماده شد، منو دوباره ساخته می‌شه');
+                console.log('✅ members آماده شد');
                 renderMenuPage(content);
             }
         }, 500);
@@ -197,10 +188,8 @@ function renderMenuPage(content) {
         return;
     }
 
-    // پیدا کردن member فعلی
     var member = members.find(function(m) { return String(m.id) === String(currentUser.memberId); });
     
-    // اگه پیدا نشد، با accountNumber جستجو کن
     if (!member && currentUser.accountNumber) {
         member = members.find(function(m) {
             return String(m.accountNumber) === String(currentUser.accountNumber) ||
@@ -209,12 +198,11 @@ function renderMenuPage(content) {
     }
     
     if (!member) { 
-        console.warn('⚠️ member پیدا نشد. memberId:', currentUser.memberId, '| members:', members.length);
+        console.warn('⚠️ member پیدا نشد');
         content.style.display = 'block';
         content.innerHTML = 
             '<div style="text-align:center;padding:40px 20px;">' +
                 '<p style="font-size:1.1rem;color:#ef4444;font-weight:700;">⚠️ خطا در پیدا کردن اطلاعات کاربر</p>' +
-                '<p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px;">شناسه کاربر: ' + (currentUser.memberId || 'نامشخص') + '</p>' +
                 '<button onclick="location.reload()" style="margin-top:16px;padding:10px 24px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;">🔄 تلاش مجدد</button>' +
             '</div>';
         return; 
@@ -224,7 +212,6 @@ function renderMenuPage(content) {
     var greeting = (typeof getGreeting === 'function') ? getGreeting() : 'خوش آمدید';
     var t = (typeof getTodayShamsi === 'function') ? getTodayShamsi() : { y: 1400, m: 1, d: 1 };
 
-    // تولد
     var isUserBirthday = false;
     var birthDay = 0;
     if (member.birthDateShamsi) {
@@ -252,14 +239,10 @@ function renderMenuPage(content) {
         }
     }
 
-    // ============================================================
-    // ✅ تشخیص شورا و سرپرست (سریع با کش)
-    // ============================================================
     var access = checkAccessRights(member);
     var isCouncil = access.isCouncil;
     var isHead = access.isHead;
     
-    // fallback به توابع قدیمی (فقط اگه هنوز false و کش نبود)
     if (!access.fromCache) {
         if (!isCouncil && typeof hasCouncilOrAdminAccess === 'function') {
             try { 
@@ -273,33 +256,23 @@ function renderMenuPage(content) {
                 if (r2 === true || r2 === 'true' || r2 === 1) isHead = true;
             } catch(e) {}
         }
-        
-        // به‌روزرسانی کش با مقادیر نهایی
         __accessCache.isCouncil = isCouncil;
         __accessCache.isHead = isHead;
     }
     
-    // لاگ
-    console.log('🎯 تشخیص دسترسی:', {
-        'member.id': member.id,
-        'member.isCouncil': member.isCouncil,
-        'member.heh2': member.heh2,
-        'isCouncil نهایی': isCouncil,
-        'isHead نهایی': isHead,
-        'fromCache': access.fromCache
-    });
+    console.log('🎯 دسترسی نهایی:', { isCouncil: isCouncil, isHead: isHead });
 
     // ============================================================
     // آیتم‌های منو
     // ============================================================
     var publicItems = [
-    { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
-    { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
-    { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
-    { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
-    { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
-    { tab: 'guide', label: '📚 راهنمای استفاده', icon: 'fa-book', color: '#10b981', external: true }
-];
+        { tab: 'profile', label: 'اطلاعات شخصی شما', icon: 'fa-user-circle', color: '#8b5cf6' },
+        { tab: 'dashboard', label: 'صورتحساب', icon: 'fa-chart-line', color: '#667eea' },
+        { tab: 'requests', label: 'درخواست‌ها', icon: 'fa-file-signature', color: '#f97316' },
+        { tab: 'sms', label: 'سامانه‌های پیامکی', icon: 'fa-sms', color: '#14b8a6' },
+        { tab: 'support', label: 'پشتیبانی', icon: 'fa-headset', color: '#84cc16' },
+        { tab: 'guide', label: '📚 راهنمای استفاده', icon: 'fa-book', color: '#10b981', external: true }
+    ];
 
     var specialBoxItems = [
         { tab: 'myFund', label: 'صندوق من', icon: 'fa-gem', color: '#06b6d4' },
@@ -332,19 +305,19 @@ function renderMenuPage(content) {
 
     // آیتم‌های عمومی
     publicItems.forEach(function(item) {
-    var blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
-    
-    // 🆕 چک کن اگه external بود، در تب جدید باز کن
-    var onclickAction = item.external 
-        ? 'window.open(\'guide.html\', \'_blank\')' 
-        : 'selectMenuItem(\'' + item.tab + '\')';
-    
-    gridHtml += '<div class="grid-menu-item' + blinkClass + '" data-tab="' + item.tab + '" onclick="' + onclickAction + '">' +
-        '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
-        '<i class="fas ' + item.icon + '"></i></div>' +
-        '<div class="menu-label">' + item.label + '</div>' +
-        '<span class="menu-badge">0</span></div>';
-});
+        var blinkClass = item.tab === 'dashboard' ? ' blink-dashboard' : '';
+        
+        // 🆕 چک کن اگه external بود، در تب جدید باز کن
+        var onclickAction = item.external 
+            ? 'window.open(\'guide.html\', \'_blank\')' 
+            : 'selectMenuItem(\'' + item.tab + '\')';
+        
+        gridHtml += '<div class="grid-menu-item' + blinkClass + '" data-tab="' + item.tab + '" onclick="' + onclickAction + '">' +
+            '<div class="menu-icon" style="background:linear-gradient(135deg,' + item.color + ',' + item.color + 'dd);">' +
+            '<i class="fas ' + item.icon + '"></i></div>' +
+            '<div class="menu-label">' + item.label + '</div>' +
+            '<span class="menu-badge">0</span></div>';
+    });
 
     // جداکننده سرویس‌های اسکریپتی
     gridHtml += '<div class="script-services-divider"><i class="fas fa-cloud"></i> خدمات آنلاین و متصل به اسکریپت <span>☁️ اطلاعات این بخش فقط هنگام ورود به آن بارگذاری می‌شود</span></div>';
@@ -387,7 +360,7 @@ function renderMenuPage(content) {
             badgeHtml + '</div>';
     });
 
-    // بخش خانواده (فقط سرپرستان)
+    // بخش خانواده
     gridHtml += '<div class="family-divider" style="background:#ffffff;"><i class="fas fa-users"></i> بخش خانواده (فقط سرپرستان)</div>';
     familyItems.forEach(function(item) {
         var disabled = isHead ? '' : 'disabled';
@@ -498,13 +471,13 @@ window.openLadySection = openLadySection;
 window.openTeenPiggy = openTeenPiggy;
 window.renderMenuPage = renderMenuPage;
 window.checkAccessRights = checkAccessRights;
+
 // ============================================================
-// 🛠️ باز کردن پنل مدیر (با توکن امنیتی)
+// 🛠️ باز کردن پنل مدیر
 // ============================================================
 function openAdminPanel() {
     console.log('🛠️ باز کردن پنل مدیر...');
     
-    // چک کن عضو شوراست
     var member = members ? members.find(function(m) { 
         return String(m.id) === String(currentUser.memberId); 
     }) : null;
@@ -514,7 +487,6 @@ function openAdminPanel() {
         return;
     }
     
-    // ✅ توکن با پشتیبانی از Unicode (فارسی)
     var tokenData = {
         memberId: member.id,
         accountNumber: member.accountNumber,
@@ -525,10 +497,8 @@ function openAdminPanel() {
         timestamp: Date.now()
     };
     
-    // ✅ تبدیل به Base64 با پشتیبانی Unicode
     var token = btoa(unescape(encodeURIComponent(JSON.stringify(tokenData))));
     
-    // ذخیره در localStorage
     try {
         localStorage.setItem('admin_access_token', token);
         console.log('✅ توکن ساخته شد');
@@ -538,7 +508,6 @@ function openAdminPanel() {
         return;
     }
     
-    // باز کردن پنل
     window.open('admin-final.html', '_blank');
 }
 
