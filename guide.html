@@ -25,390 +25,299 @@
             margin-bottom: 6px;
             font-weight: 900;
         }
-        .subtitle {
-            text-align: center;
-            color: #9ca3af;
-            font-size: 0.85rem;
-            margin-bottom: 20px;
-        }
+        .subtitle { text-align: center; color: #9ca3af; font-size: 0.85rem; margin-bottom: 20px; }
 
         /* تب‌ها */
         .tabs {
-            display: flex;
-            gap: 4px;
-            background: rgba(255,255,255,0.05);
-            padding: 5px;
-            border-radius: 50px;
-            margin-bottom: 18px;
+            display: flex; gap: 4px; background: rgba(255,255,255,0.05);
+            padding: 5px; border-radius: 50px; margin-bottom: 18px;
             border: 1px solid rgba(255,255,255,0.1);
-            position: sticky;
-            top: 10px;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            position: sticky; top: 10px; z-index: 100; backdrop-filter: blur(10px);
         }
         .tab {
-            flex: 1;
-            padding: 10px 4px;
-            border: none;
-            background: transparent;
-            color: rgba(255,255,255,0.6);
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
+            flex: 1; padding: 10px 4px; border: none; background: transparent;
+            color: rgba(255,255,255,0.6); border-radius: 40px; font-size: 0.7rem;
+            font-weight: 800; cursor: pointer; transition: all 0.3s; font-family: inherit;
             white-space: nowrap;
         }
         .tab.active {
             background: linear-gradient(135deg, #ffc94d, #d97706);
-            color: #1a1a2e;
-            box-shadow: 0 4px 14px rgba(245,158,11,0.5);
+            color: #1a1a2e; box-shadow: 0 4px 14px rgba(245,158,11,0.5);
         }
 
         .panel { display: none; animation: fadeIn 0.4s; }
         .panel.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* کارت */
         .card {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 18px;
-            padding: 18px;
-            margin-bottom: 12px;
+            background: rgba(255,255,255,0.05); border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 18px; padding: 18px; margin-bottom: 12px;
         }
 
-        .step-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
+        .step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
         .step-num {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
+            width: 32px; height: 32px; border-radius: 50%;
             background: linear-gradient(135deg, #ffc94d, #d97706);
-            color: #1a1a2e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 0.9rem;
-            flex-shrink: 0;
+            color: #1a1a2e; display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 0.9rem; flex-shrink: 0;
         }
-        .step-title {
-            font-size: 0.95rem;
-            font-weight: 900;
-            color: #ffc94d;
-        }
-
-        .step-text {
-            color: #d1d5db;
-            font-size: 0.85rem;
-            line-height: 1.9;
-            margin-bottom: 10px;
-        }
-        .step-text strong {
-            color: #ffc94d;
-        }
+        .step-title { font-size: 0.95rem; font-weight: 900; color: #ffc94d; }
+        .step-text { color: #d1d5db; font-size: 0.85rem; line-height: 1.9; margin-bottom: 10px; }
+        .step-text strong { color: #ffc94d; }
 
         .tip-box {
-            background: rgba(139,92,246,0.1);
-            border-right: 4px solid #8b5cf6;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 0.78rem;
-            color: #d1d5db;
-            line-height: 1.7;
-            margin-top: 10px;
+            background: rgba(139,92,246,0.1); border-right: 4px solid #8b5cf6;
+            border-radius: 10px; padding: 10px 12px; font-size: 0.78rem;
+            color: #d1d5db; line-height: 1.7; margin-top: 10px;
         }
         .tip-box i { color: #8b5cf6; margin-left: 4px; }
 
         .warn-box {
-            background: rgba(245,158,11,0.1);
-            border-right: 4px solid #f59e0b;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 0.78rem;
-            color: #d1d5db;
-            line-height: 1.7;
-            margin-top: 10px;
+            background: rgba(245,158,11,0.1); border-right: 4px solid #f59e0b;
+            border-radius: 10px; padding: 10px 12px; font-size: 0.78rem;
+            color: #d1d5db; line-height: 1.7; margin-top: 10px;
         }
         .warn-box i { color: #f59e0b; margin-left: 4px; }
 
-        /* تصویر شبیه‌سازی موبایل */
+        /* موبایل */
         .phone-mockup {
-            width: 240px;
-            height: 460px;
-            margin: 0 auto 16px;
-            background: #0a0a15;
-            border-radius: 36px;
-            padding: 10px;
+            width: 250px; height: 480px; margin: 0 auto 16px;
+            background: #0a0a15; border-radius: 36px; padding: 10px;
             box-shadow: 0 0 0 3px #2a2a3e, 0 0 0 5px #1a1a2e, 0 20px 50px rgba(0,0,0,0.7);
-            position: relative;
-            overflow: hidden;
+            position: relative; overflow: hidden;
         }
         .phone-notch {
-            width: 90px;
-            height: 18px;
-            background: #0a0a15;
-            border-radius: 0 0 18px 18px;
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
+            width: 90px; height: 18px; background: #0a0a15; border-radius: 0 0 18px 18px;
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 10;
         }
         .phone-screen {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border-radius: 28px;
-            position: relative;
-            overflow: hidden;
-            padding: 26px 10px 10px;
+            border-radius: 28px; position: relative; overflow: hidden;
+            padding: 26px 8px 70px;
         }
 
-        /* منوی پایین شبیه‌سازی */
+        /* منوی پایین */
         .mock-bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background: #1a1a2e;
-            border-top: 2px solid #ffc94d;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
+            position: absolute; bottom: 0; left: 0; right: 0; height: 60px;
+            background: #1a1a2e; border-top: 2px solid #ffc94d;
+            display: flex; align-items: center; justify-content: space-around;
             direction: rtl;
         }
         .mock-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 3px;
-            font-size: 0.55rem;
-            color: #fff;
-            flex: 1;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            font-size: 0.55rem; color: #fff; flex: 1; padding: 4px 0;
+            border-radius: 8px; transition: all 0.3s;
         }
-        .mock-nav-item i {
-            font-size: 1.1rem;
+        .mock-nav-item i { font-size: 1.1rem; }
+        .mock-nav-item.gold i { color: #ffc94d; font-size: 1.4rem; }
+        .mock-nav-item.green i { color: #10b981; }
+
+        /* انیمیشن ضربه روی دکمه نصب */
+        .mock-nav-item.tap-install {
+            animation: tapPulse 1.5s ease-in-out infinite;
+            background: rgba(16,185,129,0.25);
         }
-        .mock-nav-item.gold i {
-            color: #ffc94d;
-            font-size: 1.4rem;
-        }
-        .mock-nav-item.green i {
+        .mock-nav-item.tap-install i {
             color: #10b981;
+            animation: iconBounce 1.5s ease-in-out infinite;
         }
-        .mock-nav-item.highlight {
-            animation: highlightPulse 1.5s infinite;
-            background: rgba(16,185,129,0.2);
-            border-radius: 12px;
-            padding: 4px;
+        @keyframes tapPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+            50% { transform: scale(1.08); box-shadow: 0 0 0 12px rgba(16,185,129,0); }
         }
-        .mock-nav-item.highlight i {
-            color: #10b981;
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
         }
-        @keyframes highlightPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.6); }
-            50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+
+        /* دایره کلیک (نشانگر انگشت) */
+        .tap-indicator {
+            position: absolute;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            border: 3px solid #fff;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 200;
+            box-shadow: 0 0 20px rgba(255,255,255,0.6);
+        }
+        .tap-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px; height: 12px;
+            background: #ffc94d;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffc94d;
+        }
+        .tap-indicator.active {
+            animation: tapAnim 2s ease-out forwards;
+        }
+        @keyframes tapAnim {
+            0% { opacity: 0; transform: scale(0.5); }
+            20% { opacity: 1; transform: scale(1); }
+            50% { transform: scale(1.3); box-shadow: 0 0 30px rgba(255,255,255,0.9); }
+            100% { opacity: 0; transform: scale(1.8); }
         }
 
         /* منوی اصلی شبیه‌سازی */
         .mock-menu-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding: 8px;
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 6px; padding: 4px;
         }
         .mock-menu-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 10px 4px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            background: #fff; border-radius: 10px; padding: 8px 3px;
+            text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s;
         }
         .mock-menu-card .icon-box {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            margin: 0 auto 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 1.1rem;
+            width: 34px; height: 34px; border-radius: 10px; margin: 0 auto 5px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1rem;
         }
         .mock-menu-card .label {
-            font-size: 0.5rem;
-            color: #1a1a2e;
-            font-weight: 800;
-            line-height: 1.3;
+            font-size: 0.45rem; color: #1a1a2e; font-weight: 800; line-height: 1.2;
         }
-        .mock-menu-card.target {
-            animation: targetPulse 1.5s infinite;
-            box-shadow: 0 0 0 3px #ffc94d;
+        .mock-menu-card.tap-target {
+            animation: cardPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 0 3px #ffc94d, 0 0 20px rgba(255,201,77,0.6);
+            transform: scale(1.05);
         }
-        @keyframes targetPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+        @keyframes cardPulse {
+            0%, 100% { transform: scale(1.05); }
+            50% { transform: scale(1.12); }
         }
 
         /* فروشگاه شبیه‌سازی */
-        .mock-shop {
-            padding: 10px;
-        }
+        .mock-shop { padding: 4px; }
         .mock-points {
             background: linear-gradient(135deg, rgba(255,201,77,0.2), rgba(217,119,6,0.1));
             border: 2px solid rgba(255,201,77,0.4);
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 10px;
+            border-radius: 10px; padding: 8px; text-align: center; margin-bottom: 8px;
         }
-        .mock-points .label { font-size: 0.6rem; color: #9ca3af; }
+        .mock-points .label { font-size: 0.55rem; color: #9ca3af; }
         .mock-points .value { font-size: 1.2rem; color: #ffc94d; font-weight: 900; }
 
         .mock-shop-tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 10px;
-            background: rgba(255,255,255,0.05);
-            padding: 3px;
-            border-radius: 20px;
+            display: flex; gap: 3px; margin-bottom: 8px;
+            background: rgba(255,255,255,0.05); padding: 3px; border-radius: 20px;
         }
         .mock-shop-tab {
-            flex: 1;
-            padding: 5px;
-            text-align: center;
-            font-size: 0.55rem;
-            font-weight: 800;
-            color: rgba(255,255,255,0.5);
-            border-radius: 16px;
+            flex: 1; padding: 5px; text-align: center; font-size: 0.5rem;
+            font-weight: 800; color: rgba(255,255,255,0.5); border-radius: 16px;
         }
         .mock-shop-tab.active {
-            background: linear-gradient(135deg, #6d5dd3, #5b4dc4);
-            color: #fff;
+            background: linear-gradient(135deg, #6d5dd3, #5b4dc4); color: #fff;
         }
 
-        .mock-shop-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-        }
+        .mock-shop-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
         .mock-shop-item {
-            background: #fff;
-            border-radius: 10px;
-            padding: 8px 6px;
-            text-align: center;
-            color: #1a1a2e;
+            background: #fff; border-radius: 8px; padding: 6px 4px;
+            text-align: center; color: #1a1a2e; transition: all 0.3s;
         }
-        .mock-shop-item .icon { font-size: 1.3rem; margin-bottom: 4px; }
-        .mock-shop-item .name { font-size: 0.5rem; font-weight: 800; margin-bottom: 3px; line-height: 1.3; }
-        .mock-shop-item .price { font-size: 0.5rem; color: #f59e0b; font-weight: 900; }
+        .mock-shop-item .icon { font-size: 1.1rem; margin-bottom: 3px; }
+        .mock-shop-item .name { font-size: 0.45rem; font-weight: 800; margin-bottom: 2px; line-height: 1.2; }
+        .mock-shop-item .price { font-size: 0.45rem; color: #f59e0b; font-weight: 900; }
         .mock-shop-item .buy-btn {
-            background: #10b981;
-            color: #fff;
-            font-size: 0.5rem;
-            padding: 3px 8px;
-            border-radius: 6px;
-            margin-top: 4px;
-            display: inline-block;
-            font-weight: 800;
+            background: #10b981; color: #fff; font-size: 0.45rem;
+            padding: 2px 6px; border-radius: 5px; margin-top: 3px;
+            display: inline-block; font-weight: 800;
         }
-        .mock-shop-item.target {
-            animation: targetPulse 1.5s infinite;
-            box-shadow: 0 0 0 3px #ffc94d;
+        .mock-shop-item.tap-target {
+            animation: cardPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 0 3px #ffc94d, 0 0 20px rgba(255,201,77,0.6);
+            transform: scale(1.08);
         }
 
-        /* فرم ارسال پیام شبیه‌سازی */
-        .mock-form {
-            padding: 10px;
-        }
+        /* فرم شبیه‌سازی */
+        .mock-form { padding: 4px; }
         .mock-form-field {
             background: rgba(255,255,255,0.06);
             border: 1.5px solid rgba(255,255,255,0.15);
-            border-radius: 10px;
-            padding: 8px 10px;
-            margin-bottom: 8px;
-            color: #9ca3af;
-            font-size: 0.65rem;
+            border-radius: 8px; padding: 7px 9px; margin-bottom: 6px;
+            color: #9ca3af; font-size: 0.6rem; transition: all 0.3s;
         }
-        .mock-form-field.target {
-            animation: targetPulse 1.5s infinite;
+        .mock-form-field.typing {
             border-color: #8b5cf6;
-        }
-        .mock-form-field.filled {
-            color: #fff;
             background: rgba(139,92,246,0.1);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(139,92,246,0.4);
+        }
+        .mock-form-field.typing::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+            color: #8b5cf6;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
         }
         .mock-send-btn {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: #fff;
-            text-align: center;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            margin-top: 6px;
+            color: #fff; text-align: center; padding: 9px;
+            border-radius: 8px; font-size: 0.65rem; font-weight: 800;
+            margin-top: 4px; transition: all 0.3s;
         }
-        .mock-send-btn.target {
-            animation: targetPulse 1.5s infinite;
+        .mock-send-btn.tap-target {
+            animation: cardPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 0 3px #ffc94d, 0 0 20px rgba(255,201,77,0.6);
         }
         .mock-send-btn.success {
             background: linear-gradient(135deg, #10b981, #059669);
+            animation: successFlash 1s;
+        }
+        @keyframes successFlash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(16,185,129,0.8); }
+            100% { transform: scale(1); }
+        }
+
+        /* پیام موفقیت */
+        .success-toast {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff; padding: 12px 20px; border-radius: 12px;
+            font-size: 0.7rem; font-weight: 800;
+            box-shadow: 0 10px 30px rgba(16,185,129,0.5);
+            z-index: 300; opacity: 0;
+            transition: all 0.4s;
+        }
+        .success-toast.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
         }
 
         .replay-btn {
-            display: block;
-            margin: 14px auto 0;
-            padding: 9px 22px;
-            background: rgba(255,201,77,0.15);
-            color: #ffc94d;
-            border: 2px solid rgba(255,201,77,0.4);
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            cursor: pointer;
-            font-family: inherit;
-            transition: all 0.3s;
+            display: block; margin: 14px auto 0; padding: 9px 22px;
+            background: rgba(255,201,77,0.15); color: #ffc94d;
+            border: 2px solid rgba(255,201,77,0.4); border-radius: 10px;
+            font-size: 0.8rem; font-weight: 800; cursor: pointer;
+            font-family: inherit; transition: all 0.3s;
         }
         .replay-btn:hover { background: rgba(255,201,77,0.25); }
 
         .progress-bar {
-            height: 4px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 99px;
-            overflow: hidden;
-            margin-bottom: 14px;
+            height: 4px; background: rgba(255,255,255,0.1);
+            border-radius: 99px; overflow: hidden; margin-bottom: 14px;
         }
         .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ffc94d, #d97706);
-            border-radius: 99px;
-            transition: width 0.5s ease;
-            width: 0%;
+            height: 100%; background: linear-gradient(90deg, #ffc94d, #d97706);
+            border-radius: 99px; transition: width 0.5s ease; width: 0%;
         }
 
         .status-text {
-            text-align: center;
-            color: #ffc94d;
-            font-size: 0.85rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            min-height: 22px;
+            text-align: center; color: #ffc94d; font-size: 0.85rem;
+            font-weight: 800; margin-bottom: 10px; min-height: 22px;
         }
 
         .footer-note {
-            text-align: center;
-            color: #6b7280;
-            font-size: 0.7rem;
-            margin-top: 20px;
-            line-height: 1.8;
+            text-align: center; color: #6b7280; font-size: 0.7rem;
+            margin-top: 20px; line-height: 1.8;
         }
     </style>
 </head>
@@ -433,29 +342,35 @@
 
         <div class="phone-mockup">
             <div class="phone-notch"></div>
-            <div class="phone-screen" id="installScreen">
-                <!-- منوی پایین -->
-                <div class="mock-bottom-nav" style="bottom:0;">
-                    <div class="mock-nav-item">
-                        <i class="fas fa-home"></i>
-                        <span>خانه</span>
-                    </div>
-                    <div class="mock-nav-item">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>خروج</span>
-                    </div>
-                    <div class="mock-nav-item gold">
-                        <i class="fas fa-chart-pie"></i>
-                    </div>
-                    <div class="mock-nav-item">
-                        <i class="fas fa-sliders-h"></i>
-                        <span>تنظیمات</span>
-                    </div>
-                    <div class="mock-nav-item green highlight" id="installBtnHighlight">
-                        <i class="fas fa-download"></i>
-                        <span>نصب برنامه</span>
-                    </div>
+            <div class="phone-screen">
+                <!-- نمایش مرورگر -->
+                <div style="display:flex; align-items:center; gap:5px; background:rgba(255,255,255,0.1); padding:5px 8px; border-radius:6px; margin-bottom:8px; font-size:0.5rem; color:#9ca3af;">
+                    <i class="fas fa-lock" style="color:#10b981;"></i>
+                    <span>sandogh-site.github.io</span>
                 </div>
+
+                <div style="text-align:center; padding-top:20px;">
+                    <div style="font-size:3rem; margin-bottom:8px;" id="appIconAnim">📲</div>
+                    <div style="color:#fff; font-size:0.75rem; font-weight:800;">صندوق اتحاد</div>
+                    <div style="color:#9ca3af; font-size:0.55rem; margin-top:3px;">سیستم حسابداری</div>
+                </div>
+
+                <!-- دکمه نصب بزرگ وسط -->
+                <div id="installBtnBig" style="position:absolute; bottom:75px; left:15px; right:15px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; padding:12px; border-radius:12px; text-align:center; font-size:0.75rem; font-weight:800; box-shadow:0 5px 20px rgba(16,185,129,0.5); transition:all 0.3s;">
+                    📲 نصب برنامه
+                </div>
+
+                <!-- منوی پایین -->
+                <div class="mock-bottom-nav">
+                    <div class="mock-nav-item"><i class="fas fa-home"></i><span>خانه</span></div>
+                    <div class="mock-nav-item"><i class="fas fa-sign-out-alt"></i><span>خروج</span></div>
+                    <div class="mock-nav-item gold"><i class="fas fa-chart-pie"></i></div>
+                    <div class="mock-nav-item"><i class="fas fa-sliders-h"></i><span>تنظیمات</span></div>
+                    <div class="mock-nav-item green" id="installNavBtn"><i class="fas fa-download"></i><span>نصب برنامه</span></div>
+                </div>
+
+                <!-- نشانگر انگشت -->
+                <div class="tap-indicator" id="installTapIndicator"></div>
             </div>
         </div>
 
@@ -492,11 +407,11 @@
                 <div class="step-title">تأیید نصب</div>
             </div>
             <div class="step-text">
-                روی <strong>«نصب سریع»</strong> بزنید. مرورگر پنجره‌ای باز می‌کند که از شما می‌پرسد آیا می‌خواهید نصب کنید. روی <strong>«نصب»</strong> کلیک کنید.
+                روی <strong>«نصب سریع»</strong> بزنید. مرورگر پنجره‌ای باز می‌کند. روی <strong>«نصب»</strong> کلیک کنید.
             </div>
             <div class="warn-box">
                 <i class="fas fa-lightbulb"></i>
-                در صورت نبود این پنجره، از منوی مرورگر (سه‌نقطه بالا) گزینه «Install app» یا «افزودن به صفحه اصلی» را انتخاب کنید.
+                در صورت نبود این پنجره، از منوی مرورگر گزینه «Install app» را انتخاب کنید.
             </div>
         </div>
 
@@ -506,7 +421,7 @@
                 <div class="step-title">نصب کامل شد!</div>
             </div>
             <div class="step-text">
-                حالا آیکون <strong>صندوق اتحاد</strong> روی صفحه اصلی گوشی شماست. با کلیک روی آن، برنامه در حالت تمام‌صفحه باز می‌شود.
+                حالا آیکون <strong>صندوق اتحاد</strong> روی صفحه اصلی گوشی شماست.
             </div>
         </div>
 
@@ -523,8 +438,8 @@
         <div class="phone-mockup">
             <div class="phone-notch"></div>
             <div class="phone-screen" id="messageScreen">
-                <div style="padding: 5px 0;">
-                    <!-- منوی اصلی با کارت‌ها -->
+                <!-- حالت ۱: منو -->
+                <div id="messageStep1">
                     <div class="mock-menu-grid">
                         <div class="mock-menu-card">
                             <div class="icon-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-gift"></i></div>
@@ -532,7 +447,7 @@
                         </div>
                         <div class="mock-menu-card">
                             <div class="icon-box" style="background:linear-gradient(135deg,#f59e0b,#d97706);"><i class="fas fa-star"></i></div>
-                            <div class="label">امتیازات و فروشگاه</div>
+                            <div class="label">امتیازات</div>
                         </div>
                         <div class="mock-menu-card">
                             <div class="icon-box" style="background:linear-gradient(135deg,#3b82f6,#2563eb);"><i class="fas fa-envelope"></i></div>
@@ -542,7 +457,7 @@
                             <div class="icon-box" style="background:linear-gradient(135deg,#ec4899,#db2777);"><i class="fas fa-chart-bar"></i></div>
                             <div class="label">نظرسنجی</div>
                         </div>
-                        <div class="mock-menu-card target" id="msgCardTarget">
+                        <div class="mock-menu-card" id="msgCardTarget">
                             <div class="icon-box" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);"><i class="fas fa-paper-plane"></i></div>
                             <div class="label">ارسال پیام</div>
                         </div>
@@ -552,6 +467,25 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- حالت ۲: فرم -->
+                <div id="messageStep2" style="display:none;">
+                    <div class="mock-form">
+                        <div style="color:#8b5cf6; font-size:0.7rem; font-weight:800; margin-bottom:8px; text-align:center;">
+                            <i class="fas fa-paper-plane"></i> ارسال پیام به شورا
+                        </div>
+                        <div class="mock-form-field" id="mockTitle">عنوان پیام...</div>
+                        <div class="mock-form-field" id="mockType">نوع: پیشنهاد</div>
+                        <div class="mock-form-field" id="mockText" style="min-height:60px;">متن پیام...</div>
+                        <div class="mock-send-btn" id="mockSendBtn">📤 ارسال پیام</div>
+                    </div>
+                </div>
+
+                <!-- پیام موفقیت -->
+                <div class="success-toast" id="msgSuccessToast">
+                    ✅ پیام ارسال شد!
+                </div>
+
                 <div class="mock-bottom-nav">
                     <div class="mock-nav-item"><i class="fas fa-home"></i><span>خانه</span></div>
                     <div class="mock-nav-item"><i class="fas fa-sign-out-alt"></i><span>خروج</span></div>
@@ -559,6 +493,8 @@
                     <div class="mock-nav-item"><i class="fas fa-sliders-h"></i><span>تنظیمات</span></div>
                     <div class="mock-nav-item green"><i class="fas fa-download"></i><span>نصب برنامه</span></div>
                 </div>
+
+                <div class="tap-indicator" id="messageTapIndicator"></div>
             </div>
         </div>
 
@@ -572,7 +508,7 @@
             </div>
             <div class="tip-box">
                 <i class="fas fa-info-circle"></i>
-                این کارت در ردیف دوم منو قرار دارد، کنار «نظرسنجی» و «مسابقات».
+                این کارت در ردیف دوم منو، کنار «نظرسنجی» و «مسابقات» قرار دارد.
             </div>
         </div>
 
@@ -596,7 +532,7 @@
                 <div class="step-title">ارسال به شورا</div>
             </div>
             <div class="step-text">
-                روی دکمه بنفش <strong>«📤 ارسال پیام»</strong> کلیک کنید. پیام شما به‌طور مستقیم به شورای صندوق ارسال می‌شود.
+                روی دکمه بنفش <strong>«📤 ارسال پیام»</strong> کلیک کنید.
             </div>
         </div>
 
@@ -606,7 +542,7 @@
                 <div class="step-title">پیام ارسال شد</div>
             </div>
             <div class="step-text">
-                پس از ارسال، پیام <strong>«✅ با موفقیت ارسال شد»</strong> نمایش داده می‌شود. شورا در اسرع وقت پیام شما را بررسی می‌کند.
+                پیام <strong>«✅ با موفقیت ارسال شد»</strong> نمایش داده می‌شود.
             </div>
             <div class="tip-box">
                 <i class="fas fa-gift"></i>
@@ -630,7 +566,7 @@
                 <div class="mock-shop">
                     <div class="mock-points">
                         <div class="label">⭐ امتیاز شما</div>
-                        <div class="value">۱</div>
+                        <div class="value" id="mockPointValue">۱</div>
                     </div>
                     <div class="mock-shop-tabs">
                         <div class="mock-shop-tab active">فروشگاه</div>
@@ -641,29 +577,34 @@
                         <div class="mock-shop-item">
                             <div class="icon">💳</div>
                             <div class="name">شارژ سیم کارت</div>
-                            <div class="price">⭐ ۲۰۰ امتیاز</div>
+                            <div class="price">⭐ ۲۰۰</div>
                             <div class="buy-btn">خرید</div>
                         </div>
                         <div class="mock-shop-item">
                             <div class="icon">🌐</div>
                             <div class="name">بسته اینترنت</div>
-                            <div class="price">⭐ ۳۰۰ امتیاز</div>
+                            <div class="price">⭐ ۳۰۰</div>
                             <div class="buy-btn">خرید</div>
                         </div>
-                        <div class="mock-shop-item">
+                        <div class="mock-shop-item" id="shopItemTarget">
                             <div class="icon">📚</div>
                             <div class="name">کتاب</div>
-                            <div class="price">⭐ ۵۰۰ امتیاز</div>
+                            <div class="price">⭐ ۵۰۰</div>
                             <div class="buy-btn">خرید</div>
                         </div>
                         <div class="mock-shop-item">
                             <div class="icon">🔬</div>
                             <div class="name">میکروسکوپ</div>
-                            <div class="price">⭐ ۱۵۰۰ امتیاز</div>
+                            <div class="price">⭐ ۱۵۰۰</div>
                             <div class="buy-btn">خرید</div>
                         </div>
                     </div>
                 </div>
+
+                <div class="success-toast" id="shopSuccessToast">
+                    ✅ خرید موفق!
+                </div>
+
                 <div class="mock-bottom-nav">
                     <div class="mock-nav-item"><i class="fas fa-home"></i><span>خانه</span></div>
                     <div class="mock-nav-item"><i class="fas fa-sign-out-alt"></i><span>خروج</span></div>
@@ -671,6 +612,8 @@
                     <div class="mock-nav-item"><i class="fas fa-sliders-h"></i><span>تنظیمات</span></div>
                     <div class="mock-nav-item green"><i class="fas fa-download"></i><span>نصب برنامه</span></div>
                 </div>
+
+                <div class="tap-indicator" id="shopTapIndicator"></div>
             </div>
         </div>
 
@@ -691,30 +634,30 @@
         <div class="card">
             <div class="step-header">
                 <div class="step-num">۲</div>
-                <div class="step-title">مشاهده امتیاز و لیست جوایز</div>
+                <div class="step-title">مشاهده امتیاز و جوایز</div>
             </div>
             <div class="step-text">
-                بالای صفحه، <strong>امتیاز فعلی شما</strong> نمایش داده می‌شود. در پایین، <strong>لیست جوایز</strong> با قیمت هر کدام (به امتیاز) قرار دارد.
+                بالای صفحه، <strong>امتیاز فعلی</strong> شما و در پایین، <strong>لیست جوایز</strong> با قیمت هر کدام (به امتیاز) نمایش داده می‌شود.
             </div>
         </div>
 
         <div class="card">
             <div class="step-header">
                 <div class="step-num">۳</div>
-                <div class="step-title">انتخاب و خرید جایزه</div>
+                <div class="step-title">خرید جایزه</div>
             </div>
             <div class="step-text">
-                روی دکمه <strong>«خرید»</strong> کنار جایزه مورد نظر کلیک کنید. اگر امتیاز کافی داشته باشید، خرید انجام می‌شود.
+                روی دکمه <strong>«خرید»</strong> کنار جایزه مورد نظر کلیک کنید. در صورت داشتن امتیاز کافی، خرید انجام می‌شود.
             </div>
         </div>
 
         <div class="card">
             <div class="step-header">
                 <div class="step-num">✓</div>
-                <div class="step-title">پیگیری از تب تاریخچه</div>
+                <div class="step-title">پیگیری خریدها</div>
             </div>
             <div class="step-text">
-                بعد از خرید، از تب <strong>«تاریخچه»</strong> می‌توانید تمام خریدها و کسب امتیازهای خود را مشاهده کنید.
+                از تب <strong>«تاریخچه»</strong> می‌توانید تمام خریدها و کسب امتیازهای خود را مشاهده کنید.
             </div>
         </div>
 
@@ -757,93 +700,202 @@ function switchTab(tab) {
 }
 
 // ============================================================
-// انیمیشن نصب
+// انیمیشن نصب (حلقه‌ای)
 // ============================================================
-var installTimeouts = [];
+var installLoop;
 function startInstallAnimation() {
-    installTimeouts.forEach(t => clearTimeout(t));
-    installTimeouts = [];
+    // پاک کردن حلقه قبلی
+    if (installLoop) clearInterval(installLoop);
 
-    var highlight = document.getElementById('installBtnHighlight');
+    var navBtn = document.getElementById('installNavBtn');
+    var tapIndicator = document.getElementById('installTapIndicator');
     var progress = document.getElementById('installProgress');
     var status = document.getElementById('installStatus');
+    var appIcon = document.getElementById('appIconAnim');
 
-    if (highlight) highlight.classList.add('highlight');
-    if (progress) progress.style.width = '0%';
+    var step = 0;
+    var steps = [
+        { progress: 20, status: '👀 دکمه «📲 نصب برنامه» رو پیدا کن', action: function() {
+            navBtn.classList.add('tap-install');
+        }},
+        { progress: 50, status: '👆 دکمه نصب رو بزن', action: function() {
+            // نمایش انگشت روی دکمه نصب
+            showTap(tapIndicator, 200, 420);
+        }},
+        { progress: 80, status: '✅ پنجره نصب باز شد', action: function() {
+            navBtn.classList.remove('tap-install');
+            navBtn.classList.add('tap-install');
+        }},
+        { progress: 100, status: '🎉 برنامه نصب شد!', action: function() {
+            appIcon.style.animation = 'iconBounce 0.5s ease 3';
+        }}
+    ];
 
-    installTimeouts.push(setTimeout(() => {
-        status.textContent = '👆 روی دکمه «📲 نصب برنامه» در پایین صفحه بزن';
-        progress.style.width = '33%';
-    }, 500));
+    function runStep() {
+        if (step >= steps.length) step = 0;
+        var s = steps[step];
+        progress.style.width = s.progress + '%';
+        status.textContent = s.status;
+        if (s.action) s.action();
+        step++;
+    }
 
-    installTimeouts.push(setTimeout(() => {
-        status.textContent = '✅ دکمه پیدا شد! کلیک کن';
-        progress.style.width = '66%';
-    }, 2500));
+    runStep();
+    installLoop = setInterval(runStep, 2000);
+}
 
-    installTimeouts.push(setTimeout(() => {
-        status.textContent = '🎉 حالا برو مرحله ۲ رو بخون';
-        progress.style.width = '100%';
-    }, 4500));
+function showTap(el, x, y) {
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.classList.remove('active');
+    void el.offsetWidth; // force reflow
+    el.classList.add('active');
 }
 
 // ============================================================
-// انیمیشن ارسال پیام
+// انیمیشن ارسال پیام (حلقه‌ای)
 // ============================================================
-var messageTimeouts = [];
+var messageLoop;
 function startMessageAnimation() {
-    messageTimeouts.forEach(t => clearTimeout(t));
-    messageTimeouts = [];
+    if (messageLoop) clearInterval(messageLoop);
 
-    var target = document.getElementById('msgCardTarget');
+    var cardTarget = document.getElementById('msgCardTarget');
+    var tapIndicator = document.getElementById('messageTapIndicator');
     var progress = document.getElementById('messageProgress');
     var status = document.getElementById('messageStatus');
+    var step1 = document.getElementById('messageStep1');
+    var step2 = document.getElementById('messageStep2');
+    var successToast = document.getElementById('msgSuccessToast');
 
-    if (progress) progress.style.width = '0%';
+    var mockTitle = document.getElementById('mockTitle');
+    var mockType = document.getElementById('mockType');
+    var mockText = document.getElementById('mockText');
+    var mockSendBtn = document.getElementById('mockSendBtn');
 
-    messageTimeouts.push(setTimeout(() => {
-        status.textContent = '👆 روی کارت «✉️ ارسال پیام» بزن';
-        progress.style.width = '33%';
-    }, 500));
+    // ریست
+    step1.style.display = 'block';
+    step2.style.display = 'none';
+    successToast.classList.remove('show');
+    mockTitle.textContent = 'عنوان پیام...';
+    mockTitle.classList.remove('typing');
+    mockType.textContent = 'نوع: پیشنهاد';
+    mockText.textContent = 'متن پیام...';
+    mockText.classList.remove('typing');
+    mockSendBtn.classList.remove('success', 'tap-target');
+    cardTarget.classList.remove('tap-target');
 
-    messageTimeouts.push(setTimeout(() => {
-        status.textContent = '✅ کارت ارسال پیام مشخص شد';
-        progress.style.width = '66%';
-    }, 2500));
+    var step = 0;
+    var steps = [
+        { progress: 10, status: '👆 روی کارت «✉️ ارسال پیام» بزن', action: function() {
+            cardTarget.classList.add('tap-target');
+            setTimeout(() => showTap(tapIndicator, 100, 200), 500);
+        }},
+        { progress: 30, status: '📝 فرم ارسال پیام باز شد', action: function() {
+            cardTarget.classList.remove('tap-target');
+            step1.style.display = 'none';
+            step2.style.display = 'block';
+        }},
+        { progress: 50, status: '✍️ عنوان پیام رو وارد کن', action: function() {
+            mockTitle.classList.add('typing');
+            mockTitle.textContent = 'درخواست وام';
+        }},
+        { progress: 70, status: '📋 متن پیام رو بنویس', action: function() {
+            mockTitle.classList.remove('typing');
+            mockText.classList.add('typing');
+            mockText.textContent = 'با سلام، درخواست وام دارم';
+        }},
+        { progress: 85, status: '📤 روی دکمه ارسال بزن', action: function() {
+            mockText.classList.remove('typing');
+            mockSendBtn.classList.add('tap-target');
+            showTap(tapIndicator, 100, 340);
+        }},
+        { progress: 100, status: '✅ پیام با موفقیت ارسال شد!', action: function() {
+            mockSendBtn.classList.remove('tap-target');
+            mockSendBtn.classList.add('success');
+            successToast.classList.add('show');
+        }}
+    ];
 
-    messageTimeouts.push(setTimeout(() => {
-        status.textContent = '📝 فرم پیام رو پر کن و ارسال کن';
-        progress.style.width = '100%';
-    }, 4500));
+    function runStep() {
+        if (step >= steps.length) {
+            // ریست برای حلقه بعدی
+            step = 0;
+            setTimeout(() => {
+                step1.style.display = 'block';
+                step2.style.display = 'none';
+                successToast.classList.remove('show');
+                mockTitle.textContent = 'عنوان پیام...';
+                mockTitle.classList.remove('typing');
+                mockText.textContent = 'متن پیام...';
+                mockText.classList.remove('typing');
+                mockSendBtn.classList.remove('success', 'tap-target');
+            }, 1000);
+        }
+        var s = steps[step];
+        progress.style.width = s.progress + '%';
+        status.textContent = s.status;
+        if (s.action) s.action();
+        step++;
+    }
+
+    runStep();
+    messageLoop = setInterval(runStep, 2200);
 }
 
 // ============================================================
-// انیمیشن فروشگاه
+// انیمیشن فروشگاه (حلقه‌ای)
 // ============================================================
-var shopTimeouts = [];
+var shopLoop;
 function startShopAnimation() {
-    shopTimeouts.forEach(t => clearTimeout(t));
-    shopTimeouts = [];
+    if (shopLoop) clearInterval(shopLoop);
 
+    var target = document.getElementById('shopItemTarget');
+    var tapIndicator = document.getElementById('shopTapIndicator');
     var progress = document.getElementById('shopProgress');
     var status = document.getElementById('shopStatus');
+    var successToast = document.getElementById('shopSuccessToast');
+    var pointValue = document.getElementById('mockPointValue');
 
-    if (progress) progress.style.width = '0%';
+    // ریست
+    successToast.classList.remove('show');
+    target.classList.remove('tap-target');
+    pointValue.textContent = '۱';
 
-    shopTimeouts.push(setTimeout(() => {
-        status.textContent = '👆 روی کارت «⭐ امتیازات و فروشگاه» بزن';
-        progress.style.width = '33%';
-    }, 500));
+    var step = 0;
+    var steps = [
+        { progress: 15, status: '⭐ امتیازت رو ببین: ۱ امتیاز', action: function() {
+            pointValue.style.transform = 'scale(1.2)';
+            setTimeout(() => pointValue.style.transform = 'scale(1)', 500);
+        }},
+        { progress: 40, status: '👀 جایزه مورد نظر رو انتخاب کن', action: function() {
+            target.classList.add('tap-target');
+        }},
+        { progress: 65, status: '👆 روی دکمه «خرید» بزن', action: function() {
+            showTap(tapIndicator, 160, 270);
+        }},
+        { progress: 100, status: '🎉 خرید با موفقیت انجام شد!', action: function() {
+            target.classList.remove('tap-target');
+            successToast.classList.add('show');
+        }}
+    ];
 
-    shopTimeouts.push(setTimeout(() => {
-        status.textContent = '⭐ امتیازت رو ببین و جایزه انتخاب کن';
-        progress.style.width = '66%';
-    }, 2500));
+    function runStep() {
+        if (step >= steps.length) {
+            step = 0;
+            setTimeout(() => {
+                successToast.classList.remove('show');
+                target.classList.remove('tap-target');
+            }, 1000);
+        }
+        var s = steps[step];
+        progress.style.width = s.progress + '%';
+        status.textContent = s.status;
+        if (s.action) s.action();
+        step++;
+    }
 
-    shopTimeouts.push(setTimeout(() => {
-        status.textContent = '🎁 روی دکمه «خرید» بزن';
-        progress.style.width = '100%';
-    }, 4500));
+    runStep();
+    shopLoop = setInterval(runStep, 2000);
 }
 
 // ============================================================
@@ -856,4 +908,4 @@ document.addEventListener('DOMContentLoaded', function() {
 console.log('✅ راهنمای صندوق اتحاد آماده است');
 </script>
 </body>
-</html>
+    </html>
