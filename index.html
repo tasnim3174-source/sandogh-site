@@ -1158,5 +1158,84 @@ function sendPasswordChangeSms() {
 
 window.sendPasswordChangeSms = sendPasswordChangeSms;
 </script>
+    <!-- نوار پایین - مستقیم در HTML -->
+<style>
+    #bottomNavDirect {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 60px !important;
+        background: #1a1a2e !important;
+        z-index: 9999999 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        border-top: 2px solid #ffc94d !important;
+        padding: 8px 0 !important;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.5) !important;
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        direction: rtl !important;
+    }
+    #bottomNavDirect button {
+        flex: 1 !important;
+        background: transparent !important;
+        border: none !important;
+        color: #fff !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 3px !important;
+        cursor: pointer !important;
+        font-family: inherit !important;
+        padding: 6px 0 !important;
+        height: 100% !important;
+        font-size: 0.7rem !important;
+    }
+    #bottomNavDirect button i {
+        font-size: 1.2rem !important;
+    }
+    #bottomNavDirect button.gold {
+        color: #ffc94d !important;
+    }
+    #bottomNavDirect button.gold i {
+        font-size: 1.6rem !important;
+    }
+    #bottomNavDirect button.green {
+        color: #10b981 !important;
+    }
+</style>
+
+<div id="bottomNavDirect">
+    <button onclick="goToMenu()">
+        <i class="fas fa-home"></i>
+        <span>خانه</span>
+    </button>
+    <button onclick="handleLogoutFromNav()">
+        <i class="fas fa-sign-out-alt"></i>
+        <span>خروج</span>
+    </button>
+    <button class="gold" onclick="showBottomNavModal()">
+        <i class="fas fa-chart-pie"></i>
+    </button>
+    <button onclick="openSettings()">
+        <i class="fas fa-sliders-h"></i>
+        <span>تنظیمات</span>
+    </button>
+    <button class="green" onclick="goToInstallPage()">
+        <i class="fas fa-download"></i>
+        <span>نصب برنامه</span>
+    </button>
+</div>
+
+<script>
+    function goToInstallPage() {
+        window.location.href = 'install.html';
+    }
+</script>
 </body>
 </html>
