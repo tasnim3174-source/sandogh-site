@@ -917,7 +917,7 @@ if (ringEl) ringEl.classList.add('okc');
                     document.getElementById('newLoader').classList.add('away');
                     document.getElementById('loaderOk').classList.remove('show');
                     
-                    // 🆕 چک کن آیا صفحه انتخاب کاربر لازمه؟
+                   // 🆕 چک کن آیا صفحه انتخاب کاربر لازمه؟
                     var __currentMember = null;
                     if (currentUser) {
                         __currentMember = members.find(function(m) {
@@ -933,8 +933,43 @@ if (ringEl) ringEl.classList.add('okc');
                         });
                     }
                     
+                    // ✅ اگه members هنوز کامل نیست (فقط ۱ عضو)، صبر کن
+                    if (members.length <= 1 && __waitAttempts < __maxWait) {
+                        console.log('⏳ صبر برای members کامل (' + members.length + ') - تلاش ' + __waitAttempts);
+                        return;
+                    }
+                    
+                    // ✅ اگه timeout شد و members هنوز کمه، از __fullMembers استفاده کن
+                    if (members.length <= 1 && window.__fullMembers && window.__fullMembers.length > 1) {
+                        console.log('🔄 استفاده از window.__fullMembers');
+                        members = window.__fullMembers;
+                        if (window.__fullTransactions) transactions = window.__fullTransactions;
+                        if (window.__fullUsers) users = window.__fullUsers;
+                        
+                        // دوباره محاسبه کن
+                        if (currentUser) {
+                            __currentMember = members.find(function(m) {
+                                return String(m.accountNumber) === String(currentUser.accountNumber) ||
+                                       String(m.id) === String(currentUser.memberId);
+                            });
+                        }
+                        __familyMembers = [];
+                        if (__currentMember && __currentMember.heh1) {
+                            __familyMembers = members.filter(function(m) {
+                                return String(m.heh1) === String(__currentMember.heh1);
+                            });
+                        }
+                    }
+                    
                     var __isHead = __currentMember && String(__currentMember.heh2) === '01';
                     var __hasFamilySelect = (typeof showFamilySelectScreen === 'function');
+                    
+                    console.log('🔍 چک شرط:');
+                    console.log('  members:', members.length);
+                    console.log('  __currentMember:', __currentMember ? __currentMember.firstName : 'نیست');
+                    console.log('  __familyMembers:', __familyMembers.length);
+                    console.log('  __isHead:', __isHead);
+                    console.log('  __hasFamilySelect:', __hasFamilySelect);
                     
                     if (__isHead && __familyMembers.length > 1 && __hasFamilySelect) {
                         // ✅ صفحه انتخاب کاربر
@@ -950,6 +985,7 @@ if (ringEl) ringEl.classList.add('okc');
                         showFamilySelectScreen();
                     } else {
                         // ✅ مستقیم برو منو
+                        console.log('➡️ مستقیم به منو (شرط برقرار نیست)');
                         const appContainer = document.getElementById('appContainer');
                         appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
                         renderPage('menu');
