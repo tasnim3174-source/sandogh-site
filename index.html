@@ -1215,5 +1215,122 @@ window.goToFamilySelect = function() {
 
     console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
     </script>
+    <script>
+// ============================================================
+// 🆕 سیستم خروج هوشمند (Override doLogout)
+// ============================================================
+(function() {
+    'use strict';
+    
+    // منتظر بمون تا همه اسکریپت‌ها لود بشن
+    function initLogoutOverride() {
+        if (typeof doLogout !== 'function') {
+            setTimeout(initLogoutOverride, 500);
+            return;
+        }
+        
+        console.log('🔧 Override کردن doLogout...');
+        
+        window.doLogout = function() {
+            console.log('🚪 doLogout (نسخه جدید)');
+            
+            var cm = null;
+            var fm = [];
+            try {
+                cm = members.find(function(m) {
+                    return String(m.accountNumber) === String(currentUser.accountNumber) ||
+                           String(m.id) === String(currentUser.memberId);
+                });
+                fm = cm && cm.heh1 ? members.filter(function(m) { return String(m.heh1) === String(cm.heh1); }) : [];
+            } catch(e) {}
+            
+            var hasFamily = fm.length > 1;
+            
+            var modalHtml = `
+                <div id="logoutChoiceModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:99999999;display:flex;align-items:center;justify-content:center;padding:20px;direction:rtl;">
+                    <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+                        <div style="font-size:3rem;margin-bottom:12px;">🚪</div>
+                        <h3 style="color:#ffc94d;font-size:1.2rem;font-weight:900;margin-bottom:8px;">می‌خوای کجا بری؟</h3>
+                        <p style="color:#9ca3af;font-size:0.85rem;margin-bottom:20px;">یکی از گزینه‌های زیر رو انتخاب کن</p>
+                        ${hasFamily ? `
+                        <button onclick="window.goToFamilySelectFromModal()" style="width:100%;padding:14px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border:none;border-radius:12px;font-size:0.95rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 15px rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+                            <i class="fas fa-users"></i>
+                            تغییر کاربر (اعضای خانواده)
+                        </button>
+                        ` : ''}
+                        <button onclick="window.realLogout()" style="width:100%;padding:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:12px;font-size:0.95rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 15px rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            خروج کامل از برنامه
+                        </button>
+                        <button onclick="document.getElementById('logoutChoiceModal').remove()" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit;">
+                            ❌ لغو
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            var oldModal = document.getElementById('logoutChoiceModal');
+            if (oldModal) oldModal.remove();
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        };
+        
+        window.goToFamilySelectFromModal = function() {
+            var modal = document.getElementById('logoutChoiceModal');
+            if (modal) modal.remove();
+            if (typeof window.goToFamilySelect === 'function') {
+                window.goToFamilySelect();
+            } else {
+                alert('❌ صفحه انتخاب کاربر در دسترس نیست');
+            }
+        };
+        
+        window.realLogout = function() {
+            var modal = document.getElementById('logoutChoiceModal');
+            if (modal) modal.remove();
+            
+            try { currentUser = null; } catch(e) {}
+            try { if (typeof autoUpdateInterval !== 'undefined' && autoUpdateInterval) { clearInterval(autoUpdateInterval); autoUpdateInterval = null; } } catch(e) {}
+            try { if (typeof stopKeepAlive === 'function') stopKeepAlive(); } catch(e) {}
+            try { if (typeof updateFloatingButtons === 'function') updateFloatingButtons(); } catch(e) {}
+            try { localStorage.removeItem('currentUser'); sessionStorage.removeItem('currentUser'); localStorage.removeItem('selectedMemberId'); } catch(e) {}
+            
+            location.reload();
+        };
+        
+        // 🆕 تابع goToFamilySelect (اگه نبود، اضافه کن)
+        if (typeof window.goToFamilySelect !== 'function') {
+            window.goToFamilySelect = function() {
+                if (typeof showFamilySelectScreen !== 'function') {
+                    alert('❌ صفحه انتخاب کاربر در دسترس نیست');
+                    return;
+                }
+                
+                var cm = members.find(function(m) {
+                    return String(m.accountNumber) === String(currentUser.accountNumber) ||
+                           String(m.id) === String(currentUser.memberId);
+                });
+                var fm = cm && cm.heh1 ? members.filter(function(m) { return String(m.heh1) === String(cm.heh1); }) : [];
+                
+                if (fm.length <= 1) {
+                    alert('ℹ️ اعضای دیگه‌ای در خانواده نیست.');
+                    return;
+                }
+                
+                var n1 = document.getElementById('bottomNavDirect');
+                if (n1) n1.style.display = 'none';
+                var n2 = document.getElementById('mainBottomNav');
+                if (n2) n2.style.display = 'none';
+                
+                showFamilySelectScreen();
+            };
+        }
+        
+        console.log('✅ doLogout override شد');
+    }
+    
+    // شروع
+    setTimeout(initLogoutOverride, 1000);
+})();
+</script>
 </body>
 </html>
