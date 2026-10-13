@@ -435,7 +435,6 @@ function renderDashboardContent() {
 
     return '<div id="dashboardStatementRoot">' +
         installBannerHtml +
-        changeUserHtml +
         summaryBox +
         tabHtml +
         '<div class="statement-panel" data-statement-panel="allowance">' +
