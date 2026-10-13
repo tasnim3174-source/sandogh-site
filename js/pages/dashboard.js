@@ -52,7 +52,7 @@ function renderDashboardContent() {
                 <div style="font-size:1rem; font-weight:900; color:#10b981; margin-bottom:2px;">نصب برنامه روی گوشی</div>
                 <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">دسترسی سریع‌تر با نصب روی صفحه اصلی</div>
             </div>
-            <a href="install.html" style="padding:10px 20px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border-radius:10px; font-size:0.9rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(16,185,129,0.4); flex-shrink:0; white-space:nowrap;">نصب کن ←</a>
+            <a href="install.html" style="padding:10px 20px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border-radius:10px; font-size:0.9rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(16,185,129,0.4); flex-shrink:0; white-space:nowrap;">نصب کن</a>
         </div>
     `;
     const summaryBox = `
