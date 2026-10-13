@@ -382,6 +382,32 @@
                     <p style="color:var(--text-secondary);font-size:0.65rem;">سطح امنیت شما با رمز عبور است.</p>
                 </div>
                 <button class="btn-small danger-btn" style="font-size:0.7rem;padding:6px 14px;min-height:30px;" onclick="closeSettings(); sendPasswordChangeSms()">📱 درخواست تغییر رمز پیامکی</button>
+          <!-- 🆕 بخش تغییر کاربر -->
+<div class="settings-section">
+    <div class="settings-subtitle"><i class="fas fa-users"></i> مدیریت کاربر</div>
+    
+    <div style="background:linear-gradient(135deg,rgba(139,92,246,0.08),rgba(124,58,237,0.05));padding:12px;border-radius:10px;margin-bottom:8px;border:1px solid rgba(139,92,246,0.2);">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <i class="fas fa-user-friends" style="color:#8b5cf6;font-size:1rem"></i>
+            <span style="font-size:0.85rem;color:var(--text-primary);font-weight:800;">تغییر کاربر</span>
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.7rem;margin-bottom:10px;">برو به صفحه انتخاب کاربر و با یکی دیگه از اعضای خانواده وارد شو</p>
+        <button onclick="closeSettings(); goToFamilySelect();" style="width:100%;padding:12px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border:none;border-radius:10px;font-size:0.9rem;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(139,92,246,0.4);">
+            <i class="fas fa-users"></i> تغییر کاربر
+        </button>
+    </div>
+    
+    <div style="background:linear-gradient(135deg,rgba(239,68,68,0.08),rgba(220,38,38,0.05));padding:12px;border-radius:10px;border:1px solid rgba(239,68,68,0.2);">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+            <i class="fas fa-sign-out-alt" style="color:#ef4444;font-size:1rem"></i>
+            <span style="font-size:0.85rem;color:var(--text-primary);font-weight:800;">خروج از حساب</span>
+        </div>
+        <p style="color:var(--text-secondary);font-size:0.7rem;margin-bottom:10px;">خروج کامل از برنامه (باید دوباره وارد بشی)</p>
+        <button onclick="closeSettings(); handleLogoutFromNav();" style="width:100%;padding:12px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:10px;font-size:0.9rem;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(239,68,68,0.4);">
+            <i class="fas fa-sign-out-alt"></i> خروج از برنامه
+        </button>
+    </div>
+</div>
             </div>
         </div>
     </div>
@@ -593,7 +619,41 @@
         window.goToInstallPage = function() {
             window.location.href = 'install.html';
         };
-
+<script>
+// ============================================================
+// 🆕 رفتن به صفحه انتخاب کاربر
+// ============================================================
+window.goToFamilySelect = function() {
+    console.log('👥 رفتن به صفحه انتخاب کاربر...');
+    
+    // چک کن تابع موجوده
+    if (typeof showFamilySelectScreen !== 'function') {
+        alert('❌ صفحه انتخاب کاربر در دسترس نیست');
+        return;
+    }
+    
+    // چک کن اعضای خانواده
+    var cm = members.find(function(m) {
+        return String(m.accountNumber) === String(currentUser.accountNumber) ||
+               String(m.id) === String(currentUser.memberId);
+    });
+    var fm = cm && cm.heh1 ? members.filter(function(m) { return String(m.heh1) === String(cm.heh1); }) : [];
+    
+    if (fm.length <= 1) {
+        alert('ℹ️ اعضای دیگه‌ای در خانواده نیست.\\n\\nفقط خودت توی خانواده هستی.');
+        return;
+    }
+    
+    // مخفی کردن نوار پایین
+    var n1 = document.getElementById('bottomNavDirect');
+    if (n1) n1.style.display = 'none';
+    var n2 = document.getElementById('mainBottomNav');
+    if (n2) n2.style.display = 'none';
+    
+    // نمایش صفحه انتخاب
+    showFamilySelectScreen();
+};
+</script>
         function updateBottomNavVisibility() {
             var nav = document.getElementById('bottomNavDirect');
             if (!nav) return;
