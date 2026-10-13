@@ -42,7 +42,19 @@ function renderDashboardContent() {
     }
 
     const waitingLoanCount = window.WAITING_LOAN_COUNT || 0;
-
+    // ============================================================
+    // 📲 کارت نصب برنامه
+    // ============================================================
+    const installBannerHtml = `
+        <div class="dashboard-section" style="background:linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.08)); border:2px solid rgba(16,185,129,0.4); border-radius:16px; padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+            <span style="font-size:2rem; flex-shrink:0;">📲</span>
+            <div style="flex:1; min-width:180px;">
+                <div style="font-size:1rem; font-weight:900; color:#10b981; margin-bottom:2px;">نصب برنامه روی گوشی</div>
+                <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">دسترسی سریع‌تر با نصب روی صفحه اصلی</div>
+            </div>
+            <a href="install.html" style="padding:10px 20px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border-radius:10px; font-size:0.9rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(16,185,129,0.4); flex-shrink:0; white-space:nowrap;">نصب کن ←</a>
+        </div>
+    `;
     const summaryBox = `
     <div class="dashboard-section summary-section">
         <h3 class="summary-title">
@@ -395,8 +407,9 @@ function renderDashboardContent() {
     // ============================================================
     // 🚀 دکمه شناور برای تب‌های صورتحساب
     // ============================================================
-        return '<div id="dashboardStatementRoot">' +
-        summaryBox +
+       return '<div id="dashboardStatementRoot">' +
+    installBannerHtml +              ← ✅ این خط اضافه شد
+    summaryBox +
         tabHtml +
         '<div class="statement-panel" data-statement-panel="allowance">' +
             allowanceSummaryHtml +
