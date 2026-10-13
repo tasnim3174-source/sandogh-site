@@ -8,7 +8,7 @@
 // ============================================================
 (function() {
     if (!document.getElementById('bottomNav')) {
-        var navHtml = '<div class="bottom-nav" id="bottomNav" style="display:none;">';
+        var navHtml = '<div class="bottom-nav" id="bottomNav">';
         navHtml += '<button class="bottom-nav-btn" onclick="goToMenu()"><i class="fas fa-home"></i><span>خانه</span></button>';
         navHtml += '<button class="bottom-nav-btn" onclick="handleLogoutFromNav()"><i class="fas fa-sign-out-alt"></i><span>خروج</span></button>';
         navHtml += '<button class="bottom-nav-center" onclick="showBottomNavModal()"><i class="fas fa-chart-pie"></i></button>';
