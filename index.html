@@ -966,10 +966,14 @@
                 var hasRealMembers = (window.__fullMembers && window.__fullMembers.length > 1) ||
                                      (members && members.length > 1);
 
-                if (hasRealMembers || __waitAttempts >= __maxWait) {
-                    clearInterval(__waitInterval);
+               // ✅ چک کن members واقعاً کامل شده (بیشتر از ۱۰ تا)
+var isReallyReady = (members && members.length > 10) || 
+                    (window.__fullMembers && window.__fullMembers.length > 10);
 
-                    console.log('✅ آماده! members: ' + (members ? members.length : 0));
+if (isReallyReady || __waitAttempts >= __maxWait) {
+    clearInterval(__waitInterval);
+    
+    console.log('✅ آماده! members: ' + (members ? members.length : 0));
 
                     document.getElementById('newLoader').classList.add('away');
                     document.getElementById('loaderOk').classList.remove('show');
