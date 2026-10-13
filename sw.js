@@ -1,11 +1,12 @@
 // sw.js
-const CACHE_NAME = 'sandogh-cache-v51';
+const CACHE_NAME = 'sandogh-cache-v100';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './logo.png',
-  './logo1.png'
+  './logo1.png',
+  './js/pages/family-select.js'
 ];
 
 self.addEventListener('install', event => {
