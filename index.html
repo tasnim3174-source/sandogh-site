@@ -17,351 +17,340 @@
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800;900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="css/main.css">
-    <!-- 🚨 غیرفعال کردن Service Worker -->
-<script>
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        registrations.forEach(function(reg) { reg.unregister(); });
-    });
-}
-</script>
     <link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#f59e0b" />
-<link rel="apple-touch-icon" href="logo1.png" />
- <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js');
-    });
-  }
- </script>
-    <head>
-    <!-- کدهای قبلی -->
-    
-    <!-- ⬇️⬇️⬇️ این رو اضافه کن ⬇️⬇️⬇️ -->
-   
-<style>
-    /* اعداد خلاصه حساب - بزرگ و بولد */
-    .summary-section .summary-title {
-        font-size: 1.7rem !important;
-        font-weight: 800 !important;
-        margin-bottom: 18px !important;
-    }
+    <meta name="theme-color" content="#f59e0b" />
+    <link rel="apple-touch-icon" href="logo1.png" />
 
-    .summary-section .summary-grid {
-        display: grid !important;
-        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 14px !important;
-    }
-
-    .summary-section .summary-card {
-        padding: 18px 12px !important;
-        border-radius: 16px !important;
-        text-align: center !important;
-    }
-
-    .summary-section .sc-label {
-        font-size: 1.05rem !important;
-        font-weight: 800 !important;
-        line-height: 1.8 !important;
-        margin: 8px 0 !important;
-    }
-
-    .summary-section .sc-value {
-        font-size: 1.7rem !important;
-        font-weight: 800 !important;
-        line-height: 1.7 !important;
-    }
-
-    .summary-section .sc-icon {
-        font-size: 1.7rem !important;
-        margin-bottom: 4px !important;
-    }
-
-    /* موبایل */
-    @media (max-width: 600px) {
+    <style>
+        /* اعداد خلاصه حساب - بزرگ و بولد */
+        .summary-section .summary-title {
+            font-size: 1.7rem !important;
+            font-weight: 800 !important;
+            margin-bottom: 18px !important;
+        }
         .summary-section .summary-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-            gap: 12px !important;
+            display: grid !important;
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            gap: 14px !important;
+        }
+        .summary-section .summary-card {
+            padding: 18px 12px !important;
+            border-radius: 16px !important;
+            text-align: center !important;
+        }
+        .summary-section .sc-label {
+            font-size: 1.05rem !important;
+            font-weight: 800 !important;
+            line-height: 1.8 !important;
+            margin: 8px 0 !important;
         }
         .summary-section .sc-value {
             font-size: 1.7rem !important;
-        }
-        .summary-section .sc-label {
-            font-size: 1rem !important;
+            font-weight: 800 !important;
+            line-height: 1.7 !important;
         }
         .summary-section .sc-icon {
-            font-size: 1.6rem !important;
+            font-size: 1.7rem !important;
+            margin-bottom: 4px !important;
         }
-    }
+        @media (max-width: 600px) {
+            .summary-section .summary-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 12px !important;
+            }
+            .summary-section .sc-value { font-size: 1.7rem !important; }
+            .summary-section .sc-label { font-size: 1rem !important; }
+            .summary-section .sc-icon { font-size: 1.6rem !important; }
+        }
 
-   /* ============================================================
-   ✅ نوار تب‌های شناور افقی - پایین صفحه
-   ============================================================ */
+        /* نوار تب‌های شناور افقی */
+        #dashboardStatementRoot > .statement-tabs,
+        #dashboardStatementRoot .statement-tabs,
+        div#dashboardStatementRoot > div.statement-tabs,
+        .statement-tabs,
+        .statement-tabs-floating {
+            position: fixed !important;
+            top: auto !important;
+            right: auto !important;
+            bottom: 140px !important;
+            left: 50% !important;
+            inset: auto auto 140px 50% !important;
+            transform: translateX(-50%) !important;
+            display: flex !important;
+            flex-direction: row !important;
+            flex-flow: row !important;
+            flex-wrap: nowrap !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 6px !important;
+            padding: 6px 8px !important;
+            margin: 0 !important;
+            background: rgba(26, 26, 46, 0.92) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 2px solid rgba(245, 158, 11, 0.5) !important;
+            border-radius: 50px !important;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.25) !important;
+            z-index: 9998 !important;
+            max-width: calc(100% - 24px) !important;
+            min-width: auto !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            white-space: nowrap !important;
+        }
+        #dashboardStatementRoot .statement-tabs .statement-tab,
+        #dashboardStatementRoot > .statement-tabs > .statement-tab,
+        .statement-tab,
+        .statement-tabs-floating .statement-tab {
+            flex: 0 0 auto !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: auto !important;
+            text-align: center !important;
+            font-size: 0.92rem !important;
+            font-weight: 800 !important;
+            padding: 10px 16px !important;
+            border-radius: 40px !important;
+            border: none !important;
+            background: transparent !important;
+            color: rgba(255, 255, 255, 0.7) !important;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap !important;
+            line-height: 1.4;
+            transform: none !important;
+        }
+        #dashboardStatementRoot > .statement-tabs::-webkit-scrollbar,
+        #dashboardStatementRoot .statement-tabs::-webkit-scrollbar,
+        .statement-tabs-floating::-webkit-scrollbar { display: none; }
+        .statement-tab:hover,
+        #dashboardStatementRoot .statement-tabs .statement-tab:hover {
+            background: rgba(245, 158, 11, 0.15) !important;
+            color: #ffc94d !important;
+            transform: none !important;
+        }
+        .statement-tab.active,
+        #dashboardStatementRoot .statement-tabs .statement-tab.active {
+            background: linear-gradient(135deg, #ffc94d, #d97706) !important;
+            color: #1a1a2e !important;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
+            font-weight: 900 !important;
+        }
+        #dashboardStatementRoot { padding-bottom: 90px !important; }
 
-/* override کردن CSS قدیمی */
-#dashboardStatementRoot > .statement-tabs,
-#dashboardStatementRoot .statement-tabs,
-div#dashboardStatementRoot > div.statement-tabs,
-.statement-tabs,
-.statement-tabs-floating {
-    position: fixed !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: 140px !important;
-    left: 50% !important;
-    inset: auto auto 140px 50% !important;    /* ← هر دو 160px */
-    transform: translateX(-50%) !important;
-    display: flex !important;
-    flex-direction: row !important;
-    flex-flow: row !important;
-    flex-wrap: nowrap !important;
-    justify-content: center !important;
-    align-items: center !important;
-    gap: 6px !important;
-    padding: 6px 8px !important;
-    margin: 0 !important;
-    background: rgba(26, 26, 46, 0.92) !important;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border: 2px solid rgba(245, 158, 11, 0.5) !important;
-    border-radius: 50px !important;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.25) !important;
-    z-index: 9998 !important;
-    max-width: calc(100% - 24px) !important;
-    min-width: auto !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    white-space: nowrap !important;
-}
+        @media (max-width: 600px) {
+            #dashboardStatementRoot > .statement-tabs,
+            #dashboardStatementRoot .statement-tabs,
+            .statement-tabs-floating {
+                bottom: 78px !important;
+                inset: auto auto 78px 50% !important;
+                padding: 5px 6px !important;
+                gap: 4px !important;
+                border-radius: 40px !important;
+                max-width: calc(100% - 16px) !important;
+            }
+            .statement-tab { font-size: 0.78rem !important; padding: 9px 11px !important; }
+            #dashboardStatementRoot { padding-bottom: 80px !important; }
+        }
+        @media (max-width: 360px) {
+            .statement-tab { font-size: 0.7rem !important; padding: 8px 8px !important; }
+        }
 
-/* تب‌ها - override کردن CSS قدیمی (width: 100% و متن راست) */
-#dashboardStatementRoot .statement-tabs .statement-tab,
-#dashboardStatementRoot > .statement-tabs > .statement-tab,
-.statement-tab,
-.statement-tabs-floating .statement-tab {
-    flex: 0 0 auto !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: auto !important;
-    text-align: center !important;
-    font-size: 0.92rem !important;
-    font-weight: 800 !important;
-    padding: 10px 16px !important;
-    border-radius: 40px !important;
-    border: none !important;
-    background: transparent !important;
-    color: rgba(255, 255, 255, 0.7) !important;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    white-space: nowrap !important;
-    line-height: 1.4;
-    transform: none !important;
-}
+        /* نوار پایین مستقیم */
+        #bottomNavDirect {
+            display: none;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            height: 85px !important;
+            background: #1a1a2e !important;
+            z-index: 9999999 !important;
+            border-top: 2px solid #ffc94d !important;
+            padding: 13px 0 !important;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.5) !important;
+            flex-direction: row !important;
+            justify-content: space-around !important;
+            align-items: center !important;
+            direction: rtl !important;
+        }
+        body.logged-in #bottomNavDirect,
+        body.show-nav #bottomNavDirect { display: flex !important; }
+        #bottomNavDirect button {
+            flex: 1 !important;
+            background: transparent !important;
+            border: none !important;
+            color: #fff !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 3px !important;
+            cursor: pointer !important;
+            font-family: inherit !important;
+            padding: 6px 0 !important;
+            height: 100% !important;
+            font-size: 0.7rem !important;
+        }
+        #bottomNavDirect button i { font-size: 1.7rem !important; }
+        #bottomNavDirect button.gold { color: #ffc94d !important; }
+        #bottomNavDirect button.gold i { font-size: 1.7rem !important; }
+        #bottomNavDirect button.green { color: #10b981 !important; }
 
-#dashboardStatementRoot > .statement-tabs::-webkit-scrollbar,
-#dashboardStatementRoot .statement-tabs::-webkit-scrollbar,
-.statement-tabs-floating::-webkit-scrollbar {
-    display: none;
-}
+        /* کم کردن فاصله پایین */
+        body, html, html body { padding-bottom: 60px !important; }
+        body > :last-child { padding-bottom: 0 !important; margin-bottom: 0 !important; }
+        @media (max-width: 768px) {
+            body, html, html body { padding-bottom: 75px !important; }
+        }
+    </style>
 
-/* hover */
-.statement-tab:hover,
-#dashboardStatementRoot .statement-tabs .statement-tab:hover {
-    background: rgba(245, 158, 11, 0.15) !important;
-    color: #ffc94d !important;
-    transform: none !important;
-}
-
-/* active */
-.statement-tab.active,
-#dashboardStatementRoot .statement-tabs .statement-tab.active {
-    background: linear-gradient(135deg, #ffc94d, #d97706) !important;
-    color: #1a1a2e !important;
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.5);
-    font-weight: 900 !important;
-}
-/* فاصله پایین داشبورد تا تب‌ها روی محتوا نیفتن */
-#dashboardStatementRoot {
-    padding-bottom: 90px !important;
-}
-
-/* ============================================================
-   موبایل
-   ============================================================ */
-@media (max-width: 600px) {
-    #dashboardStatementRoot > .statement-tabs,
-    #dashboardStatementRoot .statement-tabs,
-    .statement-tabs-floating {
-        bottom: 78px !important;
-        inset: auto auto 78px 50% !important;
-        padding: 5px 6px !important;
-        gap: 4px !important;
-        border-radius: 40px !important;
-        max-width: calc(100% - 16px) !important;
-    }
-
-    .statement-tab {
-        font-size: 0.78rem !important;
-        padding: 9px 11px !important;
-    }
-
-    #dashboardStatementRoot {
-        padding-bottom: 80px !important;
-    }
-}
-
-@media (max-width: 360px) {
-    .statement-tab {
-        font-size: 0.7rem !important;
-        padding: 8px 8px !important;
-    }
-}
-</style>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js');
+            });
+        }
+    </script>
 </head>
 <body>
- <div class="loaderGlow g1"></div>
-<div class="loaderGlow g2"></div>
-<canvas id="loaderFx"></canvas>
 
-<div id="newLoader">
-    <div class="loader-particles" id="loaderParticles"></div>
-    
-    <div class="loaderCenter">
-        
-        <div class="emb">
-            <div class="emb-glow"></div>
-            <div class="coin">
-                <div class="coin-face">
-                    <svg viewBox="0 0 100 100" fill="none">
-                        <defs>
-                            <radialGradient id="coinGrad" cx="0.3" cy="0.3">
-                                <stop offset="0" stop-color="#ffe08a"/>
-                                <stop offset="0.5" stop-color="#ffc94d"/>
-                                <stop offset="1" stop-color="#b8860b"/>
-                            </radialGradient>
-                        </defs>
-                        <circle cx="50" cy="50" r="46" fill="url(#coinGrad)"/>
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>
-                        <circle cx="50" cy="50" r="34" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
-                        <text x="50" y="42" font-family="B Titr, Tahoma" font-size="14" font-weight="900" fill="#8b6914" text-anchor="middle">صندوق</text>
-                        <text x="50" y="66" font-family="B Titr, Tahoma" font-size="18" font-weight="900" fill="#6b4e0a" text-anchor="middle">اتحاد</text>
-                    </svg>
-                </div>
-                <div class="coin-shine"></div>
-            </div>
-        </div>
-        
-        <p class="wlc">به سیستم حسابداری صندوق اتحاد خوش آمدید 🌟</p>
-        
-        <div class="pct">
-            <span id="ldrPct">۰</span>
-            <span class="sg">٪</span>
-        </div>
-        
-        <div class="stt">
-            <span class="stt-dot"></span>
-            <span id="ldrStx">آماده‌سازی</span>
-            <span class="dts"><i>.</i><i>.</i><i>.</i></span>
-        </div>
-        
-        <div class="barw">
-            <div class="bar">
-                <div class="fill" id="ldrFill">
-                    <div class="fill-shine"></div>
+    <div class="loaderGlow g1"></div>
+    <div class="loaderGlow g2"></div>
+    <canvas id="loaderFx"></canvas>
+
+    <div id="newLoader">
+        <div class="loader-particles" id="loaderParticles"></div>
+        <div class="loaderCenter">
+            <div class="emb">
+                <div class="emb-glow"></div>
+                <div class="coin">
+                    <div class="coin-face">
+                        <svg viewBox="0 0 100 100" fill="none">
+                            <defs>
+                                <radialGradient id="coinGrad" cx="0.3" cy="0.3">
+                                    <stop offset="0" stop-color="#ffe08a"/>
+                                    <stop offset="0.5" stop-color="#ffc94d"/>
+                                    <stop offset="1" stop-color="#b8860b"/>
+                                </radialGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="46" fill="url(#coinGrad)"/>
+                            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.45)" stroke-width="1.2"/>
+                            <circle cx="50" cy="50" r="34" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+                            <text x="50" y="42" font-family="B Titr, Tahoma" font-size="14" font-weight="900" fill="#8b6914" text-anchor="middle">صندوق</text>
+                            <text x="50" y="66" font-family="B Titr, Tahoma" font-size="18" font-weight="900" fill="#6b4e0a" text-anchor="middle">اتحاد</text>
+                        </svg>
+                    </div>
+                    <div class="coin-shine"></div>
                 </div>
             </div>
+            <p class="wlc">به سیستم حسابداری صندوق اتحاد خوش آمدید 🌟</p>
+            <div class="pct">
+                <span id="ldrPct">۰</span>
+                <span class="sg">٪</span>
+            </div>
+            <div class="stt">
+                <span class="stt-dot"></span>
+                <span id="ldrStx">آماده‌سازی</span>
+                <span class="dts"><i>.</i><i>.</i><i>.</i></span>
+            </div>
+            <div class="barw">
+                <div class="bar">
+                    <div class="fill" id="ldrFill">
+                        <div class="fill-shine"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="steps">
+                <div class="stp" id="ldrS0">
+                    <span class="ic">
+                        <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M4 5h16v6H4zM4 13h16v6H4z"/>
+                            <circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/>
+                            <circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/>
+                        </svg>
+                        <span class="sn"></span>
+                        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12.5l4.5 4.5L19 7"/>
+                        </svg>
+                    </span>
+                    <span class="stp-txt">اتصال به سرور</span>
+                </div>
+                <div class="stp" id="ldrS1">
+                    <span class="ic">
+                        <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                        <span class="sn"></span>
+                        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12.5l4.5 4.5L19 7"/>
+                        </svg>
+                    </span>
+                    <span class="stp-txt">احراز هویت</span>
+                </div>
+                <div class="stp" id="ldrS2">
+                    <span class="ic">
+                        <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                            <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/>
+                        </svg>
+                        <span class="sn"></span>
+                        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12.5l4.5 4.5L19 7"/>
+                        </svg>
+                    </span>
+                    <span class="stp-txt">بارگذاری اطلاعات</span>
+                </div>
+                <div class="stp" id="ldrS3">
+                    <span class="ic">
+                        <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <rect x="4" y="4" width="7" height="7" rx="1.5"/>
+                            <rect x="13" y="4" width="7" height="7" rx="1.5"/>
+                            <rect x="4" y="13" width="7" height="7" rx="1.5"/>
+                            <rect x="13" y="13" width="7" height="7" rx="1.5"/>
+                        </svg>
+                        <span class="sn"></span>
+                        <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12.5l4.5 4.5L19 7"/>
+                        </svg>
+                    </span>
+                    <span class="stp-txt">آماده‌سازی داشبورد</span>
+                </div>
+            </div>
         </div>
-        
-        <div class="steps">
-            <div class="stp" id="ldrS0">
-                <span class="ic">
-                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M4 5h16v6H4zM4 13h16v6H4z"/>
-                        <circle cx="8" cy="8" r="1.1" fill="currentColor" stroke="none"/>
-                        <circle cx="8" cy="16" r="1.1" fill="currentColor" stroke="none"/>
-                    </svg>
-                    <span class="sn"></span>
-                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12.5l4.5 4.5L19 7"/>
-                    </svg>
-                </span>
-                <span class="stp-txt">اتصال به سرور</span>
-            </div>
-            <div class="stp" id="ldrS1">
-                <span class="ic">
-                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/>
-                        <path d="M9 12l2 2 4-4"/>
-                    </svg>
-                    <span class="sn"></span>
-                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12.5l4.5 4.5L19 7"/>
-                    </svg>
-                </span>
-                <span class="stp-txt">احراز هویت</span>
-            </div>
-            <div class="stp" id="ldrS2">
-                <span class="ic">
-                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-                        <path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v4h-4"/>
-                    </svg>
-                    <span class="sn"></span>
-                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12.5l4.5 4.5L19 7"/>
-                    </svg>
-                </span>
-                <span class="stp-txt">بارگذاری اطلاعات</span>
-            </div>
-            <div class="stp" id="ldrS3">
-                <span class="ic">
-                    <svg class="iw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                        <rect x="4" y="4" width="7" height="7" rx="1.5"/>
-                        <rect x="13" y="4" width="7" height="7" rx="1.5"/>
-                        <rect x="4" y="13" width="7" height="7" rx="1.5"/>
-                        <rect x="13" y="13" width="7" height="7" rx="1.5"/>
-                    </svg>
-                    <span class="sn"></span>
-                    <svg class="ck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12.5l4.5 4.5L19 7"/>
-                    </svg>
-                </span>
-                <span class="stp-txt">آماده‌سازی داشبورد</span>
+        <div class="loaderBot">
+            <div class="time-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2" stroke-linecap="round"/>
+                </svg>
+                <span>زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span>
             </div>
         </div>
     </div>
-    
-    <div class="loaderBot">
-        <div class="time-badge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/>
-                <path d="M12 6v6l4 2" stroke-linecap="round"/>
-            </svg>
-            <span>زمان سپری شده: <b id="ldrTm">۰</b> ثانیه</span>
-        </div>
-    </div>
-</div>
 
-<div id="loaderOk">
-    <div class="okc">
-        <div class="ok-welcome-icon">🌟</div>
-        <h2 class="ok-welcome-title">به سیستم هوشمند صندوق اتحاد خوش آمدید</h2>
-        <div class="ok-datetime" id="okDateTime">
-            <span class="ok-date">—</span>
-            <span class="ok-time">—</span>
+    <div id="loaderOk">
+        <div class="okc">
+            <div class="ok-welcome-icon">🌟</div>
+            <h2 class="ok-welcome-title">به سیستم هوشمند صندوق اتحاد خوش آمدید</h2>
+            <div class="ok-datetime" id="okDateTime">
+                <span class="ok-date">—</span>
+                <span class="ok-time">—</span>
+            </div>
+            <div class="ok-enter-msg">بفرمایید داخل برنامه</div>
+            <div class="ok-spinner">
+                <div class="ok-spinner-circle"></div>
+                <div class="ok-spinner-circle"></div>
+                <div class="ok-spinner-circle"></div>
+            </div>
+            <div class="ok-status">در حال آماده‌سازی اطلاعات...</div>
         </div>
-        <div class="ok-enter-msg">بفرمایید داخل برنامه</div>
-        <div class="ok-spinner">
-            <div class="ok-spinner-circle"></div>
-            <div class="ok-spinner-circle"></div>
-            <div class="ok-spinner-circle"></div>
-        </div>
-        <div class="ok-status">در حال آماده‌سازی اطلاعات...</div>
     </div>
-</div>
+
     <div class="settings-modal" id="settingsModal">
         <div class="settings-modal-content">
             <button class="settings-close" onclick="closeSettings()">✕</button>
@@ -396,7 +385,7 @@ div#dashboardStatementRoot > div.statement-tabs,
                     </div>
                     <p style="color:var(--text-secondary);font-size:0.65rem;">سطح امنیت شما با رمز عبور است.</p>
                 </div>
-<button class="btn-small danger-btn" style="font-size:0.7rem;padding:6px 14px;min-height:30px;" onclick="closeSettings(); sendPasswordChangeSms()">📱 درخواست تغییر رمز پیامکی</button>
+                <button class="btn-small danger-btn" style="font-size:0.7rem;padding:6px 14px;min-height:30px;" onclick="closeSettings(); sendPasswordChangeSms()">📱 درخواست تغییر رمز پیامکی</button>
             </div>
         </div>
     </div>
@@ -435,10 +424,10 @@ div#dashboardStatementRoot > div.statement-tabs,
         <div class="login-page" id="loginPage">
             <h1>سیستم حسابداری صندوق اتحاد</h1>
 
-           <button class="download-app-btn" onclick="window.location.href='install.html'">
-    <i class="fas fa-download"></i>
-    <span>نصب برنامه</span>
-</button>
+            <button class="download-app-btn" onclick="window.location.href='install.html'">
+                <i class="fas fa-download"></i>
+                <span>نصب برنامه</span>
+            </button>
             <div class="input-group">
                 <label><i class="fas fa-user"></i> نام کاربری</label>
                 <input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید" autocomplete="username">
@@ -560,9 +549,6 @@ div#dashboardStatementRoot > div.statement-tabs,
         </div>
     </div>
 
-    <!-- ============================================================
-         اسکریپت‌های هسته
-         ============================================================ -->
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
     <script src="js/core/api.js"></script>
@@ -577,42 +563,144 @@ div#dashboardStatementRoot > div.statement-tabs,
     <script src="js/ui/toast.js"></script>
     <script src="js/ui/modals.js"></script>
     <script src="js/ui/header.js"></script>
-     <script src="js/ui/bottom-nav.js"></script>
-<script src="js/ui/entry-alerts.js"></script>
+    <script src="js/ui/bottom-nav.js"></script>
+    <script src="js/ui/entry-alerts.js"></script>
     <script src="js/pages/menu.js?v=7"></script>
     <script src="js/pages/profile.js"></script>
     <script src="js/pages/dashboard.js"></script>
     <script src="js/pages/family-select.js"></script>
     <script src="shared/password-functions.js"></script>
 
-    <!-- 🚨 بازسازی خودکار منو (اگه نسخه قدیمی کش شده بود) -->
+    <div id="bottomNavDirect">
+        <button onclick="goToMenu()">
+            <i class="fas fa-home"></i>
+            <span>خانه</span>
+        </button>
+        <button onclick="handleLogoutFromNav()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>خروج</span>
+        </button>
+        <button class="gold" onclick="showBottomNavModal()">
+            <i class="fas fa-chart-pie"></i>
+        </button>
+        <button onclick="openSettings()">
+            <i class="fas fa-sliders-h"></i>
+            <span>تنظیمات</span>
+        </button>
+        <button class="green" onclick="goToInstallPage()">
+            <i class="fas fa-download"></i>
+            <span>نصب برنامه</span>
+        </button>
+    </div>
+
+    <script>
+        window.goToInstallPage = function() {
+            window.location.href = 'install.html';
+        };
+
+        function updateBottomNavVisibility() {
+            var nav = document.getElementById('bottomNavDirect');
+            if (!nav) return;
+            var isLoggedIn = false;
+            try {
+                if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) isLoggedIn = true;
+                if (localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser')) isLoggedIn = true;
+                if (document.body.classList.contains('logged-in') || document.body.classList.contains('show-nav')) isLoggedIn = true;
+            } catch(e) {}
+            nav.style.display = isLoggedIn ? 'flex' : 'none';
+        }
+        document.addEventListener('DOMContentLoaded', updateBottomNavVisibility);
+        window.addEventListener('load', updateBottomNavVisibility);
+        setInterval(updateBottomNavVisibility, 500);
+    </script>
+
+    <!-- ============================================================
+         سیستم بستن خودکار لودرها
+         ============================================================ -->
+    <script>
+    (function() {
+        'use strict';
+        var checkCount = 0;
+        var maxChecks = 100;
+
+        var checkInterval = setInterval(function() {
+            checkCount++;
+
+            var isLoggedIn = (typeof currentUser !== 'undefined' && currentUser && currentUser.memberId);
+            var hasMembers = (typeof members !== 'undefined' && members.length > 1);
+            var hasPage = (typeof currentPage !== 'undefined' && currentPage);
+
+            if (isLoggedIn && hasMembers && hasPage) {
+                clearInterval(checkInterval);
+                console.log('🔓 بستن خودکار لودرها...');
+
+                ['newLoader', 'loaderOk', 'loaderFx'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) {
+                        el.classList.remove('active', 'away', 'show');
+                        el.style.display = 'none';
+                    }
+                });
+
+                document.querySelectorAll('.loaderGlow').forEach(function(el) {
+                    el.classList.remove('active');
+                    el.style.display = 'none';
+                });
+
+                var sectionLoader = document.getElementById('sectionLoader');
+                if (sectionLoader) sectionLoader.classList.remove('show');
+
+                console.log('✅ لودرها بسته شدن (تلاش: ' + checkCount + ')');
+
+                setTimeout(function() {
+                    ['newLoader', 'loaderOk', 'loaderFx'].forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el) el.style.display = 'none';
+                    });
+                }, 1000);
+
+                setTimeout(function() {
+                    ['newLoader', 'loaderOk', 'loaderFx'].forEach(function(id) {
+                        var el = document.getElementById(id);
+                        if (el) el.style.display = 'none';
+                    });
+                }, 3000);
+            }
+
+            if (checkCount >= maxChecks) {
+                clearInterval(checkInterval);
+                ['newLoader', 'loaderOk', 'loaderFx'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+            }
+        }, 500);
+
+        console.log('🚀 سیستم بستن خودکار لودر فعال شد');
+    })();
+    </script>
+
     <script>
     (function() {
         var attempts = 0;
-        var maxAttempts = 20;   // ۱۰ ثانیه
-        
+        var maxAttempts = 20;
+
         var checkInterval = setInterval(function() {
             attempts++;
-            
-            // چک کن کاربر لاگین کرده و منو ساخته شده
             if (typeof currentUser !== 'undefined' && currentUser && document.getElementById('mainHeader')) {
                 var c = document.querySelectorAll('.council-item.disabled');
                 var f = document.querySelectorAll('.family-item.disabled');
-                
-                // اگه بیش از ۰ تا disabled داریم، منو رو بازسازی کن
+
                 if (c.length > 0 || f.length > 0) {
                     console.log('🚨 تشخیص disabled - بازسازی منو... (' + attempts + ')');
-                    
                     var oldHdr = document.getElementById('mainHeader');
                     if (oldHdr) oldHdr.remove();
-                    
                     var content = document.getElementById('contentArea');
                     if (!content) {
                         content = document.createElement('div');
                         content.id = 'contentArea';
                         document.body.appendChild(content);
                     }
-                    
                     if (typeof renderMenuPage === 'function') {
                         renderMenuPage(content);
                     }
@@ -621,7 +709,6 @@ div#dashboardStatementRoot > div.statement-tabs,
                     console.log('✅ منو درست کار می‌کنه');
                 }
             }
-            
             if (attempts >= maxAttempts) {
                 clearInterval(checkInterval);
             }
@@ -630,18 +717,12 @@ div#dashboardStatementRoot > div.statement-tabs,
     </script>
 
     <script>
-    // ============================================================
-    // فلگ‌های پردازش پس‌زمینه
-    // ============================================================
     window.__bgProcessing = false;
     window.__dataReady = false;
     window.__fullMembers = null;
     window.__fullTransactions = null;
     window.__fullUsers = null;
 
-    // ============================================================
-    // متغیرهای لودر
-    // ============================================================
     var ldrFx = null, ldrCx = null, W = 0, H = 0, dust = [], conf = [];
     var ldrStages = [
         { u: 25, t: 'اتصال به سرور اصلی' },
@@ -696,8 +777,8 @@ div#dashboardStatementRoot > div.statement-tabs,
     function ldrRender() {
         document.getElementById('ldrPct').textContent = ldrFa(Math.round(ldrP));
         document.getElementById('ldrFill').style.width = ldrP + '%';
-       var rfEl = document.getElementById('ldrRf');
-if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
+        var rfEl = document.getElementById('ldrRf');
+        if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
         var act = 3;
         for (var i = 0; i < ldrStages.length; i++) { if (ldrP < ldrStages[i].u) { act = i; break; } }
         for (i = 0; i < 4; i++) {
@@ -713,9 +794,7 @@ if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
 
     function ldrTick() {
         if (ldrDone) return;
-        
         var maxProgress = 60;
-        
         if (loginDataReady) {
             if (loginResult && loginResult.success) {
                 maxProgress = 100;
@@ -724,7 +803,6 @@ if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
                 return;
             }
         }
-        
         if (ldrP >= maxProgress) {
             if (loginDataReady && loginResult && loginResult.success) {
                 ldrP = 100;
@@ -736,7 +814,6 @@ if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
             }
             return;
         }
-        
         var hic = Math.random() < 0.06;
         if (!hic) ldrP = Math.min(maxProgress, ldrP + (Math.random() * 4 + 2));
         ldrRender();
@@ -763,13 +840,12 @@ if (rfEl) rfEl.style.strokeDashoffset = C * (1 - ldrP / 100);
         clearInterval(ldrSecT);
         ldrRender();
         var ringEl = document.getElementById('ldrRing');
-if (ringEl) ringEl.classList.add('okc');
+        if (ringEl) ringEl.classList.add('okc');
 
         var res = loginResult;
         currentUser = res.user;
-        
-        // ✅ ساخت member موقت از login-users.json
-                var tempMember = {
+
+        var tempMember = {
             id: currentUser.id || currentUser.accountNumber || currentUser.username,
             firstName: currentUser.firstName || 'کاربر',
             accountNumber: currentUser.accountNumber || currentUser.username,
@@ -777,9 +853,7 @@ if (ringEl) ringEl.classList.add('okc');
             phone2: currentUser.phone2 || '',
             heh1: currentUser.heh1 || '',
             heh2: currentUser.heh2 || '',
-            isCouncil: currentUser.isCouncil === true || 
-                       currentUser.role === 'council' || 
-                       currentUser.role === 'admin',
+            isCouncil: currentUser.isCouncil === true || currentUser.role === 'council' || currentUser.role === 'admin',
             isHead: currentUser.isHead === true,
             balance: 0,
             loanBalance: 0,
@@ -791,42 +865,35 @@ if (ringEl) ringEl.classList.add('okc');
             active: true,
             _isTemp: true
         };
-        
+
         members = [tempMember];
         transactions = [];
         users = res.data.users || [];
-        
+
         if (!currentUser.memberId) {
             currentUser.memberId = tempMember.id;
         }
-        
+
         transactionsByMember = new Map();
         memberScores = {};
         memberScores[tempMember.id] = { score: 0, tier: 'برنزی', points: 0 };
-        
+
         window.__dataReady = false;
         window.__bgProcessing = true;
 
         saveRememberMe(res.username, res.password);
 
-        // ✅ صفحه loaderOk رو باز نمی‌کنیم - صفحه لودر اصلی بمونه
-// فقط صبر می‌کنیم تا data.xlsx لود بشه (کد پایین‌تر این کارو می‌کنه)
-
-               // ============================================================
-        // ✅ منتظر بمون تا members واقعی لود بشه، بعد منو رو بساز
-        // ============================================================
         setTimeout(function() {
             var __waitAttempts = 0;
-            var __maxWait = 60;   // حداکثر ۱۵ ثانیه
-            
-            // ✅ شروع لود data.xlsx در پس‌زمینه
+            var __maxWait = 60;
+
             console.log('⏳ شروع لود data.xlsx در پس‌زمینه...');
             var bgStart = Date.now();
-            
+
             if (typeof loadMainDataWithCache === 'function') {
                 loadMainDataWithCache(false).then(function(fullData) {
                     console.log('✅ data.xlsx لود شد در ' + (Date.now() - bgStart) + 'ms');
-                    
+
                     if (fullData.members && fullData.members.length > 0) {
                         members = fullData.members;
                         window.__fullMembers = members;
@@ -839,8 +906,7 @@ if (ringEl) ringEl.classList.add('okc');
                         users = fullData.users;
                         window.__fullUsers = users;
                     }
-                    
-                    // memberId واقعی
+
                     var realMember = members.find(function(m) {
                         return String(m.accountNumber) === String(currentUser.accountNumber) ||
                                String(m.accountNumber) === String(currentUser.username);
@@ -849,8 +915,7 @@ if (ringEl) ringEl.classList.add('okc');
                         currentUser.memberId = realMember.id;
                         console.log('✅ memberId واقعی: ' + realMember.id);
                     }
-                    
-                    // Map تراکنش‌ها
+
                     transactionsByMember = new Map();
                     if (transactions && transactions.length > 0) {
                         transactions.forEach(function(t) {
@@ -859,39 +924,33 @@ if (ringEl) ringEl.classList.add('okc');
                             transactionsByMember.get(id).push(t);
                         });
                     }
-                    
-                    // امتیاز اعضا
+
                     if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
                         members.forEach(function(m) {
                             try { memberScores[m.id] = calculateMemberScore(m); }
                             catch(e) { memberScores[m.id] = 0; }
                         });
                     }
-                    
-                    // کارهای جانبی
+
                     try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
                     try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
                     try { if (typeof loadGameScores === 'function') loadGameScores(); } catch(e) {}
-                    
+
                     var rm = members.find(function(m) { return m.id === currentUser.memberId; });
                     if (rm && typeof checkAutoNotifications === 'function') {
                         setTimeout(function() { checkAutoNotifications(rm); }, 500);
                     }
-                                        // ✅ بازسازی منو با داده‌های واقعی
+
                     console.log('🔄 بازسازی منو با داده‌های واقعی');
                     if (typeof renderPage === 'function') {
                         renderPage('menu');
                     }
-                    
-                    // ✅ ریست کش دسترسی (برای اطمینان)
+
                     if (typeof __accessCache !== 'undefined') {
                         __accessCache.memberId = null;
                         __accessCache.timestamp = 0;
                     }
-                    
-                    window.__dataReady = true;
-                    window.__bgProcessing = false;
-                    console.log('🎉 همه داده‌ها آماده است');
+
                     window.__dataReady = true;
                     window.__bgProcessing = false;
                     console.log('🎉 همه داده‌ها آماده است');
@@ -900,24 +959,21 @@ if (ringEl) ringEl.classList.add('okc');
                     window.__bgProcessing = false;
                 });
             }
-            
-            // ✅ چک هر ۲۵۰ms: members آماده شد؟
+
             var __waitInterval = setInterval(function() {
                 __waitAttempts++;
-                
+
                 var hasRealMembers = (window.__fullMembers && window.__fullMembers.length > 1) ||
                                      (members && members.length > 1);
-                
+
                 if (hasRealMembers || __waitAttempts >= __maxWait) {
                     clearInterval(__waitInterval);
-                    
+
                     console.log('✅ آماده! members: ' + (members ? members.length : 0));
-                    
-                    // حالا لودر رو ببند
+
                     document.getElementById('newLoader').classList.add('away');
                     document.getElementById('loaderOk').classList.remove('show');
-                    
-                   // 🆕 چک کن آیا صفحه انتخاب کاربر لازمه؟
+
                     var __currentMember = null;
                     if (currentUser) {
                         __currentMember = members.find(function(m) {
@@ -925,28 +981,25 @@ if (ringEl) ringEl.classList.add('okc');
                                    String(m.id) === String(currentUser.memberId);
                         });
                     }
-                    
+
                     var __familyMembers = [];
                     if (__currentMember && __currentMember.heh1) {
                         __familyMembers = members.filter(function(m) {
                             return String(m.heh1) === String(__currentMember.heh1);
                         });
                     }
-                    
-                    // ✅ اگه members هنوز کامل نیست (فقط ۱ عضو)، صبر کن
+
                     if (members.length <= 1 && __waitAttempts < __maxWait) {
                         console.log('⏳ صبر برای members کامل (' + members.length + ') - تلاش ' + __waitAttempts);
                         return;
                     }
-                    
-                    // ✅ اگه timeout شد و members هنوز کمه، از __fullMembers استفاده کن
+
                     if (members.length <= 1 && window.__fullMembers && window.__fullMembers.length > 1) {
                         console.log('🔄 استفاده از window.__fullMembers');
                         members = window.__fullMembers;
                         if (window.__fullTransactions) transactions = window.__fullTransactions;
                         if (window.__fullUsers) users = window.__fullUsers;
-                        
-                        // دوباره محاسبه کن
+
                         if (currentUser) {
                             __currentMember = members.find(function(m) {
                                 return String(m.accountNumber) === String(currentUser.accountNumber) ||
@@ -960,50 +1013,36 @@ if (ringEl) ringEl.classList.add('okc');
                             });
                         }
                     }
-                    
+
                     var __isHead = __currentMember && String(__currentMember.heh2) === '01';
                     var __hasFamilySelect = (typeof showFamilySelectScreen === 'function');
-                    
+
                     console.log('🔍 چک شرط:');
                     console.log('  members:', members.length);
                     console.log('  __currentMember:', __currentMember ? __currentMember.firstName : 'نیست');
                     console.log('  __familyMembers:', __familyMembers.length);
                     console.log('  __isHead:', __isHead);
                     console.log('  __hasFamilySelect:', __hasFamilySelect);
-                    
+
                     if (__isHead && __familyMembers.length > 1 && __hasFamilySelect) {
-                        // ✅ صفحه انتخاب کاربر
                         console.log('👨‍👩‍👧‍👦 نمایش صفحه انتخاب کاربر (' + __familyMembers.length + ' عضو)');
-                        
-                        // مخفی کردن نوارها
+
                         var __nav1 = document.getElementById('bottomNavDirect');
                         if (__nav1) __nav1.style.display = 'none';
                         var __nav2 = document.getElementById('mainBottomNav');
                         if (__nav2) __nav2.style.display = 'none';
-                        
-                        // نمایش صفحه انتخاب
+
                         showFamilySelectScreen();
                     } else {
-                        // ✅ مستقیم برو منو
                         console.log('➡️ مستقیم به منو (شرط برقرار نیست)');
                         const appContainer = document.getElementById('appContainer');
                         appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
                         renderPage('menu');
                     }
-                    
-                    // کارهای جانبی (در هر دو حالت)
-                    if (typeof updateVisitInfo === 'function') {
-                        try { updateVisitInfo(); } catch(e) {}
-                    }
-                    if (typeof updateFloatingButtons === 'function') {
-                        try { updateFloatingButtons(); } catch(e) {}
-                    }
-                    if (typeof startKeepAlive === 'function') {
-                        try { startKeepAlive(); } catch(e) {}
-                    }
 
-                    var mainNav = document.getElementById('mainBottomNav');
-                    if (mainNav) mainNav.style.display = 'flex';
+                    if (typeof updateVisitInfo === 'function') { try { updateVisitInfo(); } catch(e) {} }
+                    if (typeof updateFloatingButtons === 'function') { try { updateFloatingButtons(); } catch(e) {} }
+                    if (typeof startKeepAlive === 'function') { try { startKeepAlive(); } catch(e) {} }
 
                     if (typeof autoUpdateInterval !== 'undefined' && autoUpdateInterval) {
                         clearInterval(autoUpdateInterval);
@@ -1014,19 +1053,19 @@ if (ringEl) ringEl.classList.add('okc');
                         }, 60 * 60 * 1000);
                     }
 
-                    // حذف نهایی لودرها
                     setTimeout(function() {
                         var nl = document.getElementById('newLoader');
                         if (nl) { nl.style.display = 'none'; nl.classList.remove('active', 'away'); }
                         var ok = document.getElementById('loaderOk');
-                        if (ok) ok.classList.remove('active');
-                        document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.remove('active'); });
+                        if (ok) { ok.style.display = 'none'; ok.classList.remove('active'); }
+                        document.querySelectorAll('.loaderGlow').forEach(function(el) { el.style.display = 'none'; el.classList.remove('active'); });
                         if (typeof ldrFx !== 'undefined' && ldrFx) ldrFx.classList.remove('active');
                     }, 400);
                 }
             }, 250);
         }, 1000);
     }
+
     function showLoaderAnimation() {
         ldrStartTime = Date.now();
         ldrSecs = 0;
@@ -1050,17 +1089,14 @@ if (ringEl) ringEl.classList.add('okc');
         var core = document.getElementById('ldrCore');
         if (core) { core.onclick = function(e) { ldrBurst(e.clientX, e.clientY, 20); }; }
         ldrP = 0; ldrDone = false; ldrSecs = 0; ldrFi = 0;
-       var ringEl = document.getElementById('ldrRing');
-if (ringEl) ringEl.classList.remove('okc');
+        var ringEl = document.getElementById('ldrRing');
+        if (ringEl) ringEl.classList.remove('okc');
         ldrRender();
         setTimeout(ldrTick, 500);
     }
 
     window.addEventListener('resize', ldrResize);
 
-    // ============================================================
-    // توابع کمکی UI
-    // ============================================================
     function toggleServicesPanelV2() {
         const panel = document.getElementById('servicesPanelV2');
         const arrow = document.getElementById('servicesArrowV2');
@@ -1075,9 +1111,6 @@ if (ringEl) ringEl.classList.remove('okc');
 
     function openDirectLink(url) { window.open(url, '_blank'); }
 
-    // ============================================================
-    // تابع renderPage با Lazy Loading
-    // ============================================================
     function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
@@ -1159,228 +1192,40 @@ if (ringEl) ringEl.classList.remove('okc');
         checkMaintenance();
     });
 
+    function sendPasswordChangeSms() {
+        var FUND_PHONE = '09138944709';
+        if (!confirm('🔐 درخواست تغییر رمز عبور\n\nدرخواست شما به شورای صندوق ارسال می‌شود.\n\nپس از تأیید، رمز جدید به شما اعلام خواهد شد.\n\nادامه می‌دهید؟')) return;
+        var member = null;
+        if (typeof members !== 'undefined' && members && typeof currentUser !== 'undefined' && currentUser) {
+            member = members.find(function(m) {
+                return String(m.id) === String(currentUser.memberId) ||
+                       String(m.accountNumber) === String(currentUser.accountNumber);
+            });
+        }
+        var userName = (member && member.firstName) || (currentUser && currentUser.firstName) || 'کاربر';
+        var userCode = (currentUser && (currentUser.username || currentUser.accountNumber)) || '';
+        var userPhone = (member && (member.phone1 || member.phone)) || (currentUser && currentUser.phone1) || '';
+        var accountNumber = (member && member.accountNumber) || (currentUser && currentUser.accountNumber) || '';
+        var smsText = '🔐 درخواست تغییر رمز عبور\nشماره کاربری: ' + userCode + '\nنام: ' + userName + '\nتلفن تماس: ' + userPhone + '\nتاریخ: ' + new Date().toLocaleDateString('fa-IR');
+
+        try {
+            var url = ADMIN_URL + '?action=submitMemberRequest&user=' + encodeURIComponent(userCode) + '&name=' + encodeURIComponent(userName) + '&accountNumber=' + encodeURIComponent(accountNumber) + '&phone=' + encodeURIComponent(userPhone) + '&code=PWD&title=' + encodeURIComponent('درخواست تغییر رمز عبور') + '&type=password';
+            fetch(url, { cache: 'no-cache' }).then(function(r) { return r.json(); }).then(function(d) {
+                if (d.ok) console.log('✅ درخواست تغییر رمز در سرور ثبت شد');
+            }).catch(function(e) { console.warn('⚠️ خطا:', e); });
+        } catch(e) {}
+
+        window.location.href = 'sms:' + FUND_PHONE + '?body=' + encodeURIComponent(smsText);
+
+        setTimeout(function() {
+            if (typeof showSimpleToast === 'function') {
+                showSimpleToast('✅', 'پیامک آماده شد', 'لطفاً پیام را برای شماره <b>' + FUND_PHONE + '</b> ارسال کنید.', '#10b981');
+            }
+        }, 1500);
+    }
+    window.sendPasswordChangeSms = sendPasswordChangeSms;
+
     console.log('✅ سیستم صندوق اتحاد با موفقیت بارگذاری شد');
     </script>
-
-    <div class="bottom-nav" id="mainBottomNav" style="display:none;">
-    </div>
-    <script>
-/* ============================================================
-   درخواست تغییر رمز پیامکی
-   ============================================================ */
-function sendPasswordChangeSms() {
-    var FUND_PHONE = '09138944709';
-    
-    if (!confirm('🔐 درخواست تغییر رمز عبور\n\n' +
-                 'درخواست شما به شورای صندوق ارسال می‌شود.\n\n' +
-                 'پس از تأیید، رمز جدید به شما اعلام خواهد شد.\n\n' +
-                 'ادامه می‌دهید؟')) {
-        return;
-    }
-    
-    // پیدا کردن member
-    var member = null;
-    if (typeof members !== 'undefined' && members && typeof currentUser !== 'undefined' && currentUser) {
-        member = members.find(function(m) {
-            return String(m.id) === String(currentUser.memberId) ||
-                   String(m.accountNumber) === String(currentUser.accountNumber);
-        });
-    }
-    
-    var userName = (member && member.firstName) || (currentUser && currentUser.firstName) || 'کاربر';
-    var userCode = (currentUser && (currentUser.username || currentUser.accountNumber)) || '';
-    var userPhone = (member && (member.phone1 || member.phone)) || (currentUser && currentUser.phone1) || '';
-    var accountNumber = (member && member.accountNumber) || (currentUser && currentUser.accountNumber) || '';
-    
-    // متن پیامک
-    var smsText = '🔐 درخواست تغییر رمز عبور\n' +
-                  'شماره کاربری: ' + userCode + '\n' +
-                  'نام: ' + userName + '\n' +
-                  'تلفن تماس: ' + userPhone + '\n' +
-                  'تاریخ: ' + new Date().toLocaleDateString('fa-IR');
-    
-    // ۱. ثبت در سرور
-    try {
-        var url = ADMIN_URL + '?action=submitMemberRequest'
-            + '&user=' + encodeURIComponent(userCode)
-            + '&name=' + encodeURIComponent(userName)
-            + '&accountNumber=' + encodeURIComponent(accountNumber)
-            + '&phone=' + encodeURIComponent(userPhone)
-            + '&code=PWD'
-            + '&title=' + encodeURIComponent('درخواست تغییر رمز عبور')
-            + '&type=password';
-        
-        fetch(url, { cache: 'no-cache' })
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-                if (d.ok) console.log('✅ درخواست تغییر رمز در سرور ثبت شد');
-                else console.warn('⚠️ خطا:', d.error);
-            })
-            .catch(function(e) { console.warn('⚠️ خطا:', e); });
-    } catch(e) {
-        console.warn('خطا:', e);
-    }
-    
-    // ۲. باز کردن اپ پیامک
-    window.location.href = 'sms:' + FUND_PHONE + '?body=' + encodeURIComponent(smsText);
-    
-    // ۳. Toast تأیید
-    setTimeout(function() {
-        if (typeof showSimpleToast === 'function') {
-            showSimpleToast('✅', 'پیامک آماده شد', 
-                'لطفاً پیام را برای شماره <b>' + FUND_PHONE + '</b> ارسال کنید.<br><br>' +
-                'پس از تأیید شورا، رمز جدید اعلام می‌شود.', 
-                '#10b981');
-        }
-    }, 1500);
-}
-
-window.sendPasswordChangeSms = sendPasswordChangeSms;
-</script>
-   <style>
-    #bottomNavDirect {
-        display: none;
-        position: fixed !important;
-        bottom: 0 !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
-        height: 85px !important;
-        background: #1a1a2e !important;
-        z-index: 9999999 !important;
-        border-top: 2px solid #ffc94d !important;
-        padding:13px 0 !important;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.5) !important;
-        flex-direction: row !important;
-        justify-content: space-around !important;
-        align-items: center !important;
-        direction: rtl !important;
-    }
-    /* فقط بعد از لاگین نمایش داده بشه */
-    body.logged-in #bottomNavDirect,
-    body.show-nav #bottomNavDirect {
-        display: flex !important;
-    }
-    #bottomNavDirect button {
-        flex: 1 !important;
-        background: transparent !important;
-        border: none !important;
-        color: #fff !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 3px !important;
-        cursor: pointer !important;
-        font-family: inherit !important;
-        padding: 6px 0 !important;
-        height: 100% !important;
-        font-size: 0.7rem !important;
-    }
-    #bottomNavDirect button i {
-        font-size: 1.7rem !important;
-    }
-    #bottomNavDirect button.gold {
-        color: #ffc94d !important;
-    }
-    #bottomNavDirect button.gold i {
-        font-size: 1.7rem !important;
-    }
-    #bottomNavDirect button.green {
-        color: #10b981 !important;
-    }
-           #bottomNavDirect button.green {
-        color: #10b981 !important;
-    }
-
-    /* ============================================================
-       کم کردن فاصله پایین محتوا
-       ============================================================ */
-    body,
-    html,
-    html body {
-        padding-bottom:60px !important;
-    }
-    
-    body > :last-child {
-        padding-bottom: 0 !important;
-        margin-bottom: 0 !important;
-    }
-    
-    /* برای موبایل - ارتفاع نوار پایین */
-    @media (max-width: 768px) {
-        body,
-        html,
-        html body {
-            padding-bottom: 75px !important;
-        }
-    }
-</style>
-</style>
-
-<div id="bottomNavDirect">
-    <button onclick="goToMenu()">
-        <i class="fas fa-home"></i>
-        <span>خانه</span>
-    </button>
-    <button onclick="handleLogoutFromNav()">
-        <i class="fas fa-sign-out-alt"></i>
-        <span>خروج</span>
-    </button>
-    <button class="gold" onclick="showBottomNavModal()">
-        <i class="fas fa-chart-pie"></i>
-    </button>
-    <button onclick="openSettings()">
-        <i class="fas fa-sliders-h"></i>
-        <span>تنظیمات</span>
-    </button>
-    <button class="green" onclick="goToInstallPage()">
-        <i class="fas fa-download"></i>
-        <span>نصب برنامه</span>
-    </button>
-</div>
-
-<script>
-    // تابع نصب
-    window.goToInstallPage = function() {
-        window.location.href = 'install.html';
-    };
-    
-    // نمایش نوار بعد از لاگین
-    function updateBottomNavVisibility() {
-        var nav = document.getElementById('bottomNavDirect');
-        if (!nav) return;
-        
-        var isLoggedIn = false;
-        try {
-            // چک کن کاربر لاگین کرده
-            if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) {
-                isLoggedIn = true;
-            }
-            // یا چک کن localStorage
-            if (localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser')) {
-                isLoggedIn = true;
-            }
-            // یا چک کن کلاس body
-            if (document.body.classList.contains('logged-in') || 
-                document.body.classList.contains('show-nav')) {
-                isLoggedIn = true;
-            }
-        } catch(e) {}
-        
-        if (isLoggedIn) {
-            nav.style.display = 'flex';
-        } else {
-            nav.style.display = 'none';
-        }
-    }
-    
-    // اجرا در بارگذاری
-    document.addEventListener('DOMContentLoaded', updateBottomNavVisibility);
-    window.addEventListener('load', updateBottomNavVisibility);
-    
-    // هر ۵۰۰ میلی‌ثانیه چک کن (برای بعد از لاگین)
-    setInterval(updateBottomNavVisibility, 500);
-</script>
 </body>
 </html>
