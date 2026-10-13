@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - صورتحساب و داشبورد
-   نسخه: 2.1 (فونت‌های بزرگ و خوانا برای موبایل)
+   نسخه: 2.2 (با دکمه تغییر کاربر)
    ============================================================ */
 
 function renderDashboardContent() {
@@ -42,6 +42,7 @@ function renderDashboardContent() {
     }
 
     const waitingLoanCount = window.WAITING_LOAN_COUNT || 0;
+
     // ============================================================
     // 📲 کارت نصب برنامه
     // ============================================================
@@ -55,6 +56,35 @@ function renderDashboardContent() {
             <a href="install.html" style="padding:10px 20px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border-radius:10px; font-size:0.9rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(16,185,129,0.4); flex-shrink:0; white-space:nowrap;">نصب کن</a>
         </div>
     `;
+
+    // ============================================================
+    // 👥 کارت تغییر کاربر
+    // ============================================================
+    let changeUserHtml = '';
+    try {
+        const cm = members.find(m => 
+            String(m.accountNumber) === String(currentUser.accountNumber) ||
+            String(m.id) === String(currentUser.memberId)
+        );
+        const fm = cm && cm.heh1 ? members.filter(m => String(m.heh1) === String(cm.heh1)) : [];
+        const isHead = cm && String(cm.heh2) === '01';
+        
+        if (isHead && fm.length > 1) {
+            changeUserHtml = `
+                <div class="dashboard-section" style="background:linear-gradient(135deg, rgba(139,92,246,0.15), rgba(124,58,237,0.08)); border:2px solid rgba(139,92,246,0.4); border-radius:16px; padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                    <span style="font-size:2rem; flex-shrink:0;">👥</span>
+                    <div style="flex:1; min-width:180px;">
+                        <div style="font-size:1rem; font-weight:900; color:#8b5cf6; margin-bottom:2px;">تغییر کاربر</div>
+                        <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">با اعضای دیگه خانواده وارد بشو</div>
+                    </div>
+                    <button onclick="if(typeof showFamilySelectScreen==='function'){showFamilySelectScreen();}else{alert('صفحه انتخاب در دسترس نیست');}" style="padding:10px 20px; background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:#fff; border:none; border-radius:10px; font-size:0.9rem; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(139,92,246,0.4); flex-shrink:0; white-space:nowrap; font-family:inherit;">تغییر کاربر</button>
+                </div>
+            `;
+        }
+    } catch(e) {
+        console.warn('خطا در ساخت changeUserHtml:', e);
+    }
+
     const summaryBox = `
     <div class="dashboard-section summary-section">
         <h3 class="summary-title">
@@ -96,8 +126,7 @@ function renderDashboardContent() {
             </div>
         </div>
     </div>
-`;
-
+    `;
 
     let adminHtml = '';
     if (currentUser.role === 'admin') {
@@ -304,11 +333,11 @@ function renderDashboardContent() {
         </div>
     `;
 
-   setTimeout(function() {
-    document.querySelectorAll('.tx-excel-container').forEach(function(el) {
-        renderExcelTransactions(memberTxns, el);
-    });
-}, 200);
+    setTimeout(function() {
+        document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+            renderExcelTransactions(memberTxns, el);
+        });
+    }, 200);
 
     const statusHtml =
         '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:14px 16px;">' +
@@ -332,30 +361,30 @@ function renderDashboardContent() {
             '</div>' +
         '</div>';
 
-   const tabHtml =
-    '<div class="statement-tabs statement-tabs-floating" role="tablist">' +
-        '<button type="button" class="statement-tab" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری</button>' +
-        '<button type="button" class="statement-tab" data-statement-tab="loan" onclick="switchDashboardTab(\'loan\')">🏦 تسهیلات</button>' +
-        '<button type="button" class="statement-tab active" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 یک نگاه</button>' +
-    '</div>';
+    const tabHtml =
+        '<div class="statement-tabs statement-tabs-floating" role="tablist">' +
+            '<button type="button" class="statement-tab" data-statement-tab="allowance" onclick="switchDashboardTab(\'allowance\')">💰 مقرری</button>' +
+            '<button type="button" class="statement-tab" data-statement-tab="loan" onclick="switchDashboardTab(\'loan\')">🏦 تسهیلات</button>' +
+            '<button type="button" class="statement-tab active" data-statement-tab="overview" onclick="switchDashboardTab(\'overview\')">📊 یک نگاه</button>' +
+        '</div>';
+
     window.switchDashboardTab = function(tab) {
-    var root = document.getElementById('dashboardStatementRoot');
-    if (!root) return;
-    root.querySelectorAll('.statement-tab').forEach(function(btn) {
-        btn.classList.toggle('active', btn.getAttribute('data-statement-tab') === tab);
-    });
-    root.querySelectorAll('.statement-panel').forEach(function(panel) {
-        panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
-    });
-    // رندر مجدد جدول‌ها در پنل فعال
-    setTimeout(function() {
-        document.querySelectorAll('.tx-excel-container').forEach(function(el) {
-            if (el.offsetParent !== null) {
-                renderExcelTransactions(memberTxns, el);
-            }
+        var root = document.getElementById('dashboardStatementRoot');
+        if (!root) return;
+        root.querySelectorAll('.statement-tab').forEach(function(btn) {
+            btn.classList.toggle('active', btn.getAttribute('data-statement-tab') === tab);
         });
-    }, 50);
-};
+        root.querySelectorAll('.statement-panel').forEach(function(panel) {
+            panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
+        });
+        setTimeout(function() {
+            document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+                if (el.offsetParent !== null) {
+                    renderExcelTransactions(memberTxns, el);
+                }
+            });
+        }, 50);
+    };
 
     window.downloadExcel = function() {
         const m = members.find(function(x) { return x.id === currentUser.memberId; });
@@ -404,12 +433,10 @@ function renderDashboardContent() {
         } catch (e) { alert('❌ خطا: ' + e.message); }
     };
 
-    // ============================================================
-    // 🚀 دکمه شناور برای تب‌های صورتحساب
-    // ============================================================
-       return '<div id="dashboardStatementRoot">' +
-    installBannerHtml +             
-          summaryBox +
+    return '<div id="dashboardStatementRoot">' +
+        installBannerHtml +
+        changeUserHtml +
+        summaryBox +
         tabHtml +
         '<div class="statement-panel" data-statement-panel="allowance">' +
             allowanceSummaryHtml +
@@ -440,7 +467,6 @@ function renderDashboardContent() {
             lastTxHtml +
             approvedHtml +
             miniSmsHtml +
-            allTxnsHtml +
             allTxnsHtml +
         '</div>' +
     '</div>';
