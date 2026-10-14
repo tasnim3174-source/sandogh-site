@@ -26,7 +26,7 @@
     quizzes:        { scripts: ['js/script-services/quizzes.js'],     message: 'در حال آماده‌سازی مسابقات...' },
     dailyReward:    { scripts: ['js/script-services/daily-reward.js'],message: 'در حال آماده‌سازی پاداش روزانه...' },
     emailForm:      { scripts: ['js/script-services/email-form.js'],  message: 'در حال آماده‌سازی فرم ایمیل...' },
-    messaging:      { scripts: ['js/script-services/messaging.js'],   message: 'در حال آماده‌سازی پیام‌رسان...' },
+    messaging:      { scripts: [],  message: 'در حال آماده‌سازی پیام‌رسان...', external: 'messages.html' },
     survey:         { scripts: ['js/script-services/messaging.js'],   message: 'در حال آماده‌سازی نظرسنجی...' },
 
     games:          { scripts: ['js/entertainment/games.js'],          message: 'در حال آماده‌سازی بازی‌ها...' },
