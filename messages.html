@@ -944,9 +944,23 @@ function renderMessageCard(msg, isSent) {
     var timeStr = formatTime(msg.created_at);
     var avatar = (isSent ? (msg.to_name || '؟') : (msg.from_name || '؟')).charAt(0);
     
-    var senderLabel = isSent 
-        ? 'به: ' + (msg.to_name || 'نامشخص')
-        : 'از: ' + (msg.from_name || 'ناشناس');
+    var senderLabel;
+if (isSent) {
+    // پیام‌های ارسالی: نام گیرنده
+    var toName = msg.to_name;
+    if (!toName || toName === 'undefined' || toName === 'null' || toName === '') {
+        // اگه خالی بود، از name استفاده کن یا نام کاربر رو بگیر
+        toName = (currentMember && currentMember.firstName) ? 'نامشخص' : 'گیرنده';
+    }
+    senderLabel = 'به: ' + toName;
+} else {
+    // پیام‌های دریافتی: نام فرستنده
+    var fromName = msg.from_name;
+    if (!fromName || fromName === 'undefined' || fromName === 'null') {
+        fromName = 'کاربر صندوق';
+    }
+    senderLabel = 'از: ' + fromName;
+}
     
     if (msg.type === 'council' && !isSent) {
         senderLabel = 'از: شورای صندوق';
