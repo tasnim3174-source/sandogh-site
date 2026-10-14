@@ -277,6 +277,59 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div id="sec11" style="display:none">
       <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
     </div>
+    <!-- ============================================================ -->
+<!-- 🆕 تب ۱۲: اطلاعات کاربری اعضا -->
+<!-- ============================================================ -->
+<div id="sec12" style="display:none">
+  <div class="box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+      <h3 style="color:#ffd700;margin:0">🔐 اطلاعات کاربری اعضا</h3>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="refresh" onclick="loadUsersInfo()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        <button onclick="downloadUsersExcel()" style="padding:8px 16px;border-radius:12px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">📥 دانلود Excel</button>
+      </div>
+    </div>
+    
+    <!-- آمار -->
+    <div class="stats" style="margin-bottom:14px">
+      <div class="stat"><b id="usTotal">0</b><span>کل کاربران</span></div>
+      <div class="stat"><b id="usChanged">0</b><span>🟢 رمز تغییر یافته</span></div>
+      <div class="stat"><b id="usCouncil">0</b><span>🛡️ شورا</span></div>
+      <div class="stat"><b id="usRegular">0</b><span>👤 عادی</span></div>
+    </div>
+    
+    <!-- فیلترها -->
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <input type="text" id="usersSearch" placeholder="🔍 جستجو (نام، شماره، تلفن...)" oninput="renderUsersTable()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
+      <select id="usersRoleFilter" onchange="renderUsersTable()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+        <option value="all" style="background:#1a1a2e">👥 همه نقش‌ها</option>
+        <option value="council" style="background:#1a1a2e">🛡️ شورا و مدیر</option>
+        <option value="regular" style="background:#1a1a2e">👤 اعضای عادی</option>
+      </select>
+      <select id="usersPwdFilter" onchange="renderUsersTable()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+        <option value="all" style="background:#1a1a2e">🔑 همه رمزها</option>
+        <option value="default" style="background:#1a1a2e">🔵 رمز پیش‌فرض</option>
+        <option value="changed" style="background:#1a1a2e">🟢 رمز تغییر یافته</option>
+      </select>
+    </div>
+    
+    <!-- جدول کاربران -->
+    <div class="tw" id="usersTableContainer" style="max-height:500px">
+      <div class="loader">در حال بارگذاری...</div>
+    </div>
+    
+    <!-- لاگ تغییر رمز -->
+    <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <h4 style="color:#ffd700;margin:0;font-size:.95rem">📋 لاگ تغییرات رمز</h4>
+        <button onclick="loadPasswordLog()" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-size:.78rem">🔄 به‌روزرسانی</button>
+      </div>
+      <div class="tw" id="passwordLogContainer" style="max-height:300px">
+        <div class="loader">در حال بارگذاری...</div>
+      </div>
+    </div>
+  </div>
+</div>
 <div id="sec13" style="display:none">
   <div class="box" style="text-align:center">
     <h3 style="color:#ffd700;margin-bottom:15px">📤 آپلود فایل اکسل جدید</h3>
