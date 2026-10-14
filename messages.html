@@ -1272,12 +1272,74 @@ function sendMessage(event) {
         });
         
     } else {
-        // پیام به عضو (با گیرنده تأیید شده)
+               // 🆕 پیام به عضو (تقویت شده)
+        console.log('📤 شروع ارسال پیام به عضو...');
+        console.log('  validatedRecipient:', validatedRecipient);
+        console.log('  membersList طول:', membersList ? membersList.length : 0);
+        
+        // 🆕 اگه validatedRecipient خالی بود، دوباره پیدا کن
+        var finalRecipient = validatedRecipient;
+        
+        if (!finalRecipient) {
+            console.log('⚠️ validatedRecipient خالیه، دوباره پیدا می‌کنم...');
+            var inputVal = document.getElementById('recipientInput').value.trim();
+            
+            if (inputVal && membersList && membersList.length > 0) {
+                function normalizePhone(p) {
+                    if (!p) return '';
+                    var s = String(p).replace(/[\s\-\(\)\+]/g, '');
+                    if (s.startsWith('98') && s.length >= 12) s = '0' + s.substring(2);
+                    s = s.replace(/[۰-۹]/g, function(d) { return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); });
+                    return s;
+                }
+                
+                var searchNorm = normalizePhone(inputVal);
+                
+                for (var i = 0; i < membersList.length; i++) {
+                    var m = membersList[i];
+                    if (String(m.accountNumber) === inputVal) { finalRecipient = m; break; }
+                    if (String(m.id) === inputVal) { finalRecipient = m; break; }
+                    if (m.phone && normalizePhone(m.phone) === searchNorm) { finalRecipient = m; break; }
+                    if (m.phone2 && normalizePhone(m.phone2) === searchNorm) { finalRecipient = m; break; }
+                }
+                
+                console.log('  نتیجه جستجو:', finalRecipient);
+            }
+        }
+        
+        // 🆕 اگه بازم خالی بود، پیام خطا بده
+        if (!finalRecipient) {
+            showToast('❌ لطفاً شماره گیرنده را دوباره وارد کنید', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
+            return;
+        }
+        
+        // 🆕 استخراج id و name
+        var recipientId = finalRecipient.id || finalRecipient.accountNumber || finalRecipient.memberId || '';
+        var recipientName = finalRecipient.name || finalRecipient.firstName || '';
+        
+        if (!recipientId) {
+            showToast('❌ شناسه گیرنده معتبر نیست', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
+            return;
+        }
+        
+        // 🆕 اگه name خالی بود، از شماره استفاده کن
+        if (!recipientName || recipientName === 'undefined' || recipientName === 'null' || recipientName === '') {
+            recipientName = 'کاربر ' + (finalRecipient.accountNumber || recipientId);
+        }
+        
+        console.log('  ✅ نهایی:');
+        console.log('    to_user:', recipientId);
+        console.log('    to_name:', recipientName);
+        
         apiCall('sendMessageToMember', {
             from_user: myId,
             from_name: fromName,
-            to_user: validatedRecipient.id,
-            to_name: validatedRecipient.name,
+            to_user: recipientId,
+            to_name: recipientName,
             subject: subject,
             message: message,
             is_urgent: isUrgent ? 'true' : 'false'
@@ -1286,7 +1348,7 @@ function sendMessage(event) {
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
             
             if (d.ok) {
-                showToast('✅ پیام برای ' + validatedRecipient.name + ' ارسال شد');
+                showToast('✅ پیام برای ' + recipientName + ' ارسال شد');
                 validatedRecipient = null;
                 closeComposeModal();
                 setTimeout(loadMessages, 1000);
@@ -1296,6 +1358,10 @@ function sendMessage(event) {
         });
     }
 }
+
+// ============================================================
+// ارسال پاسخ
+// ============================================================
 function sendReply(event) {
     event.preventDefault();
     var text = document.getElementById('replyInput').value.trim();
