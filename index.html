@@ -949,5 +949,34 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 3000);
 });
 </script>
+    <script>
+// ============================================================
+// 🆕 دریافت پیام از iframe پیام‌رسان
+// ============================================================
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'messagesUpdate') {
+        console.log('📩 پیام از iframe:', event.data);
+        
+        var unread = event.data.unread || 0;
+        var bell = document.getElementById('messagesBell');
+        var badge = document.getElementById('messagesBadge');
+        
+        if (bell) {
+            bell.style.display = 'flex';
+            
+            if (unread > 0) {
+                if (badge) {
+                    badge.textContent = unread;
+                    badge.style.display = 'flex';
+                }
+                bell.classList.add('pulse');
+            } else {
+                if (badge) badge.style.display = 'none';
+                bell.classList.remove('pulse');
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>
