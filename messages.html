@@ -568,11 +568,10 @@
 
         <form id="composeForm" onsubmit="sendMessage(event)">
             <div class="form-field" id="recipientField" style="display:none;">
-                <label>گیرنده <span class="required">*</span></label>
-                <select id="recipientSelect">
-                    <option value="">در حال بارگذاری...</option>
-                </select>
-            </div>
+    <label>شماره تلفن یا شماره حساب گیرنده <span class="required">*</span></label>
+    <input type="text" id="recipientInput" placeholder="مثلاً: 09131762040 یا 200176" maxlength="20" autocomplete="off">
+    <div id="recipientInfo" style="margin-top:8px;font-size:0.75rem;padding:8px 12px;border-radius:8px;display:none;"></div>
+</div>
 
             <div class="form-field">
                 <label>عنوان <span class="required">*</span></label>
@@ -1052,9 +1051,22 @@ function openComposeModal() {
     document.getElementById('composeForm').reset();
     
     var recipientField = document.getElementById('recipientField');
+    var recipientInput = document.getElementById('recipientInput');
+    var recipientInfo = document.getElementById('recipientInfo');
+    
     if (currentTab === 'members') {
         recipientField.style.display = 'block';
         document.getElementById('anonymousField').style.display = 'none';
+        
+        // فعال کردن جستجوی خودکار
+        if (recipientInput) {
+            recipientInput.value = '';
+            recipientInput.oninput = checkRecipient;
+        }
+        
+        if (recipientInfo) {
+            recipientInfo.style.display = 'none';
+        }
     } else {
         recipientField.style.display = 'none';
         document.getElementById('anonymousField').style.display = 'flex';
@@ -1064,7 +1076,102 @@ function openComposeModal() {
         ? '<i class="fas fa-crown"></i> پیام به شورا'
         : '<i class="fas fa-users"></i> پیام به اعضا';
 }
+    // ============================================================
+// 🆕 چک کردن گیرنده با شماره تلفن یا شماره حساب
+// ============================================================
+var validatedRecipient = null;
 
+function checkRecipient() {
+    var input = document.getElementById('recipientInput');
+    var info = document.getElementById('recipientInfo');
+    var value = input.value.trim();
+    
+    validatedRecipient = null;
+    
+    if (!value) {
+        info.style.display = 'none';
+        return;
+    }
+    
+    // جستجو در membersList
+    var found = null;
+    var myId = getUserId();
+    
+    // شماره تلفن رو نرمال کن (حذف فاصله، خط تیره، +98)
+    var searchPhone = value.replace(/[\s\-\(\)\+]/g, '');
+    if (searchPhone.startsWith('98') && searchPhone.length === 12) {
+        searchPhone = '0' + searchPhone.substring(2);
+    }
+    
+    // جستجو
+    for (var i = 0; i < membersList.length; i++) {
+        var m = membersList[i];
+        
+        // چک شماره حساب
+        if (String(m.accountNumber) === value) {
+            found = m;
+            break;
+        }
+        
+        // چک شماره تلفن ۱
+        if (m.phone1) {
+            var p1 = String(m.phone1).replace(/[\s\-\(\)\+]/g, '');
+            if (p1 === searchPhone || p1 === value) {
+                found = m;
+                break;
+            }
+        }
+        
+        // چک شماره تلفن ۲
+        if (m.phone2) {
+            var p2 = String(m.phone2).replace(/[\s\-\(\)\+]/g, '');
+            if (p2 === searchPhone || p2 === value) {
+                found = m;
+                break;
+            }
+        }
+        
+        // چک username
+        if (String(m.karbari) === value) {
+            found = m;
+            break;
+        }
+    }
+    
+    if (!found) {
+        info.style.display = 'block';
+        info.style.background = 'rgba(239,68,68,0.1)';
+        info.style.borderRight = '3px solid #ef4444';
+        info.style.color = '#ef4444';
+        info.innerHTML = '❌ کاربری با این شماره پیدا نشد';
+        return;
+    }
+    
+    // چک نکن خودش باشه
+    if (String(found.accountNumber) === String(myId) || String(found.id) === String(currentUser.memberId)) {
+        info.style.display = 'block';
+        info.style.background = 'rgba(245,158,11,0.1)';
+        info.style.borderRight = '3px solid #f59e0b';
+        info.style.color = '#f59e0b';
+        info.innerHTML = '⚠️ نمی‌تونی به خودت پیام بفرستی';
+        return;
+    }
+    
+    // پیدا شد
+    validatedRecipient = {
+        id: found.karbari || found.accountNumber || found.id,
+        name: found.firstName,
+        accountNumber: found.accountNumber,
+        memberId: found.id,
+        phone: found.phone1 || found.phone2 || ''
+    };
+    
+    info.style.display = 'block';
+    info.style.background = 'rgba(16,185,129,0.1)';
+    info.style.borderRight = '3px solid #10b981';
+    info.style.color = '#10b981';
+    info.innerHTML = '✅ ' + escapeHtml(found.firstName) + ' - ' + escapeHtml(found.accountNumber);
+}
 function closeComposeModal() {
     document.getElementById('composeModal').classList.remove('show');
 }
@@ -1080,15 +1187,15 @@ function sendMessage(event) {
     var type = document.getElementById('typeSelect').value;
     var isUrgent = document.getElementById('urgentCheck').checked;
     var isAnonymous = currentTab === 'council' && document.getElementById('anonymousCheck').checked;
-    var recipientId = document.getElementById('recipientSelect').value;
     
     if (!subject || !message) {
         showToast('لطفاً عنوان و متن پیام را وارد کنید', 'error');
         return;
     }
     
-    if (currentTab === 'members' && !recipientId) {
-        showToast('لطفاً گیرنده را انتخاب کنید', 'error');
+    // برای پیام به عضو: باید گیرنده تأیید شده باشه
+    if (currentTab === 'members' && !validatedRecipient) {
+        showToast('❌ لطفاً شماره تلفن یا شماره حساب گیرنده را وارد کنید', 'error');
         return;
     }
     
@@ -1099,10 +1206,7 @@ function sendMessage(event) {
     var fromName = isAnonymous ? 'ناشناس' : getUserName();
     var myId = getUserId();
     
-    var apiParams = {};
-    
     if (currentTab === 'council') {
-        // پیام به شورا
         apiCall('sendMessageToCouncil', {
             user: myId,
             name: fromName,
@@ -1121,14 +1225,12 @@ function sendMessage(event) {
         });
         
     } else {
-        // پیام به عضو
-        var recipientName = getRecipientName(recipientId);
-        
+        // پیام به عضو (با گیرنده تأیید شده)
         apiCall('sendMessageToMember', {
             from_user: myId,
             from_name: fromName,
-            to_user: recipientId,
-            to_name: recipientName,
+            to_user: validatedRecipient.id,
+            to_name: validatedRecipient.name,
             subject: subject,
             message: message,
             is_urgent: isUrgent ? 'true' : 'false'
@@ -1137,7 +1239,8 @@ function sendMessage(event) {
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
             
             if (d.ok) {
-                showToast('✅ پیام با موفقیت ارسال شد');
+                showToast('✅ پیام برای ' + validatedRecipient.name + ' ارسال شد');
+                validatedRecipient = null;
                 closeComposeModal();
                 setTimeout(loadMessages, 1000);
             } else {
@@ -1146,7 +1249,6 @@ function sendMessage(event) {
         });
     }
 }
-
 function sendReply(event) {
     event.preventDefault();
     var text = document.getElementById('replyInput').value.trim();
