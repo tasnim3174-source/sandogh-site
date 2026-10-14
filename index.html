@@ -328,18 +328,39 @@
     // نمایش نوار پایین
     // ============================================================
     function updateBottomNavVisibility() {
-        var nav = document.getElementById('bottomNavDirect');
-        if (!nav) return;
-        
-        var isLoggedIn = false;
-        try {
-            if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) isLoggedIn = true;
-            if (localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser')) isLoggedIn = true;
-            if (document.body.classList.contains('logged-in') || document.body.classList.contains('show-nav')) isLoggedIn = true;
-        } catch(e) {}
-        
-        nav.style.display = isLoggedIn ? 'flex' : 'none';
+    var nav = document.getElementById('bottomNavDirect');
+    if (!nav) return;
+    
+    // 🆕 چک کن توی صفحه لاگین یا لودر هستیم
+    var loginPage = document.getElementById('loginPage');
+    var newLoader = document.getElementById('newLoader');
+    var loaderOk = document.getElementById('loaderOk');
+    
+    var isLoginVisible = loginPage && loginPage.style.display !== 'none' && loginPage.offsetParent !== null;
+    var isLoaderVisible = (newLoader && newLoader.offsetParent !== null) || (loaderOk && loaderOk.offsetParent !== null);
+    
+    // 🆕 اگه توی لاگین یا لودر هستیم → مخفی
+    if (isLoginVisible || isLoaderVisible) {
+        nav.style.display = 'none';
+        return;
     }
+    
+    // 🆕 فقط اگه کاربر لاگین کرده و توی منو هستیم → نمایش
+    var isLoggedIn = false;
+    try {
+        if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) {
+            isLoggedIn = true;
+        }
+    } catch(e) {}
+    
+    var isInMenu = (typeof currentPage !== 'undefined' && currentPage === 'menu');
+    
+    if (isLoggedIn && isInMenu) {
+        nav.style.display = 'flex';
+    } else {
+        nav.style.display = 'none';
+    }
+}
     document.addEventListener('DOMContentLoaded', updateBottomNavVisibility);
     window.addEventListener('load', updateBottomNavVisibility);
     setInterval(updateBottomNavVisibility, 500);
