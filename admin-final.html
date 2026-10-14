@@ -113,6 +113,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="12" data-role="all" onclick="showTab(12)">🔐 اطلاعات کاربری اعضا</div>
     <div class="menu-item" data-tab="13" data-role="all" onclick="showTab(13)">📤 آپلود فایل اکسل</div>
     <div class="menu-item" data-tab="14" data-role="all" onclick="showTab(14)">📨 درخواست‌های اعضا</div>
+     <div class="menu-item" data-tab="15" data-role="all" onclick="showTab(15)">📩 پیام‌های اعضا</div>
   </div>
 
   <div class="main-content">
@@ -351,7 +352,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       </div>
     </div>
 
-    <div id="sec14" style="display:none">
+        <div id="sec14" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <h3 style="color:#ffd700;margin:0">📨 درخواست‌های اعضا</h3>
@@ -385,9 +386,42 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         </div>
       </div>
     </div>
-  </div>
-</div>
 
+    <!-- ============================================================ -->
+    <!-- 🆕 تب ۱۵: پیام‌های بین اعضا -->
+    <!-- ============================================================ -->
+    <div id="sec15" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700;margin:0">📩 پیام‌های بین اعضا</h3>
+          <button class="refresh" onclick="loadMemberMessages()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        
+        <div class="stats" id="msgStats" style="margin-bottom:14px">
+          <div class="stat"><b id="mmTotal">0</b><span>کل پیام‌ها</span></div>
+          <div class="stat"><b id="mmOriginals">0</b><span>📨 پیام اصلی</span></div>
+          <div class="stat"><b id="mmReplies">0</b><span>↩️ پاسخ‌ها</span></div>
+          <div class="stat"><b id="mmUsers">0</b><span>👥 کاربران</span></div>
+        </div>
+        
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <input type="text" id="mmSearch" placeholder="🔍 جستجو (نام فرستنده/گیرنده، متن پیام...)" oninput="renderMemberMessages()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
+          <select id="mmTypeFilter" onchange="renderMemberMessages()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">📋 همه</option>
+            <option value="original" style="background:#1a1a2e">📨 پیام اصلی</option>
+            <option value="reply" style="background:#1a1a2e">↩️ پاسخ‌ها</option>
+          </select>
+          <select id="mmUrgentFilter" onchange="renderMemberMessages()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">🔔 همه</option>
+            <option value="urgent" style="background:#1a1a2e">⚠️ فوری</option>
+          </select>
+        </div>
+        
+        <div id="memberMessagesList">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </div>
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
