@@ -865,5 +865,89 @@ window.closeMessagesWindow = function() {
     }
 };
 </script>
+    <!-- 🆕 آیکون پاکت نامه شناور -->
+<button id="messagesBell" onclick="openMessagesWindow()" style="display:none;position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);display:none;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;transition:all 0.3s;">
+    <i class="fas fa-envelope"></i>
+    <span id="messagesBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;width:24px;height:24px;border-radius:50%;font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 8px rgba(239,68,68,0.6);">0</span>
+</button>
+
+<style>
+#messagesBell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 30px rgba(139,92,246,0.8) !important;
+}
+#messagesBell.pulse {
+    animation: bellPulse 2s infinite;
+}
+@keyframes bellPulse {
+    0%, 100% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 0 rgba(139,92,246,0.7); }
+    50% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 15px rgba(139,92,246,0); }
+}
+</style>
+
+<script>
+// ============================================================
+// 🆕 چک کردن پیام‌های خوانده‌نشده
+// ============================================================
+window.checkUnreadMessages = function() {
+    // اگه کاربر لاگین نکرده، کاری نکن
+    if (typeof currentUser === 'undefined' || !currentUser || !currentUser.accountNumber) {
+        return;
+    }
+    
+    // مخفی کردن دکمه اگه توی صفحه لاگین هستیم
+    if (typeof currentPage !== 'undefined' && (currentPage === 'login' || !currentPage)) {
+        var bell = document.getElementById('messagesBell');
+        if (bell) bell.style.display = 'none';
+        return;
+    }
+    
+    var userId = currentUser.accountNumber;
+    var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+    
+    fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { cache: 'no-cache' })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok && d.messages) {
+                // پیام‌های خوانده‌نشده
+                var unread = d.messages.filter(function(m) {
+                    return m.status === 'new' && String(m.from_id) !== String(userId);
+                }).length;
+                
+                var bell = document.getElementById('messagesBell');
+                var badge = document.getElementById('messagesBadge');
+                
+                if (bell) {
+                    bell.style.display = 'flex';
+                    
+                    if (unread > 0) {
+                        if (badge) {
+                            badge.textContent = unread;
+                            badge.style.display = 'flex';
+                        }
+                        bell.classList.add('pulse');
+                    } else {
+                        if (badge) badge.style.display = 'none';
+                        bell.classList.remove('pulse');
+                    }
+                }
+            }
+        })
+        .catch(function(e) {
+            console.log('⚠️ خطا در چک پیام‌ها:', e.message);
+        });
+};
+
+// ============================================================
+// شروع چک کردن پیام‌ها بعد از لاگین
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // هر ۳۰ ثانیه چک کن
+    setTimeout(function() {
+        checkUnreadMessages();
+        setInterval(checkUnreadMessages, 30000);
+    }, 3000);
+});
+</script>
 </body>
 </html>
