@@ -1317,20 +1317,37 @@ function sendMessage(event) {
         
         // 🆕 استخراج id و name
         var recipientId = finalRecipient.id || finalRecipient.accountNumber || finalRecipient.memberId || '';
-        var recipientName = finalRecipient.name || finalRecipient.firstName || '';
-        
-        if (!recipientId) {
-            showToast('❌ شناسه گیرنده معتبر نیست', 'error');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
-            return;
+       // 🆕 استخراج نام (اولویت: name → firstName → 'کاربر')
+var recipientName = finalRecipient.name || finalRecipient.firstName || '';
+
+// 🆕 اگه نام خالی بود، سعی کن از چند منبع دیگه بگیریم
+if (!recipientName || recipientName === 'undefined' || recipientName === 'null' || recipientName === '') {
+    // از membersList اصلی چک کن
+    if (membersList && membersList.length > 0) {
+        for (var k = 0; k < membersList.length; k++) {
+            var mm = membersList[k];
+            if (String(mm.accountNumber) === String(finalRecipient.accountNumber) ||
+                String(mm.id) === String(finalRecipient.id)) {
+                recipientName = mm.name || mm.firstName || '';
+                if (recipientName) break;
+            }
         }
-        
-        // 🆕 اگه name خالی بود، از شماره استفاده کن
-        if (!recipientName || recipientName === 'undefined' || recipientName === 'null' || recipientName === '') {
-            recipientName = 'کاربر ' + (finalRecipient.accountNumber || recipientId);
-        }
-        
+    }
+}
+
+// اگه بازم خالی بود، فقط شماره حساب رو نشون بده
+if (!recipientName) {
+    recipientName = 'کاربر ' + (finalRecipient.accountNumber || recipientId);
+}
+
+var recipientId = finalRecipient.id || finalRecipient.accountNumber || finalRecipient.memberId || '';
+
+if (!recipientId) {
+    showToast('❌ شناسه گیرنده معتبر نیست', 'error');
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
+    return;
+}
         console.log('  ✅ نهایی:');
         console.log('    to_user:', recipientId);
         console.log('    to_name:', recipientName);
