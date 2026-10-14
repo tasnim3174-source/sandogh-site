@@ -1328,20 +1328,24 @@ function deleteMessage(id) {
 // ============================================================
 // لیست گیرندگان
 // ============================================================
+f// ============================================================
+// دریافت لیست اعضا از API
+// ============================================================
 function updateRecipientList() {
+    console.log('📥 دریافت لیست اعضا از API...');
+    
     apiCall('getMembersForMessaging', { user: getUserId() }).then(function(d) {
-        var select = document.getElementById('recipientSelect');
-        if (!select) return;
-        
         if (d.ok && d.members) {
-            var html = '<option value="">انتخاب گیرنده...</option>';
-            d.members.forEach(function(m) {
-                html += '<option value="' + m.id + '">' + m.name + ' - ' + m.accountNumber + '</option>';
-            });
-            select.innerHTML = html;
-            console.log('✅ ' + d.members.length + ' گیرنده لود شد');
+            membersList = d.members;
+            console.log('✅ ' + membersList.length + ' عضو از API لود شد');
+            
+            if (membersList.length > 0) {
+                console.log('📋 نمونه:', membersList[0]);
+                console.log('📋 فیلدها:', Object.keys(membersList[0]));
+            }
         } else {
-            select.innerHTML = '<option value="">خطا در بارگذاری</option>';
+            console.error('❌ خطا در دریافت اعضا:', d.error);
+            membersList = [];
         }
     });
 }
@@ -1448,11 +1452,77 @@ function preventBackToLogin() {
     } catch(e) {}
 }
 
-// اجرا در بارگذاری
 document.addEventListener('DOMContentLoaded', function() {
-    preventBackToLogin();
+    console.log('📨 پیام‌رسان بارگذاری شد');
+    
+    try {
+        var userStr = localStorage.getItem('currentUser');
+        if (userStr) {
+            currentUser = JSON.parse(userStr);
+            console.log('👤 کاربر:', currentUser.firstName || currentUser.username);
+        }
+        
+        if (!currentUser || !currentUser.accountNumber) {
+            alert('❌ لطفاً ابتدا از طریق برنامه اصلی وارد شوید');
+            window.close();
+            return;
+        }
+        
+        console.log('✅ اطلاعات کاربر لود شد:', currentUser.firstName);
+        
+    } catch(e) {
+        console.error('خطا:', e);
+    }
+    
+       // 🆕 از API لیست اعضا رو بگیر
+    loadMessages();
+    updateRecipientList();
+    setInterval(loadMessages, REFRESH_INTERVAL);
+    updateOnlineStatus();
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
 });
+
+// ============================================================
+// 🔙 بستن پیام‌رسان و بازگشت به برنامه اصلی
+// ============================================================
+function closeMessages() {
+    console.log('🔙 بستن پیام‌رسان...');
+    
+    try {
+        if (window.opener && !window.opener.closed) {
+            window.opener.focus();
+            window.close();
+            setTimeout(function() {
+                window.location.replace('index.html');
+            }, 300);
+            return;
+        }
+    } catch(e) {}
+    
+    try {
+        window.location.replace('index.html');
+    } catch(e) {
+        window.location.href = 'index.html';
+    }
+}
+
+// جلوگیری از دکمه Back
+(function preventBackToLogin() {
+    try {
+        window.history.pushState(null, '', window.location.href);
+        
+        window.addEventListener('popstate', function() {
+            window.history.pushState(null, '', window.location.href);
+            closeMessages();
+        });
+    } catch(e) {}
+})();
+
+window.closeMessages = closeMessages;
+
 console.log('✅ پیام‌رسان آماده است');
 </script>
 </body>
 </html>
+
