@@ -57,11 +57,28 @@ async function openScriptService(tabName) {
             else alert('⚠️ فرم ایمیل هنوز آماده نیست');
             break;
        case 'messaging':
-    console.log('📨 باز کردن پنجره پیام‌رسان...');
-    if (typeof window.openMessagesWindow === 'function') {
-        window.openMessagesWindow();
+    console.log('📨 باز کردن پیام‌رسان...');
+    
+    // 🆕 چک کن PWA هست یا وب
+    var isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone === true;
+    
+    if (isPWA) {
+        // توی PWA: از iframe شناور استفاده کن
+        console.log('📱 PWA detected - استفاده از iframe شناور');
+        if (typeof window.openMessagesWindow === 'function') {
+            window.openMessagesWindow();
+        } else {
+            alert('❌ پیام‌رسان در دسترس نیست');
+        }
     } else {
-        window.open('messages.html', '_blank');
+        // توی وب: از پنجره جدید استفاده کن
+        console.log('🌐 Web - استفاده از پنجره جدید');
+        if (typeof window.openMessagesWindow === 'function') {
+            window.openMessagesWindow();
+        } else {
+            window.open('messages.html', '_blank');
+        }
     }
     return;
         case 'survey':
