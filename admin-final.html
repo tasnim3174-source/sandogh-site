@@ -598,9 +598,13 @@ function showTab(n){
   else if (n === 13) {
     if (sec13) sec13.style.display = 'block';
   }
-  else if (n === 14) {
+    else if (n === 14) {
     if (sec14) sec14.style.display = 'block';
     loadMemberRequests();
+  }
+  else if (n === 15) {
+    if (sec15) sec15.style.display = 'block';
+    loadMemberMessages();
   }
   
   var qEl = document.getElementById('q');
@@ -1482,6 +1486,142 @@ function escapeHtmlAdmin(str) {
     return String(str).replace(/[&<>"']/g, function(c) {
         return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
     }).replace(/\n/g, '<br>');
+}
+// ============================================================
+// 🆕 تب ۱۵: پیام‌های بین اعضا
+// ============================================================
+
+var allMemberMessages = [];
+
+function loadMemberMessages() {
+    var listEl = document.getElementById('memberMessagesList');
+    if (!listEl) {
+        console.error('❌ memberMessagesList پیدا نشد');
+        return;
+    }
+    
+    listEl.innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+    
+    fetch(URL + '?action=getAllMemberMessagesAdmin&key=' + encodeURIComponent(KEY) + '&_=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (!d.ok || !d.messages) {
+                listEl.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت پیام‌ها</div>';
+                return;
+            }
+            
+            allMemberMessages = d.messages;
+            
+            var totalEl = document.getElementById('mmTotal');
+            var origEl = document.getElementById('mmOriginals');
+            var repEl = document.getElementById('mmReplies');
+            var usrEl = document.getElementById('mmUsers');
+            
+            if (totalEl) totalEl.textContent = d.total || 0;
+            if (origEl) origEl.textContent = d.originals || 0;
+            if (repEl) repEl.textContent = d.replies || 0;
+            if (usrEl) usrEl.textContent = d.uniqueUsers || 0;
+            
+            renderMemberMessages();
+        })
+        .catch(function(e) {
+            console.error('خطا:', e);
+            listEl.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در اتصال</div>';
+        });
+}
+
+function renderMemberMessages() {
+    var listEl = document.getElementById('memberMessagesList');
+    if (!listEl) return;
+    
+    var q = (document.getElementById('mmSearch')?.value || '').trim().toLowerCase();
+    var typeFilter = document.getElementById('mmTypeFilter')?.value || 'all';
+    var urgentFilter = document.getElementById('mmUrgentFilter')?.value || 'all';
+    
+    var filtered = allMemberMessages.filter(function(m) {
+        var isReply = m.parent_id && m.parent_id !== '';
+        if (typeFilter === 'original' && isReply) return false;
+        if (typeFilter === 'reply' && !isReply) return false;
+        if (urgentFilter === 'urgent' && !m.is_urgent) return false;
+        
+        if (q) {
+            var searchStr = String(
+                (m.from_name || '') + ' ' + 
+                (m.to_name || '') + ' ' + 
+                (m.subject || '') + ' ' + 
+                (m.message || '') + ' ' +
+                (m.from_id || '') + ' ' +
+                (m.to_id || '')
+            ).toLowerCase();
+            if (searchStr.indexOf(q) < 0) return false;
+        }
+        
+        return true;
+    });
+    
+    if (filtered.length === 0) {
+        listEl.innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 پیامی یافت نشد</div>';
+        return;
+    }
+    
+    var html = '';
+    filtered.forEach(function(m) {
+        var dt = m.created_at ? new Date(m.created_at) : null;
+        var dateStr = dt ? fmtFull(dt) : '-';
+        var isReply = m.parent_id && m.parent_id !== '';
+        var isUrgent = m.is_urgent === true;
+        
+        var borderColor = isReply ? '#10b981' : (isUrgent ? '#f59e0b' : '#8b5cf6');
+        var badge = isReply ? '<span style="background:rgba(16,185,129,.15);color:#10b981;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:800">↩️ پاسخ</span>' : 
+                     (isUrgent ? '<span style="background:rgba(245,158,11,.15);color:#f59e0b;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:800">⚠️ فوری</span>' : 
+                     '<span style="background:rgba(139,92,246,.15);color:#8b5cf6;padding:3px 10px;border-radius:99px;font-size:.7rem;font-weight:800">📨 پیام اصلی</span>');
+        
+        html += '<div class="req-card" style="border-right:3px solid ' + borderColor + ';">';
+        
+        html += '<div class="req-head">';
+        html += '<div style="flex:1;min-width:0;">';
+        html += '<div style="font-weight:800;color:#fff;font-size:.88rem;margin-bottom:4px;">👤 ' + escapeHtmlAdmin(m.from_name || 'نامشخص') + ' <span style="color:#666;font-size:.7rem">(' + (m.from_id || '-') + ')</span></div>';
+        html += '<div style="font-size:.72rem;color:#9ca3af;">→ به: <b style="color:#ffd700">' + escapeHtmlAdmin(m.to_name || 'نامشخص') + '</b> <span style="color:#666">(' + (m.to_id || '-') + ')</span></div>';
+        html += '</div>';
+        html += badge;
+        html += '</div>';
+        
+        if (m.subject) {
+            html += '<div style="background:rgba(255,215,0,.06);padding:8px 10px;border-radius:8px;margin:8px 0;font-size:.82rem;">';
+            html += '<b style="color:#ffd700">📋 ' + escapeHtmlAdmin(m.subject) + '</b>';
+            html += '</div>';
+        }
+        
+        html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;font-size:.82rem;line-height:1.8;color:#d1d5db;margin:8px 0;">';
+        html += escapeHtmlAdmin(m.message || '');
+        html += '</div>';
+        
+        html += '<div style="font-size:.7rem;color:#6b7280;margin-top:8px;">📅 ' + dateStr + '</div>';
+        
+        html += '<div style="margin-top:10px;">';
+        html += '<button onclick="deleteMemberMessage(\'' + m.id + '\')" style="padding:8px 14px;border:none;border-radius:8px;background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3);cursor:pointer;font-family:tahoma;font-weight:700;font-size:.78rem;">🗑️ حذف پیام</button>';
+        html += '</div>';
+        
+        html += '</div>';
+    });
+    
+    listEl.innerHTML = html;
+}
+
+function deleteMemberMessage(id) {
+    if (!confirm('آیا از حذف این پیام مطمئن هستید؟\n\nاین عمل قابل بازگشت نیست.')) return;
+    
+    fetch(URL + '?action=deleteMemberMessageAdmin&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id) + '&_=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                alert('✅ پیام حذف شد');
+                loadMemberMessages();
+            } else {
+                alert('❌ ' + (d.error || 'خطا در حذف'));
+            }
+        })
+        .catch(function() { alert('❌ خطا در اتصال'); });
 }
 
 console.log('✅ پنل مدیریت آماده است');
