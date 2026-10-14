@@ -522,9 +522,9 @@
             <button class="header-btn" onclick="loadMessages()" title="بروزرسانی" id="refreshBtn">
                 <i class="fas fa-sync-alt"></i>
             </button>
-            <button class="header-btn" onclick="window.close()" title="بستن">
-                <i class="fas fa-times"></i>
-            </button>
+           <button class="header-btn" onclick="closeMessages()" title="بازگشت به برنامه">
+    <i class="fas fa-times"></i>
+</button>
         </div>
     </div>
     
@@ -1303,7 +1303,53 @@ window.closeReplyModal = closeReplyModal;
 window.sendMessage = sendMessage;
 window.sendReply = sendReply;
 window.deleteMessage = deleteMessage;
+    window.closeMessages = closeMessages;
+// ============================================================
+// بستن پیام‌رسان و بازگشت به برنامه اصلی
+// ============================================================
+function closeMessages() {
+    console.log('🔙 بستن پیام‌رسان...');
+    
+    // تلاش برای بستن پنجره
+    try {
+        // اگه از window.open باز شده
+        if (window.opener && !window.opener.closed) {
+            window.close();
+            return;
+        }
+    } catch(e) {}
+    
+    // اگه نتونست، برو به برنامه اصلی
+    try {
+        // پاک کردن تاریخچه برای جلوگیری از بازگشت
+        if (window.history && window.history.length > 1) {
+            window.location.replace('index.html');
+        } else {
+            window.location.href = 'index.html';
+        }
+    } catch(e) {
+        window.location.href = 'index.html';
+    }
+}
 
+// جلوگیری از دکمه Back گوشی
+function preventBackToLogin() {
+    try {
+        // جایگزینی وضعیت فعلی
+        window.history.pushState(null, '', window.location.href);
+        
+        window.addEventListener('popstate', function() {
+            // به جای برگشت، برو به برنامه اصلی
+            window.history.pushState(null, '', window.location.href);
+            closeMessages();
+        });
+    } catch(e) {}
+}
+
+// اجرا در بارگذاری
+document.addEventListener('DOMContentLoaded', function() {
+    preventBackToLogin();
+});
 console.log('✅ پیام‌رسان آماده است');
 </script>
 </body>
