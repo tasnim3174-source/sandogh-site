@@ -781,6 +781,39 @@ function loadMessages() {
             allMessages = d.messages;
             renderMessages();
             updateBadges();
+            function loadMessages() {
+    var btn = document.getElementById('refreshBtn');
+    if (btn) btn.classList.add('loading');
+    
+    apiCall('getAllMessagesForUser', { user: getUserId() }).then(function(d) {
+        if (btn) btn.classList.remove('loading');
+        
+        if (d.ok && d.messages) {
+            allMessages = d.messages;
+            renderMessages();
+            updateBadges();
+            console.log('✅ ' + allMessages.length + ' پیام لود شد');
+            
+            // 🆕 به والد (برنامه اصلی) پیام بفرست
+            try {
+                if (window.parent && window.parent !== window) {
+                    var unread = allMessages.filter(function(m) {
+                        return m.status === 'new' && String(m.from_id) !== String(getUserId());
+                    }).length;
+                    
+                    window.parent.postMessage({
+                        type: 'messagesUpdate',
+                        unread: unread,
+                        total: allMessages.length
+                    }, '*');
+                }
+            } catch(e) {}
+            
+        } else {
+            console.error('❌ خطا در لود پیام‌ها:', d.error);
+        }
+    });
+}
             console.log('✅ ' + allMessages.length + ' پیام لود شد');
         } else {
             console.error('❌ خطا در لود پیام‌ها:', d.error);
