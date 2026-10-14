@@ -832,11 +832,36 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        if (!currentUser) {
-            alert('❌ لطفاً اول وارد برنامه شوید');
-            window.close();
-            return;
+       if (!currentUser || !currentUser.accountNumber) {
+    console.log('⚠️ currentUser پیدا نشد، تلاش از sessionStorage...');
+    
+    // تلاش دوم: از sessionStorage
+    try {
+        var sess = sessionStorage.getItem('currentUser');
+        if (sess) {
+            currentUser = JSON.parse(sess);
+            console.log('✅ currentUser از sessionStorage لود شد');
         }
+    } catch(e) {}
+    
+    // تلاش سوم: از loginResult
+    if (!currentUser) {
+        try {
+            var userStr2 = localStorage.getItem('sandogh_user');
+            if (userStr2) {
+                currentUser = JSON.parse(userStr2);
+                console.log('✅ currentUser از sandogh_user لود شد');
+            }
+        } catch(e) {}
+    }
+    
+    // اگه بازم نبود، پیام بده
+    if (!currentUser || !currentUser.accountNumber) {
+        alert('❌ لطفاً ابتدا از طریق برنامه اصلی وارد شوید');
+        window.close();
+        return;
+    }
+}
         
         console.log('✅ اطلاعات کاربر لود شد');
         
