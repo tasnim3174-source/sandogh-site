@@ -270,127 +270,124 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
           <button onclick="filterMsgs('answered')" style="padding:8px 14px;border-radius:99px;border:1px solid rgba(34,197,94,.4);background:rgba(34,197,94,.1);color:#22c55e;cursor:pointer;font-weight:700;font-family:tahoma">✅ پاسخ‌داده‌شده</button>
           <button onclick="filterMsgs('all')" style="padding:8px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);cursor:pointer;font-weight:700;font-family:tahoma">📋 همه</button>
         </div>
-               <div id="councilMessagesList"><div class="loader">در حال بارگذاری...</div></div>
+        <div id="councilMessagesList"><div class="loader">در حال بارگذاری...</div></div>
       </div>
     </div>
-   
+
     <div id="sec11" style="display:none">
-  <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
+      <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- 🆕 تب ۱۲: اطلاعات کاربری اعضا -->
+    <!-- ============================================================ -->
+    <div id="sec12" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700;margin:0">🔐 اطلاعات کاربری اعضا</h3>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="refresh" onclick="loadUsersInfo()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+            <button onclick="downloadUsersExcel()" style="padding:8px 16px;border-radius:12px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">📥 دانلود Excel</button>
+          </div>
+        </div>
+        
+        <div class="stats" style="margin-bottom:14px">
+          <div class="stat"><b id="usTotal">0</b><span>کل کاربران</span></div>
+          <div class="stat"><b id="usChanged">0</b><span>🟢 رمز تغییر یافته</span></div>
+          <div class="stat"><b id="usCouncil">0</b><span>🛡️ شورا</span></div>
+          <div class="stat"><b id="usRegular">0</b><span>👤 عادی</span></div>
+        </div>
+        
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+          <input type="text" id="usersSearch" placeholder="🔍 جستجو (نام، شماره، تلفن...)" oninput="renderUsersTable()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
+          <select id="usersRoleFilter" onchange="renderUsersTable()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">👥 همه نقش‌ها</option>
+            <option value="council" style="background:#1a1a2e">🛡️ شورا و مدیر</option>
+            <option value="regular" style="background:#1a1a2e">👤 اعضای عادی</option>
+          </select>
+          <select id="usersPwdFilter" onchange="renderUsersTable()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">🔑 همه رمزها</option>
+            <option value="default" style="background:#1a1a2e">🔵 رمز پیش‌فرض</option>
+            <option value="changed" style="background:#1a1a2e">🟢 رمز تغییر یافته</option>
+          </select>
+        </div>
+        
+        <div class="tw" id="usersTableContainer" style="max-height:500px">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+        
+        <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+            <h4 style="color:#ffd700;margin:0;font-size:.95rem">📋 لاگ تغییرات رمز</h4>
+            <button onclick="loadPasswordLog()" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-size:.78rem">🔄 به‌روزرسانی</button>
+          </div>
+          <div class="tw" id="passwordLogContainer" style="max-height:300px">
+            <div class="loader">در حال بارگذاری...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sec13" style="display:none">
+      <div class="box" style="text-align:center">
+        <h3 style="color:#ffd700;margin-bottom:15px">📤 آپلود فایل اکسل جدید</h3>
+        <p style="color:rgba(255,255,255,.7);margin-bottom:16px;line-height:2;font-size:.85rem">
+          فایل <b style="color:#ffd700">data1.xlsx</b> جدید رو انتخاب کن.<br>
+          این فایل جایگزین فایل قبلی در گیت‌هاب می‌شه.
+        </p>
+        <input type="file" id="adminExcelFile" accept=".xlsx,.xls" 
+               style="width:100%;max-width:500px;padding:12px;border:2px dashed #ffc94d;border-radius:12px;box-sizing:border-box;background:rgba(0,0,0,0.3);color:#fff;cursor:pointer;font-size:.85rem;margin-bottom:14px;font-family:tahoma">
+        <button id="adminUploadBtn" onclick="adminUploadExcelToGitHub()" 
+                style="width:100%;max-width:500px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffc94d,#d97706);color:#1a1a2e;font-size:1rem;font-weight:900;cursor:pointer;font-family:tahoma">
+          🚀 آپلود به گیت‌هاب
+        </button>
+        <div id="adminUploadStatus" style="margin-top:16px;padding:14px;border-radius:12px;display:none;font-size:.85rem;text-align:center;line-height:2;max-width:500px;margin-left:auto;margin-right:auto"></div>
+        <div style="margin-top:20px;padding:14px;background:rgba(255,215,0,.06);border:1px dashed rgba(255,215,0,.4);border-radius:12px;max-width:500px;margin-left:auto;margin-right:auto;font-size:.75rem;color:rgba(255,255,255,.6);line-height:2;text-align:right">
+          <b style="color:#ffd700">💡 نکات مهم:</b><br>
+          • فایل باید از نوع <b style="color:#ffd700">.xlsx</b> باشد<br>
+          • نام فایل باید <b style="color:#ffd700">data1.xlsx</b> باشد<br>
+          • بعد از آپلود، برنامه را رفرش کن
+        </div>
+      </div>
+    </div>
+
+    <div id="sec14" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700;margin:0">📨 درخواست‌های اعضا</h3>
+          <button class="refresh" onclick="loadMemberRequests()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        
+        <div class="stats" id="memberRequestsStats" style="margin-bottom:14px">
+          <div class="stat"><b id="mrTotal">0</b><span>کل درخواست‌ها</span></div>
+          <div class="stat"><b id="mrPending">0</b><span>⏳ در انتظار</span></div>
+          <div class="stat"><b id="mrResolved">0</b><span>✅ پاسخ داده شده</span></div>
+          <div class="stat"><b id="mrToday">0</b><span>📅 امروز</span></div>
+        </div>
+        
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <select id="mrTypeFilter" onchange="renderMemberRequests()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">📋 همه انواع</option>
+            <option value="general" style="background:#1a1a2e">📋 درخواست‌های عمومی</option>
+            <option value="password" style="background:#1a1a2e">🔐 تغییر رمز</option>
+            <option value="purchase" style="background:#1a1a2e">🛍️ خرید</option>
+          </select>
+          <select id="mrStatusFilter" onchange="renderMemberRequests()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
+            <option value="all" style="background:#1a1a2e">📋 همه وضعیت‌ها</option>
+            <option value="pending" style="background:#1a1a2e">⏳ در انتظار</option>
+            <option value="resolved" style="background:#1a1a2e">✅ پاسخ داده شده</option>
+          </select>
+          <input type="text" id="mrSearch" placeholder="🔍 جستجو (نام، شماره، عنوان...)" oninput="renderMemberRequests()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
+        </div>
+        
+        <div id="memberRequestsList">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- ============================================================ -->
-<!-- 🆕 تب ۱۲: اطلاعات کاربری اعضا -->
-<!-- ============================================================ -->
-<div id="sec12" style="display:none">
-  <div class="box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <h3 style="color:#ffd700;margin:0">🔐 اطلاعات کاربری اعضا</h3>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <button class="refresh" onclick="loadUsersInfo()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
-        <button onclick="downloadUsersExcel()" style="padding:8px 16px;border-radius:12px;border:none;background:#22c55e;color:#fff;cursor:pointer;font-weight:700">📥 دانلود Excel</button>
-      </div>
-    </div>
-    
-    <!-- آمار -->
-    <div class="stats" style="margin-bottom:14px">
-      <div class="stat"><b id="usTotal">0</b><span>کل کاربران</span></div>
-      <div class="stat"><b id="usChanged">0</b><span>🟢 رمز تغییر یافته</span></div>
-      <div class="stat"><b id="usCouncil">0</b><span>🛡️ شورا</span></div>
-      <div class="stat"><b id="usRegular">0</b><span>👤 عادی</span></div>
-    </div>
-    
-    <!-- فیلترها -->
-    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <input type="text" id="usersSearch" placeholder="🔍 جستجو (نام، شماره، تلفن...)" oninput="renderUsersTable()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
-      <select id="usersRoleFilter" onchange="renderUsersTable()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
-        <option value="all" style="background:#1a1a2e">👥 همه نقش‌ها</option>
-        <option value="council" style="background:#1a1a2e">🛡️ شورا و مدیر</option>
-        <option value="regular" style="background:#1a1a2e">👤 اعضای عادی</option>
-      </select>
-      <select id="usersPwdFilter" onchange="renderUsersTable()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
-        <option value="all" style="background:#1a1a2e">🔑 همه رمزها</option>
-        <option value="default" style="background:#1a1a2e">🔵 رمز پیش‌فرض</option>
-        <option value="changed" style="background:#1a1a2e">🟢 رمز تغییر یافته</option>
-      </select>
-    </div>
-    
-    <!-- جدول کاربران -->
-    <div class="tw" id="usersTableContainer" style="max-height:500px">
-      <div class="loader">در حال بارگذاری...</div>
-    </div>
-    
-    <!-- لاگ تغییر رمز -->
-    <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,.1);padding-top:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-        <h4 style="color:#ffd700;margin:0;font-size:.95rem">📋 لاگ تغییرات رمز</h4>
-        <button onclick="loadPasswordLog()" style="padding:6px 14px;border-radius:10px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer;font-size:.78rem">🔄 به‌روزرسانی</button>
-      </div>
-      <div class="tw" id="passwordLogContainer" style="max-height:300px">
-        <div class="loader">در حال بارگذاری...</div>
-      </div>
-    </div>
-  </div>
-</div>
-<div id="sec13" style="display:none">
-  <div class="box" style="text-align:center">
-    <h3 style="color:#ffd700;margin-bottom:15px">📤 آپلود فایل اکسل جدید</h3>
-    <p style="color:rgba(255,255,255,.7);margin-bottom:16px;line-height:2;font-size:.85rem">
-      فایل <b style="color:#ffd700">data1.xlsx</b> جدید رو انتخاب کن.<br>
-      این فایل جایگزین فایل قبلی در گیت‌هاب می‌شه.
-    </p>
-    <input type="file" id="adminExcelFile" accept=".xlsx,.xls" 
-           style="width:100%;max-width:500px;padding:12px;border:2px dashed #ffc94d;border-radius:12px;box-sizing:border-box;background:rgba(0,0,0,0.3);color:#fff;cursor:pointer;font-size:.85rem;margin-bottom:14px;font-family:tahoma">
-    <button id="adminUploadBtn" onclick="adminUploadExcelToGitHub()" 
-            style="width:100%;max-width:500px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffc94d,#d97706);color:#1a1a2e;font-size:1rem;font-weight:900;cursor:pointer;font-family:tahoma">
-      🚀 آپلود به گیت‌هاب
-    </button>
-    <div id="adminUploadStatus" style="margin-top:16px;padding:14px;border-radius:12px;display:none;font-size:.85rem;text-align:center;line-height:2;max-width:500px;margin-left:auto;margin-right:auto"></div>
-    <div style="margin-top:20px;padding:14px;background:rgba(255,215,0,.06);border:1px dashed rgba(255,215,0,.4);border-radius:12px;max-width:500px;margin-left:auto;margin-right:auto;font-size:.75rem;color:rgba(255,255,255,.6);line-height:2;text-align:right">
-      <b style="color:#ffd700">💡 نکات مهم:</b><br>
-      • فایل باید از نوع <b style="color:#ffd700">.xlsx</b> باشد<br>
-      • نام فایل باید <b style="color:#ffd700">data1.xlsx</b> باشد<br>
-      • بعد از آپلود، برنامه را رفرش کن
-    </div>
-  </div>
-</div>
-
-<div id="sec14" style="display:none">
-  <div class="box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-      <h3 style="color:#ffd700;margin:0">📨 درخواست‌های اعضا</h3>
-      <button class="refresh" onclick="loadMemberRequests()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
-    </div>
-    
-    <!-- آمار -->
-    <div class="stats" id="memberRequestsStats" style="margin-bottom:14px">
-      <div class="stat"><b id="mrTotal">0</b><span>کل درخواست‌ها</span></div>
-      <div class="stat"><b id="mrPending">0</b><span>⏳ در انتظار</span></div>
-      <div class="stat"><b id="mrResolved">0</b><span>✅ پاسخ داده شده</span></div>
-      <div class="stat"><b id="mrToday">0</b><span>📅 امروز</span></div>
-    </div>
-    
-    <!-- فیلترها -->
-    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <select id="mrTypeFilter" onchange="renderMemberRequests()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
-        <option value="all" style="background:#1a1a2e">📋 همه انواع</option>
-        <option value="general" style="background:#1a1a2e">📋 درخواست‌های عمومی</option>
-        <option value="password" style="background:#1a1a2e">🔐 تغییر رمز</option>
-        <option value="purchase" style="background:#1a1a2e">🛍️ خرید</option>
-      </select>
-      <select id="mrStatusFilter" onchange="renderMemberRequests()" style="padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma;cursor:pointer">
-        <option value="all" style="background:#1a1a2e">📋 همه وضعیت‌ها</option>
-        <option value="pending" style="background:#1a1a2e">⏳ در انتظار</option>
-        <option value="resolved" style="background:#1a1a2e">✅ پاسخ داده شده</option>
-      </select>
-      <input type="text" id="mrSearch" placeholder="🔍 جستجو (نام، شماره، عنوان...)" oninput="renderMemberRequests()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
-    </div>
-    
-    <!-- لیست درخواست‌ها -->
-    <div id="memberRequestsList">
-      <div class="loader">در حال بارگذاری...</div>
-    </div>
-  </div>
-</div>
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
@@ -412,75 +409,21 @@ function fmtDate(d){
 function fmtTime(d){ return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
 function fmtFull(d){ return fmtDate(d) + ' - ساعت ' + fmtTime(d); }
 
-// ============================================================
-// 🔒 چک دسترسی (با توکن)
-// ============================================================
-  function check() {
-    // ✅ چک توکن امنیتی
-    try {
-        var token = localStorage.getItem('admin_access_token');
-        if (token) {
-            var data = JSON.parse(decodeURIComponent(escape(atob(token))));
-            var age = Date.now() - data.timestamp;
-            
-            if (age <= 5 * 60 * 1000 && data.isCouncil) {
-                console.log('✅ توکن معتبر');
-                isCouncil = true;
-                window.__councilUser = {
-                    id: data.memberId,
-                    name: data.firstName,
-                    accountNumber: data.accountNumber,
-                    username: data.username
-                };
-                
-                setTimeout(function() {
-                    try { localStorage.removeItem('admin_access_token'); } catch(e) {}
-                }, 1500);
-                
-                enterDashboard();
-                return;
-            }
-        }
-    } catch(e) {
-        console.error('خطا در چک توکن:', e.message);
-    }
-    
-    // ⬇️ کد اصلی check() خودت (چک رمز)
-    // ... دست نزن ...
-    
-    var u = document.getElementById('cuser').value.trim();
-    var p = document.getElementById('pass').value.trim();
-    // ...
-}
 function check() {
-    // ✅ چک کن توکن در localStorage هست
     var token = null;
-    try {
-        token = localStorage.getItem('admin_access_token');
-    } catch(e) {}
+    try { token = localStorage.getItem('admin_access_token'); } catch(e) {}
     
     if (!token) {
-        // اگه توکن نبود، از روش قدیمی (رمز) استفاده کن
-        var u = document.getElementById('cuser').value.trim();
-        var p = document.getElementById('pass').value.trim();
-        
-        if (!u || !p) {
-            document.getElementById('err').style.display = 'block';
-            document.getElementById('err').textContent = '❌ لطفاً از طریق برنامه اصلی وارد شوید';
-            return;
-        }
-        
-        // ... کد چک رمز قدیمی (که خودت داری) ...
+        document.getElementById('err').style.display = 'block';
+        document.getElementById('err').textContent = '❌ لطفاً از طریق برنامه اصلی وارد شوید';
         return;
     }
     
-    // ✅ توکن رو دیکد کن
     try {
         var data = JSON.parse(atob(token));
         var now = Date.now();
         var age = now - data.timestamp;
         
-        // توکن ۵ دقیقه اعتبار
         if (age > 5 * 60 * 1000) {
             alert('⏰ توکن منقضی شده!\n\nلطفاً از برنامه اصلی دوباره وارد شوید.');
             try { localStorage.removeItem('admin_access_token'); } catch(e) {}
@@ -495,16 +438,12 @@ function check() {
             return;
         }
         
-        // ✅ توکن معتبر → ورود
         window.__adminData = data;
         window.__isAdmin = data.isAdmin === true;
         
         console.log('✅ خوش آمدید ' + (data.firstName || data.username));
-        
-        // نمایش پنل
         showDash();
         
-        // حذف توکن بعد از استفاده (یک‌بار مصرف)
         setTimeout(function() {
             try { localStorage.removeItem('admin_access_token'); } catch(e) {}
         }, 1000);
@@ -516,9 +455,6 @@ function check() {
     }
 }
 
-// ============================================================
-// نمایش پنل بعد از تأیید
-// ============================================================
 function showDash() {
     var loginEl = document.getElementById('login');
     var dashEl = document.getElementById('dash');
@@ -526,27 +462,25 @@ function showDash() {
     if (loginEl) loginEl.style.display = 'none';
     if (dashEl) dashEl.style.display = 'block';
     
-    // اگه عضو شوراست، بنر نشون بده
     if (!window.__isAdmin && window.__adminData) {
         var banner = document.getElementById('councilBanner');
         if (banner) banner.style.display = 'block';
         
-        // مخفی کردن کنترل‌های ادمین
         var controls = document.getElementById('adminControls');
         if (controls) controls.style.display = 'none';
     }
     
-    // بارگذاری داده‌ها (اگه تابع init داری)
     if (typeof init === 'function') {
-        try { init(); } catch(e) { console.error('خطا در init:', e); }
+        try { init(); } catch(e) {}
     }
     if (typeof loadAll === 'function') {
-        try { loadAll(); } catch(e) { console.error('خطا در loadAll:', e); }
+        try { loadAll(); } catch(e) {}
     }
 }
 
 window.check = check;
 window.showDash = showDash;
+
 function enterDashboard(){
   document.getElementById('login').style.display = 'none';
   document.getElementById('dash').style.display = 'block';
@@ -598,7 +532,8 @@ function showTab(n){
   var sec11 = document.getElementById('sec11'); if (sec11) sec11.style.display = 'none';
   var sec12 = document.getElementById('sec12'); if (sec12) sec12.style.display = 'none';
   var sec13 = document.getElementById('sec13'); if (sec13) sec13.style.display = 'none';
-var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = 'none';
+  var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = 'none';
+  
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
   items.forEach(function(item){
@@ -612,11 +547,7 @@ var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = '
   else if (n === 8) { if (tab8El) tab8El.style.display = 'block'; loadPurchaseRequests(); }
   else if (n === 9) { if (sec9) sec9.style.display = 'block'; }
   else if (n === 10) {
-    if (sec10) {
-      var mainEl = document.querySelector('.main-content');
-      if (mainEl && sec10.parentElement !== mainEl) mainEl.appendChild(sec10);
-      sec10.style.display = 'block';
-    }
+    if (sec10) sec10.style.display = 'block';
     loadCouncilMessages();
   }
   else if (n === 11) {
@@ -627,22 +558,17 @@ var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = '
     }
   }
   else if (n === 12) {
-    if (sec12) {
-      sec12.style.display = 'block';
-    }
+    if (sec12) sec12.style.display = 'block';
     loadUsersInfo();
   }
   else if (n === 13) {
-    if (sec13) {
-      sec13.style.display = 'block';
-    }
+    if (sec13) sec13.style.display = 'block';
   }
   else if (n === 14) {
-    if (sec14) {
-        sec14.style.display = 'block';
-    }
+    if (sec14) sec14.style.display = 'block';
     loadMemberRequests();
-}
+  }
+  
   var qEl = document.getElementById('q');
   if (qEl) qEl.style.display = (n === 1 ? 'block' : 'none');
 
@@ -671,12 +597,11 @@ function loadAdminNameCache(cb){
     if (d && Array.isArray(d.rows)) list = d.rows;
     else if (Array.isArray(d)) list = d;
     else if (d && Array.isArray(d.members)) list = d.members;
-    else if (d && d.data && Array.isArray(d.data.members)) list = d.data.members;
     if (list) {
       list.forEach(function(m){
-        var n = String(m.name || m.firstName || m.fullName || m['نام'] || '');
+        var n = String(m.name || m.firstName || m.fullName || '');
         if (!n) return;
-        [m.ID, m.id, m.karbari, m['شماره حساب'], m.accountNumber, m.user, m.shenaseh, m['کاربری']].forEach(function(kk){
+        [m.ID, m.id, m.karbari, m.accountNumber, m.user].forEach(function(kk){
           var key = String(kk || '').trim();
           if (key) window.__adminNames[key] = n;
         });
@@ -700,7 +625,7 @@ function renderLogs(){
   document.getElementById('sD').textContent = tc;
   document.getElementById('sU').textContent = Object.keys(users).length;
   if(logs.length === 0){ document.getElementById('tw1').innerHTML = '<div class="loader">هنوز هیچ ورودی ثبت نشده</div>'; return; }
-  var h = '<table><tr><th style="width:40px;text-align:center"><input type="checkbox" id="selectAllLogs" onchange="toggleAllLogs(this.checked)" title="انتخاب همه"></th><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
+  var h = '<table><tr><th style="width:40px;text-align:center"><input type="checkbox" id="selectAllLogs" onchange="toggleAllLogs(this.checked)"></th><th>کاربر</th><th>نام</th><th>تاریخ</th><th>ساعت</th><th>دستگاه</th><th>مرورگر</th></tr>';
   logs.forEach(function(l){
     var row = (l.user + l.name).toLowerCase();
     if(q && row.indexOf(q) < 0) return;
@@ -806,7 +731,7 @@ function showQuizResults(quizId){
       var displayName = (r.name && r.name.trim() && r.name.trim() !== 'عضو ') ? r.name : 'شماره ' + r.user;
       var percent = Math.round(((r.score||0) / (r.maxScore||1)) * 100);
       var dt = r.submittedAt ? new Date(r.submittedAt) : null;
-      var ds = dt ? dt.toLocaleDateString('fa-IR') + ' ' + dt.toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'}) : '-';
+      var ds = dt ? dt.toLocaleDateString('fa-IR') : '-';
       html += '<tr style="border-bottom:1px solid rgba(255,255,255,.05)">';
       html += '<td style="padding:10px">' + medal + '</td><td style="padding:10px">' + displayName + '</td>';
       html += '<td style="padding:10px;text-align:center;color:#22c55e;font-weight:700">' + (r.score||0) + ' از ' + (r.maxScore||0) + '</td>';
@@ -827,21 +752,19 @@ function loadExistingQuizzes(){
     var html = '<div style="display:flex;flex-direction:column;gap:8px">';
     quizzes.forEach(function(q){
       html += '<div style="display:flex;justify-content:space-between;align-items:center;background:rgba(255,255,255,.05);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,215,0,.1)">';
-      html += '<div style="flex:1"><b style="color:#ffd700">' + q.title + '</b><br><span style="font-size:.75rem;color:rgba(255,255,255,.5)">' + (q.questions.length || 0) + ' سوال | ' + (q.startDate || '') + ' تا ' + (q.endDate || '') + '</span></div>';
+      html += '<div style="flex:1"><b style="color:#ffd700">' + q.title + '</b><br><span style="font-size:.75rem;color:rgba(255,255,255,.5)">' + (q.questions.length || 0) + ' سوال</span></div>';
       html += '<button onclick="deleteQuizFromPanel(\'' + q.id + '\', \'' + q.title.replace(/'/g, "\\'") + '\')" style="padding:6px 12px;border-radius:8px;border:none;background:#ef4444;color:#fff;cursor:pointer;font-size:.75rem">🗑️ حذف</button></div>';
     });
     html += '</div>';
     document.getElementById('existingQuizzesList').innerHTML = html;
-  }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b">❌ خطا در دریافت مسابقات</div>'; });
+  }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b">❌ خطا</div>'; });
 }
 
 function deleteQuizFromPanel(quizId, quizTitle){
   if(!confirm('آیا مطمئن هستید که می‌خواهید مسابقه «' + quizTitle + '» را حذف کنید؟')) return;
-  document.getElementById('existingQuizzesList').innerHTML = '<div class="loader">در حال حذف...</div>';
   fetch(URL + '?action=deleteQuiz&key=' + encodeURIComponent(KEY) + '&quizId=' + encodeURIComponent(quizId)).then(function(r){ return r.json(); }).then(function(d){
-    if(d.ok){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#22c55e;text-align:center;padding:10px">✅ مسابقه حذف شد</div>'; setTimeout(loadExistingQuizzes, 1500); }
-    else { document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>'; }
-  }).catch(function(){ document.getElementById('existingQuizzesList').innerHTML = '<div style="color:#ff6b6b;text-align:center;padding:10px">❌ خطا در ارتباط با سرور</div>'; });
+    if(d.ok){ loadExistingQuizzes(); } else { alert('❌ ' + (d.error || 'خطا')); }
+  });
 }
 
 function addQuestion(){
@@ -858,8 +781,7 @@ function addQuestion(){
     html += '<input id="q' + qNum + '_opt' + i + '" placeholder="گزینه ' + i + '" style="flex:1;padding:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:#fff;outline:none">';
     html += '<button onclick="setCorrectAnswer(' + qNum + ',' + (i-1) + ')" id="q' + qNum + '_correctBtn' + i + '" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff;cursor:pointer">✓</button></div>';
   }
-  html += '</div><input type="hidden" id="q' + qNum + '_correct" value="0">';
-  html += '<p style="color:rgba(255,255,255,.5);font-size:.75rem;margin-top:8px">💡 روی دکمه ✓ گزینه صحیح کلیک کنید (سبز می‌شود)</p></div>';
+  html += '</div><input type="hidden" id="q' + qNum + '_correct" value="0"></div>';
   document.getElementById('questionsContainer').insertAdjacentHTML('beforeend', html);
 }
 
@@ -869,7 +791,7 @@ function setCorrectAnswer(qNum, optIdx){
   document.getElementById('q' + qNum + '_correct').value = optIdx;
   for(var j=1;j<=4;j++){
     var btn = document.getElementById('q' + qNum + '_correctBtn' + j);
-    if(btn){ btn.style.background = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.05)'; btn.style.borderColor = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.2)'; }
+    if(btn){ btn.style.background = (j === optIdx + 1) ? '#22c55e' : 'rgba(255,255,255,.05)'; }
   }
 }
 
@@ -897,37 +819,36 @@ function createQuizFromPanel(){
     }
   }
   if(questionCount === 0){ document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ حداقل یک سوال با دو گزینه لازم است</div>'; return; }
-  document.getElementById('quizBuilderMsg').innerHTML = '<div class="loader">در حال ساخت مسابقه...</div>';
+  document.getElementById('quizBuilderMsg').innerHTML = '<div class="loader">در حال ساخت...</div>';
   fetch(URL + '?' + params).then(function(r){ return r.json(); }).then(function(d){
     if(d.ok){
-      document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#22c55e">✅ مسابقه «' + title + '» با موفقیت ساخته شد!</div>';
+      document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#22c55e">✅ مسابقه ساخته شد!</div>';
       document.getElementById('quizTitle').value = ''; document.getElementById('quizStart').value = ''; document.getElementById('quizEnd').value = '';
       document.getElementById('questionsContainer').innerHTML = ''; quizQuestionCount = 0; addQuestion();
       if(typeof loadQuizResults === 'function') loadQuizResults();
-    } else { document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا: ' + (d.error || 'مشکل ناشناخته') + '</div>'; }
-  }).catch(function(){ document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا در ارتباط با سرور</div>'; });
+    } else { document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ ' + (d.error || 'خطا') + '</div>'; }
+  }).catch(function(){ document.getElementById('quizBuilderMsg').innerHTML = '<div style="color:#ff6b6b">❌ خطا</div>'; });
 }
 
 function loadPoints(){
   fetch(URL + '?action=getAllMembersWithPoints').then(r=>r.json()).then(d=>{ renderPoints(d.members || []); }).catch(function(){
-    document.getElementById('pointsList').innerHTML = '<div class="loader">خطا در دریافت</div>';
+    document.getElementById('pointsList').innerHTML = '<div class="loader">خطا</div>';
   });
 }
 
 function renderPoints(arr){
-  if(arr.length === 0){ document.getElementById('pointsList').innerHTML = '<div class="loader">هیچ عضوی پیدا نشد</div>'; return; }
+  if(arr.length === 0){ document.getElementById('pointsList').innerHTML = '<div class="loader">عضوی پیدا نشد</div>'; return; }
   arr.sort(function(a,b){ return (b.points||0) - (a.points||0); });
   var totalPoints = 0; arr.forEach(function(p){ totalPoints += (p.points||0); });
   var h = '<div style="background:rgba(255,215,0,.08);border-radius:12px;padding:12px;margin-bottom:12px;text-align:center">';
-  h += '<b style="color:#ffd700">📊 آمار کلی</b><br><span style="font-size:.85rem">👥 ' + arr.length + ' عضو | ⭐ ' + totalPoints + ' امتیاز کل</span></div>';
+  h += '<b style="color:#ffd700">📊 آمار کلی</b><br><span style="font-size:.85rem">👥 ' + arr.length + ' عضو | ⭐ ' + totalPoints + ' امتیاز</span></div>';
   h += '<table><tr><th>رتبه</th><th>عضو</th><th>شماره</th><th>امتیاز</th><th>آخرین به‌روزرسانی</th></tr>';
   arr.forEach(function(p, idx){
     var medal = '🏅';
     if ((p.points||0) > 0) { if (idx === 0) medal = '🥇'; else if (idx === 1) medal = '🥈'; else if (idx === 2) medal = '🥉'; } else { medal = '⚪'; }
     var dt = p.lastUpdate ? new Date(p.lastUpdate) : null;
     var ds = dt ? fmtDate(dt) + ' ' + fmtTime(dt) : '-';
-    var ptsColor = (p.points||0) > 0 ? '#22c55e' : 'rgba(255,255,255,.3)';
-    h += '<tr><td>' + medal + '</td><td>' + (p.name || p.user) + '</td><td>' + p.user + '</td><td style="color:' + ptsColor + ';font-weight:900">' + (p.points||0) + ' ⭐</td><td>' + ds + '</td></tr>';
+    h += '<tr><td>' + medal + '</td><td>' + (p.name || p.user) + '</td><td>' + p.user + '</td><td style="color:#22c55e;font-weight:900">' + (p.points||0) + ' ⭐</td><td>' + ds + '</td></tr>';
   });
   document.getElementById('pointsList').innerHTML = h + '</table>';
 }
@@ -939,9 +860,9 @@ function adminUpdatePoints(type){
   if(!uid){ alert('❌ شماره عضو را وارد کن'); return; }
   if(!upts){ alert('❌ مقدار امتیاز را وارد کن'); return; }
   fetch(URL + '?action=updatePoints&user=' + encodeURIComponent(uid) + '&name=' + encodeURIComponent(uname) + '&points=' + encodeURIComponent(upts) + '&type=' + type).then(r=>r.json()).then(d=>{
-    if(d.ok){ alert('✅ ثبت شد'); loadPoints(); document.getElementById('ptUser').value = ''; document.getElementById('ptName').value = ''; document.getElementById('ptPts').value = ''; }
-    else { alert('❌ خطا: ' + (d.error || 'نامشخص')); }
-  }).catch(function(){ alert('❌ خطا در اتصال'); });
+    if(d.ok){ alert('✅ ثبت شد'); loadPoints(); }
+    else { alert('❌ ' + (d.error || 'خطا')); }
+  });
 }
 
 function loadShopProducts(){
@@ -949,7 +870,7 @@ function loadShopProducts(){
     var products = d.products || [];
     window._shopProducts = products;
     var html = '';
-    if (products.length === 0) { html = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">🛒 هنوز محصولی اضافه نشده</div>'; }
+    if (products.length === 0) { html = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">🛒 محصولی نیست</div>'; }
     else {
       html = '<table style="width:100%;border-collapse:collapse">';
       html += '<tr style="background:rgba(255,215,0,.1)"><th style="padding:10px;text-align:right;color:#ffd700">نام</th><th style="padding:10px;text-align:right;color:#ffd700">توضیحات</th><th style="padding:10px;text-align:right;color:#ffd700">قیمت</th><th style="padding:10px;text-align:right;color:#ffd700">موجودی</th><th style="padding:10px;text-align:right;color:#ffd700">عملیات</th></tr>';
@@ -957,15 +878,15 @@ function loadShopProducts(){
         html += '<tr style="border-bottom:1px solid rgba(255,255,255,.1)">';
         html += '<td style="padding:10px">' + p.name + '</td><td style="padding:10px">' + (p.description || '-') + '</td>';
         html += '<td style="padding:10px">' + p.price + ' امتیاز</td><td style="padding:10px">' + p.stock + '</td>';
-        html += '<td style="padding:10px"><div style="display:flex;gap:6px;flex-wrap:wrap">';
-        html += '<button onclick="editShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ffd700;color:#1a1a2e;cursor:pointer;font-family:tahoma;font-weight:700">✏️ ویرایش</button>';
-        html += '<button onclick="deleteShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer;font-family:tahoma">🗑️ حذف</button>';
+        html += '<td style="padding:10px"><div style="display:flex;gap:6px">';
+        html += '<button onclick="editShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ffd700;color:#1a1a2e;cursor:pointer;font-weight:700">✏️</button>';
+        html += '<button onclick="deleteShopProduct(\'' + p.shenaseh + '\')" style="padding:6px 12px;border:none;border-radius:6px;background:#ef4444;color:#fff;cursor:pointer">🗑️</button>';
         html += '</div></td></tr>';
       });
       html += '</table>';
     }
     document.getElementById('shopProductsList').innerHTML = html;
-  }).catch(function(){ document.getElementById('shopProductsList').innerHTML = '<div style="color:#ff6b6b;padding:20px">❌ خطا در دریافت محصولات</div>'; });
+  });
 }
 
 function addShopProduct(){
@@ -973,45 +894,39 @@ function addShopProduct(){
   var desc = document.getElementById('shopDesc').value.trim();
   var price = parseInt(document.getElementById('shopPrice').value) || 0;
   var stock = parseInt(document.getElementById('shopStock').value) || 0;
-  if (!name || price <= 0) { alert('⚠️ نام و قیمت محصول الزامی است'); return; }
+  if (!name || price <= 0) { alert('⚠️ نام و قیمت الزامی است'); return; }
   var shenaseh = 'PRD-' + Date.now().toString().slice(-6);
   fetch(ADMIN_URL + '?action=addShopProduct&shenaseh=' + encodeURIComponent(shenaseh) + '&name=' + encodeURIComponent(name) + '&description=' + encodeURIComponent(desc) + '&price=' + price + '&stock=' + stock)
     .then(function(r){ return r.json(); }).then(function(d){
-      if (d.ok) { alert('✅ محصول "' + name + '" با موفقیت اضافه شد'); document.getElementById('shopName').value = ''; document.getElementById('shopDesc').value = ''; document.getElementById('shopPrice').value = ''; document.getElementById('shopStock').value = ''; loadShopProducts(); }
-      else { alert('❌ خطا در افزودن محصول: ' + (d.error || 'نامشخص')); }
-    }).catch(function(){ alert('❌ خطا در اتصال'); });
+      if (d.ok) { alert('✅ محصول اضافه شد'); loadShopProducts(); }
+      else { alert('❌ ' + (d.error || 'خطا')); }
+    });
 }
 
 function deleteShopProduct(shenaseh){
-  if (!confirm('آیا از حذف این محصول مطمئن هستید؟')) return;
+  if (!confirm('حذف محصول؟')) return;
   fetch(ADMIN_URL + '?action=deleteShopProduct&shenaseh=' + encodeURIComponent(shenaseh)).then(function(r){ return r.json(); }).then(function(d){
-    if (d.ok) { alert('✅ محصول حذف شد'); loadShopProducts(); } else { alert('❌ خطا در حذف محصول'); }
-  }).catch(function(){ alert('❌ خطا در اتصال'); });
+    if (d.ok) { loadShopProducts(); }
+  });
 }
 
 function editShopProduct(shenaseh){
   var list = window._shopProducts || [];
   var p = null;
   for (var i=0;i<list.length;i++){ if(String(list[i].shenaseh)===String(shenaseh)){ p=list[i]; break; } }
-  if(!p){ alert('❌ محصول پیدا نشد'); return; }
-  var name = prompt('✏️ نام محصول:', p.name || '');
+  if(!p){ alert('❌ پیدا نشد'); return; }
+  var name = prompt('نام:', p.name || '');
   if (name === null) return;
-  name = name.trim();
-  if (!name) { alert('⚠️ نام محصول نمی‌تواند خالی باشد'); return; }
-  var desc = prompt('📝 توضیحات:', p.description || '');
+  var desc = prompt('توضیحات:', p.description || '');
   if (desc === null) return;
-  var price = prompt('💰 قیمت (امتیاز):', p.price || 0);
+  var price = prompt('قیمت:', p.price || 0);
   if (price === null) return;
-  price = parseInt(price) || 0;
-  if (price <= 0) { alert('⚠️ قیمت باید بزرگ‌تر از صفر باشد'); return; }
-  var stock = prompt('📦 موجودی:', p.stock || 0);
+  var stock = prompt('موجودی:', p.stock || 0);
   if (stock === null) return;
-  stock = parseInt(stock) || 0;
-  fetch(ADMIN_URL + '?action=updateShopProduct&shenaseh=' + encodeURIComponent(shenaseh) + '&name=' + encodeURIComponent(name) + '&description=' + encodeURIComponent(desc) + '&price=' + price + '&stock=' + stock)
+  fetch(ADMIN_URL + '?action=updateShopProduct&shenaseh=' + encodeURIComponent(shenaseh) + '&name=' + encodeURIComponent(name) + '&description=' + encodeURIComponent(desc) + '&price=' + (parseInt(price)||0) + '&stock=' + (parseInt(stock)||0))
     .then(function(r){ return r.json(); }).then(function(d){
-      if (d.ok) { alert('✅ محصول با موفقیت ویرایش شد'); loadShopProducts(); }
-      else { alert('❌ خطا در ویرایش: ' + (d.error || 'نامشخص')); }
-    }).catch(function(){ alert('❌ خطا در اتصال'); });
+      if (d.ok) { loadShopProducts(); }
+    });
 }
 
 function loadPurchaseRequests(){
@@ -1019,189 +934,66 @@ function loadPurchaseRequests(){
   fetch(URL + '?action=getPurchaseRequests').then(function(r){ return r.json(); }).then(function(d){
     var requests = d.requests || [];
     if(requests.length === 0){
-      document.getElementById('purchaseRequestsList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 هنوز درخواست خریدی ثبت نشده</div>';
+      document.getElementById('purchaseRequestsList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 درخواستی نیست</div>';
       return;
     }
-    var html = '<div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">';
-    var pendingCount = 0, approvedCount = 0, rejectedCount = 0;
-    requests.forEach(function(r){ if(r.status==='pending') pendingCount++; else if(r.status==='approved') approvedCount++; else rejectedCount++; });
-    html += '<div class="stat" style="flex:1;min-width:100px"><b>' + pendingCount + '</b><span>⏳ در انتظار</span></div>';
-    html += '<div class="stat" style="flex:1;min-width:100px"><b>' + approvedCount + '</b><span>✅ تایید شده</span></div>';
-    html += '<div class="stat" style="flex:1;min-width:100px"><b>' + rejectedCount + '</b><span>❌ رد شده</span></div>';
-    html += '</div>';
+    var html = '';
     requests.forEach(function(r){
       var tagClass = r.status==='pending' ? 'pending-tag' : (r.status==='approved' ? 'approved-tag' : 'rejected-tag');
-      var tagText = r.status==='pending' ? '⏳ در انتظار' : (r.status==='approved' ? '✅ تایید شده' : '❌ رد / انصراف شده');
+      var tagText = r.status==='pending' ? '⏳ در انتظار' : (r.status==='approved' ? '✅ تایید شده' : '❌ رد شده');
       var dt = new Date(r.timestamp);
-      var dateStr = fmtFull(dt);
       html += '<div class="req-card">';
       html += '<div class="req-head">';
-      html += '<div><b style="color:#ffd700;font-size:1rem">👤 ' + (r.name || 'شماره ' + r.user) + '</b>';
-      html += '<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">شماره عضو: ' + r.user + '</div></div>';
+      html += '<div><b style="color:#ffd700">👤 ' + (r.name || 'شماره ' + r.user) + '</b></div>';
       html += '<span class="' + tagClass + '">' + tagText + '</span>';
       html += '</div>';
-      html += '<div style="background:rgba(255,215,0,.05);padding:10px;border-radius:8px;margin-bottom:8px">';
-      html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">';
-      html += '<div><b style="color:#fff">🛍️ ' + r.product + '</b>';
-      html += '<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">شناسه: ' + r.shenaseh + '</div></div>';
-      html += '<div style="text-align:left"><div style="color:#ffd700;font-weight:900;font-size:1.1rem">' + r.price + ' امتیاز</div>';
-      html += '<div style="font-size:.7rem;color:rgba(255,255,255,.5)">📅 ' + dateStr + '</div></div>';
-      html += '</div></div>';
+      html += '<div><b>🛍️ ' + r.product + '</b> | ' + r.price + ' امتیاز</div>';
+      html += '<div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:4px">📅 ' + fmtFull(dt) + '</div>';
       if(r.status === 'pending'){
         html += '<div class="req-actions">';
-        html += '<button class="btn-approve" onclick="resolvePurchase(\'' + r.id + '\', \'approved\')">✅ تایید و تحویل</button>';
-        html += '<button class="btn-reject" onclick="resolvePurchase(\'' + r.id + '\', \'rejected\')">❌ رد و برگشت امتیاز</button>';
-        html += '</div>';
-      } else if(r.status === 'approved'){
-        html += '<div class="req-actions">';
-        html += '<button class="btn-reject" onclick="cancelPurchase(\'' + r.id + '\')">↩️ انصراف و برگشت جایزه</button>';
+        html += '<button class="btn-approve" onclick="resolvePurchase(\'' + r.id + '\', \'approved\')">✅ تایید</button>';
+        html += '<button class="btn-reject" onclick="resolvePurchase(\'' + r.id + '\', \'rejected\')">❌ رد</button>';
         html += '</div>';
       }
       html += '</div>';
     });
     document.getElementById('purchaseRequestsList').innerHTML = html;
-  }).catch(function(){
-    document.getElementById('purchaseRequestsList').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت درخواست‌ها</div>';
   });
 }
 
 function resolvePurchase(id, status){
-  var actionText = status === 'approved' ? 'تایید و تحویل' : 'انصراف / رد و برگشت امتیاز و موجودی';
-  if(!confirm('آیا از ' + actionText + ' این درخواست مطمئن هستید؟')) return;
-  document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال پردازش...</div>';
+  if(!confirm('مطمئنی؟')) return;
   fetch(URL + '?action=resolvePurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status))
     .then(function(r){ return r.json(); }).then(function(d){
-      if(d.ok){ alert('✅ درخواست با موفقیت ' + (status==='approved'?'تایید':'رد / انصراف') + ' شد'); loadPurchaseRequests(); loadPoints(); }
-      else { alert('❌ خطا: ' + (d.error || 'مشکل ناشناخته')); loadPurchaseRequests(); }
-    }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
+      if(d.ok){ loadPurchaseRequests(); loadPoints(); }
+    });
 }
 
 function cancelPurchase(id){
-  if(!confirm('↩️ انصراف از خرید و برگشت جایزه؟\n\nامتیاز و موجودی محصول برگشت داده می‌شود.')) return;
-  document.getElementById('purchaseRequestsList').innerHTML = '<div class="loader">در حال پردازش...</div>';
+  if(!confirm('انصراف؟')) return;
   fetch(URL + '?action=cancelPurchase&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id))
     .then(function(r){ return r.json(); }).then(function(d){
-      if(d.ok){ alert(d.msg || '✅ انصراف ثبت و برگشت انجام شد'); loadPurchaseRequests(); loadPoints(); }
-      else { alert('❌ خطا: ' + (d.error || 'مشکل ناشناخته')); loadPurchaseRequests(); }
-    }).catch(function(){ alert('❌ خطا در ارتباط با سرور'); loadPurchaseRequests(); });
+      if(d.ok){ loadPurchaseRequests(); loadPoints(); }
+    });
 }
 
 function testMonthlyReport(){
-  if(!confirm('گزارش ماه قبل همین حالا به گروه شورای صندوق ارسال شود؟')) return;
-  document.getElementById('monthlyReportResult').textContent='در حال ارسال...';
+  if(!confirm('ارسال تست؟')) return;
   fetch(ADMIN_URL + '?action=sendMonthlyReport&key=' + encodeURIComponent(KEY))
     .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(d.ok){ alert('✅ ' + (d.msg||'ارسال شد')); document.getElementById('monthlyReportResult').textContent = d.preview || ''; }
-      else { alert('❌ ' + (d.error||d.msg||'خطا')); document.getElementById('monthlyReportResult').textContent = JSON.stringify(d); }
-    })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
+    .then(function(d){ alert(d.ok ? '✅ ارسال شد' : '❌ خطا'); })
+    .catch(function(){ alert('❌ خطا'); });
 }
 
 function setupMonthlyReport(){
-  if(!confirm('از این به بعد، اول هر ماه ساعت ۹ صبح گزارش ماه قبل به‌صورت خودکار به گروه شورا ارسال شود؟')) return;
+  if(!confirm('فعال‌سازی خودکار؟')) return;
   fetch(ADMIN_URL + '?action=setupMonthlyReport&key=' + encodeURIComponent(KEY))
     .then(function(r){ return r.json(); })
-    .then(function(d){ alert(d.ok ? d.msg : '❌ ' + (d.error||d.msg)); })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
+    .then(function(d){ alert(d.ok ? d.msg : '❌ خطا'); });
 }
 
 function openStmtList() {
-  var old = document.getElementById('stmtListOverlay');
-  if (old) old.parentNode.removeChild(old);
-  var ov = document.createElement('div');
-  ov.id = 'stmtListOverlay';
-  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9998;display:flex;align-items:center;justify-content:center;font-family:tahoma;padding:12px';
-  ov.innerHTML = '<div style="background:#1a1a2e;border:1px solid #b8860b;border-radius:18px;padding:20px;width:100%;max-width:1100px;max-height:92vh;overflow:auto;color:#fff;direction:rtl">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">' +
-      '<div style="font-weight:800;font-size:1.05rem">📬 تنظیمات اطلاع‌رسانی صورتحساب</div>' +
-      '<button id="stmtListClose" style="background:#5a1e1e;color:#fff;border:none;border-radius:8px;padding:6px 12px;cursor:pointer">✕</button>' +
-    '</div>' +
-    '<div id="stmtStats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px"></div>' +
-    '<div style="display:flex;gap:8px;margin-bottom:12px">' +
-      '<input id="stmtSearch" type="text" placeholder="🔍 جستجو (نام یا کد)" style="flex:1;padding:9px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.85rem" />' +
-      '<select id="stmtFilter" style="padding:9px 12px;border-radius:10px;border:1px solid #444;background:#111;color:#fff;font-size:.85rem">' +
-        '<option value="all">همه</option><option value="email">فقط ایمیل</option><option value="sms">فقط پیامک</option><option value="ita">فقط ایتا</option><option value="site">فقط سایت</option><option value="both">ایمیل+پیامک</option>' +
-      '</select>' +
-    '</div>' +
-    '<div style="overflow-x:auto;border-radius:12px;border:1px solid #333">' +
-      '<table style="width:100%;border-collapse:collapse;font-size:.82rem">' +
-        '<thead style="background:#2a2a44"><tr>' +
-          '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">#</th>' +
-          '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">نام</th>' +
-          '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">کد</th>' +
-          '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">ایمیل</th>' +
-          '<th style="padding:10px 8px;text-align:right;border-bottom:1px solid #333">آیدی ایتا</th>' +
-          '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">📧</th>' +
-          '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">📱</th>' +
-          '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">💬</th>' +
-          '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">🌐</th>' +
-          '<th style="padding:10px 8px;text-align:center;border-bottom:1px solid #333">ثبت</th>' +
-        '</tr></thead>' +
-        '<tbody id="stmtListBody"><tr><td colspan="10" style="padding:20px;text-align:center;color:#888">در حال بارگذاری...</td></tr></tbody>' +
-      '</table>' +
-    '</div>' +
-    '<div style="margin-top:12px;font-size:.72rem;color:#888;text-align:center">💡 این اطلاعات توسط خود اعضا در سایت ثبت شده است</div>' +
-  '</div>';
-  document.body.appendChild(ov);
-  document.getElementById('stmtListClose').onclick = function(){ ov.parentNode.removeChild(ov); };
-  var allRows = [];
-  function render() {
-    var q = (document.getElementById('stmtSearch').value || '').trim().toLowerCase();
-    var f = document.getElementById('stmtFilter').value;
-    var tbody = document.getElementById('stmtListBody');
-    var filtered = allRows.filter(function(r) {
-      if (q && String(r.name + ' ' + r.user).toLowerCase().indexOf(q) < 0) return false;
-      if (f === 'email' && !r.wantEmail) return false;
-      if (f === 'sms' && !r.wantSms) return false;
-      if (f === 'ita' && !r.wantIta) return false;
-      if (f === 'site' && !r.wantSite) return false;
-      if (f === 'both' && !(r.wantEmail && r.wantSms)) return false;
-      return true;
-    });
-    if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:#888">عضوی یافت نشد</td></tr>'; return; }
-    var html = '';
-    for (var i = 0; i < filtered.length; i++) {
-      var r = filtered[i];
-      var dt = r.ts ? new Date(r.ts).toLocaleDateString('fa-IR') : '—';
-      html += '<tr style="border-bottom:1px solid #2a2a44">' +
-        '<td style="padding:8px;color:#888">' + (i + 1) + '</td>' +
-        '<td style="padding:8px">' + (r.name || '—') + '</td>' +
-        '<td style="padding:8px;font-family:monospace;color:#ffd700">' + r.user + '</td>' +
-        '<td style="padding:8px;font-size:.75rem;direction:ltr;text-align:right;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (r.email || '') + '">' + (r.email || '—') + '</td>' +
-        '<td style="padding:8px;font-size:.75rem;direction:ltr;text-align:right;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + (r.itaId || '') + '">' + (r.itaId || '—') + '</td>' +
-        '<td style="padding:8px;text-align:center">' + (r.wantEmail ? '<span style="color:#4ade80">✅</span>' : '<span style="color:#666">—</span>') + '</td>' +
-        '<td style="padding:8px;text-align:center">' + (r.wantSms ? '<span style="color:#4ade80">✅</span>' : '<span style="color:#666">—</span>') + '</td>' +
-        '<td style="padding:8px;text-align:center">' + (r.wantIta ? '<span style="color:#a855f7">✅</span>' : '<span style="color:#666">—</span>') + '</td>' +
-        '<td style="padding:8px;text-align:center">' + (r.wantSite ? '<span style="color:#06b6d4">✅</span>' : '<span style="color:#666">—</span>') + '</td>' +
-        '<td style="padding:8px;text-align:center;font-size:.7rem;color:#aaa">' + dt + '</td>' +
-      '</tr>';
-    }
-    tbody.innerHTML = html;
-  }
-  fetch(STMT_API + '?action=getStatementEmailList&key=admin12345').then(function(r){ return r.json(); }).then(function(d){
-    if (!d.ok) { document.getElementById('stmtListBody').innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:#f87171">❌ خطا در دریافت</td></tr>'; return; }
-    allRows = d.rows || [];
-    var st = d.stats || { total: 0, email: 0, sms: 0, both: 0, none: 0, ita: 0, site: 0 };
-    var items = [
-      { label: '👥 کل', value: st.total || 0, color: '#ffd700' },
-      { label: '📧 ایمیل', value: st.email || 0, color: '#4ade80' },
-      { label: '📱 پیامک', value: st.sms || 0, color: '#60a5fa' },
-      { label: '💬 ایتا', value: st.ita || 0, color: '#a855f7' },
-      { label: '🌐 سایت', value: st.site || 0, color: '#06b6d4' },
-      { label: '💞 هر دو', value: st.both || 0, color: '#f472b6' },
-      { label: '🚫 هیچکدام', value: st.none || 0, color: '#888' }
-    ];
-    document.getElementById('stmtStats').innerHTML = items.map(function(x) {
-      return '<div style="background:#111;border:1px solid #333;border-radius:10px;padding:10px;text-align:center">' +
-        '<div style="font-size:1.4rem;font-weight:800;color:' + x.color + '">' + x.value + '</div>' +
-        '<div style="font-size:.72rem;color:#bbb;margin-top:3px">' + x.label + '</div>' +
-      '</div>';
-    }).join('');
-    render();
-  }).catch(function(){ document.getElementById('stmtListBody').innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:#f87171">❌ خطا در اتصال</td></tr>'; });
-  document.getElementById('stmtSearch').oninput = render;
-  document.getElementById('stmtFilter').onchange = render;
+  alert('این بخش در حال توسعه است');
 }
 
 (function(){
@@ -1210,7 +1002,7 @@ function openStmtList() {
   var token = decodeURIComponent(m[1]);
   fetch(URL + '?action=verifyCouncilToken&token=' + encodeURIComponent(token)).then(function(r){ return r.json(); }).then(function(d){
     if (d.ok) { isCouncil = true; window.__councilUser = { id: d.id, name: d.name }; enterDashboard(); }
-  }).catch(function(){});
+  });
 })();
 
 // ============================================================
@@ -1224,7 +1016,7 @@ function loadCouncilMessages(){
   fetch(ADMIN_URL + '?action=getCouncilMessages&key=' + encodeURIComponent(KEY) + '&_=' + Date.now())
     .then(function(r){ return r.json(); })
     .then(function(d){ allCouncilMsgs = d.messages || []; renderCouncilMessages(); })
-    .catch(function(){ document.getElementById('councilMessagesList').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت پیام‌ها</div>'; });
+    .catch(function(){ document.getElementById('councilMessagesList').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا</div>'; });
 }
 
 function filterMsgs(f){ msgFilter = f; renderCouncilMessages(); }
@@ -1235,7 +1027,7 @@ function renderCouncilMessages(){
     return m.status === msgFilter;
   });
   if (!list.length) {
-    document.getElementById('councilMessagesList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">📭 پیامی در این دسته نیست</div>';
+    document.getElementById('councilMessagesList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">📭 پیامی نیست</div>';
     return;
   }
   var html = '';
@@ -1243,102 +1035,36 @@ function renderCouncilMessages(){
     var dt = m.timestamp ? new Date(m.timestamp) : null;
     var ds = dt ? fmtFull(dt) : '-';
     var tag = m.status === 'answered' ? '<span class="approved-tag">✅ پاسخ داده شد</span>' : '<span class="pending-tag">⏳ بی‌پاسخ</span>';
-    html += '<div class="req-card" id="card_' + m.id + '">';
-    html += '<div class="req-head"><div><b style="color:#ffd700">👤 ' + (m.name || 'نامشخص') + '</b><div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:2px">کد: ' + m.user + ' | 📅 ' + ds + '</div></div>' + tag + '</div>';
-    html += '<div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap">';
-    html += '<button onclick="toggleEdit(\'' + m.id + '\', \'message\')" style="flex:1;min-width:90px;padding:7px;border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:#60a5fa;border-radius:8px;cursor:pointer;font-family:tahoma;font-size:.78rem">✏️ ویرایش پیام</button>';
+    html += '<div class="req-card">';
+    html += '<div class="req-head"><div><b style="color:#ffd700">👤 ' + (m.name || 'نامشخص') + '</b><div style="font-size:.75rem;color:rgba(255,255,255,.5)">کد: ' + m.user + ' | ' + ds + '</div></div>' + tag + '</div>';
+    html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin-bottom:8px">' + String(m.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
     if (m.status === 'answered') {
-      html += '<button onclick="toggleEdit(\'' + m.id + '\', \'reply\')" style="flex:1;min-width:90px;padding:7px;border:1px solid rgba(168,85,247,.4);background:rgba(168,85,247,.1);color:#c084fc;border-radius:8px;cursor:pointer;font-family:tahoma;font-size:.78rem">✏️ ویرایش پاسخ</button>';
-    }
-    html += '<button onclick="deleteCouncilMsg(\'' + m.id + '\')" style="flex:1;min-width:90px;padding:7px;border:1px solid rgba(239,68,68,.4);background:rgba(239,68,68,.1);color:#f87171;border-radius:8px;cursor:pointer;font-family:tahoma;font-size:.78rem">🗑️ حذف کامل</button>';
-    html += '</div>';
-    html += '<div id="msgView_' + m.id + '" style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin-bottom:8px;line-height:1.9;font-size:.85rem">' + String(m.message||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
-    html += '<div id="msgEdit_' + m.id + '" style="display:none;margin-bottom:8px">';
-    html += '<textarea id="msgTA_' + m.id + '" maxlength="500" style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(59,130,246,.3);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none">' + String(m.message||'').replace(/</g,'&lt;') + '</textarea>';
-    html += '<div style="display:flex;gap:6px;margin-top:6px">';
-    html += '<button onclick="saveEdit(\'' + m.id + '\', \'message\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:#22c55e;color:#fff;font-weight:700;cursor:pointer;font-family:tahoma">✅ ذخیره</button>';
-    html += '<button onclick="cancelEdit(\'' + m.id + '\', \'message\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:tahoma">❌ لغو</button>';
-    html += '</div></div>';
-    if (m.status === 'answered') {
-      html += '<div id="replyView_' + m.id + '" style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:8px;line-height:1.9;font-size:.85rem;margin-top:8px"><b style="color:#22c55e">💬 پاسخ:</b><br>' + String(m.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
-      html += '<div id="replyEdit_' + m.id + '" style="display:none;margin-top:8px">';
-      html += '<textarea id="replyTA_' + m.id + '" maxlength="500" style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(168,85,247,.3);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none">' + String(m.reply||'').replace(/</g,'&lt;') + '</textarea>';
-      html += '<div style="display:flex;gap:6px;margin-top:6px">';
-      html += '<button onclick="saveEdit(\'' + m.id + '\', \'reply\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:#22c55e;color:#fff;font-weight:700;cursor:pointer;font-family:tahoma">✅ ذخیره</button>';
-      html += '<button onclick="cancelEdit(\'' + m.id + '\', \'reply\')" style="flex:1;padding:8px;border:none;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;cursor:pointer;font-family:tahoma">❌ لغو</button>';
-      html += '</div></div>';
+      html += '<div style="background:rgba(34,197,94,.08);padding:10px;border-radius:8px"><b style="color:#22c55e">💬 پاسخ:</b><br>' + String(m.reply||'').replace(/</g,'&lt;').replace(/\n/g,'<br>') + '</div>';
     } else {
-      html += '<textarea id="reply_' + m.id + '" maxlength="500" placeholder="✍️ پاسخ شورا را بنویسید..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none;margin-bottom:8px"></textarea>';
-      html += '<button onclick="sendMemberReply(\'' + m.id + '\')" style="width:100%;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer;font-family:tahoma">📨 ثبت و ارسال پاسخ به عضو</button>';
+      html += '<textarea id="reply_' + m.id + '" placeholder="پاسخ..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;margin-bottom:8px;outline:none"></textarea>';
+      html += '<button onclick="sendMemberReply(\'' + m.id + '\')" style="width:100%;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer">📨 ثبت و ارسال پاسخ</button>';
     }
     html += '</div>';
   });
   document.getElementById('councilMessagesList').innerHTML = html;
 }
 
-function toggleEdit(mid, type){
-  var viewEl = document.getElementById((type === 'message' ? 'msgView_' : 'replyView_') + mid);
-  var editEl = document.getElementById((type === 'message' ? 'msgEdit_' : 'replyEdit_') + mid);
-  if (viewEl && editEl) { viewEl.style.display = 'none'; editEl.style.display = 'block'; }
-}
-
-function cancelEdit(mid, type){
-  var viewEl = document.getElementById((type === 'message' ? 'msgView_' : 'replyView_') + mid);
-  var editEl = document.getElementById((type === 'message' ? 'msgEdit_' : 'replyEdit_') + mid);
-  if (viewEl && editEl) { viewEl.style.display = 'block'; editEl.style.display = 'none'; }
-}
-
-function saveEdit(mid, type){
-  var ta = document.getElementById((type === 'message' ? 'msgTA_' : 'replyTA_') + mid);
-  if (!ta) return;
-  var text = ta.value.trim();
-  if (text.length < 3) { alert('⚠️ متن خیلی کوتاه است'); return; }
-  if (!confirm('تغییرات ذخیره شود؟')) return;
-  var body = { action: 'editCouncilMessage', key: KEY, id: mid };
-  if (type === 'message') { body.message = text; } else { body.reply = text; }
-  fetch(ADMIN_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
-    .then(function(r){ return r.text(); })
-    .then(function(t){
-      try {
-        var d = JSON.parse(t);
-        if (d.ok) { alert('✅ تغییرات ذخیره شد'); loadCouncilMessages(); }
-        else { alert('❌ ' + (d.error || 'خطا در ذخیره')); }
-      } catch(e) { alert('❌ پاسخ سرور معتبر نیست'); }
-    })
-    .catch(function(e){ alert('❌ خطا: ' + e.message); });
-}
-
-function deleteCouncilMsg(mid){
-  if (!confirm('آیا از حذف کامل این پیام مطمئن هستید؟\nاین عمل قابل بازگشت نیست.')) return;
-  fetch(ADMIN_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteCouncilMessage', key: KEY, id: mid }) })
-    .then(function(r){ return r.text(); })
-    .then(function(t){
-      try {
-        var d = JSON.parse(t);
-        if (d.ok) { alert('✅ پیام حذف شد'); loadCouncilMessages(); }
-        else { alert('❌ ' + (d.error || 'خطا در حذف')); }
-      } catch(e) { alert('❌ پاسخ سرور معتبر نیست'); }
-    })
-    .catch(function(e){ alert('❌ خطا: ' + e.message); });
-}
-
 function sendMemberReply(mid){
   var ta = document.getElementById('reply_' + mid);
   if (!ta) return;
   var text = ta.value.trim();
-  if (text.length < 3) { alert('⚠️ متن پاسخ را بنویسید'); return; }
-  if (!confirm('پاسخ ثبت و برای عضو ارسال شود؟')) return;
+  if (text.length < 3) { alert('⚠️ متن را بنویسید'); return; }
+  if (!confirm('ارسال پاسخ؟')) return;
   fetch(ADMIN_URL + '?action=replyToMember&key=' + encodeURIComponent(KEY) + '&messageId=' + encodeURIComponent(mid) + '&reply=' + encodeURIComponent(text))
     .then(function(r){ return r.json(); })
     .then(function(d){
-      alert(d.ok ? ('✅ ' + (d.msg || 'پاسخ ثبت شد')) : ('❌ ' + (d.error || 'خطا')));
+      alert(d.ok ? '✅ ثبت شد' : ('❌ ' + (d.error || 'خطا')));
       loadCouncilMessages();
-    })
-    .catch(function(){ alert('❌ خطا در ارتباط'); });
+    });
 }
 
 // ============================================================
-// 🆕 تب ۱۲: اطلاعات کاربری و رمزهای اعضا
+// تب ۱۲: اطلاعات کاربری و رمزهای اعضا
 // ============================================================
 
 var allUsersInfo = [];
@@ -1352,17 +1078,12 @@ function loadUsersInfo() {
     .then(function(r) { return r.json(); })
     .then(function(d) {
       if (!d.ok || !d.users) {
-        document.getElementById('usersTableContainer').innerHTML = 
-          '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت کاربران: ' + (d.error || 'نامشخص') + '</div>';
+        document.getElementById('usersTableContainer').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا</div>';
         return;
       }
       allUsersInfo = d.users;
       updateUsersStats();
       renderUsersTable();
-    })
-    .catch(function(e) {
-      document.getElementById('usersTableContainer').innerHTML = 
-        '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در اتصال</div>';
     });
   
   loadPasswordLog();
@@ -1394,42 +1115,24 @@ function renderUsersTable() {
   
   var filtered = allUsersInfo.filter(function(u) {
     if (q) {
-      var searchStr = String(
-        (u.firstName || '') + ' ' + 
-        (u.accountNumber || '') + ' ' + 
-        (u.username || '') + ' ' + 
-        (u.phone || '')
-      ).toLowerCase();
+      var searchStr = String((u.firstName || '') + ' ' + (u.accountNumber || '') + ' ' + (u.username || '') + ' ' + (u.phone || '')).toLowerCase();
       if (searchStr.indexOf(q) < 0) return false;
     }
-    
     if (roleFilter === 'council' && !u.isCouncil) return false;
     if (roleFilter === 'regular' && (u.isCouncil || u.isAdmin)) return false;
-    
     var defaultPwd = u.accountNumber || u.username;
     var isChanged = u.password && u.password !== defaultPwd;
     if (pwdFilter === 'default' && isChanged) return false;
     if (pwdFilter === 'changed' && !isChanged) return false;
-    
     return true;
   });
   
   if (filtered.length === 0) {
-    document.getElementById('usersTableContainer').innerHTML = 
-      '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">🔍 کاربری یافت نشد</div>';
+    document.getElementById('usersTableContainer').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">🔍 کاربری یافت نشد</div>';
     return;
   }
   
-  var html = '<table><tr>' +
-    '<th style="width:40px">#</th>' +
-    '<th>نام</th>' +
-    '<th>شماره حساب</th>' +
-    '<th>نام کاربری</th>' +
-    '<th style="min-width:150px">رمز عبور</th>' +
-    '<th>نقش</th>' +
-    '<th>تلفن</th>' +
-    '<th style="width:200px">عملیات</th>' +
-    '</tr>';
+  var html = '<table><tr><th>#</th><th>نام</th><th>شماره حساب</th><th>نام کاربری</th><th>رمز عبور</th><th>نقش</th><th>تلفن</th><th>عملیات</th></tr>';
   
   filtered.forEach(function(u, idx) {
     var defaultPwd = u.accountNumber || u.username;
@@ -1437,13 +1140,9 @@ function renderUsersTable() {
     var usernameColor = isChanged ? '#22c55e' : '#ffd700';
     
     var roleText, roleColor;
-    if (u.isAdmin) {
-      roleText = '👑 مدیر'; roleColor = '#ffd700';
-    } else if (u.isCouncil) {
-      roleText = '🛡️ شورا'; roleColor = '#3b82f6';
-    } else {
-      roleText = '👤 عضو'; roleColor = 'rgba(255,255,255,.6)';
-    }
+    if (u.isAdmin) { roleText = '👑 مدیر'; roleColor = '#ffd700'; }
+    else if (u.isCouncil) { roleText = '🛡️ شورا'; roleColor = '#3b82f6'; }
+    else { roleText = '👤 عضو'; roleColor = 'rgba(255,255,255,.6)'; }
     
     var pwdId = 'pwd_' + idx;
     var pwdDisplay = isChanged ? '🟢 تغییر یافته' : '🔵 پیش‌فرض';
@@ -1451,22 +1150,20 @@ function renderUsersTable() {
     html += '<tr>';
     html += '<td>' + (idx + 1) + '</td>';
     html += '<td><b>' + (u.firstName || '—') + '</b></td>';
-    html += '<td style="font-family:monospace;direction:ltr;text-align:center">' + (u.accountNumber || '—') + '</td>';
-    html += '<td style="font-family:monospace;direction:ltr;text-align:center;color:' + usernameColor + ';font-weight:700">' + (u.username || '—') + '</td>';
+    html += '<td style="font-family:monospace;text-align:center">' + (u.accountNumber || '—') + '</td>';
+    html += '<td style="font-family:monospace;text-align:center;color:' + usernameColor + ';font-weight:700">' + (u.username || '—') + '</td>';
     html += '<td style="text-align:center">' +
-      '<span id="' + pwdId + '_hidden" style="font-family:monospace;font-size:1.1rem;letter-spacing:2px;color:#888">••••••</span>' +
-      '<span id="' + pwdId + '_shown" style="font-family:monospace;direction:ltr;font-weight:700;color:#22c55e;display:none">' + (u.password || '—') + '</span>' +
-      '<div style="font-size:.6rem;color:rgba(255,255,255,.4);margin-top:3px">' + pwdDisplay + '</div>' +
+      '<span id="' + pwdId + '_hidden" style="font-family:monospace;color:#888">••••••</span>' +
+      '<span id="' + pwdId + '_shown" style="font-family:monospace;font-weight:700;color:#22c55e;display:none">' + (u.password || '—') + '</span>' +
+      '<div style="font-size:.6rem;color:rgba(255,255,255,.4)">' + pwdDisplay + '</div>' +
       '</td>';
-    html += '<td style="color:' + roleColor + ';font-weight:700;font-size:.75rem">' + roleText + '</td>';
-    html += '<td style="font-family:monospace;direction:ltr;font-size:.7rem">' + (u.phone || '—') + '</td>';
-    html += '<td>' +
-      '<div style="display:flex;gap:4px;flex-wrap:wrap;justify-content:center">' +
-      '<button onclick="toggleUserPwd(\'' + pwdId + '\')" title="نمایش/مخفی رمز" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(59,130,246,.15);color:#60a5fa;cursor:pointer;font-size:.7rem">👁️</button>' +
-      '<button onclick="copyUserInfo(\'' + u.accountNumber + '\',\'' + u.username + '\',\'' + (u.password||'') + '\')" title="کپی اطلاعات" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer;font-size:.7rem">📋</button>' +
-      '<button onclick="adminChangeUserPwd(\'' + u.accountNumber + '\',\'' + (u.firstName||'') + '\')" title="تغییر رمز" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer;font-size:.7rem">✏️</button>' +
-      '</div>' +
-      '</td>';
+    html += '<td style="color:' + roleColor + ';font-weight:700">' + roleText + '</td>';
+    html += '<td style="font-family:monospace;font-size:.7rem">' + (u.phone || '—') + '</td>';
+    html += '<td><div style="display:flex;gap:4px;justify-content:center">' +
+      '<button onclick="toggleUserPwd(\'' + pwdId + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(59,130,246,.15);color:#60a5fa;cursor:pointer">👁️</button>' +
+      '<button onclick="copyUserInfo(\'' + u.accountNumber + '\',\'' + u.username + '\',\'' + (u.password||'') + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer">📋</button>' +
+      '<button onclick="adminChangeUserPwd(\'' + u.accountNumber + '\',\'' + (u.firstName||'') + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer">✏️</button>' +
+      '</div></td>';
     html += '</tr>';
   });
   
@@ -1478,7 +1175,6 @@ function toggleUserPwd(pwdId) {
   var hidden = document.getElementById(pwdId + '_hidden');
   var shown = document.getElementById(pwdId + '_shown');
   if (!hidden || !shown) return;
-  
   if (shown.style.display === 'none') {
     hidden.style.display = 'none';
     shown.style.display = 'inline';
@@ -1489,62 +1185,27 @@ function toggleUserPwd(pwdId) {
 }
 
 function copyUserInfo(accountNum, username, password) {
-  var text = '👤 اطلاعات ورود صندوق اتحاد\n\n' +
-             '🔢 شماره حساب: ' + accountNum + '\n' +
-             '👤 نام کاربری: ' + username + '\n' +
-             '🔑 رمز عبور: ' + password;
-  
+  var text = 'اطلاعات ورود:\nشماره: ' + accountNum + '\nنام کاربری: ' + username + '\nرمز: ' + password;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(function() {
-      alert('✅ اطلاعات کپی شد!');
-    }).catch(function() {
-      fallbackCopyUsers(text);
-    });
+    navigator.clipboard.writeText(text).then(function() { alert('✅ کپی شد'); });
   } else {
-    fallbackCopyUsers(text);
+    alert(text);
   }
-}
-
-function fallbackCopyUsers(text) {
-  var textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.select();
-  try {
-    document.execCommand('copy');
-    alert('✅ اطلاعات کپی شد!');
-  } catch (e) {
-    alert('❌ خطا در کپی');
-  }
-  document.body.removeChild(textarea);
 }
 
 function adminChangeUserPwd(accountNum, firstName) {
-  var newPwd = prompt('🔑 رمز جدید برای «' + firstName + '» (شماره حساب ' + accountNum + '):');
+  var newPwd = prompt('رمز جدید برای «' + firstName + '»:');
   if (newPwd === null) return;
   newPwd = newPwd.trim();
-  if (!newPwd || newPwd.length < 4) {
-    alert('⚠️ رمز باید حداقل ۴ کاراکتر باشد');
-    return;
-  }
+  if (!newPwd || newPwd.length < 4) { alert('⚠️ حداقل ۴ کاراکتر'); return; }
+  if (!confirm('تغییر رمز؟')) return;
   
-  if (!confirm('آیا از تغییر رمز «' + firstName + '» به «' + newPwd + '» مطمئن هستید؟')) return;
-  
-  fetch(URL + '?action=adminChangePassword&key=' + encodeURIComponent(KEY) + 
-        '&username=' + encodeURIComponent(accountNum) + 
-        '&newPassword=' + encodeURIComponent(newPwd))
+  fetch(URL + '?action=adminChangePassword&key=' + encodeURIComponent(KEY) + '&username=' + encodeURIComponent(accountNum) + '&newPassword=' + encodeURIComponent(newPwd))
     .then(function(r) { return r.json(); })
     .then(function(d) {
-      if (d.ok) {
-        alert('✅ رمز با موفقیت تغییر کرد\n\nرمز جدید: ' + newPwd);
-        loadUsersInfo();
-      } else {
-        alert('❌ ' + (d.error || 'خطا در تغییر رمز'));
-      }
-    })
-    .catch(function() { alert('❌ خطا در اتصال'); });
+      if (d.ok) { alert('✅ تغییر کرد'); loadUsersInfo(); }
+      else { alert('❌ ' + (d.error || 'خطا')); }
+    });
 }
 
 function loadPasswordLog() {
@@ -1553,94 +1214,54 @@ function loadPasswordLog() {
     .then(function(d) {
       passwordLogData = d.log || [];
       renderPasswordLog();
-    })
-    .catch(function() {
-      document.getElementById('passwordLogContainer').innerHTML = 
-        '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت</div>';
     });
 }
 
 function renderPasswordLog() {
   if (passwordLogData.length === 0) {
-    document.getElementById('passwordLogContainer').innerHTML = 
-      '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">📭 هنوز تغییر رمزی ثبت نشده</div>';
+    document.getElementById('passwordLogContainer').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:20px;text-align:center">📭 لاگی نیست</div>';
     return;
   }
-  
-  var html = '<table><tr>' +
-    '<th>#</th>' +
-    '<th>تاریخ</th>' +
-    '<th>نام کاربری</th>' +
-    '<th>رمز قبلی</th>' +
-    '<th>رمز جدید</th>' +
-    '<th>تغییر دهنده</th>' +
-    '</tr>';
-  
+  var html = '<table><tr><th>#</th><th>تاریخ</th><th>نام کاربری</th><th>رمز قبلی</th><th>رمز جدید</th><th>تغییر دهنده</th></tr>';
   passwordLogData.slice(0, 100).forEach(function(log, idx) {
     var changerText = log.changedBy === 'admin' ? '👑 مدیر' : '👤 کاربر';
     var changerColor = log.changedBy === 'admin' ? '#ffd700' : '#3b82f6';
-    
     html += '<tr>' +
       '<td>' + (idx + 1) + '</td>' +
-      '<td style="font-size:.7rem;color:rgba(255,255,255,.6)">' + (log.date || '—') + '</td>' +
-      '<td style="font-family:monospace;direction:ltr;text-align:center">' + (log.username || '—') + '</td>' +
-      '<td style="font-family:monospace;direction:ltr;text-align:center;color:rgba(255,255,255,.5);font-size:.75rem">' + (log.oldPassword || '—') + '</td>' +
-      '<td style="font-family:monospace;direction:ltr;text-align:center;color:#22c55e;font-weight:700">' + (log.newPassword || '—') + '</td>' +
-      '<td style="color:' + changerColor + ';font-weight:700;font-size:.75rem">' + changerText + '</td>' +
+      '<td style="font-size:.7rem">' + (log.date || '—') + '</td>' +
+      '<td style="font-family:monospace;text-align:center">' + (log.username || '—') + '</td>' +
+      '<td style="font-family:monospace;text-align:center;color:rgba(255,255,255,.5)">' + (log.oldPassword || '—') + '</td>' +
+      '<td style="font-family:monospace;text-align:center;color:#22c55e;font-weight:700">' + (log.newPassword || '—') + '</td>' +
+      '<td style="color:' + changerColor + ';font-weight:700">' + changerText + '</td>' +
       '</tr>';
   });
-  
   html += '</table>';
   document.getElementById('passwordLogContainer').innerHTML = html;
 }
 
 function downloadUsersExcel() {
-  if (allUsersInfo.length === 0) {
-    alert('⚠️ هیچ کاربری برای دانلود وجود ندارد');
-    return;
-  }
-  
-  var rows = [];
-  rows.push(['ردیف', 'نام', 'شماره حساب', 'نام کاربری', 'رمز عبور', 'نقش', 'تلفن', 'کد خانوار', 'تعداد اعضا']);
-  
+  if (allUsersInfo.length === 0) { alert('⚠️ کاربری نیست'); return; }
+  var rows = [['ردیف', 'نام', 'شماره حساب', 'نام کاربری', 'رمز', 'نقش', 'تلفن']];
   allUsersInfo.forEach(function(u, idx) {
     var roleText = u.isAdmin ? 'مدیر' : (u.isCouncil ? 'شورا' : 'عضو');
-    rows.push([
-      (idx + 1),
-      u.firstName || '',
-      u.accountNumber || '',
-      u.username || '',
-      u.password || '',
-      roleText,
-      u.phone || '',
-      u.heh1 || '',
-      u.familyCount || 0
-    ]);
+    rows.push([(idx + 1), u.firstName || '', u.accountNumber || '', u.username || '', u.password || '', roleText, u.phone || '']);
   });
-  
-  var csv = '\uFEFF';
-  rows.forEach(function(row) {
-    csv += row.map(function(cell) {
+  var csv = '\uFEFF' + rows.map(function(row) {
+    return row.map(function(cell) {
       var s = String(cell);
-      if (s.indexOf(',') >= 0 || s.indexOf('"') >= 0 || s.indexOf('\n') >= 0) {
-        return '"' + s.replace(/"/g, '""') + '"';
-      }
-      return s;
-    }).join(',') + '\n';
-  });
-  
+      return (s.indexOf(',') >= 0 || s.indexOf('"') >= 0) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(',');
+  }).join('\n');
   var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
   var link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = 'users_info_' + new Date().toISOString().split('T')[0] + '.csv';
-  document.body.appendChild(link);
+  link.download = 'users_' + new Date().toISOString().split('T')[0] + '.csv';
   link.click();
-  document.body.removeChild(link);
-  
-  alert('✅ فایل Excel دانلود شد');
+  alert('✅ دانلود شد');
 }
+
 // ============================================================
-// 🆕 آپلود فایل اکسل به گیت‌هاب
+// آپلود فایل اکسل
 // ============================================================
 
 async function adminUploadExcelToGitHub() {
@@ -1649,64 +1270,44 @@ async function adminUploadExcelToGitHub() {
     var btn = document.getElementById('adminUploadBtn');
     
     if (!fileInput.files || fileInput.files.length === 0) {
-        showAdminUploadStatus('⚠️ لطفاً یه فایل اکسل انتخاب کن', 'warning');
+        showAdminUploadStatus('⚠️ فایل انتخاب کن', 'warning');
         return;
     }
     
     var file = fileInput.files[0];
     
-    if (!file.name.toLowerCase().endsWith('.xlsx') && !file.name.toLowerCase().endsWith('.xls')) {
-        showAdminUploadStatus('❌ فقط فایل‌های Excel (.xlsx یا .xls) مجاز هستند', 'error');
+    if (!file.name.toLowerCase().endsWith('.xlsx')) {
+        showAdminUploadStatus('❌ فقط .xlsx مجاز است', 'error');
         return;
     }
     
     var sizeKB = (file.size / 1024).toFixed(1);
-    showAdminUploadStatus('⏳ در حال آپلود (' + sizeKB + ' کیلوبایت)...<br>لطفاً صبر کن...', 'info');
+    showAdminUploadStatus('⏳ در حال آپلود...', 'info');
     btn.disabled = true;
-    btn.innerHTML = '⏳ در حال آپلود...';
+    btn.innerHTML = '⏳...';
     
     try {
         var base64 = await adminFileToBase64(file);
-        
         var response = await fetch(URL, {
             method: 'POST',
-            body: JSON.stringify({
-                action: 'uploadExcel',
-                fileContent: base64
-            }),
+            body: JSON.stringify({ action: 'uploadExcel', fileContent: base64 }),
             headers: { 'Content-Type': 'text/plain;charset=utf-8' }
         });
-        
         var text = await response.text();
-        var result;
-        try {
-            result = JSON.parse(text);
-        } catch (e) {
-            showAdminUploadStatus('❌ پاسخ نامعتبر از سرور:<br>' + text.substring(0, 200), 'error');
-            btn.disabled = false;
-            btn.innerHTML = '🚀 آپلود به گیت‌هاب';
-            return;
-        }
+        var result = JSON.parse(text);
         
         if (result.ok) {
-            showAdminUploadStatus('✅ فایل با موفقیت آپلود شد!<br>📊 حجم: ' + sizeKB + ' کیلوبایت<br>🔗 <a href="' + result.url + '" target="_blank" style="color:#22c55e;font-weight:bold">مشاهده در گیت‌هاب</a>', 'success');
+            showAdminUploadStatus('✅ آپلود شد!', 'success');
             fileInput.value = '';
-            btn.disabled = false;
-            btn.innerHTML = '🚀 آپلود به گیت‌هاب';
-            
-            setTimeout(function() {
-                showAdminUploadStatus('✅ آپلود موفق!<br>🔄 حالا برنامه رو ببند و دوباره باز کن تا اطلاعات جدید لود بشه.', 'success');
-            }, 3000);
         } else {
-            showAdminUploadStatus('❌ ' + (result.error || 'خطای نامشخص'), 'error');
-            btn.disabled = false;
-            btn.innerHTML = '🚀 آپلود به گیت‌هاب';
+            showAdminUploadStatus('❌ ' + (result.error || 'خطا'), 'error');
         }
     } catch (e) {
-        showAdminUploadStatus('❌ خطا: ' + e.message, 'error');
-        btn.disabled = false;
-        btn.innerHTML = '🚀 آپلود به گیت‌هاب';
+        showAdminUploadStatus('❌ ' + e.message, 'error');
     }
+    
+    btn.disabled = false;
+    btn.innerHTML = '🚀 آپلود به گیت‌هاب';
 }
 
 function adminFileToBase64(file) {
@@ -1722,7 +1323,6 @@ function showAdminUploadStatus(msg, type) {
     var status = document.getElementById('adminUploadStatus');
     if (!status) return;
     status.style.display = 'block';
-    
     var colors = {
         info: { bg: 'rgba(56,189,248,0.15)', color: '#38bdf8', border: '#38bdf8' },
         warning: { bg: 'rgba(245,158,11,0.15)', color: '#f59e0b', border: '#f59e0b' },
@@ -1735,30 +1335,25 @@ function showAdminUploadStatus(msg, type) {
     status.style.borderRight = '3px solid ' + c.border;
     status.innerHTML = msg;
 }
+
 // ============================================================
-// 🆕 تب ۱۴: درخواست‌های اعضا
+// تب ۱۴: درخواست‌های اعضا
 // ============================================================
 
 var allMemberRequests = [];
 
 function loadMemberRequests() {
     document.getElementById('memberRequestsList').innerHTML = '<div class="loader">در حال بارگذاری...</div>';
-    
     fetch(URL + '?action=getAllMemberRequests&key=' + encodeURIComponent(KEY) + '&_=' + Date.now())
         .then(function(r) { return r.json(); })
         .then(function(d) {
             if (!d.ok || !d.requests) {
-                document.getElementById('memberRequestsList').innerHTML = 
-                    '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت درخواست‌ها</div>';
+                document.getElementById('memberRequestsList').innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا</div>';
                 return;
             }
             allMemberRequests = d.requests;
             updateMemberRequestsStats();
             renderMemberRequests();
-        })
-        .catch(function(e) {
-            document.getElementById('memberRequestsList').innerHTML = 
-                '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در اتصال</div>';
         });
 }
 
@@ -1769,8 +1364,7 @@ function updateMemberRequestsStats() {
     
     allMemberRequests.forEach(function(r) {
         if (r.status === 'pending') pending++;
-        else if (r.status === 'resolved' || r.status === 'answered') resolved++;
-        
+        else resolved++;
         try {
             var d = new Date(r.timestamp);
             if (d.toDateString() === todayStr) today++;
@@ -1790,30 +1384,17 @@ function renderMemberRequests() {
     
     var filtered = allMemberRequests.filter(function(r) {
         if (typeFilter !== 'all' && r.type !== typeFilter) return false;
-        
-        if (statusFilter === 'pending') {
-            if (r.status !== 'pending') return false;
-        } else if (statusFilter === 'resolved') {
-            if (r.status === 'pending') return false;
-        }
-        
+        if (statusFilter === 'pending' && r.status !== 'pending') return false;
+        if (statusFilter === 'resolved' && r.status === 'pending') return false;
         if (q) {
-            var searchStr = String(
-                (r.name || '') + ' ' + 
-                (r.user || '') + ' ' + 
-                (r.accountNumber || '') + ' ' + 
-                (r.title || '') + ' ' + 
-                (r.code || '')
-            ).toLowerCase();
+            var searchStr = String((r.name || '') + ' ' + (r.user || '') + ' ' + (r.title || '')).toLowerCase();
             if (searchStr.indexOf(q) < 0) return false;
         }
-        
         return true;
     });
     
     if (filtered.length === 0) {
-        document.getElementById('memberRequestsList').innerHTML = 
-            '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 درخواستی یافت نشد</div>';
+        document.getElementById('memberRequestsList').innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 درخواستی نیست</div>';
         return;
     }
     
@@ -1821,96 +1402,45 @@ function renderMemberRequests() {
     filtered.forEach(function(r) {
         var dt = r.timestamp ? new Date(r.timestamp) : null;
         var dateStr = dt ? fmtFull(dt) : '-';
-        
-        var statusTag = r.status === 'pending' 
-            ? '<span class="pending-tag">⏳ در انتظار</span>' 
-            : '<span class="approved-tag">✅ پاسخ داده شده</span>';
-        
+        var statusTag = r.status === 'pending' ? '<span class="pending-tag">⏳ در انتظار</span>' : '<span class="approved-tag">✅ پاسخ داده شده</span>';
         var typeColor = r.type === 'password' ? '#8b5cf6' : (r.type === 'purchase' ? '#f59e0b' : '#3b82f6');
         var typeLabel = r.typeLabel || '📋 عمومی';
         
         html += '<div class="req-card" style="border-right:3px solid ' + typeColor + ';">';
         html += '<div class="req-head">';
-        html += '<div>';
-        html += '<div style="font-weight:800;color:#ffd700;font-size:.9rem">👤 ' + (r.name || 'ناشناس') + ' <span style="font-size:.7rem;color:' + typeColor + '">' + typeLabel + '</span></div>';
-        html += '<div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px">کد: ' + (r.user || '-') + ' | حساب: ' + (r.accountNumber || '-') + ' | 📅 ' + dateStr + '</div>';
-        if (r.phone) html += '<div style="font-size:.7rem;color:rgba(255,255,255,.5)">📱 ' + r.phone + '</div>';
-        html += '</div>';
+        html += '<div><div style="font-weight:800;color:#ffd700">👤 ' + (r.name || 'ناشناس') + ' <span style="font-size:.7rem;color:' + typeColor + '">' + typeLabel + '</span></div>';
+        html += '<div style="font-size:.72rem;color:rgba(255,255,255,.5)">کد: ' + (r.user || '-') + ' | 📅 ' + dateStr + '</div></div>';
         html += statusTag;
         html += '</div>';
+        html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin:8px 0"><b>' + escapeHtmlAdmin(r.title || '') + '</b></div>';
         
-        html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin:8px 0;font-size:.85rem;line-height:1.7">';
-        html += '<b style="color:#fff">📋 ' + escapeHtmlAdmin(r.title || '') + '</b>';
-        if (r.code) html += ' <span style="color:rgba(255,255,255,.4);font-size:.75rem">(کد: ' + r.code + ')</span>';
-        html += '</div>';
-        
-        if (r.reply && r.reply.trim() && r.status !== 'pending') {
-            html += '<div style="background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.3);padding:10px;border-radius:8px;margin:8px 0;font-size:.82rem;line-height:1.7">';
-            html += '<b style="color:#22c55e">💬 پاسخ شورا:</b><br>' + escapeHtmlAdmin(r.reply);
-            html += '</div>';
+        if (r.reply && r.status !== 'pending') {
+            html += '<div style="background:rgba(34,197,94,.08);padding:10px;border-radius:8px"><b style="color:#22c55e">💬 پاسخ:</b><br>' + escapeHtmlAdmin(r.reply) + '</div>';
         }
         
         if (r.status === 'pending') {
-            html += '<div id="mrReply_' + r.id + '" style="display:none;margin-top:8px">';
-            html += '<textarea id="mrTA_' + r.id + '" placeholder="✍️ پاسخ خود را بنویسید..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;resize:vertical;outline:none"></textarea>';
-            html += '<div style="display:flex;gap:6px;margin-top:6px">';
-            html += '<button onclick="submitMemberRequestReply(\'' + r.id + '\',\'' + r.type + '\')" style="flex:2;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer;font-family:tahoma">📨 ثبت و ارسال پاسخ</button>';
-            html += '<button onclick="cancelMemberRequestReply(\'' + r.id + '\')" style="flex:1;padding:10px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.05);color:#fff;cursor:pointer;font-family:tahoma">❌ لغو</button>';
-            html += '</div>';
-            html += '</div>';
-            html += '<div class="req-actions">';
-            html += '<button onclick="openMemberRequestReply(\'' + r.id + '\')" style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff">✍️ پاسخ دادن</button>';
-            html += '</div>';
+            html += '<textarea id="mrTA_' + r.id + '" placeholder="پاسخ..." style="width:100%;min-height:70px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;padding:10px;font-family:tahoma;font-size:.82rem;margin:8px 0;outline:none"></textarea>';
+            html += '<button onclick="submitMemberRequestReply(\'' + r.id + '\',\'' + r.type + '\')" style="width:100%;padding:10px;border:none;border-radius:10px;background:#22c55e;color:#fff;font-weight:800;cursor:pointer">📨 ثبت پاسخ</button>';
         }
-        
         html += '</div>';
     });
     
     document.getElementById('memberRequestsList').innerHTML = html;
 }
 
-function openMemberRequestReply(id) {
-    var box = document.getElementById('mrReply_' + id);
-    if (box) {
-        box.style.display = 'block';
-        var ta = document.getElementById('mrTA_' + id);
-        if (ta) ta.focus();
-    }
-}
-
-function cancelMemberRequestReply(id) {
-    var box = document.getElementById('mrReply_' + id);
-    if (box) box.style.display = 'none';
-}
-
 function submitMemberRequestReply(id, type) {
     var ta = document.getElementById('mrTA_' + id);
     if (!ta) return;
     var reply = ta.value.trim();
+    if (reply.length < 2) { alert('⚠️ پاسخ بنویسید'); return; }
+    if (!confirm('ارسال پاسخ؟')) return;
     
-    if (reply.length < 2) {
-        alert('⚠️ لطفاً پاسخ را بنویسید');
-        return;
-    }
-    
-    if (!confirm('پاسخ ثبت و برای عضو ارسال شود؟')) return;
-    
-    fetch(URL + '?action=resolveMemberRequest&key=' + encodeURIComponent(KEY) 
-        + '&id=' + encodeURIComponent(id) 
-        + '&type=' + encodeURIComponent(type)
-        + '&reply=' + encodeURIComponent(reply)
-        + '&status=resolved'
-        + '&replyBy=' + encodeURIComponent((window.__councilUser && window.__councilUser.name) || 'شورا'))
+    fetch(URL + '?action=resolveMemberRequest&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id) + '&type=' + encodeURIComponent(type) + '&reply=' + encodeURIComponent(reply) + '&status=resolved')
         .then(function(r) { return r.json(); })
         .then(function(d) {
-            if (d.ok) {
-                alert('✅ پاسخ با موفقیت ثبت شد');
-                loadMemberRequests();
-            } else {
-                alert('❌ خطا: ' + (d.error || 'نامشخص'));
-            }
-        })
-        .catch(function() { alert('❌ خطا در اتصال'); });
+            if (d.ok) { alert('✅ ثبت شد'); loadMemberRequests(); }
+            else { alert('❌ ' + (d.error || 'خطا')); }
+        });
 }
 
 function escapeHtmlAdmin(str) {
@@ -1919,7 +1449,8 @@ function escapeHtmlAdmin(str) {
         return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
     }).replace(/\n/g, '<br>');
 }
-console.log('✅ تب اطلاعات کاربری آماده است');
+
+console.log('✅ پنل مدیریت آماده است');
 </script>
 </body>
 </html>
