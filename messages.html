@@ -1204,20 +1204,28 @@ function checkRecipient() {
         return;
     }
     
-    // پیدا شد
-    validatedRecipient = {
-        id: found.karbari || found.accountNumber || found.id,
-        name: found.firstName,
-        accountNumber: found.accountNumber,
-        memberId: found.id,
-        phone: found.phone1 || found.phone2 || ''
-    };
-    
-    info.style.display = 'block';
-    info.style.background = 'rgba(16,185,129,0.1)';
-    info.style.borderRight = '3px solid #10b981';
-    info.style.color = '#10b981';
-    info.innerHTML = '✅ ' + escapeHtml(found.firstName) + ' - ' + escapeHtml(found.accountNumber);
+    // 🆕 پیدا شد — نام رو از name بگیر
+var recipientName = found.name || found.firstName || '';
+if (!recipientName) {
+    // اگه خالی بود، از شماره حساب استفاده کن
+    recipientName = 'کاربر ' + (found.accountNumber || '');
+}
+
+validatedRecipient = {
+    id: found.karbari || found.accountNumber || found.id || found.memberId,
+    name: recipientName,
+    accountNumber: found.accountNumber,
+    memberId: found.id || found.memberId,
+    phone: found.phone || found.phone1 || found.phone2 || ''
+};
+
+console.log('✅ validatedRecipient:', validatedRecipient);
+
+info.style.display = 'block';
+info.style.background = 'rgba(16,185,129,0.1)';
+info.style.borderRight = '3px solid #10b981';
+info.style.color = '#10b981';
+info.innerHTML = '✅ ' + escapeHtml(recipientName) + ' - ' + escapeHtml(found.accountNumber);Name) + ' - ' + escapeHtml(found.accountNumber);
 }
 function closeComposeModal() {
     document.getElementById('composeModal').classList.remove('show');
