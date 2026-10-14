@@ -408,7 +408,12 @@
                 try { if (typeof autoUpdateInterval !== 'undefined' && autoUpdateInterval) { clearInterval(autoUpdateInterval); autoUpdateInterval = null; } } catch(e) {}
                 try { if (typeof stopKeepAlive === 'function') stopKeepAlive(); } catch(e) {}
                 try { if (typeof updateFloatingButtons === 'function') updateFloatingButtons(); } catch(e) {}
-                try { localStorage.removeItem('currentUser'); sessionStorage.removeItem('currentUser'); localStorage.removeItem('selectedMemberId'); } catch(e) {}
+                try { 
+    localStorage.removeItem('currentUser'); 
+    sessionStorage.removeItem('currentUser'); 
+    localStorage.removeItem('selectedMemberId');
+    localStorage.removeItem('sandogh_members_cache');
+} catch(e) {}
                 
                 location.reload();
             };
@@ -519,7 +524,13 @@
         
         var res = loginResult;
         currentUser = res.user;
-        
+       // 🆕 ذخیره در localStorage برای دسترسی از صفحات دیگه
+try {
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    console.log('✅ currentUser ذخیره شد');
+} catch(e) {
+    console.warn('⚠️ خطا در ذخیره currentUser:', e);
+}
         var tempMember = {
             id: currentUser.id || currentUser.accountNumber || currentUser.username,
             firstName: currentUser.firstName || 'کاربر',
