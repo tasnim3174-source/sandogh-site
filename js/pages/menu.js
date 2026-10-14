@@ -56,10 +56,14 @@ async function openScriptService(tabName) {
             if (typeof openEmailForm === 'function') openEmailForm();
             else alert('⚠️ فرم ایمیل هنوز آماده نیست');
             break;
-        case 'messaging':
-            // 🆕 باز کردن پیام‌رسان مستقل در تب جدید
-            window.open('messages.html', '_blank');
-            break;
+       case 'messaging':
+    console.log('📨 باز کردن پنجره پیام‌رسان...');
+    if (typeof window.openMessagesWindow === 'function') {
+        window.openMessagesWindow();
+    } else {
+        window.open('messages.html', '_blank');
+    }
+    return;
         case 'survey':
             if (typeof openSurvey === 'function') openSurvey();
             else alert('⚠️ نظرسنجی هنوز آماده نیست');
