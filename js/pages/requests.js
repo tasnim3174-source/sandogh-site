@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - درخواست‌ها
-   نسخه: 3.0 - با ثبت در سرور + تاریخچه
+   نسخه: 4.0 - با ۳ بخش (پیامکی + تاریخچه + سیستمی)
    ============================================================ */
 
 function renderRequestsContent() {
@@ -23,14 +23,17 @@ function renderRequestsContent() {
     ];
 
     return `
-        <div class="info-box"><i class="fas fa-file-signature"></i> درخواست‌های پیامکی</div>
+        <div class="info-box"><i class="fas fa-file-signature"></i> درخواست‌ها</div>
         
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-            <button onclick="showRequestsTab('new')" id="reqTabNew" style="flex:1;min-width:120px;padding:10px;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;">📝 درخواست جدید</button>
-            <button onclick="showRequestsTab('history')" id="reqTabHistory" style="flex:1;min-width:120px;padding:10px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;">📋 تاریخچه درخواست‌ها</button>
+        <!-- 🆕 ۳ تب جدید -->
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+            <button onclick="showRequestsTab('sms')" id="reqTabSms" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">📱 درخواست‌های پیامکی</button>
+            <button onclick="showRequestsTab('history')" id="reqTabHistory" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">📜 تاریخچه درخواست‌ها</button>
+            <button onclick="showRequestsTab('system')" id="reqTabSystem" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">⚙️ درخواست‌های سیستمی</button>
         </div>
         
-        <div id="reqNewPanel">
+        <!-- 📱 بخش ۱: درخواست‌های پیامکی -->
+        <div id="reqSmsPanel">
             <div class="dashboard-section" style="border-right-color:var(--gold-color);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(217,119,6,0.06));">
                 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
                     <i class="fas fa-info-circle" style="font-size:1.5rem;color:var(--gold-color);"></i>
@@ -55,10 +58,11 @@ function renderRequestsContent() {
             </div>
         </div>
         
+        <!-- 📜 بخش ۲: تاریخچه درخواست‌ها -->
         <div id="reqHistoryPanel" style="display:none;">
             <div class="dashboard-section" style="border-right-color:var(--gold-color);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
-                    <div style="font-weight:bold;color:var(--text-primary);font-size:0.95rem;">📋 تاریخچه درخواست‌های من</div>
+                    <div style="font-weight:bold;color:var(--text-primary);font-size:0.95rem;">📜 تاریخچه درخواست‌های من</div>
                     <button onclick="loadMyRequests()" style="padding:6px 12px;border-radius:8px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);cursor:pointer;font-size:0.75rem;">🔄 به‌روزرسانی</button>
                 </div>
                 <div id="myRequestsList">
@@ -66,34 +70,64 @@ function renderRequestsContent() {
                 </div>
             </div>
         </div>
+        
+        <!-- ⚙️ بخش ۳: درخواست‌های سیستمی (آماده برای توسعه) -->
+        <div id="reqSystemPanel" style="display:none;">
+            <div class="dashboard-section" style="border-right-color:#3b82f6;background:linear-gradient(135deg,rgba(59,130,246,0.05),rgba(37,99,235,0.05));">
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                    <i class="fas fa-cogs" style="font-size:1.8rem;color:#3b82f6;"></i>
+                    <div>
+                        <div style="font-weight:bold;color:var(--text-primary);font-size:0.95rem;">⚙️ درخواست‌های سیستمی</div>
+                        <div style="color:var(--text-secondary);font-size:0.8rem;">درخواست‌های خودکار و سیستمی</div>
+                    </div>
+                </div>
+                
+                <div id="systemRequestsList">
+                    <div style="text-align:center;padding:40px 20px;color:var(--text-secondary);">
+                        <i class="fas fa-tools" style="font-size:3rem;color:var(--text-muted);margin-bottom:12px;display:block;"></i>
+                        <div style="font-size:1rem;font-weight:700;margin-bottom:6px;">🚧 در حال ساخت</div>
+                        <div style="font-size:0.8rem;line-height:1.7;">این بخش به‌زودی تکمیل می‌شود<br>درخواست‌های سیستمی خودکار اینجا نمایش داده می‌شوند</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     `;
 }
 
 function showRequestsTab(tab) {
-    var newPanel = document.getElementById('reqNewPanel');
+    var smsPanel = document.getElementById('reqSmsPanel');
     var historyPanel = document.getElementById('reqHistoryPanel');
-    var newBtn = document.getElementById('reqTabNew');
+    var systemPanel = document.getElementById('reqSystemPanel');
+    var smsBtn = document.getElementById('reqTabSms');
     var historyBtn = document.getElementById('reqTabHistory');
+    var systemBtn = document.getElementById('reqTabSystem');
     
-    if (tab === 'new') {
-        newPanel.style.display = 'block';
-        historyPanel.style.display = 'none';
-        newBtn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
-        newBtn.style.color = '#fff';
-        newBtn.style.border = 'none';
-        historyBtn.style.background = 'var(--card-bg)';
-        historyBtn.style.color = 'var(--text-primary)';
-        historyBtn.style.border = '1px solid var(--border-color)';
-    } else {
-        newPanel.style.display = 'none';
-        historyPanel.style.display = 'block';
-        historyBtn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
-        historyBtn.style.color = '#fff';
-        historyBtn.style.border = 'none';
-        newBtn.style.background = 'var(--card-bg)';
-        newBtn.style.color = 'var(--text-primary)';
-        newBtn.style.border = '1px solid var(--border-color)';
+    // مخفی کردن همه
+    if (smsPanel) smsPanel.style.display = 'none';
+    if (historyPanel) historyPanel.style.display = 'none';
+    if (systemPanel) systemPanel.style.display = 'none';
+    
+    // ریست کردن استایل دکمه‌ها
+    var inactiveStyle = 'flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;';
+    var activeStyle = 'flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;';
+    
+    if (smsBtn) smsBtn.style.cssText = inactiveStyle;
+    if (historyBtn) historyBtn.style.cssText = inactiveStyle;
+    if (systemBtn) systemBtn.style.cssText = inactiveStyle;
+    
+    // نمایش تب فعال
+    if (tab === 'sms') {
+        if (smsPanel) smsPanel.style.display = 'block';
+        if (smsBtn) smsBtn.style.cssText = activeStyle;
+    } else if (tab === 'history') {
+        if (historyPanel) historyPanel.style.display = 'block';
+        if (historyBtn) historyBtn.style.cssText = activeStyle;
         loadMyRequests();
+    } else if (tab === 'system') {
+        if (systemPanel) systemPanel.style.display = 'block';
+        if (systemBtn) systemBtn.style.cssText = activeStyle;
+        // ⚙️ اینجا بعداً می‌تونی loadSystemRequests() رو صدا بزنی
+        // loadSystemRequests();
     }
 }
 
@@ -104,7 +138,7 @@ async function sendSmsRequest(code, title) {
     const FUND_PHONE = '09138944709';
     const message = `درخواست ${code} - ${title}\nشماره حساب: ${member.accountNumber}\nنام: ${member.firstName}`;
     
-    // ۱. ثبت در سرور (بدون انتظار طولانی)
+    // ۱. ثبت در سرور
     try {
         var url = ADMIN_URL + '?action=submitMemberRequest'
             + '&user=' + encodeURIComponent(member.id || member.accountNumber)
@@ -137,7 +171,7 @@ async function loadMyRequests() {
     list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);">در حال بارگذاری...</div>';
     
     try {
-var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
+        var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
         var url = ADMIN_URL + '?action=getMyMemberRequests&user=' + encodeURIComponent(uid);
         var res = await fetch(url, { cache: 'no-cache' });
         var data = await res.json();
