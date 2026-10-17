@@ -454,7 +454,10 @@ function renderMenuPage(content) {
             hdr.style.background = 'linear-gradient(135deg, #1a1a2e, #2a2a4a)';
             hdr.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
 
-            document.body.style.paddingTop = hdr.offsetHeight + 'px';
+            // 🆕 فقط اگه هدر واقعاً نمایش داده می‌شه
+if (hdr && hdr.style.display !== 'none' && hdr.offsetHeight > 0) {
+    document.body.style.paddingTop = hdr.offsetHeight + 'px';
+}
             document.body.style.background = 'var(--bg-primary)';
             document.body.style.paddingBottom = '0';
             document.body.style.marginBottom = '0';
