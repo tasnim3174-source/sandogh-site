@@ -1121,5 +1121,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('✅ توابع پیام‌رسان آماده است');
 </script>
+    <style>
+/* 🆕 پیش‌فرض: بدون padding-top */
+body {
+    padding-top: 0 !important;
+}
+</style>
+
+<script>
+// 🆕 چک کن اگه هدر مخفی بود، padding-top رو صفر کن
+setInterval(function() {
+    var hdr = document.getElementById('mainHeader');
+    if (!hdr || hdr.style.display === 'none' || hdr.offsetHeight === 0) {
+        if (document.body.style.paddingTop !== '0px') {
+            document.body.style.paddingTop = '0px';
+        }
+    }
+}, 300);
+
+console.log('✅ ریست padding-top فعال شد');
+</script>
 </body>
 </html>
