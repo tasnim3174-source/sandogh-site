@@ -18,7 +18,10 @@ function goToMenu() {
         hdr.style.left = '0';
         hdr.style.right = '0';
         hdr.style.zIndex = '99';
-        document.body.style.paddingTop = hdr.offsetHeight + 'px';
+        // 🆕 فقط اگه هدر واقعاً نمایش داده می‌شه
+if (hdr && hdr.style.display !== 'none' && hdr.offsetHeight > 0) {
+    document.body.style.paddingTop = hdr.offsetHeight + 'px';
+}
     }
     renderPage('menu');
     window.scrollTo({ top: 0, behavior: 'smooth' });
