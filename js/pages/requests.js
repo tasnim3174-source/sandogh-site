@@ -432,7 +432,14 @@ async function openLoanSignModal() {
     var accountNum = member.accountNumber || currentUser.accountNumber || 'نامشخص';
     var phone = member.phone1 || member.phone || 'نامشخص';
 
-    var isCouncil = (currentUser.isCouncil === true || currentUser.role === 'council' || currentUser.role === 'admin');
+    // چک کردن شورا با بررسی دقیق‌تر
+    var isCouncil = false;
+    if (currentUser) {
+        if (currentUser.isCouncil === true || currentUser.role === 'council' || currentUser.role === 'admin') isCouncil = true;
+    }
+    if (member) {
+        if (member.isCouncil === true || member.isHead === true) isCouncil = true;
+    }
 
     var modalHtml = `
         <div id="loanSignModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:10px;backdrop-filter:blur(6px);">
@@ -461,11 +468,8 @@ async function openLoanSignModal() {
                     در تاریخ 
                     <input type="text" id="signDate" placeholder="تاریخ" value="${new Date().toLocaleDateString('fa-IR')}" style="width:100px;padding:4px;border-radius:6px;border:1px solid #8b5cf6;background:#16213e;color:#fff;text-align:center;font-family:tahoma;font-size:0.85rem;">
                     از این صندوق دریافت نمودم.
-                    
                     <br><br>
-                    و موظف هستم این مبلغ را به طور کامل طی اقساط تعیین شده بصورت ماهانه پرداخت نمایم. لذا اینجانب و چنانچه شخصاً نتوانستم پرداخت نمایم، بعد از تاریخ اقساط معوقه، وارثین و خانواده من موظف به پرداخت آن هستند و این دین برگردن اینجانب و خانواده‌ام می‌باشد.
-                    <br><br>
-                    این فرم الکترونیکی را شخصاً با اطلاع کامل خوانده و امضا نموده‌ام و این فرم الکترونیکی در تمام محاکم قضایی قابل اجرا می‌باشد.
+                    و موظف هستم این مبلغ را به طور کامل طی اقساط تعیین شده بصورت ماهانه پرداخت نمایم...
                 </div>
 
                 <div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:10px;position:relative;">
@@ -478,12 +482,12 @@ async function openLoanSignModal() {
                 </div>
 
                 <div style="display:flex;gap:10px;">
-                    <button onclick="submitSignedLoan()" style="flex:2;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.95rem;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
+                    <button onclick="submitSignedLoan(event)" style="flex:2;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.95rem;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
                         ✅ ثبت و امضا
                     </button>
                     
                     ${isCouncil ? `
-                    <button onclick="approveLoanSignature()" style="flex:1;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.9rem;box-shadow:0 4px 15px rgba(245,158,11,0.4);">
+                    <button onclick="approveLoanSignature(event)" style="flex:1;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.9rem;box-shadow:0 4px 15px rgba(245,158,11,0.4);">
                         👑 تایید نهایی
                     </button>
                     ` : ''}
@@ -563,7 +567,7 @@ function clearSignature() {
     document.getElementById('signPlaceholder').style.display = 'block';
 }
 
-async function submitSignedLoan() {
+async function submitSignedLoan(e) {
     if (!sigCanvas) return;
     
     var blank = document.createElement('canvas');
@@ -585,7 +589,7 @@ async function submitSignedLoan() {
         return;
     }
 
-    var btn = event.target;
+    var btn = e.target;
     var originalText = btn.innerHTML;
     btn.disabled = true;
     btn.innerHTML = '⏳ در حال ثبت...';
@@ -617,15 +621,20 @@ async function submitSignedLoan() {
             btn.disabled = false;
             btn.innerHTML = originalText;
         }
-    } catch(e) {
-        alert('❌ خطای شبکه: ' + e.message);
+    } catch(err) {
+        alert('❌ خطای شبکه: ' + err.message);
         btn.disabled = false;
         btn.innerHTML = originalText;
     }
 }
 
-async function approveLoanSignature() {
+async function approveLoanSignature(e) {
     if (!confirm('آیا مطمئنید که می‌خواهید این قرارداد را تایید نهایی کنید؟')) return;
+
+    var btn = e.target;
+    var originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ در حال تایید...';
 
     try {
         var member = members.find(m => m.id === currentUser.memberId) || {};
@@ -641,9 +650,13 @@ async function approveLoanSignature() {
             closeLoanSignModal();
         } else {
             alert('❌ خطا: ' + (data.error || 'نامشخص'));
+            btn.disabled = false;
+            btn.innerHTML = originalText;
         }
-    } catch(e) {
-        alert('❌ خطای شبکه: ' + e.message);
+    } catch(err) {
+        alert('❌ خطای شبکه: ' + err.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
     }
 }
 
