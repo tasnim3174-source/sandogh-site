@@ -115,6 +115,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="14" data-role="all" onclick="showTab(14)">📨 درخواست‌های اعضا</div>
     <div class="menu-item" data-tab="15" data-role="all" onclick="showTab(15)">📩 پیام‌های اعضا</div>
     <div class="menu-item" data-tab="16" data-role="all" onclick="showTab(16)">✍️ امضاهای وام</div>
+    <div class="menu-item" data-tab="17" data-role="all" onclick="showTab(17)">🚫 مدیریت دسترسی (مسدودی)</div>
   </div>
 
   <div class="main-content">
@@ -418,9 +419,6 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 🆕 تب ۱۶: امضاهای وام -->
-    <!-- ============================================================ -->
     <div id="sec16" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -434,6 +432,22 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       </div>
     </div>
 
+    <div id="sec17" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700;margin:0">🚫 مدیریت وضعیت دسترسی کاربران</h3>
+          <button class="refresh" onclick="loadAccessStatusList()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        
+        <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+          <input type="text" id="accessSearch" placeholder="🔍 جستجو (نام، شماره حساب...)" oninput="renderAccessStatusTable()" style="flex:1;min-width:200px;padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:#fff;outline:none;font-family:tahoma">
+        </div>
+        
+        <div class="tw" id="accessStatusTableContainer" style="max-height:500px">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </div>
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
@@ -580,7 +594,8 @@ function showTab(n){
   var sec13 = document.getElementById('sec13'); if (sec13) sec13.style.display = 'none';
   var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = 'none';
   var sec15 = document.getElementById('sec15'); if (sec15) sec15.style.display = 'none';
-  var sec16 = document.getElementById('sec16'); if (sec16) sec16.style.display = 'none'; // 🆕
+  var sec16 = document.getElementById('sec16'); if (sec16) sec16.style.display = 'none';
+  var sec17 = document.getElementById('sec17'); if (sec17) sec17.style.display = 'none';
   
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
@@ -620,9 +635,13 @@ function showTab(n){
     if (sec15) sec15.style.display = 'block';
     loadMemberMessages();
   }
-  else if (n === 16) { // 🆕
+  else if (n === 16) {
     if (sec16) sec16.style.display = 'block';
     loadSignedLoans();
+  }
+  else if (n === 17) {
+    if (sec17) sec17.style.display = 'block';
+    loadAccessStatusList();
   }
   
   var qEl = document.getElementById('q');
@@ -1219,6 +1238,7 @@ function renderUsersTable() {
       '<button onclick="toggleUserPwd(\'' + pwdId + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(59,130,246,.15);color:#60a5fa;cursor:pointer">👁️</button>' +
       '<button onclick="copyUserInfo(\'' + u.accountNumber + '\',\'' + u.username + '\',\'' + (u.password||'') + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer">📋</button>' +
       '<button onclick="adminChangeUserPwd(\'' + u.accountNumber + '\',\'' + (u.firstName||'') + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer">✏️</button>' +
+      '<button onclick="toggleUserAccess(\'' + u.accountNumber + '\',\'' + (u.firstName||'') + '\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(239,68,68,.15);color:#ef4444;cursor:pointer">🚫</button>' +
       '</div></td>';
     html += '</tr>';
   });
@@ -1726,6 +1746,117 @@ async function approveSignedLoanAdmin(loanId) {
         if (d.ok) {
             alert('✅ قرارداد با موفقیت تایید نهایی شد');
             loadSignedLoans();
+        } else {
+            alert('❌ خطا: ' + (d.error || 'نامشخص'));
+        }
+    } catch(e) {
+        alert('❌ خطای شبکه: ' + e.message);
+    }
+}
+
+// ============================================================
+// 🆕 تب ۱۷: مدیریت دسترسی (مسدودی)
+// ============================================================
+
+var allAccessStatuses = {};
+
+async function loadAccessStatusList() {
+    var container = document.getElementById('accessStatusTableContainer');
+    if (!container) return;
+    container.innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+    
+    try {
+        // ۱. دریافت لیست همه کاربران
+        var usersRes = await fetch(URL + '?action=getAllUsers&_=' + Date.now());
+        var usersData = await usersRes.json();
+        if (!usersData.ok || !usersData.users) {
+            container.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت لیست کاربران</div>';
+            return;
+        }
+
+        // ۲. دریافت وضعیت مسدودی‌ها
+        var statusRes = await fetch(URL + '?action=getAllAccessStatuses&key=' + encodeURIComponent(KEY) + '&_=' + Date.now());
+        var statusData = await statusRes.json();
+        
+        allAccessStatuses = {};
+        if (statusData.ok && statusData.statuses) {
+            statusData.statuses.forEach(function(s) {
+                allAccessStatuses[String(s.user)] = s;
+            });
+        }
+
+        window.__allUsersForAccess = usersData.users;
+        renderAccessStatusTable();
+        
+    } catch(e) {
+        container.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا: ' + e.message + '</div>';
+    }
+}
+
+function renderAccessStatusTable() {
+    var container = document.getElementById('accessStatusTableContainer');
+    var users = window.__allUsersForAccess || [];
+    var q = (document.getElementById('accessSearch')?.value || '').trim().toLowerCase();
+    
+    var filtered = users.filter(function(u) {
+        if (q) {
+            var searchStr = String((u.firstName || '') + ' ' + (u.accountNumber || '')).toLowerCase();
+            if (searchStr.indexOf(q) < 0) return false;
+        }
+        return true;
+    });
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">👤 کاربری یافت نشد</div>';
+        return;
+    }
+
+    var html = '<table><tr><th>#</th><th>نام</th><th>شماره حساب</th><th>وضعیت</th><th>دلیل</th><th>عملیات</th></tr>';
+    
+    filtered.forEach(function(u, idx) {
+        var st = allAccessStatuses[String(u.accountNumber)] || { status: 'active', reason: '' };
+        var statusColor = st.status === 'active' ? '#22c55e' : (st.status === 'blocked' ? '#f59e0b' : '#ef4444');
+        var statusLabel = st.status === 'active' ? '✅ فعال' : (st.status === 'blocked' ? '⏸️ مسدود' : '🚫 بسته');
+        
+        html += '<tr>';
+        html += '<td>' + (idx + 1) + '</td>';
+        html += '<td><b>' + (u.firstName || '—') + '</b></td>';
+        html += '<td style="font-family:monospace;text-align:center">' + (u.accountNumber || '—') + '</td>';
+        html += '<td style="color:' + statusColor + ';font-weight:800;text-align:center">' + statusLabel + '</td>';
+        html += '<td style="font-size:.75rem;color:rgba(255,255,255,.6)">' + (st.reason || '—') + '</td>';
+        html += '<td><div style="display:flex;gap:4px;justify-content:center">';
+        
+        if (st.status === 'active') {
+            html += '<button onclick="changeUserAccess(\'' + u.accountNumber + '\', \'blocked\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer">⏸️ مسدود</button>';
+            html += '<button onclick="changeUserAccess(\'' + u.accountNumber + '\', \'closed\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(239,68,68,.15);color:#ef4444;cursor:pointer">🚫 بستن</button>';
+        } else {
+            html += '<button onclick="changeUserAccess(\'' + u.accountNumber + '\', \'active\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer">✅ رفع مسدودی</button>';
+        }
+        
+        html += '</div></td>';
+        html += '</tr>';
+    });
+
+    html += '</table>';
+    container.innerHTML = html;
+}
+
+async function changeUserAccess(accountNum, newStatus) {
+    var reason = '';
+    if (newStatus !== 'active') {
+        reason = prompt('دلیل ' + (newStatus === 'blocked' ? 'مسدودسازی' : 'بستن حساب') + ' را بنویسید:');
+        if (reason === null) return;
+    } else {
+        if (!confirm('آیا از رفع مسدودی این کاربر مطمئن هستید؟')) return;
+    }
+
+    try {
+        var res = await fetch(URL + '?action=setUserAccessStatus&key=' + encodeURIComponent(KEY) + '&user=' + encodeURIComponent(accountNum) + '&status=' + newStatus + '&reason=' + encodeURIComponent(reason));
+        var d = await res.json();
+        
+        if (d.ok) {
+            alert('✅ وضعیت کاربر با موفقیت تغییر کرد');
+            loadAccessStatusList(); // رفرش لیست
         } else {
             alert('❌ خطا: ' + (d.error || 'نامشخص'));
         }
