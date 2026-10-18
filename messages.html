@@ -332,9 +332,10 @@
   <div class="modal" id="adminModal">
     <div class="modal-card wide" style="max-width:560px;max-height:85vh;overflow-y:auto">
       <h3>⚙️ پنل مدیریت</h3>
-      <div class="admin-tabs">
+            <div class="admin-tabs">
         <button class="admin-tab active" id="adminTabChats" onclick="switchAdminTab('chats')">💬 چت‌ها</button>
         <button class="admin-tab" id="adminTabCouncil" onclick="switchAdminTab('council')">📤 پیام‌های به شورا</button>
+        <button class="admin-tab" id="adminTabLoans" onclick="switchAdminTab('loans')">📄 قراردادهای وام</button>
       </div>
       <div id="adminContent"><div class="empty">در حال بارگذاری...</div></div>
       <div class="modal-actions">
@@ -1043,10 +1044,12 @@ function switchAdminTab(tab){
   CURRENT_ADMIN_TAB = tab;
   document.getElementById('adminTabChats').classList.toggle('active', tab==='chats');
   document.getElementById('adminTabCouncil').classList.toggle('active', tab==='council');
+  document.getElementById('adminTabLoans').classList.toggle('active', tab==='loans');
+  
   if(tab === 'chats') loadAdminChats();
-  else loadAdminCouncilMessages();
+  else if(tab === 'council') loadAdminCouncilMessages();
+  else if(tab === 'loans') loadAdminLoans();
 }
-
 async function loadAdminChats(){
   var c = document.getElementById('adminContent');
   c.innerHTML = '<div class="empty">در حال بارگذاری...</div>';
