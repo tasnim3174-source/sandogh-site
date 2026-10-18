@@ -473,7 +473,7 @@ async function openLoanSignModal() {
                 </div>
 
                 <div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:10px;position:relative;">
-                    <canvas id="signatureCanvas" style="width:100%;height:200px;touch-action:none;cursor:crosshair;display:block;"></canvas>
+                    <canvas id="signatureCanvas" style="width:100%;height:150px;touch-action:none;cursor:crosshair;display:block;"></canvas>
                     <div id="signPlaceholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:1.2rem;pointer-events:none;font-family:tahoma;user-select:none;">✍️ اینجا امضا کنید</div>
                 </div>
 
