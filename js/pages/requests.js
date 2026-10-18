@@ -443,7 +443,7 @@ async function openLoanSignModal() {
 
     var modalHtml = `
         <div id="loanSignModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:10px;backdrop-filter:blur(6px);">
-            <div style="background:#1a1a2e;border:2px solid rgba(139,92,246,0.5);border-radius:20px;padding:20px;max-width:650px;width:100%;max-height:95vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
+            <div style="background:#1a1a2e;border:2px solid rgba(139,92,246,0.5);border-radius:20px;padding:15px;max-width:650px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
                 
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
                     <div style="display:flex;align-items:center;gap:10px;">
@@ -453,7 +453,7 @@ async function openLoanSignModal() {
                     <button onclick="closeLoanSignModal()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-size:1rem;font-family:tahoma;">✕</button>
                 </div>
                 
-                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;font-size:0.85rem;line-height:2.2;text-align:justify;color:#d1d5db;margin-bottom:16px;direction:rtl;">
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;font-size:0.85rem;line-height:1.8;text-align:justify;color:#d1d5db;margin-bottom:16px;direction:rtl;">
                     <div style="text-align:center;font-weight:900;color:#f59e0b;margin-bottom:12px;font-size:1rem;">به نام خدا</div>
                     شورای محترم صندوق اتحاد<br><br>
                     اینجانب <b style="color:#10b981;">${escapeHtml(memberName)}</b> با شماره تلفن <b style="color:#10b981;">${escapeHtml(phone)}</b> و شماره حساب <b style="color:#10b981;">${escapeHtml(accountNum)}</b> و کد ملی 
