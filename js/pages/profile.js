@@ -1,12 +1,30 @@
 /* ============================================================
    صندوق اتحاد - اطلاعات شخصی
-   نسخه: 2.1 (با کارت نصب برنامه)
+   نسخه: 2.2 (مدیریت خطای قطعی سرور با پیام دوستانه)
    ============================================================ */
 
 function renderProfileContent() {
+    // ۱. پیدا کردن کاربر
     const member = members.find(m => m.id === currentUser.memberId);
-    if (!member) return '<div style="text-align:center;padding:30px;">خطا</div>';
+    
+    // ۲. اگر کاربر پیدا نشد (مثلاً سرور گوگل قطع است یا members خالی است)
+    if (!member) {
+        return `
+            <div style="text-align:center;padding:40px 20px;margin:20px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;border:1px solid rgba(239,68,68,0.3);">
+                <div style="font-size:3rem;margin-bottom:15px;">📡</div>
+                <h3 style="color:#ef4444;font-weight:900;font-size:1.2rem;margin-bottom:10px;">ارتباط با سرور برقرار نشد</h3>
+                <p style="color:#9ca3af;font-size:0.9rem;line-height:1.8;">
+                    در حال حاضر امکان دریافت اطلاعات حساب شما وجود ندارد.<br>
+                    لطفاً از اتصال اینترنت خود مطمئن شوید یا کمی بعد دوباره تلاش کنید.
+                </p>
+                <button onclick="location.reload()" style="margin-top:20px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e;font-weight:900;border:none;cursor:pointer;font-family:inherit;font-size:0.9rem;">
+                    🔄 تلاش مجدد
+                </button>
+            </div>
+        `;
+    }
 
+    // ۳. ادامه کدهای اصلی شما (در صورت وجود کاربر)
     const ui = users.find(u => u.memberId === member.id);
     const actualPassword = ui ? ui.password || '---' : '---';
     const membershipDuration = calculateMembershipDuration(member.datMiladi);
@@ -14,8 +32,6 @@ function renderProfileContent() {
 
     return `
         <div class="info-box"><i class="fas fa-user-circle"></i> اطلاعات شخصی شما</div>
-        
-        
         
         <div class="dashboard-section" style="background:#ffffff;border:1px solid rgba(102,126,234,0.2);">
             <div style="display:flex;align-items:center;justify-content:center;gap:15px;flex-wrap:wrap;text-align:center;">
