@@ -105,7 +105,7 @@
   .chat-top .avatar{width:40px;height:40px;font-size:.95rem}
   .chat-top .ct-info{flex:1;min-width:0}
   .chat-top .ct-name{font-weight:900;font-size:.95rem}
-  .chat-top .ct-status{font-size:.7rem;opacity:.85;margin-top:1px}
+  .chat-top .ct-status{font-size:.7rem;opacity:.85;margin-top:1px;transition:color .2s}
   #messagesArea{flex:1;overflow-y:auto;padding:14px 10px 8px;display:flex;flex-direction:column;gap:6px;
     background:radial-gradient(circle at 20% 10%,rgba(139,92,246,.08),transparent 40%),
                radial-gradient(circle at 80% 90%,rgba(255,201,77,.05),transparent 40%)}
@@ -317,9 +317,10 @@
   <div class="modal" id="searchModal">
     <div class="modal-card wide">
       <h3>✏️ چت جدید</h3>
-      <p>شماره تلفن مخاطب را وارد کنید. اگر چند نفر با این شماره باشند، همه نمایش داده می‌شوند تا یکی را انتخاب کنید.</p>
-      <input id="phoneInput" placeholder="09123456789" inputmode="tel" maxlength="13"
-        oninput="onPhoneInput()" onkeydown="if(event.key==='Enter')searchContact()">
+      <p>نام، شماره تلفن یا شماره حساب مخاطب را وارد کنید. اگر چند نفر با یک شماره باشند، همه نمایش داده می‌شوند.</p>
+      <input id="searchQueryInput" placeholder="نام، شماره تلفن یا شماره حساب..." 
+        oninput="onSearchInput()" onkeydown="if(event.key==='Enter')searchContact()"
+        style="text-align:right; direction:rtl; letter-spacing:0; font-size:0.9rem;">
       <div id="searchResult"></div>
       <div class="modal-actions">
         <button class="btn-ghost" onclick="closeSearchModal()">بستن</button>
@@ -363,6 +364,7 @@ var POLL_TIMER = null;
 var CACHE = { conversations: [], messages: {} };
 var CURRENT_MAIN_TAB = 'chats';
 var CURRENT_ADMIN_TAB = 'chats';
+var ONLINE_STATUSES = {}; // 🆕
 
 /* ============================================================
    ابزارها
@@ -626,12 +628,15 @@ function renderConvList(){
 
 async function openChat(cid, otherId, otherName, otherPhone){
   ACTIVE_CONV = { convId: cid, otherId: String(otherId), otherName: otherName, otherPhone: otherPhone || '' };
+  
   document.getElementById('chatName').textContent = otherName || otherId;
-  document.getElementById('chatStatus').textContent = 'آنلاین';
   var av = document.getElementById('chatAvatar');
   av.textContent = (otherName || otherId || '?')[0];
   av.style.background = '#8b5cf6';
   document.getElementById('chatView').classList.add('open');
+  
+  updateChatStatus(otherId); // 🆕 آپدیت وضعیت اولیه
+  
   await loadMessages(cid);
   markConvRead(cid);
   setTimeout(()=> document.getElementById('msgInput').focus(), 200);
@@ -648,7 +653,19 @@ async function loadMessages(cid){
   try{
     var d = await apiCall('getMessengerMessages', { convId: cid });
     if(d.ok && d.messages){
-      CACHE.messages[cid] = d.messages;
+      var myId = String(ME.id || '');
+      var myPhone = normPhone(ME.phone || '');
+      
+      var filtered = d.messages.filter(function(m) {
+        var isFromMe = (String(m.fromId) === myId) || (normPhone(m.fromPhone) === myPhone);
+        var isToMe = (String(m.toId) === myId) || (normPhone(m.toPhone) === myPhone);
+        return isFromMe || isToMe;
+      });
+      
+      CACHE.messages[cid] = filtered;
+      renderMessages();
+    } else {
+      CACHE.messages[cid] = [];
       renderMessages();
     }
   }catch(e){
@@ -681,7 +698,8 @@ function renderMessages(){
     if(m.type === 'text'){
       html += esc(m.text);
     } else if(m.type === 'image'){
-      html += '<img class="thumb" src="'+m.fileUrl+'" onclick="openMedia(\''+m.fileUrl+'\')">';
+      // 🆕 اصلاح نمایش عکس با دامنه lh3
+      html += '<img class="thumb" src="'+m.fileUrl+'" onclick="openMedia(\''+m.fileUrl+'\')" onerror="this.style.display=\'none\';this.parentNode.innerHTML+=\'<a href=\''+m.fileUrl+'\' target=\'_blank\' style=\'color:#fff\'>مشاهده تصویر</a>\'">';
     } else if(m.type === 'video'){
       html += '<video class="thumb" controls src="'+m.fileUrl+'"></video>';
     } else if(m.type === 'audio'){
@@ -932,55 +950,53 @@ async function loadRepliesBadge(){
 }
 
 /* ============================================================
-   جستجوی شماره — چند نتیجه
+   جستجوی هوشمند
    ============================================================ */
 function openSearchModal(){
   document.getElementById('searchModal').classList.add('open');
-  document.getElementById('phoneInput').value = '';
+  document.getElementById('searchQueryInput').value = '';
   document.getElementById('searchResult').innerHTML = '';
-  setTimeout(()=> document.getElementById('phoneInput').focus(), 150);
+  setTimeout(()=> document.getElementById('searchQueryInput').focus(), 150);
 }
+
 function closeSearchModal(){
   document.getElementById('searchModal').classList.remove('open');
 }
-function onPhoneInput(){
-  var v = document.getElementById('phoneInput').value;
-  document.getElementById('phoneInput').value = v.replace(/[^\d+]/g,'');
+
+function onSearchInput(){
   document.getElementById('searchResult').innerHTML = '';
 }
 
 async function searchContact(){
-  var raw = document.getElementById('phoneInput').value;
+  var q = document.getElementById('searchQueryInput').value.trim();
   var res = document.getElementById('searchResult');
-  var np = normPhone(raw);
-  if(np.length < 11){
-    res.innerHTML = '<div class="notfound">شماره وارد شده معتبر نیست</div>';
+  if(q.length < 2){
+    res.innerHTML = '<div class="notfound">حداقل ۲ کاراکتر وارد کنید</div>';
     return;
   }
   res.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px">در حال جستجو...</div>';
   try{
-    var d = await apiCall('searchMessengerContact', { phone: np });
+    var d = await apiCall('searchMessengerContact', { q: q });
     if(!d.ok || !d.contacts || d.contacts.length === 0){
-      res.innerHTML = '<div class="notfound">❌ کاربری با این شماره پیدا نشد</div>';
+      res.innerHTML = '<div class="notfound">❌ کاربری با این مشخصات پیدا نشد</div>';
       return;
     }
 
-    // فیلتر خودم
     var filtered = d.contacts.filter(function(u){
       return String(u.id) !== String(ME.id);
     });
+    
     if(filtered.length === 0){
-      res.innerHTML = '<div class="notfound">این شماره فقط متعلق به خودتان است</div>';
+      res.innerHTML = '<div class="notfound">نتیجه‌ای پیدا نشد (یا فقط خودتان بودید)</div>';
       return;
     }
 
-    // اضافه به ALL_USERS
     filtered.forEach(function(u){
       if(!findUserById(u.id)) ALL_USERS.push(u);
     });
 
     var html = '<div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;padding:0 4px">'+
-               '👥 '+faNum(filtered.length)+' نفر با این شماره پیدا شد — یکی را انتخاب کنید:'+
+               '👥 '+faNum(filtered.length)+' نفر پیدا شد — یکی را برای چت انتخاب کنید:'+
                '</div>';
 
     filtered.forEach(function(u){
@@ -1134,10 +1150,65 @@ async function submitCouncilReply(messageId){
 }
 
 /* ============================================================
-   Polling
+   🆕 وضعیت آنلاین و Polling
    ============================================================ */
+function updateChatStatus(otherId) {
+  var el = document.getElementById('chatStatus');
+  if(!el) return;
+  
+  var lastSeen = ONLINE_STATUSES[String(otherId)];
+  if(!lastSeen) {
+    el.textContent = 'آفلاین';
+    el.style.color = 'rgba(255,255,255,0.7)';
+    return;
+  }
+  
+  var diff = (Date.now() - new Date(lastSeen).getTime()) / 1000;
+  if(diff < 120) { 
+    el.textContent = 'آنلاین';
+    el.style.color = '#6ee7b7';
+  } else {
+    var d = new Date(lastSeen);
+    var now = new Date();
+    var timeStr = d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    
+    if(d.toDateString() === now.toDateString()) {
+      el.textContent = 'آخرین بازدید: امروز ' + timeStr;
+    } else {
+      var dateStr = d.toLocaleDateString('fa-IR');
+      el.textContent = 'آخرین بازدید: ' + dateStr + ' - ' + timeStr;
+    }
+    el.style.color = 'rgba(255,255,255,0.7)';
+  }
+}
+
 function startPolling(){
   if(POLL_TIMER) clearInterval(POLL_TIMER);
+  
+  function pingMe() {
+    if(!ME) return;
+    apiCall('pingOnline', { user: ME.id }).catch(function(){});
+  }
+  pingMe();
+  setInterval(pingMe, 20000);
+  
+  function fetchStatuses() {
+    if(!ME) return;
+    apiCall('getOnlineStatus').then(function(res) {
+      if(res.ok && res.statuses) {
+        ONLINE_STATUSES = {};
+        res.statuses.forEach(function(s) {
+          ONLINE_STATUSES[String(s.user)] = s.lastSeen;
+        });
+        if(ACTIVE_CONV) {
+          updateChatStatus(ACTIVE_CONV.otherId);
+        }
+      }
+    }).catch(function(){});
+  }
+  fetchStatuses();
+  setInterval(fetchStatuses, 20000);
+
   POLL_TIMER = setInterval(async ()=>{
     if(!ME) return;
     if(ACTIVE_CONV){
@@ -1149,7 +1220,7 @@ function startPolling(){
     } else if(CURRENT_MAIN_TAB === 'replies'){
       await loadRepliesBadge();
     }
-  }, 4000);
+  }, 5000);
 }
 
 document.addEventListener('click', function(e){
