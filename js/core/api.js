@@ -1,7 +1,32 @@
 /* ============================================================
    صندوق اتحاد - API و ارتباط با سرور
-   نسخه: 2.0
+   نسخه: 2.1 (اضافه شدن مدیریت خطای CORS و پاسخ‌های HTML)
    ============================================================ */
+
+// ===== تابع امن برای دریافت اطلاعات (جلوگیری از کرش) =====
+async function safeFetch(url, options) {
+    try {
+        var res = await fetch(url, options || { cache: 'no-cache' });
+        
+        // چک کردن اینکه آیا سرور پاسخ HTML فرستاده یا JSON
+        var text = await res.text();
+        
+        if (text.trim().startsWith('<')) {
+            console.warn('⚠️ سرور به جای JSON، یک صفحه HTML برگرداند (خطای CORS یا قطعی):', url);
+            return { ok: false, error: 'CORS_ERROR' };
+        }
+        
+        try {
+            return JSON.parse(text);
+        } catch (parseError) {
+            console.warn('⚠️ خطا در تبدیل پاسخ به JSON:', parseError);
+            return { ok: false, error: 'JSON_PARSE_ERROR' };
+        }
+    } catch (networkError) {
+        console.warn('⚠️ خطای شبکه یا قطعی اینترنت:', networkError);
+        return { ok: false, error: 'NETWORK_ERROR' };
+    }
+}
 
 // ===== توابع ورود و خروج =====
 function logUserLogin(user, name) {
@@ -42,10 +67,8 @@ function handleLogoutFromNav() {
 function awardDailyLogin(user) {
     if (!user || !user.memberId) return;
     var today = new Date().toISOString().split('T')[0];
-    fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('ورود روزانه') + '&points=1&uniqueKey=daily_' + today + '_' + user.memberId)
-        .then(function(r) { return r.json(); })
-        .then(function(d) { console.log('📥 ورود روزانه:', JSON.stringify(d)); })
-        .catch(function() {});
+    safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('ورود روزانه') + '&points=1&uniqueKey=daily_' + today + '_' + user.memberId)
+        .then(function(d) { console.log('📥 ورود روزانه:', d); });
 }
 
 function awardBirthday(user, data) {
@@ -64,12 +87,10 @@ function awardBirthday(user, data) {
     var t = getPersianToday();
 
     if (bm + bd === t.month + t.day) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('🎂 تولدت مبارک!') + '&points=5&uniqueKey=birthday_' + t.year + '_' + user.memberId)
-            .then(function(r) { return r.json(); })
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('🎂 تولدت مبارک!') + '&points=5&uniqueKey=birthday_' + t.year + '_' + user.memberId)
             .then(function(d) {
                 if (d.ok) alert('🎂 تولدت مبارک! ۵ امتیاز هدیه گرفتی!');
-            })
-            .catch(function() {});
+            });
     }
 }
 
@@ -85,27 +106,19 @@ function awardMonthlyPoints(user, data) {
     var monthKey = t.year + '_' + t.month;
 
     if (member.monthlySalary > 0) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت مقرری ماهانه') + '&points=1&uniqueKey=salary_' + monthKey + '_' + user.memberId)
-            .then(function(r) { return r.json(); })
-            .catch(function() {});
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت مقرری ماهانه') + '&points=1&uniqueKey=salary_' + monthKey + '_' + user.memberId);
     }
 
     if (member.installmentAmount > 0 && member.paidInstallments > 0) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت اقساط ماهانه') + '&points=1&uniqueKey=installment_' + monthKey + '_' + user.memberId)
-            .then(function(r) { return r.json(); })
-            .catch(function() {});
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت اقساط ماهانه') + '&points=1&uniqueKey=installment_' + monthKey + '_' + user.memberId);
     }
 
     if (member.balance > member.currentMonthBalance) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('افزایش موجودی') + '&points=1&uniqueKey=balance_' + monthKey + '_' + user.memberId)
-            .then(function(r) { return r.json(); })
-            .catch(function() {});
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('افزایش موجودی') + '&points=1&uniqueKey=balance_' + monthKey + '_' + user.memberId);
     }
 
     if (member.overdueInstallments === 0 && member.installmentAmount > 0) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('بدون قسط معوقه') + '&points=1&uniqueKey=nooverdue_' + monthKey + '_' + user.memberId)
-            .then(function(r) { return r.json(); })
-            .catch(function() {});
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('بدون قسط معوقه') + '&points=1&uniqueKey=nooverdue_' + monthKey + '_' + user.memberId);
     }
 }
 
@@ -114,14 +127,10 @@ function awardQuizPoints(score, totalQuestions) {
     var memberId = currentUser.memberId;
     var today = new Date().toISOString().split('T')[0];
 
-    fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در بازی سوالات') + '&points=1&uniqueKey=quiz_play_' + today + '_' + memberId)
-        .then(function(r) { return r.json(); })
-        .catch(function() {});
+    safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در بازی سوالات') + '&points=1&uniqueKey=quiz_play_' + today + '_' + memberId);
 
     if (score > 0) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح سوالات (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=quiz_correct_' + today + '_' + memberId)
-            .then(function(r) { return r.json(); })
-            .catch(function() {});
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح سوالات (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=quiz_correct_' + today + '_' + memberId);
     }
 }
 
@@ -130,33 +139,30 @@ function awardCompetitionPoints(quizId, score) {
     var memberId = currentUser.memberId;
     var today = new Date().toISOString().split('T')[0];
 
-    fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در مسابقه') + '&points=1&uniqueKey=comp_participate_' + quizId + '_' + memberId)
-        .then(function(r) { return r.json(); }).catch(function() {});
+    safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در مسابقه') + '&points=1&uniqueKey=comp_participate_' + quizId + '_' + memberId);
 
     if (score > 0) {
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح مسابقه (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=comp_correct_' + quizId + '_' + memberId)
-            .then(function(r) { return r.json(); }).catch(function() {});
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح مسابقه (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=comp_correct_' + quizId + '_' + memberId);
     }
 }
 
 function mfAddPoints(n) {
     try {
         if (!currentUser || !currentUser.memberId) return;
-        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(currentUser.memberId) +
+        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(currentUser.memberId) +
               '&name=' + encodeURIComponent(currentUser.name || currentUser.firstName || '') +
               '&reason=' + encodeURIComponent('تکمیل فعالیت مالی') + '&points=' + encodeURIComponent(n) +
               '&uniqueKey=' + encodeURIComponent('mf_' + Date.now() + '_' + currentUser.memberId))
-          .then(function(){ return loadClubFromAdmin(); }).catch(function(){});
+          .then(function(){ return loadClubFromAdmin(); });
     } catch (e) { }
 }
 
 function syncPointsToServer(userId, userName, points) {
     try {
-        fetch(ADMIN_URL + '?action=updatePoints&user=' + encodeURIComponent(userId) +
+        safeFetch(ADMIN_URL + '?action=updatePoints&user=' + encodeURIComponent(userId) +
               '&name=' + encodeURIComponent(userName) +
               '&points=' + encodeURIComponent(points) +
-              '&type=set')
-            .catch(function(){});
+              '&type=set');
     } catch(e) {}
 }
 
@@ -166,7 +172,7 @@ async function loadClubFromAdmin() {
     try {
         const d = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
             ? {history: window.__scriptServicesCache.points || []}
-            : await fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(currentUser.memberId)).then(function(r){return r.json();});
+            : await safeFetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(currentUser.memberId));
         if (d && Array.isArray(d.history)) {
             coinHistory = d.history.map(function(x){ return {
                 date: x.date || x.createdAt || '',
@@ -182,7 +188,7 @@ async function loadClubFromAdmin() {
     try {
         const d2 = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
             ? {products: window.__scriptServicesCache.products || []}
-            : await fetch(SHOP_URL + '?action=getShopProducts').then(function(r){return r.json();});
+            : await safeFetch(SHOP_URL + '?action=getShopProducts');
         if (d2 && Array.isArray(d2.products)) window.SHOP_PRODUCTS = d2.products;
     } catch(e) { console.warn('خطا در دریافت فروشگاه از پنل مدیریت', e); }
 }
@@ -195,9 +201,8 @@ async function buyProduct(shenaseh, name, price) {
             '&name=' + encodeURIComponent(currentUser.firstName || currentUser.username || '') +
             '&productId=' + encodeURIComponent(shenaseh) + '&product=' + encodeURIComponent(name) +
             '&price=' + encodeURIComponent(price);
-        const r = await fetch(url);
-        const d = await r.json();
-        if (d && d.ok === false) { alert('❌ ' + (d.error || 'خرید انجام نشد')); return; }
+        const d = await safeFetch(url);
+        if (!d || d.ok === false) { alert('❌ ' + (d?.error || 'خرید انجام نشد')); return; }
         userCoins -= price;
         coinHistory.push({date:new Date().toLocaleString('fa-IR'), amount:-Number(price), reason:'خرید از فروشگاه', detail:'محصول: '+name});
         userPurchases.push({orderCode:(d && (d.orderCode || d.id)) || ('ORD-' + Date.now().toString().slice(-6)), productId:shenaseh, productName:name, price:Number(price), date:new Date().toLocaleString('fa-IR'), delivered:false});
@@ -263,7 +268,7 @@ function addNotification(type, title, message, category) {
         type, title, message, timestamp: Date.now(), read: false, category: category || 'system'
     });
     saveNotifications();
-    showToast({ type, title, message });
+    if (typeof showToast === 'function') showToast({ type, title, message });
 }
 
 function updateNotifBadge() {
@@ -278,19 +283,19 @@ function updateNotifBadge() {
 function markAllRead() {
     notifications.forEach(n => n.read = true);
     saveNotifications();
-    renderNotificationList();
+    if(typeof renderNotificationList === 'function') renderNotificationList();
 }
 
 function filterNotif(filter, btn) {
     document.querySelectorAll('.notification-filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderNotificationList(filter);
+    if(btn) btn.classList.add('active');
+    if(typeof renderNotificationList === 'function') renderNotificationList(filter);
 }
 
 function deleteNotification(id) {
     notifications = notifications.filter(n => n.id !== id);
     saveNotifications();
-    renderNotificationList();
+    if(typeof renderNotificationList === 'function') renderNotificationList();
 }
 
 function checkAutoNotifications(member) {
@@ -348,7 +353,7 @@ function updateVisitInfo() {
     history.push({ date: visitDate, count: count });
     if (history.length > 10) history = history.slice(-10);
     localStorage.setItem(VISIT_HISTORY_KEY, JSON.stringify(history));
-    lastVisitInfo = { count, lastVisit: visitDate, history };
+    window.lastVisitInfo = { count, lastVisit: visitDate, history };
 }
 
 function getVisitInfo() {
@@ -371,9 +376,8 @@ function getVisitInfo() {
 async function checkMaintenance() {
     try {
         if (window.location.search.includes('admin')) return true;
-        var r = await fetch(ADMIN_URL + '?action=status');
-        var s = await r.json();
-        if (s.enabled === false) { showMaintenancePage(); return false; }
+        var s = await safeFetch(ADMIN_URL + '?action=status');
+        if (s && s.enabled === false) { showMaintenancePage(); return false; }
         return true;
     } catch (e) { return true; }
 }
@@ -389,7 +393,9 @@ function showMaintenancePage() {
 
 // ===== توابع دانلود =====
 function downloadApp() {
-    showToast({ type: 'success', title: 'شروع دانلود', message: 'دانلود اپلیکیشن اندروید آغاز شد...' });
+    if (typeof showToast === 'function') {
+        showToast({ type: 'success', title: 'شروع دانلود', message: 'دانلود اپلیکیشن اندروید آغاز شد...' });
+    }
     const link = document.createElement('a');
     link.href = APK_DOWNLOAD_URL;
     link.download = 'sandogh-union.apk';
