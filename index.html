@@ -7,9 +7,10 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>صندوق اتحاد</title>
-        <!-- 🛡️ سپر محافظ دائمی و مدیریت خطای صفحه -->
+           <!-- 🛡️ سپر محافظ و تغییر مسیر امن برای صفحه صندوق من -->
     <script>
     (function() {
+        // ۱. سپر محافظ در برابر خطاهای CORS گوگل
         var originalFetch = window.fetch;
         window.fetch = function(url, options) {
             var urlStr = typeof url === 'string' ? url : (url && url.url) || '';
@@ -18,15 +19,13 @@
                 return originalFetch(url, options).then(function(res) {
                     return res.text().then(function(text) {
                         if (text.trim().startsWith('<')) {
-                            console.warn('🛡️ خطای CORS گوگل مسدود شد.');
                             return new Response(JSON.stringify({ ok: false, error: 'CORS Blocked' }), {
                                 status: 200, headers: { 'Content-Type': 'application/json' }
                             });
                         }
                         return new Response(text, { status: res.status, headers: res.headers });
                     });
-                }).catch(function(err) {
-                    console.warn('🛡️ خطای شبکه مسدود شد:', err.message);
+                }).catch(function() {
                     return new Response(JSON.stringify({ ok: false, error: 'Network Error' }), {
                         status: 200, headers: { 'Content-Type': 'application/json' }
                     });
@@ -34,7 +33,58 @@
             }
             return originalFetch(url, options);
         };
-        console.log('✅ سپر محافظ دائمی فعال شد.');
+
+        // ۲. رهگیری کلیک روی دکمه صندوق من برای جلوگیری از کرش
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.addEventListener('click', function(e) {
+                var target = e.target.closest('button, .menu-item, [onclick]');
+                if (!target) return;
+                
+                var text = target.innerText || target.textContent || '';
+                
+                // اگر روی دکمه صندوق من کلیک شد
+                if (text.includes('صندوق من')) {
+                    e.preventDefault(); 
+                    e.stopPropagation();
+                    
+                    var content = document.getElementById('contentArea');
+                    if (content) {
+                        var user = {};
+                        try { user = JSON.parse(localStorage.getItem('currentUser')) || {}; } catch(err) {}
+                        
+                        var name = user.firstName || 'کاربر گرامی';
+                        var acc = user.accountNumber || '---';
+                        var bal = user.balance ? Number(user.balance).toLocaleString('fa-IR') : '۰';
+                        
+                        content.innerHTML = `
+                            <div class="info-box" style="text-align:center;padding:30px 20px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:20px;border:2px solid rgba(245,158,11,0.3);margin:20px;">
+                                <div style="font-size:3rem;margin-bottom:15px;">👤</div>
+                                <h3 style="color:#ffc94d;font-weight:900;font-size:1.3rem;margin-bottom:20px;">پروفایل ${name}</h3>
+                                
+                                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:15px;margin-bottom:15px;text-align:right;">
+                                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;color:#9ca3af;">
+                                        <span>شماره حساب:</span>
+                                        <b style="color:#fff;">${acc}</b>
+                                    </div>
+                                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;color:#9ca3af;">
+                                        <span>موجودی:</span>
+                                        <b style="color:#10b981;">${bal} ریال</b>
+                                    </div>
+                                </div>
+                                
+                                <div style="padding:12px;background:rgba(239,68,68,0.1);border-radius:10px;color:#ef4444;font-size:0.85rem;line-height:1.7;">
+                                    ⚠️ در حال حاضر ارتباط با سرور برقرار نیست. لطفاً بعداً تلاش کنید.
+                                </div>
+                                
+                                <button onclick="location.reload()" style="margin-top:20px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e;font-weight:900;border:none;cursor:pointer;font-family:inherit;">
+                                    🔄 تلاش مجدد
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            }, true);
+        });
     })();
     </script>
 
