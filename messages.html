@@ -18,7 +18,6 @@
   #app{height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;
     background:var(--bg);position:relative;overflow:hidden}
 
-  /* ====== هدر و تب‌ها ====== */
   .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;
     padding:14px 16px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;
     box-shadow:0 4px 18px rgba(0,0,0,.4);flex-shrink:0}
@@ -29,7 +28,6 @@
     align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
   .iconbtn:active{transform:scale(.92)}
 
-  /* 🆕 تب‌های اصلی */
   .main-tabs{display:flex;background:var(--panel);border-bottom:2px solid var(--border);
     flex-shrink:0;padding:6px;gap:4px}
   .main-tab{flex:1;padding:10px 6px;border:none;background:transparent;color:var(--muted);
@@ -42,11 +40,9 @@
     justify-content:center;padding:0 5px}
   .main-tab .badge.show{display:inline-flex}
 
-  /* ====== پنل‌ها ====== */
   .main-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
   .main-panel.active{display:flex}
 
-  /* ====== لیست مکالمات ====== */
   .searchbox{padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
   .searchbox input{width:100%;padding:11px 14px;border-radius:24px;border:1px solid var(--border);
     background:var(--panel2);color:var(--text);font-family:inherit;font-size:.9rem;outline:none}
@@ -69,7 +65,6 @@
   .empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:.9rem;line-height:2}
   .empty .big{font-size:3rem;display:block;margin-bottom:10px}
 
-  /* ====== پنل ارسال به شورا ====== */
   .council-panel{padding:16px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px}
   .council-panel h3{margin:0;color:var(--gold);font-size:1rem;display:flex;align-items:center;gap:8px}
   .council-panel p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.8}
@@ -87,7 +82,6 @@
   .council-hint{padding:10px 12px;border-radius:10px;background:rgba(255,201,77,.1);
     border:1px solid rgba(255,201,77,.3);color:#ffd77a;font-size:.75rem;line-height:1.7}
 
-  /* ====== پنل پاسخ‌ها ====== */
   .replies-panel{padding:12px;overflow-y:auto;flex:1}
   .reply-card{background:var(--panel2);border:1px solid var(--border);border-radius:14px;
     padding:14px;margin-bottom:10px;border-right:4px solid var(--violet)}
@@ -103,7 +97,6 @@
     background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)}
   .reply-a b{color:var(--green);display:block;margin-bottom:4px;font-size:.72rem}
 
-  /* ====== صفحه چت ====== */
   #chatView{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);z-index:5}
   #chatView.open{display:flex}
   .chat-top{display:flex;align-items:center;gap:10px;padding:10px 12px;
@@ -140,7 +133,6 @@
   .day-sep{align-self:center;font-size:.68rem;color:var(--muted);background:rgba(255,255,255,.06);
     padding:3px 12px;border-radius:20px;margin:8px 0}
 
-  /* ====== نوار ارسال ====== */
   .composer{display:flex;align-items:flex-end;gap:6px;padding:8px 8px 10px;
     background:var(--panel);border-top:1px solid var(--border);flex-shrink:0}
   .composer .attach{width:40px;height:40px;border-radius:50%;border:none;background:var(--panel2);
@@ -157,7 +149,6 @@
   .composer .send:active{transform:scale(.9)}
   .composer .send:disabled{opacity:.4}
 
-  /* ====== منوی پیوست ====== */
   #attachMenu{position:absolute;bottom:64px;right:10px;background:var(--panel2);
     border:1px solid var(--border);border-radius:16px;padding:8px;display:none;
     flex-direction:column;gap:4px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.6);min-width:180px}
@@ -168,7 +159,6 @@
   #attachMenu button:active{background:rgba(139,92,246,.18)}
   #attachMenu .ico{font-size:1.15rem}
 
-  /* ====== دکمه شناور قلم ====== */
   #fabPen{position:absolute;bottom:22px;left:22px;width:60px;height:60px;border-radius:50%;
     border:3px solid #ffd700;background:linear-gradient(135deg,#8b5cf6,#7c3aed);
     color:#fff;font-size:1.5rem;cursor:pointer;z-index:50;display:flex;
@@ -182,7 +172,6 @@
   @media (max-width:600px){
     #fabPen{width:54px;height:54px;font-size:1.35rem;bottom:18px;left:16px}}
 
-  /* ====== مودال ====== */
   .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
     display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
   .modal.open{display:flex}
@@ -210,7 +199,6 @@
   .notfound{text-align:center;padding:14px;border-radius:12px;background:rgba(239,68,68,.1);
     color:#fca5a5;font-size:.82rem;border:1px solid rgba(239,68,68,.3)}
 
-  /* ====== پنل مدیریت ====== */
   .admin-tabs{display:flex;gap:6px;margin-bottom:12px}
   .admin-tab{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);
     background:var(--panel2);color:var(--muted);font-family:inherit;font-size:.78rem;
@@ -226,7 +214,6 @@
     background:var(--violet);color:#fff;cursor:pointer;font-family:inherit;
     font-size:.78rem;font-weight:700}
 
-  /* ====== انتخاب کاربر ====== */
   #userPicker{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);
     display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
   #userPicker.hidden{display:none}
@@ -242,7 +229,6 @@
   .up-user .uu-name{font-weight:800;font-size:.9rem}
   .up-user .uu-phone{font-size:.72rem;color:var(--muted);direction:ltr;text-align:right;margin-top:2px}
 
-  /* ====== توست ====== */
   #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:999;
     display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
   .toast{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
@@ -280,14 +266,12 @@
     </div>
   </div>
 
-  <!-- 🆕 تب‌های اصلی -->
   <div class="main-tabs">
     <button class="main-tab active" id="tabChats" onclick="switchMainTab('chats')">💬 چت‌ها</button>
     <button class="main-tab" id="tabToCouncil" onclick="switchMainTab('toCouncil')">📤 ارسال به شورا</button>
     <button class="main-tab" id="tabReplies" onclick="switchMainTab('replies')">📬 پاسخ‌ها <span class="badge" id="repliesBadge"></span></button>
   </div>
 
-  <!-- پنل چت‌ها -->
   <div class="main-panel active" id="panelChats">
     <div class="searchbox">
       <input id="convSearch" placeholder="🔍 جستجو در مکالمات..." oninput="renderConvList()">
@@ -295,7 +279,6 @@
     <div id="convList"></div>
   </div>
 
-  <!-- 🆕 پنل ارسال به شورا -->
   <div class="main-panel" id="panelToCouncil">
     <div class="council-panel">
       <h3>📤 ارسال پیام به شورا</h3>
@@ -309,14 +292,12 @@
     </div>
   </div>
 
-  <!-- 🆕 پنل پاسخ‌ها -->
   <div class="main-panel" id="panelReplies">
     <div class="replies-panel" id="repliesList">
       <div class="empty"><span class="big">📬</span>در حال بارگذاری...</div>
     </div>
   </div>
 
-  <!-- صفحه چت -->
   <div id="chatView">
     <div class="chat-top">
       <button class="iconbtn" onclick="closeChat()">→</button>
@@ -343,7 +324,6 @@
 
   <button id="fabPen" onclick="openSearchModal()" title="چت جدید">✏️</button>
 
-  <!-- مودال جستجوی شماره -->
   <div class="modal" id="searchModal">
     <div class="modal-card">
       <h3>✏️ چت جدید</h3>
@@ -358,7 +338,6 @@
     </div>
   </div>
 
-  <!-- مودال پنل مدیریت -->
   <div class="modal" id="adminModal">
     <div class="modal-card" style="max-width:560px;max-height:85vh;overflow-y:auto">
       <h3>⚙️ پنل مدیریت</h3>
@@ -378,16 +357,12 @@
 
 <script>
 /* ============================================================
-   تنظیمات — این‌ها را با مقادیر واقعی خودتان عوض کنید
+   تنظیمات
    ============================================================ */
 var API_URL = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-var ADMIN_URL = API_URL;      // اگر URL جدا دارید عوض کنید
 var ADMIN_KEY = 'admin12345';
 var MAX_FILE_MB = 5;
 
-/* ============================================================
-   State
-   ============================================================ */
 var ME = null;
 var ALL_USERS = [];
 var ACTIVE_CONV = null;
@@ -396,9 +371,6 @@ var CACHE = { conversations: [], messages: {} };
 var CURRENT_MAIN_TAB = 'chats';
 var CURRENT_ADMIN_TAB = 'chats';
 
-/* ============================================================
-   ابزارها
-   ============================================================ */
 function normPhone(p){
   if(!p) return '';
   p = String(p).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
@@ -436,7 +408,7 @@ function esc(s){
   return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
                        .replace(/\n/g,'<br>');
 }
-function uid(){ return 'm_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+function uid(){ return 'mm_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
 function convId(a,b){ return [normPhone(a),normPhone(b)].sort().join('_'); }
 function findUser(phone){
   var np = normPhone(phone);
@@ -452,9 +424,6 @@ function toast(msg, type){
   setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2600);
 }
 
-/* ============================================================
-   API helper
-   ============================================================ */
 async function apiCall(action, params){
   var qs = new URLSearchParams(Object.assign({action:action}, params||{}));
   var url = API_URL + '?' + qs.toString();
@@ -472,9 +441,6 @@ async function apiPost(action, body){
   return await res.json();
 }
 
-/* ============================================================
-   شروع
-   ============================================================ */
 async function initUserPicker(){
   var list = document.getElementById('userPickerList');
   list.innerHTML = '<div style="color:var(--muted);padding:20px">در حال بارگذاری کاربران...</div>';
@@ -494,7 +460,7 @@ async function initUserPicker(){
         '<div class="avatar" style="background:'+(u.color||'#8b5cf6')+'">'+esc((u.name||'?')[0])+'</div>'+
         '<div class="uu-info"><div class="uu-name">'+esc(u.name||'ناشناس')+
         (u.isCouncil ? ' <span style="color:#ffc94d;font-size:.7rem">(شورا)</span>' : '')+'</div>'+
-        '<div class="uu-phone">'+esc(u.phone||'')+'</div></div>';
+        '<div class="uu-phone">'+esc(u.phone||'—')+'</div></div>';
       div.onclick = ()=> selectUser(u);
       list.appendChild(div);
     });
@@ -506,7 +472,7 @@ async function initUserPicker(){
 function selectUser(u){
   ME = u;
   document.getElementById('userPicker').classList.add('hidden');
-  document.getElementById('whoAmI').textContent = 'وارد شده: ' + (u.name||u.phone);
+  document.getElementById('whoAmI').textContent = 'وارد شده: ' + (u.name||u.phone||u.id);
   if(u.isCouncil){
     document.getElementById('adminBtn').style.display = 'flex';
   }
@@ -525,9 +491,6 @@ function switchUser(){
   initUserPicker();
 }
 
-/* ============================================================
-   تب‌های اصلی
-   ============================================================ */
 function switchMainTab(tab){
   CURRENT_MAIN_TAB = tab;
   document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
@@ -547,12 +510,9 @@ function switchMainTab(tab){
   }
 }
 
-/* ============================================================
-   تب چت‌ها
-   ============================================================ */
 async function loadConversations(){
   try{
-    var d = await apiCall('getMessengerConversations', { user: ME.phone });
+    var d = await apiCall('getMessengerConversations', { user: ME.phone || ME.id });
     if(d.ok && d.conversations){
       CACHE.conversations = d.conversations;
       if(CURRENT_MAIN_TAB === 'chats') renderConvList();
@@ -566,7 +526,6 @@ function renderConvList(){
   var list = document.getElementById('convList');
   if(!ME){ list.innerHTML=''; return; }
   var convs = CACHE.conversations.slice();
-
   var q = (document.getElementById('convSearch').value||'').trim();
   if(q){
     var nq = normPhone(q);
@@ -576,7 +535,6 @@ function renderConvList(){
              (nq && c.otherPhone.indexOf(nq)>=0);
     });
   }
-
   if(convs.length === 0){
     list.innerHTML = '<div class="empty"><span class="big">💬</span>هنوز مکالمه‌ای ندارید<br>با دکمه ✏️ یک چت جدید شروع کنید</div>';
     return;
@@ -630,7 +588,7 @@ function closeChat(){
 
 async function loadMessages(cid){
   try{
-    var d = await apiCall('getMessengerMessages', { convId: cid, user: ME.phone });
+    var d = await apiCall('getMessengerMessages', { convId: cid, user: ME.phone || ME.id });
     if(d.ok && d.messages){
       CACHE.messages[cid] = d.messages;
       renderMessages();
@@ -641,14 +599,14 @@ async function loadMessages(cid){
 }
 
 async function markConvRead(cid){
-  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.phone }); }catch(e){}
+  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.phone || ME.id }); }catch(e){}
 }
 
 function renderMessages(){
   if(!ACTIVE_CONV) return;
   var area = document.getElementById('messagesArea');
   var msgs = CACHE.messages[ACTIVE_CONV.convId] || [];
-  var myPhone = normPhone(ME.phone);
+  var myPhone = normPhone(ME.phone || ME.id);
 
   if(msgs.length === 0){
     area.innerHTML = '<div class="empty" style="margin:auto"><span class="big">👋</span>شروع مکالمه<br>اولین پیام را بفرستید</div>';
@@ -701,10 +659,11 @@ async function sendText(){
   var text = input.value.trim();
   if(!text) return;
 
+  var myPhone = normPhone(ME.phone || ME.id);
   var msg = {
     id: uid(),
     convId: ACTIVE_CONV.convId,
-    fromPhone: normPhone(ME.phone),
+    fromPhone: myPhone,
     toPhone: ACTIVE_CONV.otherPhone,
     fromName: ME.name || '',
     toName: (findUser(ACTIVE_CONV.otherPhone)||{}).name || '',
@@ -737,9 +696,6 @@ async function sendText(){
   }
 }
 
-/* ============================================================
-   آپلود فایل
-   ============================================================ */
 function toggleAttachMenu(){
   document.getElementById('attachMenu').classList.toggle('open');
 }
@@ -777,10 +733,11 @@ document.getElementById('fileInput').addEventListener('change', async function(e
       return;
     }
 
+    var myPhone = normPhone(ME.phone || ME.id);
     var msg = {
       id: uid(),
       convId: ACTIVE_CONV.convId,
-      fromPhone: normPhone(ME.phone),
+      fromPhone: myPhone,
       toPhone: ACTIVE_CONV.otherPhone,
       fromName: ME.name || '',
       toName: (findUser(ACTIVE_CONV.otherPhone)||{}).name || '',
@@ -819,9 +776,6 @@ function readAsDataURL(file){
   });
 }
 
-/* ============================================================
-   🆕 ارسال به شورا
-   ============================================================ */
 async function sendToCouncil(){
   var txt = document.getElementById('councilMsgText');
   var btn = document.getElementById('councilSendBtn');
@@ -834,19 +788,17 @@ async function sendToCouncil(){
   btn.textContent = '⏳ در حال ارسال...';
   try{
     var uid_ = ME.id || ME.accountNumber || ME.phone;
-    var url = ADMIN_URL + '?action=sendMessageToCouncil'
-      + '&user=' + encodeURIComponent(uid_)
-      + '&name=' + encodeURIComponent(ME.name || 'کاربر')
-      + '&message=' + encodeURIComponent(message);
-    var res = await fetch(url, {cache:'no-cache'});
-    var data = await res.json();
-    if(data.ok){
+    var d = await apiCall('sendMessageToCouncil', {
+      user: uid_,
+      name: ME.name || 'کاربر',
+      message: message
+    });
+    if(d.ok){
       toast('✅ پیام شما ارسال شد', 'ok');
       txt.value = '';
       document.getElementById('councilCharCount').textContent = '0';
-      setTimeout(()=> switchMainTab('chats'), 600);
     } else {
-      toast('❌ خطا: '+(data.error||'نامشخص'), 'err');
+      toast('❌ خطا: '+(d.error||'نامشخص'), 'err');
     }
   }catch(e){
     toast('❌ خطای شبکه: '+e.message, 'err');
@@ -856,19 +808,14 @@ async function sendToCouncil(){
   }
 }
 
-/* ============================================================
-   🆕 پاسخ‌های من
-   ============================================================ */
 async function loadMyReplies(){
   var list = document.getElementById('repliesList');
   if(!list) return;
   list.innerHTML = '<div class="empty"><span class="big">📬</span>در حال بارگذاری...</div>';
   try{
     var uid_ = ME.id || ME.accountNumber || ME.phone;
-    var url = ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(uid_);
-    var res = await fetch(url, {cache:'no-cache'});
-    var data = await res.json();
-    var replies = (data && data.replies) || [];
+    var d = await apiCall('getMyReplies', { user: uid_ });
+    var replies = (d && d.replies) || [];
 
     if(replies.length === 0){
       list.innerHTML = '<div class="empty"><span class="big">📭</span>هنوز پاسخی دریافت نکرده‌اید</div>';
@@ -887,10 +834,8 @@ async function loadMyReplies(){
     });
     list.innerHTML = html;
 
-    // مارک خوانده‌شده
     var uid2 = ME.id || ME.accountNumber || ME.phone;
-    fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(uid2), {cache:'no-cache'})
-      .then(()=> { loadRepliesBadge(); });
+    apiCall('markRepliesSeen', { user: uid2 }).then(()=> loadRepliesBadge()).catch(()=>{});
   }catch(e){
     list.innerHTML = '<div class="empty">❌ خطا در بارگذاری: '+esc(e.message)+'</div>';
   }
@@ -899,12 +844,11 @@ async function loadMyReplies(){
 async function loadRepliesBadge(){
   try{
     var uid_ = ME.id || ME.accountNumber || ME.phone;
-    var res = await fetch(ADMIN_URL + '?action=getUnreadCount&user=' + encodeURIComponent(uid_), {cache:'no-cache'});
-    var data = await res.json();
+    var d = await apiCall('getUnreadCount', { user: uid_ });
     var badge = document.getElementById('repliesBadge');
     if(badge){
-      if(data && data.count > 0){
-        badge.textContent = faNum(data.count);
+      if(d && d.count > 0){
+        badge.textContent = faNum(d.count);
         badge.classList.add('show');
       } else {
         badge.classList.remove('show');
@@ -913,9 +857,6 @@ async function loadRepliesBadge(){
   }catch(e){}
 }
 
-/* ============================================================
-   مودال جستجوی شماره
-   ============================================================ */
 function openSearchModal(){
   document.getElementById('searchModal').classList.add('open');
   document.getElementById('phoneInput').value = '';
@@ -946,7 +887,7 @@ async function searchContact(){
       return;
     }
     var user = d.contact;
-    if(normPhone(user.phone) === normPhone(ME.phone)){
+    if(normPhone(user.phone) === normPhone(ME.phone || ME.id)){
       res.innerHTML = '<div class="notfound">این شماره متعلق به خودتان است</div>';
       return;
     }
@@ -963,13 +904,11 @@ async function searchContact(){
 }
 function startChatWith(phone){
   closeSearchModal();
-  var cid = convId(ME.phone, phone);
+  var myPhone = normPhone(ME.phone || ME.id);
+  var cid = convId(myPhone, phone);
   openChat(cid, phone);
 }
 
-/* ============================================================
-   پنل مدیریت — دو بخش
-   ============================================================ */
 function openAdminPanel(){
   if(!ME || !ME.isCouncil){ toast('دسترسی ندارید', 'err'); return; }
   document.getElementById('adminModal').classList.add('open');
@@ -1042,10 +981,8 @@ async function loadAdminCouncilMessages(){
   var c = document.getElementById('adminContent');
   c.innerHTML = '<div class="empty">در حال بارگذاری...</div>';
   try{
-    var url = ADMIN_URL + '?action=getCouncilMessages&key=' + encodeURIComponent(ADMIN_KEY);
-    var res = await fetch(url, {cache:'no-cache'});
-    var data = await res.json();
-    var messages = (data && data.messages) || [];
+    var d = await apiCall('getCouncilMessages', { key: ADMIN_KEY });
+    var messages = (d && d.messages) || [];
     if(messages.length === 0){
       c.innerHTML = '<div class="empty">📭 هیچ پیامی دریافت نشده</div>';
       return;
@@ -1078,25 +1015,21 @@ async function submitCouncilReply(messageId){
   var reply = inp.value.trim();
   if(reply.length < 3){ toast('پاسخ خیلی کوتاه است', 'err'); return; }
   try{
-    var url = ADMIN_URL + '?action=replyToMember'
-      + '&key=' + encodeURIComponent(ADMIN_KEY)
-      + '&messageId=' + encodeURIComponent(messageId)
-      + '&reply=' + encodeURIComponent(reply)
-      + '&replyBy=' + encodeURIComponent(ME.name || 'شورا');
-    var res = await fetch(url, {cache:'no-cache'});
-    var data = await res.json();
-    if(data.ok){
+    var d = await apiCall('replyToMember', {
+      key: ADMIN_KEY,
+      messageId: messageId,
+      reply: reply,
+      replyBy: ME.name || 'شورا'
+    });
+    if(d.ok){
       toast('✅ پاسخ ثبت شد', 'ok');
       loadAdminCouncilMessages();
     } else {
-      toast('❌ خطا: '+(data.error||'نامشخص'), 'err');
+      toast('❌ خطا: '+(d.error||'نامشخص'), 'err');
     }
   }catch(e){ toast('❌ '+e.message, 'err'); }
 }
 
-/* ============================================================
-   Polling
-   ============================================================ */
 function startPolling(){
   if(POLL_TIMER) clearInterval(POLL_TIMER);
   POLL_TIMER = setInterval(async ()=>{
