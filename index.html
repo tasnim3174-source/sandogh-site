@@ -1140,5 +1140,17 @@ setInterval(function() {
 
 console.log('✅ ریست padding-top فعال شد');
 </script>
+    <!-- 🆕 نمایش دائمی پاکت نامه -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // هر ۱ ثانیه چک کن اگر پاکت نامه مخفی شد، دوباره نمایشش بده
+    setInterval(function() {
+        var bell = document.getElementById('messagesBell');
+        if (bell && (typeof currentUser !== 'undefined' && currentUser) && bell.style.display === 'none') {
+            bell.style.display = 'flex';
+        }
+    }, 1000);
+});
+</script>
 </body>
 </html>
