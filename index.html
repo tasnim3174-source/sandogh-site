@@ -272,6 +272,40 @@
     <script src="js/ui/header.js"></script>
     <script src="js/ui/bottom-nav.js"></script>
     <script src="js/ui/entry-alerts.js"></script>
+    <script>
+// ============================================================
+// 🆕 تنظیمات API و CORS
+// ============================================================
+var API_URL_STATUS = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+var userAccessStatus = 'active';
+
+// ============================================================
+// 🆕 قفل کردن بخش‌های حساس
+// ============================================================
+function lockRestrictedSections() {
+    var reqBtns = document.querySelectorAll('[onclick*="requests"], [onclick*="Requests"], [onclick*="showRequests"]');
+    reqBtns.forEach(function(btn) {
+        btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به بخش درخواست‌ها مسدود است.'); return false; };
+        btn.style.opacity = '0.5';
+    });
+    var smsBtns = document.querySelectorAll('[onclick*="sms"], [onclick*="Sms"], [onclick*="SMS"]');
+    smsBtns.forEach(function(btn) {
+        btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به سامانه پیامکی مسدود است.'); return false; };
+        btn.style.opacity = '0.5';
+    });
+    var onlineBtns = document.querySelectorAll('[onclick*="online"], [onclick*="Online"], [onclick*="service"]');
+    onlineBtns.forEach(function(btn) {
+        btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به خدمات آنلاین مسدود است.'); return false; };
+        btn.style.opacity = '0.5';
+    });
+    var adminBtns = document.querySelectorAll('[onclick*="admin"], [onclick*="Admin"]');
+    adminBtns.forEach(function(btn) {
+        btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به پنل مدیریت مسدود است.'); return false; };
+        btn.style.opacity = '0.5';
+    });
+    console.log('🔒 بخش‌های حساس قفل شدند.');
+}
+</script>
     <script src="js/pages/menu.js?v=7"></script>
     <script src="js/pages/profile.js"></script>
     <script src="js/pages/dashboard.js"></script>
@@ -587,7 +621,21 @@
         
         var res = loginResult;
         currentUser = res.user;
-
+// 🆕 چک کردن وضعیت مسدودی
+fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber || currentUser.username))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            userAccessStatus = data.status;
+            if (userAccessStatus === 'blocked' || userAccessStatus === 'closed') {
+                setTimeout(function() {
+                    alert('🚫 حساب شما ' + (userAccessStatus === 'blocked' ? 'مسدود' : 'بسته') + ' شده است.\n\nلطفاً با حسابداری صندوق تماس بگیرید.');
+                    lockRestrictedSections();
+                }, 1500);
+            }
+        }
+    })
+    .catch(function(e) { console.log('خطا در چک وضعیت:', e); });
 try {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     console.log('✅ currentUser ذخیره شد');
@@ -908,49 +956,8 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
 </style>
 
 <script>
-// ============================================================
-// 🆕 توابع پنجره شناور پیام‌رسان
-// ============================================================
-window.openMessagesWindow = function() {
-  var overlay = document.getElementById('messagesOverlay');
-  var frame = document.getElementById('messagesFrame');
-  if (overlay && frame) {
-    var userId = '', userName = '';
-    try {
-      if (typeof currentUser !== 'undefined' && currentUser) {
-        userId = currentUser.id || currentUser.accountNumber || currentUser.username || currentUser.memberId || '';
-        userName = currentUser.firstName || currentUser.name || '';
-      }
-    } catch(e) {}
-    var url = 'messages.html?v=' + Date.now();
-    if (userId) url += '&user=' + encodeURIComponent(userId);
-    if (userName) url += '&name=' + encodeURIComponent(userName);
-    frame.src = url;
-    overlay.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  }
-};
-
-window.closeMessagesWindow = function() {
-    console.log('🔙 بستن پنجره پیام‌رسان...');
-    var overlay = document.getElementById('messagesOverlay');
-    if (overlay) overlay.style.display = 'none';
-    
-    // برگردوندن اسکرول
-    document.body.style.overflow = '';
-    
-    // پاک کردن src که دفعه بعد دوباره لود بشه
-    var frame = document.getElementById('messagesFrame');
-    if (frame) frame.src = 'about:blank';
-    
-    // چک کردن پیام‌های جدید
-    if (typeof checkUnreadMessages === 'function') {
-        checkUnreadMessages();
-    }
-};
-</script>
-    <!-- 🆕 آیکون پاکت نامه شناور -->
-<button id="messagesBell" onclick="openMessagesWindow()" style="display:none;position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);display:none;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;transition:all 0.3s;">
+<!-- 🆕 آیکون پاکت نامه شناور -->
+<button id="messagesBell" onclick="openMessagesWindow()" style="display:none;position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);align-items:center;justify-content:center;font-size:1.6rem;color:#fff;transition:all 0.3s;">
     <i class="fas fa-envelope"></i>
     <span id="messagesBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;width:24px;height:24px;border-radius:50%;font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 8px rgba(239,68,68,0.6);">0</span>
 </button>
@@ -968,105 +975,6 @@ window.closeMessagesWindow = function() {
     50% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 15px rgba(139,92,246,0); }
 }
 </style>
-
-<script>
-// ============================================================
-// 🆕 چک کردن پیام‌های خوانده‌نشده
-// ============================================================
-window.checkUnreadMessages = function() {
-    // اگه کاربر لاگین نکرده، کاری نکن
-    if (typeof currentUser === 'undefined' || !currentUser || !currentUser.accountNumber) {
-        return;
-    }
-    
-    // مخفی کردن دکمه اگه توی صفحه لاگین هستیم
-    if (typeof currentPage !== 'undefined' && (currentPage === 'login' || !currentPage)) {
-        var bell = document.getElementById('messagesBell');
-        if (bell) bell.style.display = 'none';
-        return;
-    }
-    
-    var userId = currentUser.accountNumber;
-    var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-    
-    fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { cache: 'no-cache' })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-            if (d.ok && d.messages) {
-                // پیام‌های خوانده‌نشده
-                var unread = d.messages.filter(function(m) {
-                    return m.status === 'new' && String(m.from_id) !== String(userId);
-                }).length;
-                
-                var bell = document.getElementById('messagesBell');
-                var badge = document.getElementById('messagesBadge');
-                
-                if (bell) {
-                    bell.style.display = 'flex';
-                    
-                    if (unread > 0) {
-                        if (badge) {
-                            badge.textContent = unread;
-                            badge.style.display = 'flex';
-                        }
-                        bell.classList.add('pulse');
-                    } else {
-                        if (badge) badge.style.display = 'none';
-                        bell.classList.remove('pulse');
-                    }
-                }
-            }
-        })
-        .catch(function(e) {
-            console.log('⚠️ خطا در چک پیام‌ها:', e.message);
-        });
-};
-
-// ============================================================
-// شروع چک کردن پیام‌ها بعد از لاگین
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    // هر ۳۰ ثانیه چک کن
-    setTimeout(function() {
-        checkUnreadMessages();
-        setInterval(checkUnreadMessages, 30000);
-    }, 3000);
-});
-</script>
-    <script>
-// ============================================================
-// 🆕 دریافت پیام از iframe پیام‌رسان
-// ============================================================
-window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'messagesUpdate') {
-        console.log('📩 پیام از iframe:', event.data);
-        
-        var unread = event.data.unread || 0;
-        var bell = document.getElementById('messagesBell');
-        var badge = document.getElementById('messagesBadge');
-        
-        if (bell) {
-            bell.style.display = 'flex';
-            
-            if (unread > 0) {
-                if (badge) {
-                    badge.textContent = unread;
-                    badge.style.display = 'flex';
-                }
-                bell.classList.add('pulse');
-            } else {
-                if (badge) badge.style.display = 'none';
-                bell.classList.remove('pulse');
-            }
-        }
-    }
-});
-</script>
-    <!-- 🆕 آیکون پاکت نامه -->
-<button id="messagesBell" onclick="openMessagesWindow()" style="position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);display:none;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;">
-    <i class="fas fa-envelope"></i>
-    <span id="messagesBadge" style="position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;width:24px;height:24px;border-radius:50%;font-size:0.75rem;font-weight:900;display:none;align-items:center;justify-content:center;border:2px solid #fff;">0</span>
-</button>
 
 <!-- 🆕 پنجره شناور پیام‌رسان -->
 <div id="messagesOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;backdrop-filter:blur(4px);">
@@ -1087,20 +995,32 @@ window.addEventListener('message', function(event) {
 <script>
 console.log('🚀 کد پیام‌رسان بارگذاری شد');
 
+// باز کردن پنجره پیام‌رسان
 window.openMessagesWindow = function() {
     console.log('📨 باز کردن پنجره پیام‌رسان...');
     var overlay = document.getElementById('messagesOverlay');
     var frame = document.getElementById('messagesFrame');
     
     if (overlay && frame) {
-        if (!frame.src || frame.src === 'about:blank' || frame.src.indexOf('messages.html') === -1) {
-            frame.src = 'messages.html?v=' + Date.now();
-        }
+        var userId = '', userName = '';
+        try {
+            if (typeof currentUser !== 'undefined' && currentUser) {
+                userId = currentUser.id || currentUser.accountNumber || currentUser.username || currentUser.memberId || '';
+                userName = currentUser.firstName || currentUser.name || '';
+            }
+        } catch(e) {}
+        
+        var url = 'messages.html?v=' + Date.now();
+        if (userId) url += '&user=' + encodeURIComponent(userId);
+        if (userName) url += '&name=' + encodeURIComponent(userName);
+        
+        frame.src = url;
         overlay.style.display = 'block';
         document.body.style.overflow = 'hidden';
     }
 };
 
+// بستن پنجره پیام‌رسان
 window.closeMessagesWindow = function() {
     console.log('🔙 بستن پنجره پیام‌رسان...');
     var overlay = document.getElementById('messagesOverlay');
@@ -1115,6 +1035,7 @@ window.closeMessagesWindow = function() {
     }
 };
 
+// 🆕 چک کردن پیام‌های جدید با مدیریت خطای CORS
 window.checkUnreadMessages = function() {
     console.log('🔍 چک پیام‌های جدید...');
     
@@ -1135,12 +1056,25 @@ window.checkUnreadMessages = function() {
     var userId = currentUser.accountNumber || currentUser.username;
     var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
     
-    fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { cache: 'no-cache' })
-        .then(function(r) { return r.json(); })
+    // استفاده از fetch با هدر Accept برای جلوگیری از خطا
+    fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { 
+        cache: 'no-cache',
+        headers: { 'Accept': 'application/json' }
+    })
+        .then(function(r) { 
+            // 🆕 چک کردن اینکه پاسخ JSON است یا HTML
+            var contentType = r.headers.get('content-type');
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                return r.json();
+            } else {
+                // اگر پاسخ HTML بود، خطا نده و فقط لاگ کن
+                return { ok: false, messages: [], error: 'Invalid response type' };
+            }
+        })
         .then(function(d) {
             console.log('📩 نتیجه:', d.ok ? '✅' : '❌', d.messages ? d.messages.length + ' پیام' : '');
             
-            if (d.ok && d.messages) {
+            if (d && d.ok && d.messages) {
                 var unread = d.messages.filter(function(m) {
                     return m.status === 'new' && String(m.from_id) !== String(userId);
                 }).length;
@@ -1157,14 +1091,17 @@ window.checkUnreadMessages = function() {
                             badge.textContent = unread;
                             badge.style.display = 'flex';
                         }
+                        bell.classList.add('pulse');
                     } else {
                         if (badge) badge.style.display = 'none';
+                        bell.classList.remove('pulse');
                     }
                 }
             }
         })
         .catch(function(e) {
-            console.log('⚠️ خطا:', e.message);
+            // 🆕 فقط لاگ کن، هرگز کرش نکن
+            console.log('⚠️ خطا در چک پیام‌ها (احتمالاً CORS):', e.message);
         });
 };
 
@@ -1173,6 +1110,17 @@ window.addEventListener('message', function(event) {
         checkUnreadMessages();
     }
 });
+
+// شروع چک کردن پیام‌ها بعد از لاگین
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        checkUnreadMessages();
+        setInterval(checkUnreadMessages, 30000);
+    }, 3000);
+});
+
+console.log('✅ توابع پیام‌رسان آماده است');
+</script>
 
 // شروع خودکار بعد از لاگین
 document.addEventListener('DOMContentLoaded', function() {
