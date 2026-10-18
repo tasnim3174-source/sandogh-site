@@ -1,1666 +1,1126 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پیام‌رسان - صندوق اتحاد</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', Tahoma, sans-serif; }
-        body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-            color: #fff;
-            direction: rtl;
-            padding-bottom: 80px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>پیام‌رسان صندوق اتحاد</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f0f1a; --panel:#1a1a2e; --panel2:#16213e; --border:#2a2a45;
+    --text:#e5e7eb; --muted:#9ca3af; --gold:#ffc94d; --violet:#8b5cf6;
+    --violet2:#7c3aed; --green:#10b981; --red:#ef4444;
+    --bubble-me:#7c3aed; --bubble-them:#252540;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text);
+    font-family:Vazirmatn,Tahoma,system-ui,sans-serif}
+  #app{height:100dvh;display:flex;flex-direction:column;max-width:560px;margin:0 auto;
+    background:var(--bg);position:relative;overflow:hidden}
 
-        .header {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            padding: 16px 20px;
-            box-shadow: 0 4px 20px rgba(139,92,246,0.4);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-        .header h1 {
-            font-size: 1.2rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .header-actions { display: flex; gap: 8px; }
-        .header-btn {
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-        .header-btn:hover { background: rgba(255,255,255,0.25); }
-        .header-btn.loading { animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+  /* ====== هدر و تب‌ها ====== */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;
+    padding:14px 16px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;
+    box-shadow:0 4px 18px rgba(0,0,0,.4);flex-shrink:0}
+  .topbar h1{margin:0;font-size:1.05rem;font-weight:900;display:flex;align-items:center;gap:8px}
+  .topbar .who{font-size:.72rem;opacity:.85;font-weight:400;margin-top:2px}
+  .iconbtn{width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:rgba(255,255,255,.18);color:#fff;font-size:1rem;display:flex;
+    align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+  .iconbtn:active{transform:scale(.92)}
 
-        .tabs {
-            display: flex;
-            gap: 6px;
-            background: rgba(0,0,0,0.2);
-            padding: 4px;
-            border-radius: 50px;
-        }
-        .tab {
-            flex: 1;
-            padding: 10px 8px;
-            border: none;
-            background: transparent;
-            color: rgba(255,255,255,0.7);
-            border-radius: 40px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            position: relative;
-        }
-        .tab.active {
-            background: #fff;
-            color: #8b5cf6;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .tab-badge {
-            background: #ef4444;
-            color: #fff;
-            font-size: 0.65rem;
-            padding: 2px 7px;
-            border-radius: 10px;
-            font-weight: 900;
-            min-width: 20px;
-            text-align: center;
-        }
-        .tab.active .tab-badge { background: #8b5cf6; }
+  /* 🆕 تب‌های اصلی */
+  .main-tabs{display:flex;background:var(--panel);border-bottom:2px solid var(--border);
+    flex-shrink:0;padding:6px;gap:4px}
+  .main-tab{flex:1;padding:10px 6px;border:none;background:transparent;color:var(--muted);
+    font-family:inherit;font-size:.78rem;font-weight:800;cursor:pointer;border-radius:10px;
+    transition:.2s;position:relative;display:flex;align-items:center;justify-content:center;gap:4px}
+  .main-tab.active{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;
+    box-shadow:0 4px 14px rgba(139,92,246,.4)}
+  .main-tab .badge{background:var(--red);color:#fff;min-width:18px;height:18px;
+    border-radius:9px;font-size:.65rem;font-weight:900;display:none;align-items:center;
+    justify-content:center;padding:0 5px}
+  .main-tab .badge.show{display:inline-flex}
 
-        .search-bar {
-            padding: 12px 16px;
-            background: rgba(0,0,0,0.15);
-            display: none;
-        }
-        .search-bar.show { display: block; }
-        .search-input {
-            width: 100%;
-            padding: 10px 14px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 0.85rem;
-            font-family: inherit;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            background: rgba(139,92,246,0.1);
-        }
-        .search-input::placeholder { color: #9ca3af; }
+  /* ====== پنل‌ها ====== */
+  .main-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
+  .main-panel.active{display:flex}
 
-        .messages-container {
-            padding: 16px;
-            max-width: 700px;
-            margin: 0 auto;
-        }
+  /* ====== لیست مکالمات ====== */
+  .searchbox{padding:10px 12px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
+  .searchbox input{width:100%;padding:11px 14px;border-radius:24px;border:1px solid var(--border);
+    background:var(--panel2);color:var(--text);font-family:inherit;font-size:.9rem;outline:none}
+  .searchbox input:focus{border-color:var(--violet)}
+  #convList{flex:1;overflow-y:auto;padding:6px 0}
+  .conv{display:flex;align-items:center;gap:12px;padding:12px 16px;cursor:pointer;
+    border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s}
+  .conv:active{background:rgba(139,92,246,.12)}
+  .avatar{width:48px;height:48px;border-radius:50%;flex-shrink:0;display:flex;
+    align-items:center;justify-content:center;font-weight:900;font-size:1.1rem;color:#fff;
+    background:linear-gradient(135deg,#8b5cf6,#7c3aed);position:relative}
+  .conv-info{flex:1;min-width:0}
+  .conv-name{font-weight:800;font-size:.95rem;display:flex;justify-content:space-between;gap:6px}
+  .conv-name .time{font-size:.68rem;color:var(--muted);font-weight:400;flex-shrink:0}
+  .conv-last{font-size:.8rem;color:var(--muted);white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;margin-top:3px;display:flex;align-items:center;gap:4px}
+  .badge{background:var(--red);color:#fff;min-width:20px;height:20px;border-radius:10px;
+    font-size:.7rem;font-weight:900;display:flex;align-items:center;justify-content:center;
+    padding:0 6px;flex-shrink:0}
+  .empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:.9rem;line-height:2}
+  .empty .big{font-size:3rem;display:block;margin-bottom:10px}
 
-        .section-title {
-            color: #9ca3af;
-            font-size: 0.75rem;
-            font-weight: 800;
-            margin: 14px 4px 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .section-title i { color: #8b5cf6; }
+  /* ====== پنل ارسال به شورا ====== */
+  .council-panel{padding:16px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:12px}
+  .council-panel h3{margin:0;color:var(--gold);font-size:1rem;display:flex;align-items:center;gap:8px}
+  .council-panel p{margin:0;color:var(--muted);font-size:.8rem;line-height:1.8}
+  .council-panel textarea{width:100%;min-height:140px;padding:14px;border-radius:14px;
+    border:1px solid var(--border);background:var(--panel2);color:var(--text);
+    font-family:inherit;font-size:.92rem;resize:vertical;outline:none;line-height:1.7}
+  .council-panel textarea:focus{border-color:var(--violet)}
+  .council-panel .char-count{text-align:left;font-size:.72rem;color:var(--muted);margin-top:-6px}
+  .council-send-btn{padding:14px;border-radius:14px;border:none;
+    background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-family:inherit;
+    font-size:.95rem;font-weight:800;cursor:pointer;box-shadow:0 6px 20px rgba(16,185,129,.4);
+    display:flex;align-items:center;justify-content:center;gap:8px;transition:.2s}
+  .council-send-btn:active{transform:scale(.97)}
+  .council-send-btn:disabled{opacity:.5;cursor:not-allowed}
+  .council-hint{padding:10px 12px;border-radius:10px;background:rgba(255,201,77,.1);
+    border:1px solid rgba(255,201,77,.3);color:#ffd77a;font-size:.75rem;line-height:1.7}
 
-        .message-card {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            border-right: 4px solid transparent;
-        }
-        .message-card:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(139,92,246,0.4);
-        }
-        .message-card.unread {
-            border-right-color: #ef4444;
-            background: rgba(239,68,68,0.05);
-        }
-        .message-card.urgent {
-            border-right-color: #f59e0b;
-            background: rgba(245,158,11,0.05);
-        }
-        .message-card.replied {
-            border-right-color: #10b981;
-        }
+  /* ====== پنل پاسخ‌ها ====== */
+  .replies-panel{padding:12px;overflow-y:auto;flex:1}
+  .reply-card{background:var(--panel2);border:1px solid var(--border);border-radius:14px;
+    padding:14px;margin-bottom:10px;border-right:4px solid var(--violet)}
+  .reply-card.new{border-right-color:var(--gold);background:rgba(255,201,77,.06)}
+  .reply-meta{font-size:.7rem;color:var(--muted);display:flex;align-items:center;
+    justify-content:space-between;margin-bottom:8px}
+  .reply-new-tag{background:var(--gold);color:#1a1a2e;padding:2px 8px;border-radius:10px;
+    font-size:.65rem;font-weight:900}
+  .reply-q{background:rgba(139,92,246,.1);padding:8px 10px;border-radius:10px;
+    font-size:.82rem;line-height:1.7;margin-bottom:8px}
+  .reply-q b{color:var(--violet);display:block;margin-bottom:4px;font-size:.72rem}
+  .reply-a{padding:8px 10px;border-radius:10px;font-size:.82rem;line-height:1.7;
+    background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25)}
+  .reply-a b{color:var(--green);display:block;margin-bottom:4px;font-size:.72rem}
 
-        .message-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        .message-sender {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
-            min-width: 0;
-        }
-        .sender-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            color: #fff;
-            font-weight: 900;
-            flex-shrink: 0;
-        }
-        .sender-info { flex: 1; min-width: 0; }
-        .sender-name {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: #fff;
-            margin-bottom: 2px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .sender-meta { font-size: 0.65rem; color: #9ca3af; }
-        .message-time { font-size: 0.65rem; color: #9ca3af; flex-shrink: 0; margin-right: 4px; }
+  /* ====== صفحه چت ====== */
+  #chatView{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg);z-index:5}
+  #chatView.open{display:flex}
+  .chat-top{display:flex;align-items:center;gap:10px;padding:10px 12px;
+    background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;flex-shrink:0;
+    box-shadow:0 4px 18px rgba(0,0,0,.4)}
+  .chat-top .avatar{width:40px;height:40px;font-size:.95rem}
+  .chat-top .ct-info{flex:1;min-width:0}
+  .chat-top .ct-name{font-weight:900;font-size:.95rem}
+  .chat-top .ct-status{font-size:.7rem;opacity:.85;margin-top:1px}
+  #messagesArea{flex:1;overflow-y:auto;padding:14px 10px 8px;display:flex;flex-direction:column;gap:6px;
+    background:radial-gradient(circle at 20% 10%,rgba(139,92,246,.08),transparent 40%),
+               radial-gradient(circle at 80% 90%,rgba(255,201,77,.05),transparent 40%)}
+  .bubble-row{display:flex;flex-direction:column;max-width:82%;animation:pop .18s ease}
+  .bubble-row.me{align-self:flex-start;align-items:flex-start}
+  .bubble-row.them{align-self:flex-end;align-items:flex-end}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .bubble{padding:8px 12px;border-radius:16px;font-size:.88rem;line-height:1.7;
+    word-break:break-word;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .bubble-row.me .bubble{background:var(--bubble-me);color:#fff;border-bottom-right-radius:5px}
+  .bubble-row.them .bubble{background:var(--bubble-them);color:var(--text);border-bottom-left-radius:5px}
+  .bubble .meta{font-size:.62rem;opacity:.7;margin-top:4px;text-align:left;display:flex;
+    align-items:center;gap:5px;justify-content:flex-end}
+  .bubble .meta .ticks{color:#fff;opacity:.9}
+  .bubble img.thumb{max-width:220px;max-height:220px;border-radius:12px;display:block;cursor:pointer;object-fit:cover}
+  .bubble video.thumb{max-width:240px;border-radius:12px;display:block}
+  .bubble audio{max-width:220px;display:block}
+  .file-card{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.18);
+    padding:8px 10px;border-radius:12px;min-width:180px}
+  .file-card .fc-icon{font-size:1.5rem;flex-shrink:0}
+  .file-card .fc-info{flex:1;min-width:0}
+  .file-card .fc-name{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .file-card .fc-size{font-size:.65rem;opacity:.75}
+  .file-card a.dl{color:inherit;text-decoration:none;font-size:1.1rem;flex-shrink:0}
+  .day-sep{align-self:center;font-size:.68rem;color:var(--muted);background:rgba(255,255,255,.06);
+    padding:3px 12px;border-radius:20px;margin:8px 0}
 
-        .message-subject {
-            font-size: 0.85rem;
-            font-weight: 800;
-            color: #ffc94d;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .message-subject .badge {
-            background: rgba(255,201,77,0.2);
-            color: #ffc94d;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.6rem;
-            font-weight: 800;
-        }
-        .message-subject .badge.urgent {
-            background: rgba(239,68,68,0.2);
-            color: #ef4444;
-        }
-        .message-subject .badge.anonymous {
-            background: rgba(139,92,246,0.2);
-            color: #8b5cf6;
-        }
+  /* ====== نوار ارسال ====== */
+  .composer{display:flex;align-items:flex-end;gap:6px;padding:8px 8px 10px;
+    background:var(--panel);border-top:1px solid var(--border);flex-shrink:0}
+  .composer .attach{width:40px;height:40px;border-radius:50%;border:none;background:var(--panel2);
+    color:var(--gold);font-size:1.15rem;cursor:pointer;display:flex;align-items:center;
+    justify-content:center;flex-shrink:0;transition:.15s}
+  .composer .attach:active{transform:scale(.9)}
+  .composer textarea{flex:1;resize:none;max-height:110px;min-height:40px;padding:10px 14px;
+    border-radius:22px;border:1px solid var(--border);background:var(--panel2);color:var(--text);
+    font-family:inherit;font-size:.9rem;outline:none;line-height:1.5}
+  .composer textarea:focus{border-color:var(--violet)}
+  .composer .send{width:44px;height:44px;border-radius:50%;border:none;
+    background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-size:1.15rem;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s}
+  .composer .send:active{transform:scale(.9)}
+  .composer .send:disabled{opacity:.4}
 
-        .message-preview {
-            font-size: 0.75rem;
-            color: #9ca3af;
-            line-height: 1.7;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            line-clamp: 2;
-        }
+  /* ====== منوی پیوست ====== */
+  #attachMenu{position:absolute;bottom:64px;right:10px;background:var(--panel2);
+    border:1px solid var(--border);border-radius:16px;padding:8px;display:none;
+    flex-direction:column;gap:4px;z-index:20;box-shadow:0 10px 30px rgba(0,0,0,.6);min-width:180px}
+  #attachMenu.open{display:flex;animation:pop .15s}
+  #attachMenu button{display:flex;align-items:center;gap:10px;padding:10px 12px;border:none;
+    background:transparent;color:var(--text);font-family:inherit;font-size:.85rem;
+    border-radius:10px;cursor:pointer;text-align:right;width:100%}
+  #attachMenu button:active{background:rgba(139,92,246,.18)}
+  #attachMenu .ico{font-size:1.15rem}
 
-        .message-footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 10px;
-            padding-top: 8px;
-            border-top: 1px dashed rgba(255,255,255,0.08);
-        }
-        .message-status {
-            font-size: 0.65rem;
-            font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .message-status.new { background: rgba(239,68,68,0.15); color: #ef4444; }
-        .message-status.read { background: rgba(59,130,246,0.15); color: #3b82f6; }
-        .message-status.replied, .message-status.answered { background: rgba(16,185,129,0.15); color: #10b981; }
-        .message-status.pending { background: rgba(245,158,11,0.15); color: #f59e0b; }
+  /* ====== دکمه شناور قلم ====== */
+  #fabPen{position:absolute;bottom:22px;left:22px;width:60px;height:60px;border-radius:50%;
+    border:3px solid #ffd700;background:linear-gradient(135deg,#8b5cf6,#7c3aed);
+    color:#fff;font-size:1.5rem;cursor:pointer;z-index:50;display:flex;
+    align-items:center;justify-content:center;box-shadow:0 8px 26px rgba(139,92,246,.55);
+    transition:transform .18s,box-shadow .18s;animation:fabPenPulse 2.4s infinite}
+  #fabPen:hover{transform:scale(1.08);box-shadow:0 12px 34px rgba(139,92,246,.75)}
+  #fabPen:active{transform:scale(.94)}
+  @keyframes fabPenPulse{
+    0%,100%{box-shadow:0 8px 26px rgba(139,92,246,.55),0 0 0 0 rgba(139,92,246,.6)}
+    50%{box-shadow:0 8px 26px rgba(139,92,246,.55),0 0 0 16px rgba(139,92,246,0)}}
+  @media (max-width:600px){
+    #fabPen{width:54px;height:54px;font-size:1.35rem;bottom:18px;left:16px}}
 
-        .message-replies-count {
-            font-size: 0.65rem;
-            color: #9ca3af;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
+  /* ====== مودال ====== */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+  .modal.open{display:flex}
+  .modal-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;
+    width:100%;max-width:400px;padding:20px;animation:pop .2s}
+  .modal-card h3{margin:0 0 6px;color:var(--gold);font-size:1.05rem}
+  .modal-card p{margin:0 0 16px;color:var(--muted);font-size:.78rem;line-height:1.7}
+  .modal-card input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
+    background:var(--panel2);color:var(--text);font-family:inherit;font-size:1rem;outline:none;
+    text-align:center;letter-spacing:1px;direction:ltr}
+  .modal-card input:focus{border-color:var(--violet)}
+  .modal-actions{display:flex;gap:8px;margin-top:14px}
+  .modal-actions button{flex:1;padding:12px;border-radius:12px;border:none;font-family:inherit;
+    font-weight:800;font-size:.88rem;cursor:pointer}
+  .btn-primary{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
+  .btn-ghost{background:var(--panel2);color:var(--muted);border:1px solid var(--border)!important}
+  #searchResult{margin-top:12px}
+  .contact-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
+    background:var(--panel2);border:1px solid var(--green);animation:pop .2s;cursor:pointer}
+  .contact-card .avatar{width:44px;height:44px}
+  .contact-card .cc-info{flex:1;min-width:0}
+  .contact-card .cc-name{font-weight:800;font-size:.92rem}
+  .contact-card .cc-phone{font-size:.72rem;color:var(--muted);direction:ltr;text-align:right;margin-top:2px}
+  .contact-card .go{color:var(--green);font-size:1.3rem}
+  .notfound{text-align:center;padding:14px;border-radius:12px;background:rgba(239,68,68,.1);
+    color:#fca5a5;font-size:.82rem;border:1px solid rgba(239,68,68,.3)}
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
-        }
-        .empty-state i { font-size: 3rem; margin-bottom: 14px; opacity: 0.5; }
-        .empty-state .title { font-size: 1rem; font-weight: 800; margin-bottom: 6px; color: #9ca3af; }
-        .empty-state .desc { font-size: 0.8rem; line-height: 1.7; }
+  /* ====== پنل مدیریت ====== */
+  .admin-tabs{display:flex;gap:6px;margin-bottom:12px}
+  .admin-tab{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);
+    background:var(--panel2);color:var(--muted);font-family:inherit;font-size:.78rem;
+    font-weight:800;cursor:pointer;transition:.2s}
+  .admin-tab.active{background:var(--violet);color:#fff;border-color:var(--violet)}
+  .admin-item{padding:10px;border-radius:10px;background:var(--panel2);margin-bottom:8px;
+    border:1px solid var(--border)}
+  .admin-item .ai-head{font-weight:800;font-size:.85rem;margin-bottom:4px;color:var(--text)}
+  .admin-item .ai-sub{font-size:.72rem;color:var(--muted);margin-bottom:6px}
+  .admin-item .ai-preview{font-size:.78rem;color:var(--text);padding:6px 8px;
+    background:rgba(139,92,246,.12);border-radius:8px;line-height:1.6}
+  .admin-item .ai-btn{margin-top:8px;padding:6px 14px;border-radius:8px;border:none;
+    background:var(--violet);color:#fff;cursor:pointer;font-family:inherit;
+    font-size:.78rem;font-weight:700}
 
-        .fab {
-            position: fixed;
-            bottom: 24px;
-            left: 24px;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: #fff;
-            border: none;
-            font-size: 1.4rem;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(139,92,246,0.5);
-            transition: all 0.3s;
-            z-index: 100;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .fab:hover { transform: scale(1.1); box-shadow: 0 12px 30px rgba(139,92,246,0.7); }
+  /* ====== انتخاب کاربر ====== */
+  #userPicker{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);
+    display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
+  #userPicker.hidden{display:none}
+  .up-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;
+    padding:24px;width:100%;max-width:400px;text-align:center;max-height:80vh;overflow-y:auto}
+  .up-card h2{margin:0 0 6px;color:var(--gold);font-size:1.15rem}
+  .up-card p{margin:0 0 18px;color:var(--muted);font-size:.78rem;line-height:1.7}
+  .up-user{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
+    background:var(--panel2);border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.15s}
+  .up-user:active{transform:scale(.98);border-color:var(--violet)}
+  .up-user .avatar{width:42px;height:42px;font-size:1rem}
+  .up-user .uu-info{flex:1;text-align:right}
+  .up-user .uu-name{font-weight:800;font-size:.9rem}
+  .up-user .uu-phone{font-size:.72rem;color:var(--muted);direction:ltr;text-align:right;margin-top:2px}
 
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        .modal-overlay.show { display: flex; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  /* ====== توست ====== */
+  #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:999;
+    display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
+  .toast{background:var(--panel2);border:1px solid var(--border);border-radius:12px;
+    padding:12px 14px;font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:8px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5);animation:toastIn .25s ease}
+  .toast.ok{border-color:var(--green);color:#6ee7b7}
+  .toast.err{border-color:var(--red);color:#fca5a5}
+  @keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:none}}
 
-        .modal-box {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            border: 2px solid rgba(139,92,246,0.4);
-            border-radius: 20px;
-            padding: 20px;
-            max-width: 500px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s;
-        }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-        .modal-title {
-            color: #8b5cf6;
-            font-size: 1.1rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .modal-close {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #fff;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .form-field { margin-bottom: 12px; }
-        .form-field label {
-            display: block;
-            color: #d1d5db;
-            font-size: 0.78rem;
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-        .form-field label .required { color: #ef4444; }
-        .form-field input[type="text"],
-        .form-field textarea,
-        .form-field select {
-            width: 100%;
-            padding: 10px 12px;
-            background: rgba(255,255,255,0.06);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            color: #fff;
-            font-size: 0.85rem;
-            font-family: inherit;
-            transition: all 0.3s;
-        }
-        .form-field input:focus,
-        .form-field textarea:focus,
-        .form-field select:focus {
-            outline: none;
-            border-color: #8b5cf6;
-            background: rgba(139,92,246,0.08);
-        }
-        .form-field textarea { min-height: 100px; resize: vertical; }
-        .form-field select option { background: #1a1a2e; color: #fff; }
-
-        .checkbox-field {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px;
-            background: rgba(255,255,255,0.04);
-            border-radius: 10px;
-            margin-bottom: 8px;
-            cursor: pointer;
-        }
-        .checkbox-field input { width: 18px; height: 18px; cursor: pointer; accent-color: #8b5cf6; }
-        .checkbox-field label { margin: 0; cursor: pointer; flex: 1; font-size: 0.8rem; color: #d1d5db; font-weight: 700; }
-        .checkbox-field .hint { font-size: 0.65rem; color: #9ca3af; font-weight: 400; }
-
-        .submit-btn {
-            width: 100%;
-            padding: 13px;
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 0.95rem;
-            font-weight: 900;
-            cursor: pointer;
-            font-family: inherit;
-            box-shadow: 0 4px 15px rgba(139,92,246,0.4);
-            transition: all 0.3s;
-            margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .submit-btn:active { transform: scale(0.97); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 800;
-            box-shadow: 0 10px 30px rgba(16,185,129,0.5);
-            z-index: 99999;
-            opacity: 0;
-            transition: all 0.4s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 10px 30px rgba(239,68,68,0.5); }
-
-        .replies-container {
-            margin-top: 12px;
-            padding-top: 12px;
-            border-top: 1px dashed rgba(255,255,255,0.1);
-        }
-        .reply-item {
-            background: rgba(139,92,246,0.08);
-            border-right: 3px solid #8b5cf6;
-            border-radius: 10px;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-        }
-        .reply-item.mine { background: rgba(16,185,129,0.08); border-right-color: #10b981; }
-        .reply-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 6px;
-            font-size: 0.7rem;
-        }
-        .reply-author { font-weight: 800; color: #8b5cf6; }
-        .reply-item.mine .reply-author { color: #10b981; }
-        .reply-time { color: #9ca3af; font-size: 0.65rem; }
-        .reply-text { font-size: 0.78rem; color: #d1d5db; line-height: 1.8; }
-
-        .detail-actions { display: flex; gap: 8px; margin-top: 14px; }
-        .detail-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.3s;
-        }
-        .detail-btn.primary { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #fff; }
-        .detail-btn.danger { background: rgba(239,68,68,0.15); color: #ef4444; border: 2px solid rgba(239,68,68,0.3); }
-
-        .offline-badge {
-            position: fixed;
-            top: 8px;
-            right: 8px;
-            background: rgba(239,68,68,0.9);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            font-weight: 800;
-            z-index: 9998;
-            display: none;
-        }
-        .offline-badge.show { display: block; }
-
-        .loading-spinner {
-            text-align: center;
-            padding: 40px;
-            color: #9ca3af;
-        }
-        .loading-spinner i { font-size: 2rem; animation: spin 1s linear infinite; margin-bottom: 10px; }
-    </style>
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-thumb{background:rgba(139,92,246,.5);border-radius:10px}
+</style>
 </head>
 <body>
 
-<div class="header">
-    <div class="header-top">
-        <h1><i class="fas fa-envelope"></i> پیام‌رسان</h1>
-        <div class="header-actions">
-            <button class="header-btn" onclick="toggleSearch()" title="جستجو">
-                <i class="fas fa-search"></i>
-            </button>
-            <button class="header-btn" onclick="loadMessages()" title="بروزرسانی" id="refreshBtn">
-                <i class="fas fa-sync-alt"></i>
-            </button>
-           <button class="header-btn" onclick="closeMessages()" title="بازگشت به برنامه">
-    <i class="fas fa-times"></i>
-</button>
-        </div>
+<div id="userPicker">
+  <div class="up-card">
+    <h2>📨 پیام‌رسان صندوق اتحاد</h2>
+    <p>یک کاربر را انتخاب کنید تا وارد شوید.</p>
+    <div id="userPickerList"><div style="color:var(--muted);padding:20px">در حال بارگذاری...</div></div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<div id="app">
+  <div class="topbar">
+    <div>
+      <h1>📨 پیام‌رسان</h1>
+      <div class="who" id="whoAmI"></div>
     </div>
-    
-    <div class="tabs">
-        <button class="tab active" data-tab="council" onclick="switchTab('council')">
-            <i class="fas fa-crown"></i>
-            <span>به شورا</span>
-            <span class="tab-badge" id="badge-council" style="display:none;">0</span>
-        </button>
-        <button class="tab" data-tab="members" onclick="switchTab('members')">
-            <i class="fas fa-users"></i>
-            <span>به اعضا</span>
-            <span class="tab-badge" id="badge-members" style="display:none;">0</span>
-        </button>
+    <div style="display:flex;gap:6px">
+      <button class="iconbtn" title="تغییر کاربر" onclick="switchUser()">🔄</button>
+      <button class="iconbtn" title="پنل مدیریت" id="adminBtn" onclick="openAdminPanel()" style="display:none">⚙️</button>
     </div>
-</div>
+  </div>
 
-<div class="search-bar" id="searchBar">
-    <input type="text" class="search-input" id="searchInput" placeholder="🔍 جستجو در پیام‌ها..." oninput="filterMessages()">
-</div>
+  <!-- 🆕 تب‌های اصلی -->
+  <div class="main-tabs">
+    <button class="main-tab active" id="tabChats" onclick="switchMainTab('chats')">💬 چت‌ها</button>
+    <button class="main-tab" id="tabToCouncil" onclick="switchMainTab('toCouncil')">📤 ارسال به شورا</button>
+    <button class="main-tab" id="tabReplies" onclick="switchMainTab('replies')">📬 پاسخ‌ها <span class="badge" id="repliesBadge"></span></button>
+  </div>
 
-<div class="messages-container" id="messagesContainer">
-    <div class="loading-spinner">
-        <i class="fas fa-spinner"></i>
-        <div>در حال بارگذاری...</div>
+  <!-- پنل چت‌ها -->
+  <div class="main-panel active" id="panelChats">
+    <div class="searchbox">
+      <input id="convSearch" placeholder="🔍 جستجو در مکالمات..." oninput="renderConvList()">
     </div>
-</div>
+    <div id="convList"></div>
+  </div>
 
-<button class="fab" onclick="openComposeModal()" title="پیام جدید">
-    <i class="fas fa-plus"></i>
-</button>
-
-<div class="modal-overlay" id="composeModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <div class="modal-title" id="composeTitle">
-                <i class="fas fa-pen"></i> پیام جدید
-            </div>
-            <button class="modal-close" onclick="closeComposeModal()">✕</button>
-        </div>
-
-        <form id="composeForm" onsubmit="sendMessage(event)">
-            <div class="form-field" id="recipientField" style="display:none;">
-    <label>شماره تلفن یا شماره حساب گیرنده <span class="required">*</span></label>
-    <input type="text" id="recipientInput" placeholder="مثلاً: 09131762040 یا 200176" maxlength="20" autocomplete="off">
-    <div id="recipientInfo" style="margin-top:8px;font-size:0.75rem;padding:8px 12px;border-radius:8px;display:none;"></div>
-</div>
-
-            <div class="form-field">
-                <label>عنوان <span class="required">*</span></label>
-                <input type="text" id="subjectInput" placeholder="موضوع پیام..." maxlength="100" required>
-            </div>
-
-            <div class="form-field">
-                <label>نوع پیام <span class="required">*</span></label>
-                <select id="typeSelect" required>
-                    <option value="suggestion">💡 پیشنهاد</option>
-                    <option value="complaint">📢 شکایت</option>
-                    <option value="request">📋 درخواست</option>
-                    <option value="question">❓ سوال</option>
-                    <option value="info">ℹ️ اطلاع‌رسانی</option>
-                    <option value="other">📝 سایر</option>
-                </select>
-            </div>
-
-            <div class="form-field">
-                <label>متن پیام <span class="required">*</span></label>
-                <textarea id="messageInput" placeholder="متن پیام خود را اینجا بنویسید..." maxlength="2000" required></textarea>
-            </div>
-
-            <div class="checkbox-field">
-                <input type="checkbox" id="urgentCheck">
-                <label for="urgentCheck">
-                    ⚠️ پیام فوری
-                    <span class="hint">(اولویت بالا)</span>
-                </label>
-            </div>
-
-            <div class="checkbox-field" id="anonymousField">
-                <input type="checkbox" id="anonymousCheck">
-                <label for="anonymousCheck">
-                    👤 ارسال ناشناس
-                    <span class="hint">(نام شما نمایش داده نمی‌شود)</span>
-                </label>
-            </div>
-
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <i class="fas fa-paper-plane"></i>
-                <span>ارسال پیام</span>
-            </button>
-        </form>
+  <!-- 🆕 پنل ارسال به شورا -->
+  <div class="main-panel" id="panelToCouncil">
+    <div class="council-panel">
+      <h3>📤 ارسال پیام به شورا</h3>
+      <p>پیام خود را بنویسید. پس از ارسال، شورای صندوق آن را می‌بیند و پاسخ می‌دهد.</p>
+      <textarea id="councilMsgText" placeholder="متن پیام خود را اینجا بنویسید... (حداقل ۵ کاراکتر)" maxlength="1000" oninput="document.getElementById('councilCharCount').textContent=this.value.length"></textarea>
+      <div class="char-count"><span id="councilCharCount">0</span> / 1000</div>
+      <button class="council-send-btn" id="councilSendBtn" onclick="sendToCouncil()">
+        📤 ارسال به شورا
+      </button>
+      <div class="council-hint">💡 پیام شما در پنل مدیریت شورا قابل مشاهده و پاسخ‌دهی است.</div>
     </div>
-</div>
+  </div>
 
-<div class="modal-overlay" id="viewModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <div class="modal-title">
-                <i class="fas fa-envelope-open"></i> مشاهده پیام
-            </div>
-            <button class="modal-close" onclick="closeViewModal()">✕</button>
-        </div>
-        <div id="viewContent"></div>
+  <!-- 🆕 پنل پاسخ‌ها -->
+  <div class="main-panel" id="panelReplies">
+    <div class="replies-panel" id="repliesList">
+      <div class="empty"><span class="big">📬</span>در حال بارگذاری...</div>
     </div>
-</div>
+  </div>
 
-<div class="modal-overlay" id="replyModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <div class="modal-title">
-                <i class="fas fa-reply"></i> پاسخ
-            </div>
-            <button class="modal-close" onclick="closeReplyModal()">✕</button>
-        </div>
-        <form onsubmit="sendReply(event)">
-            <div class="form-field">
-                <label>متن پاسخ <span class="required">*</span></label>
-                <textarea id="replyInput" placeholder="پاسخ خود را بنویسید..." required></textarea>
-            </div>
-            <button type="submit" class="submit-btn">
-                <i class="fas fa-paper-plane"></i>
-                <span>ارسال پاسخ</span>
-            </button>
-        </form>
+  <!-- صفحه چت -->
+  <div id="chatView">
+    <div class="chat-top">
+      <button class="iconbtn" onclick="closeChat()">→</button>
+      <div class="avatar" id="chatAvatar"></div>
+      <div class="ct-info">
+        <div class="ct-name" id="chatName"></div>
+        <div class="ct-status" id="chatStatus"></div>
+      </div>
     </div>
-</div>
+    <div id="messagesArea"></div>
+    <div class="composer" style="position:relative">
+      <button class="attach" onclick="toggleAttachMenu()">📎</button>
+      <textarea id="msgInput" rows="1" placeholder="پیام بنویسید..."
+        oninput="autoGrow(this)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendText()}"></textarea>
+      <button class="send" id="sendBtn" onclick="sendText()" disabled>➤</button>
+      <div id="attachMenu">
+        <button onclick="pickFile('image/*')"><span class="ico">🖼️</span> تصویر</button>
+        <button onclick="pickFile('video/*')"><span class="ico">🎬</span> فیلم</button>
+        <button onclick="pickFile('audio/*')"><span class="ico">🎤</span> صوت</button>
+        <button onclick="pickFile('*/*')"><span class="ico">📄</span> فایل</button>
+      </div>
+    </div>
+  </div>
 
-<div class="toast" id="toast">
-    <i class="fas fa-check-circle"></i>
-    <span id="toastText">عملیات موفق</span>
-</div>
+  <button id="fabPen" onclick="openSearchModal()" title="چت جدید">✏️</button>
 
-<div class="offline-badge" id="offlineBadge">
-    <i class="fas fa-wifi"></i> حالت آفلاین
+  <!-- مودال جستجوی شماره -->
+  <div class="modal" id="searchModal">
+    <div class="modal-card">
+      <h3>✏️ چت جدید</h3>
+      <p>شماره تلفن مخاطب را وارد کنید. اگر در سیستم باشد، پیدا می‌شود.</p>
+      <input id="phoneInput" placeholder="09123456789" inputmode="tel" maxlength="13"
+        oninput="onPhoneInput()" onkeydown="if(event.key==='Enter')searchContact()">
+      <div id="searchResult"></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeSearchModal()">بستن</button>
+        <button class="btn-primary" onclick="searchContact()">جستجو</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال پنل مدیریت -->
+  <div class="modal" id="adminModal">
+    <div class="modal-card" style="max-width:560px;max-height:85vh;overflow-y:auto">
+      <h3>⚙️ پنل مدیریت</h3>
+      <div class="admin-tabs">
+        <button class="admin-tab active" id="adminTabChats" onclick="switchAdminTab('chats')">💬 چت‌ها</button>
+        <button class="admin-tab" id="adminTabCouncil" onclick="switchAdminTab('council')">📤 پیام‌های به شورا</button>
+      </div>
+      <div id="adminContent"><div class="empty">در حال بارگذاری...</div></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeAdminPanel()">بستن</button>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="fileInput" style="display:none">
 </div>
 
 <script>
-// ============================================================
-// تنظیمات
-// ============================================================
+/* ============================================================
+   تنظیمات — این‌ها را با مقادیر واقعی خودتان عوض کنید
+   ============================================================ */
 var API_URL = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-var REFRESH_INTERVAL = 30000;
-var currentTab = 'council';
-var currentUser = null;
-var currentMember = null;
-var allMessages = [];
-var membersList = [];
-var searchMode = false;
-var currentMessageId = null;
-var replyParentId = null;
+var ADMIN_URL = API_URL;      // اگر URL جدا دارید عوض کنید
+var ADMIN_KEY = 'admin12345';
+var MAX_FILE_MB = 5;
 
-// ============================================================
-// راه‌اندازی
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📨 پیام‌رسان بارگذاری شد');
-    
-    try {
-        var userStr = localStorage.getItem('currentUser');
-        if (userStr) {
-            currentUser = JSON.parse(userStr);
-            console.log('👤 کاربر:', currentUser.firstName || currentUser.username);
-        }
-        
-        var membersStr = localStorage.getItem('sandogh_members_cache');
-        if (membersStr) {
-            try { membersList = JSON.parse(membersStr); } catch(e) {}
-        }
-        
-        if (!membersList || membersList.length === 0) {
-            var sess = sessionStorage.getItem('sandogh_data_v2');
-            if (sess) {
-                try {
-                    var data = JSON.parse(sess);
-                    membersList = data.members || [];
-                } catch(e) {}
-            }
-        }
-        
-        if (membersList && currentUser) {
-            currentMember = membersList.find(function(m) {
-                return String(m.accountNumber) === String(currentUser.accountNumber) ||
-                       String(m.id) === String(currentUser.memberId);
-            });
-        }
-        
-        if (!currentUser || !currentUser.accountNumber) {
-            alert('❌ لطفاً ابتدا از طریق برنامه اصلی وارد شوید');
-            window.close();
-            return;
-        }
-        
-        console.log('✅ اطلاعات کاربر لود شد:', currentUser.firstName);
-        
-    } catch(e) {
-        console.error('خطا:', e);
-    }
-    
-    loadMessages();
-    updateRecipientList();
-    setInterval(loadMessages, REFRESH_INTERVAL);
-    updateOnlineStatus();
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-});
+/* ============================================================
+   State
+   ============================================================ */
+var ME = null;
+var ALL_USERS = [];
+var ACTIVE_CONV = null;
+var POLL_TIMER = null;
+var CACHE = { conversations: [], messages: {} };
+var CURRENT_MAIN_TAB = 'chats';
+var CURRENT_ADMIN_TAB = 'chats';
 
-function updateOnlineStatus() {
-    var badge = document.getElementById('offlineBadge');
-    if (navigator.onLine) {
-        badge.classList.remove('show');
-    } else {
-        badge.classList.add('show');
-    }
+/* ============================================================
+   ابزارها
+   ============================================================ */
+function normPhone(p){
+  if(!p) return '';
+  p = String(p).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+               .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+               .replace(/\D/g,'');
+  if(p.startsWith('98')) p = p.slice(2);
+  if(p.startsWith('0')) p = p.slice(1);
+  if(p.length === 10) p = '0' + p;
+  return p;
 }
-
-function getUserId() {
-    return currentUser.accountNumber || currentUser.memberId || currentUser.username || '';
+function nowISO(){ return new Date().toISOString(); }
+function faNum(n){ return String(n).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]); }
+function fmtTime(iso){
+  try{var d=new Date(iso);return d.toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'});}catch(e){return '';}
 }
-
-function getUserName() {
-    return (currentMember && currentMember.firstName) || currentUser.firstName || 'کاربر';
-}
-
-// ============================================================
-// API Calls
-// ============================================================
-function apiCall(action, extraParams) {
-    var url = API_URL + '?action=' + action;
-    if (extraParams) {
-        Object.keys(extraParams).forEach(function(k) {
-            url += '&' + k + '=' + encodeURIComponent(extraParams[k]);
-        });
-    }
-    
-    return fetch(url, { cache: 'no-cache' })
-        .then(function(r) { return r.json(); })
-        .catch(function(e) {
-            console.error('❌ API Error:', e);
-            return { ok: false, error: 'خطا در ارتباط با سرور' };
-        });
-}
-
-// ============================================================
-// بارگذاری پیام‌ها
-// ============================================================
-function loadMessages() {
-    var btn = document.getElementById('refreshBtn');
-    if (btn) btn.classList.add('loading');
-    
-    apiCall('getAllMessagesForUser', { user: getUserId() }).then(function(d) {
-        if (btn) btn.classList.remove('loading');
-        
-        if (d.ok && d.messages) {
-            allMessages = d.messages;
-            renderMessages();
-            updateBadges();
-            function loadMessages() {
-    var btn = document.getElementById('refreshBtn');
-    if (btn) btn.classList.add('loading');
-    
-    apiCall('getAllMessagesForUser', { user: getUserId() }).then(function(d) {
-        if (btn) btn.classList.remove('loading');
-        
-        if (d.ok && d.messages) {
-            allMessages = d.messages;
-            renderMessages();
-            updateBadges();
-            console.log('✅ ' + allMessages.length + ' پیام لود شد');
-            
-            // 🆕 به والد (برنامه اصلی) پیام بفرست
-            try {
-                if (window.parent && window.parent !== window) {
-                    var unread = allMessages.filter(function(m) {
-                        return m.status === 'new' && String(m.from_id) !== String(getUserId());
-                    }).length;
-                    
-                    window.parent.postMessage({
-                        type: 'messagesUpdate',
-                        unread: unread,
-                        total: allMessages.length
-                    }, '*');
-                }
-            } catch(e) {}
-            
-        } else {
-            console.error('❌ خطا در لود پیام‌ها:', d.error);
-        }
-    });
-}
-            console.log('✅ ' + allMessages.length + ' پیام لود شد');
-        } else {
-            console.error('❌ خطا در لود پیام‌ها:', d.error);
-            document.getElementById('messagesContainer').innerHTML = 
-                '<div class="empty-state">' +
-                '<i class="fas fa-exclamation-triangle" style="color:#ef4444;"></i>' +
-                '<div class="title">خطا در بارگذاری</div>' +
-                '<div class="desc">' + (d.error || 'مشکل در ارتباط با سرور') + '</div>' +
-                '</div>';
-        }
-    });
-}
-
-// ============================================================
-// تغییر تب
-// ============================================================
-function switchTab(tab) {
-    currentTab = tab;
-    document.querySelectorAll('.tab').forEach(function(t) {
-        t.classList.toggle('active', t.getAttribute('data-tab') === tab);
-    });
-    renderMessages();
-}
-
-// ============================================================
-// جستجو
-// ============================================================
-function toggleSearch() {
-    searchMode = !searchMode;
-    var bar = document.getElementById('searchBar');
-    bar.classList.toggle('show', searchMode);
-    if (searchMode) {
-        document.getElementById('searchInput').focus();
-    } else {
-        document.getElementById('searchInput').value = '';
-        renderMessages();
-    }
-}
-
-function filterMessages() {
-    renderMessages();
-}
-
-// ============================================================
-// رندر پیام‌ها
-// ============================================================
-function renderMessages() {
-    var list = document.getElementById('messagesContainer');
-    var searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    var myId = getUserId();
-    
-    var filtered = allMessages.filter(function(msg) {
-        // فیلتر بر اساس تب
-        var isCouncilMsg = (msg.type === 'council');
-        var isMemberMsg = (msg.type === 'member');
-        
-        if (currentTab === 'council' && !isCouncilMsg) return false;
-        if (currentTab === 'members' && !isMemberMsg) return false;
-        
-        // فیلتر جستجو
-        if (searchTerm) {
-            var haystack = ((msg.subject || '') + ' ' + (msg.message || '') + ' ' + (msg.from_name || '') + ' ' + (msg.to_name || '')).toLowerCase();
-            if (haystack.indexOf(searchTerm) === -1) return false;
-        }
-        
-        return true;
-    });
-    
-    filtered.sort(function(a, b) {
-        return (b.created_at || 0) - (a.created_at || 0);
-    });
-    
-    if (filtered.length === 0) {
-        list.innerHTML = '<div class="empty-state">' +
-            '<i class="fas fa-inbox"></i>' +
-            '<div class="title">پیامی وجود ندارد</div>' +
-            '<div class="desc">' + (searchTerm ? 'نتیجه‌ای برای جستجوی شما یافت نشد' : 'برای ارسال پیام جدید، روی دکمه + پایین کلیک کنید') + '</div>' +
-            '</div>';
-        return;
-    }
-    
-    var received = [];
-    var sent = [];
-    
-    filtered.forEach(function(msg) {
-        var isSender = String(msg.from_id) === String(myId);
-        if (isSender) sent.push(msg);
-        else received.push(msg);
-    });
-    
-    var html = '';
-    
-    if (received.length > 0) {
-        html += '<div class="section-title"><i class="fas fa-inbox"></i> پیام‌های دریافتی (' + received.length + ')</div>';
-        received.forEach(function(msg) { html += renderMessageCard(msg, false); });
-    }
-    
-    if (sent.length > 0) {
-        html += '<div class="section-title" style="margin-top:20px;"><i class="fas fa-paper-plane"></i> پیام‌های ارسالی (' + sent.length + ')</div>';
-        sent.forEach(function(msg) { html += renderMessageCard(msg, true); });
-    }
-    
-    list.innerHTML = html;
-}
-
-function renderMessageCard(msg, isSent) {
-    var myId = getUserId();
-    var isUnread = !isSent && msg.status === 'new';
-    var isUrgent = msg.is_urgent === true;
-    var isReplied = msg.status === 'replied' || msg.status === 'answered';
-    
-    var classes = 'message-card';
-    if (isUnread) classes += ' unread';
-    if (isUrgent) classes += ' urgent';
-    if (isReplied) classes += ' replied';
-    
-    var typeLabels = {
-        suggestion: '💡 پیشنهاد',
-        complaint: '📢 شکایت',
-        request: '📋 درخواست',
-        question: '❓ سوال',
-        info: 'ℹ️ اطلاع‌رسانی',
-        other: '📝 سایر',
-        message: '📨 پیام',
-        reply: '↩️ پاسخ'
-    };
-    
-    var timeStr = formatTime(msg.created_at);
-    var avatar = (isSent ? (msg.to_name || '؟') : (msg.from_name || '؟')).charAt(0);
-    
-    var senderLabel;
-if (isSent) {
-    // پیام‌های ارسالی: نام گیرنده
-    var toName = msg.to_name;
-    if (!toName || toName === 'undefined' || toName === 'null' || toName === '') {
-        // اگه خالی بود، از name استفاده کن یا نام کاربر رو بگیر
-        toName = (currentMember && currentMember.firstName) ? 'نامشخص' : 'گیرنده';
-    }
-    senderLabel = 'به: ' + toName;
-} else {
-    // پیام‌های دریافتی: نام فرستنده
-    var fromName = msg.from_name;
-    if (!fromName || fromName === 'undefined' || fromName === 'null') {
-        fromName = 'کاربر صندوق';
-    }
-    senderLabel = 'از: ' + fromName;
-}
-    
-    if (msg.type === 'council' && !isSent) {
-        senderLabel = 'از: شورای صندوق';
-    }
-    
-    return '<div class="' + classes + '" onclick="openMessage(\'' + msg.id + '\')">' +
-        '<div class="message-header">' +
-            '<div class="message-sender">' +
-                '<div class="sender-avatar">' + avatar + '</div>' +
-                '<div class="sender-info">' +
-                    '<div class="sender-name">' + senderLabel + '</div>' +
-                    '<div class="sender-meta">' + (typeLabels[msg.type_msg] || '') + '</div>' +
-                '</div>' +
-            '</div>' +
-            '<div class="message-time">' + timeStr + '</div>' +
-        '</div>' +
-        '<div class="message-subject">' +
-            (isUrgent ? '<span class="badge urgent">⚠️ فوری</span>' : '') +
-            (msg.is_anonymous ? '<span class="badge anonymous">👤 ناشناس</span>' : '') +
-            escapeHtml(msg.subject || '(بدون عنوان)') +
-        '</div>' +
-        '<div class="message-preview">' + escapeHtml(msg.message || '') + '</div>' +
-        '<div class="message-footer">' +
-            '<span class="message-status ' + (msg.status || 'new') + '">' + getStatusLabel(msg.status) + '</span>' +
-        '</div>' +
-    '</div>';
-}
-
-function getStatusLabel(status) {
-    switch(status) {
-        case 'new': return '<i class="fas fa-circle"></i> جدید';
-        case 'read': return '<i class="fas fa-check"></i> خوانده شده';
-        case 'replied': return '<i class="fas fa-check-double"></i> پاسخ داده شده';
-        case 'answered': return '<i class="fas fa-check-double"></i> پاسخ داده شده';
-        case 'pending': return '<i class="fas fa-clock"></i> در انتظار';
-        case 'closed': return '<i class="fas fa-lock"></i> بسته شده';
-        default: return '<i class="fas fa-circle"></i> جدید';
-    }
-}
-
-function formatTime(timestamp) {
-    if (!timestamp) return '';
-    var now = Date.now();
-    var diff = now - timestamp;
-    var seconds = Math.floor(diff / 1000);
-    var minutes = Math.floor(seconds / 60);
-    var hours = Math.floor(minutes / 60);
-    var days = Math.floor(hours / 24);
-    
-    if (seconds < 60) return 'همین الان';
-    if (minutes < 60) return minutes + ' دقیقه پیش';
-    if (hours < 24) return hours + ' ساعت پیش';
-    if (days < 7) return days + ' روز پیش';
-    
-    var d = new Date(timestamp);
+function fmtDay(iso){
+  try{
+    var d=new Date(iso),t=new Date();
+    if(d.toDateString()===t.toDateString()) return 'امروز';
+    var y=new Date(t);y.setDate(t.getDate()-1);
+    if(d.toDateString()===y.toDateString()) return 'دیروز';
     return d.toLocaleDateString('fa-IR');
+  }catch(e){return '';}
+}
+function fmtDateFull(iso){
+  try{var d=new Date(iso);return d.toLocaleDateString('fa-IR')+' - '+fmtTime(iso);}catch(e){return '-';}
+}
+function fmtSize(b){
+  if(!b) return '0 B';
+  if(b<1024) return b+' B';
+  if(b<1048576) return (b/1024).toFixed(1)+' KB';
+  return (b/1048576).toFixed(1)+' MB';
+}
+function esc(s){
+  return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+                       .replace(/\n/g,'<br>');
+}
+function uid(){ return 'm_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
+function convId(a,b){ return [normPhone(a),normPhone(b)].sort().join('_'); }
+function findUser(phone){
+  var np = normPhone(phone);
+  return ALL_USERS.find(u => normPhone(u.phone) === np) || null;
 }
 
-function escapeHtml(text) {
-    var div = document.createElement('div');
-    div.textContent = text || '';
-    return div.innerHTML;
+function toast(msg, type){
+  var c = document.getElementById('toasts');
+  var el = document.createElement('div');
+  el.className = 'toast ' + (type||'');
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2600);
 }
 
-// ============================================================
-// نمایش پیام
-// ============================================================
-function openMessage(id) {
-    var msg = allMessages.find(function(m) { return m.id === id; });
-    if (!msg) return;
-    
-    currentMessageId = id;
-    
-    var myId = getUserId();
-    var isMine = String(msg.from_id) === String(myId);
-    
-    var html = '<div style="margin-bottom:14px;">' +
-        '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">' +
-            '<div class="sender-avatar" style="width:44px;height:44px;font-size:1rem;">' + (msg.from_name || '؟').charAt(0) + '</div>' +
-            '<div>' +
-                '<div style="font-weight:900;font-size:0.9rem;">' + (msg.is_anonymous ? '👤 ناشناس' : escapeHtml(msg.from_name || 'ناشناس')) + '</div>' +
-                '<div style="font-size:0.7rem;color:#9ca3af;">' + formatTime(msg.created_at) + '</div>' +
-            '</div>' +
-        '</div>' +
-        '<div style="background:rgba(139,92,246,0.08);border-right:3px solid #8b5cf6;border-radius:10px;padding:12px;">' +
-            '<div style="font-weight:900;font-size:0.9rem;color:#ffc94d;margin-bottom:8px;">' + escapeHtml(msg.subject) + '</div>' +
-            '<div style="font-size:0.82rem;color:#d1d5db;line-height:1.9;white-space:pre-wrap;">' + escapeHtml(msg.message) + '</div>' +
-        '</div>' +
-    '</div>';
-    
-    // اگه پاسخ داشت، نمایش بده
-    if (msg.status === 'replied' || msg.status === 'answered') {
-        var replies = allMessages.filter(function(m) { 
-            return m.parent_id === id && (m.type === 'member' || (m.type === 'council' && m.type_msg === 'reply'));
-        });
-        
-        if (replies.length > 0) {
-            html += '<div class="replies-container">';
-            html += '<div style="font-size:0.75rem;color:#9ca3af;font-weight:800;margin-bottom:8px;"><i class="fas fa-comments"></i> پاسخ‌ها (' + replies.length + ')</div>';
-            replies.forEach(function(r) {
-                var replyMine = String(r.from_id) === String(myId);
-                html += '<div class="reply-item ' + (replyMine ? 'mine' : '') + '">' +
-                    '<div class="reply-header">' +
-                        '<span class="reply-author">' + escapeHtml(r.from_name || 'ناشناس') + '</span>' +
-                        '<span class="reply-time">' + formatTime(r.created_at) + '</span>' +
-                    '</div>' +
-                    '<div class="reply-text">' + escapeHtml(r.message) + '</div>' +
-                '</div>';
-            });
-            html += '</div>';
-        }
-    }
-    
-    // دکمه‌ها
-    var canReply = !isMine || msg.type === 'council';
-    html += '<div class="detail-actions">' +
-        (canReply ? '<button class="detail-btn primary" onclick="openReplyModal(\'' + id + '\')"><i class="fas fa-reply"></i> پاسخ</button>' : '') +
-        (isMine ? '<button class="detail-btn danger" onclick="deleteMessage(\'' + id + '\')"><i class="fas fa-trash"></i> حذف</button>' : '') +
-    '</div>';
-    
-    document.getElementById('viewContent').innerHTML = html;
-    document.getElementById('viewModal').classList.add('show');
+/* ============================================================
+   API helper
+   ============================================================ */
+async function apiCall(action, params){
+  var qs = new URLSearchParams(Object.assign({action:action}, params||{}));
+  var url = API_URL + '?' + qs.toString();
+  var res = await fetch(url, {cache:'no-cache'});
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
+}
+async function apiPost(action, body){
+  var res = await fetch(API_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify(Object.assign({action:action}, body||{}))
+  });
+  if(!res.ok) throw new Error('HTTP ' + res.status);
+  return await res.json();
 }
 
-function closeViewModal() {
-    document.getElementById('viewModal').classList.remove('show');
-    renderMessages();
+/* ============================================================
+   شروع
+   ============================================================ */
+async function initUserPicker(){
+  var list = document.getElementById('userPickerList');
+  list.innerHTML = '<div style="color:var(--muted);padding:20px">در حال بارگذاری کاربران...</div>';
+  try{
+    var d = await apiCall('getMessengerUsers');
+    if(!d.ok || !d.users || d.users.length === 0){
+      list.innerHTML = '<div style="color:#fca5a5;padding:20px">❌ کاربری یافت نشد<br>'+
+        '<button onclick="initUserPicker()" style="margin-top:12px;padding:8px 16px;border:none;border-radius:8px;background:var(--violet);color:#fff;cursor:pointer;font-family:inherit">تلاش دوباره</button></div>';
+      return;
+    }
+    ALL_USERS = d.users;
+    list.innerHTML = '';
+    ALL_USERS.forEach(u=>{
+      var div = document.createElement('div');
+      div.className = 'up-user';
+      div.innerHTML =
+        '<div class="avatar" style="background:'+(u.color||'#8b5cf6')+'">'+esc((u.name||'?')[0])+'</div>'+
+        '<div class="uu-info"><div class="uu-name">'+esc(u.name||'ناشناس')+
+        (u.isCouncil ? ' <span style="color:#ffc94d;font-size:.7rem">(شورا)</span>' : '')+'</div>'+
+        '<div class="uu-phone">'+esc(u.phone||'')+'</div></div>';
+      div.onclick = ()=> selectUser(u);
+      list.appendChild(div);
+    });
+  }catch(e){
+    list.innerHTML = '<div style="color:#fca5a5;padding:20px">❌ خطا: '+esc(e.message)+'</div>';
+  }
 }
 
-// ============================================================
-// مودال ارسال پیام
-// ============================================================
-function openComposeModal() {
-    document.getElementById('composeModal').classList.add('show');
-    document.getElementById('composeForm').reset();
-    
-    var recipientField = document.getElementById('recipientField');
-    var recipientInput = document.getElementById('recipientInput');
-    var recipientInfo = document.getElementById('recipientInfo');
-    
-    if (currentTab === 'members') {
-        recipientField.style.display = 'block';
-        document.getElementById('anonymousField').style.display = 'none';
-        
-        // فعال کردن جستجوی خودکار
-        if (recipientInput) {
-            recipientInput.value = '';
-            recipientInput.oninput = checkRecipient;
-        }
-        
-        if (recipientInfo) {
-            recipientInfo.style.display = 'none';
-        }
-    } else {
-        recipientField.style.display = 'none';
-        document.getElementById('anonymousField').style.display = 'flex';
-    }
-    
-    document.getElementById('composeTitle').innerHTML = currentTab === 'council' 
-        ? '<i class="fas fa-crown"></i> پیام به شورا'
-        : '<i class="fas fa-users"></i> پیام به اعضا';
-}
-    // ============================================================
-// 🆕 چک کردن گیرنده با شماره تلفن یا شماره حساب
-// ============================================================
-var validatedRecipient = null;
-
-function checkRecipient() {
-    var input = document.getElementById('recipientInput');
-    var info = document.getElementById('recipientInfo');
-    var value = input.value.trim();
-    
-    validatedRecipient = null;
-    
-    if (!value) {
-        info.style.display = 'none';
-        return;
-    }
-    
-    // جستجو در membersList
-    var found = null;
-    var myId = getUserId();
-    
-    // شماره تلفن رو نرمال کن (حذف فاصله، خط تیره، +98)
-    var searchPhone = value.replace(/[\s\-\(\)\+]/g, '');
-    if (searchPhone.startsWith('98') && searchPhone.length === 12) {
-        searchPhone = '0' + searchPhone.substring(2);
-    }
-    
-    // جستجو
-    for (var i = 0; i < membersList.length; i++) {
-        var m = membersList[i];
-        
-        // چک شماره حساب
-        if (String(m.accountNumber) === value) {
-            found = m;
-            break;
-        }
-        
-        // چک شماره تلفن ۱
-        if (m.phone1) {
-            var p1 = String(m.phone1).replace(/[\s\-\(\)\+]/g, '');
-            if (p1 === searchPhone || p1 === value) {
-                found = m;
-                break;
-            }
-        }
-        
-        // چک شماره تلفن ۲
-        if (m.phone2) {
-            var p2 = String(m.phone2).replace(/[\s\-\(\)\+]/g, '');
-            if (p2 === searchPhone || p2 === value) {
-                found = m;
-                break;
-            }
-        }
-        
-        // چک username
-        if (String(m.karbari) === value) {
-            found = m;
-            break;
-        }
-    }
-    
-    if (!found) {
-        info.style.display = 'block';
-        info.style.background = 'rgba(239,68,68,0.1)';
-        info.style.borderRight = '3px solid #ef4444';
-        info.style.color = '#ef4444';
-        info.innerHTML = '❌ کاربری با این شماره پیدا نشد';
-        return;
-    }
-    
-    // چک نکن خودش باشه
-    if (String(found.accountNumber) === String(myId) || String(found.id) === String(currentUser.memberId)) {
-        info.style.display = 'block';
-        info.style.background = 'rgba(245,158,11,0.1)';
-        info.style.borderRight = '3px solid #f59e0b';
-        info.style.color = '#f59e0b';
-        info.innerHTML = '⚠️ نمی‌تونی به خودت پیام بفرستی';
-        return;
-    }
-    
-    // 🆕 پیدا شد — نام رو از name بگیر
-var recipientName = found.name || found.firstName || '';
-if (!recipientName) {
-    // اگه خالی بود، از شماره حساب استفاده کن
-    recipientName = 'کاربر ' + (found.accountNumber || '');
+function selectUser(u){
+  ME = u;
+  document.getElementById('userPicker').classList.add('hidden');
+  document.getElementById('whoAmI').textContent = 'وارد شده: ' + (u.name||u.phone);
+  if(u.isCouncil){
+    document.getElementById('adminBtn').style.display = 'flex';
+  }
+  loadConversations();
+  loadRepliesBadge();
+  startPolling();
 }
 
-validatedRecipient = {
-    id: found.karbari || found.accountNumber || found.id || found.memberId,
-    name: recipientName,
-    accountNumber: found.accountNumber,
-    memberId: found.id || found.memberId,
-    phone: found.phone || found.phone1 || found.phone2 || ''
-};
-
-console.log('✅ validatedRecipient:', validatedRecipient);
-
-info.style.display = 'block';
-info.style.background = 'rgba(16,185,129,0.1)';
-info.style.borderRight = '3px solid #10b981';
-info.style.color = '#10b981';
-info.innerHTML = '✅ ' + escapeHtml(recipientName) + ' - ' + escapeHtml(found.accountNumber);
+function switchUser(){
+  ME = null;
+  ACTIVE_CONV = null;
+  CACHE = { conversations: [], messages: {} };
+  document.getElementById('chatView').classList.remove('open');
+  document.getElementById('adminBtn').style.display = 'none';
+  document.getElementById('userPicker').classList.remove('hidden');
+  initUserPicker();
 }
 
-function closeComposeModal() {
-    document.getElementById('composeModal').classList.remove('show');
+/* ============================================================
+   تب‌های اصلی
+   ============================================================ */
+function switchMainTab(tab){
+  CURRENT_MAIN_TAB = tab;
+  document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.main-panel').forEach(p=>p.classList.remove('active'));
+
+  if(tab === 'chats'){
+    document.getElementById('tabChats').classList.add('active');
+    document.getElementById('panelChats').classList.add('active');
+    loadConversations();
+  } else if(tab === 'toCouncil'){
+    document.getElementById('tabToCouncil').classList.add('active');
+    document.getElementById('panelToCouncil').classList.add('active');
+  } else if(tab === 'replies'){
+    document.getElementById('tabReplies').classList.add('active');
+    document.getElementById('panelReplies').classList.add('active');
+    loadMyReplies();
+  }
 }
-// ============================================================
-// ارسال پیام
-// ============================================================
-function sendMessage(event) {
-    event.preventDefault();
-    
-    var subject = document.getElementById('subjectInput').value.trim();
-    var message = document.getElementById('messageInput').value.trim();
-    var type = document.getElementById('typeSelect').value;
-    var isUrgent = document.getElementById('urgentCheck').checked;
-    var isAnonymous = currentTab === 'council' && document.getElementById('anonymousCheck').checked;
-    
-    if (!subject || !message) {
-        showToast('لطفاً عنوان و متن پیام را وارد کنید', 'error');
-        return;
+
+/* ============================================================
+   تب چت‌ها
+   ============================================================ */
+async function loadConversations(){
+  try{
+    var d = await apiCall('getMessengerConversations', { user: ME.phone });
+    if(d.ok && d.conversations){
+      CACHE.conversations = d.conversations;
+      if(CURRENT_MAIN_TAB === 'chats') renderConvList();
     }
-    
-    // برای پیام به عضو: باید گیرنده تأیید شده باشه
-    if (currentTab === 'members' && !validatedRecipient) {
-        showToast('❌ لطفاً شماره تلفن یا شماره حساب گیرنده را وارد کنید', 'error');
-        return;
-    }
-    
-    var submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ارسال...';
-    
-    var fromName = isAnonymous ? 'ناشناس' : getUserName();
-    var myId = getUserId();
-    
-    if (currentTab === 'council') {
-        apiCall('sendMessageToCouncil', {
-            user: myId,
-            name: fromName,
-            message: subject + '\n\n' + message
-        }).then(function(d) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
-            
-            if (d.ok) {
-                showToast('✅ پیام با موفقیت ارسال شد');
-                closeComposeModal();
-                setTimeout(loadMessages, 1000);
-            } else {
-                showToast('❌ ' + (d.error || 'خطا در ارسال'), 'error');
-            }
-        });
-        
-    } else {
-               // 🆕 پیام به عضو (تقویت شده)
-        console.log('📤 شروع ارسال پیام به عضو...');
-        console.log('  validatedRecipient:', validatedRecipient);
-        console.log('  membersList طول:', membersList ? membersList.length : 0);
-        
-        // 🆕 اگه validatedRecipient خالی بود، دوباره پیدا کن
-        var finalRecipient = validatedRecipient;
-        
-        if (!finalRecipient) {
-            console.log('⚠️ validatedRecipient خالیه، دوباره پیدا می‌کنم...');
-            var inputVal = document.getElementById('recipientInput').value.trim();
-            
-            if (inputVal && membersList && membersList.length > 0) {
-                function normalizePhone(p) {
-                    if (!p) return '';
-                    var s = String(p).replace(/[\s\-\(\)\+]/g, '');
-                    if (s.startsWith('98') && s.length >= 12) s = '0' + s.substring(2);
-                    s = s.replace(/[۰-۹]/g, function(d) { return String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)); });
-                    return s;
-                }
-                
-                var searchNorm = normalizePhone(inputVal);
-                
-                for (var i = 0; i < membersList.length; i++) {
-                    var m = membersList[i];
-                    if (String(m.accountNumber) === inputVal) { finalRecipient = m; break; }
-                    if (String(m.id) === inputVal) { finalRecipient = m; break; }
-                    if (m.phone && normalizePhone(m.phone) === searchNorm) { finalRecipient = m; break; }
-                    if (m.phone2 && normalizePhone(m.phone2) === searchNorm) { finalRecipient = m; break; }
-                }
-                
-                console.log('  نتیجه جستجو:', finalRecipient);
-            }
-        }
-        
-        // 🆕 اگه بازم خالی بود، پیام خطا بده
-        if (!finalRecipient) {
-            showToast('❌ لطفاً شماره گیرنده را دوباره وارد کنید', 'error');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
-            return;
-        }
-        
-        // 🆕 استخراج id و name
-        var recipientId = finalRecipient.id || finalRecipient.accountNumber || finalRecipient.memberId || '';
-       // 🆕 استخراج نام (اولویت: name → firstName → 'کاربر')
-var recipientName = finalRecipient.name || finalRecipient.firstName || '';
-
-// 🆕 اگه نام خالی بود، سعی کن از چند منبع دیگه بگیریم
-if (!recipientName || recipientName === 'undefined' || recipientName === 'null' || recipientName === '') {
-    // از membersList اصلی چک کن
-    if (membersList && membersList.length > 0) {
-        for (var k = 0; k < membersList.length; k++) {
-            var mm = membersList[k];
-            if (String(mm.accountNumber) === String(finalRecipient.accountNumber) ||
-                String(mm.id) === String(finalRecipient.id)) {
-                recipientName = mm.name || mm.firstName || '';
-                if (recipientName) break;
-            }
-        }
-    }
+  }catch(e){
+    console.log('خطا در لود مکالمات:', e.message);
+  }
 }
 
-// اگه بازم خالی بود، فقط شماره حساب رو نشون بده
-if (!recipientName) {
-    recipientName = 'کاربر ' + (finalRecipient.accountNumber || recipientId);
-}
+function renderConvList(){
+  var list = document.getElementById('convList');
+  if(!ME){ list.innerHTML=''; return; }
+  var convs = CACHE.conversations.slice();
 
-var recipientId = finalRecipient.id || finalRecipient.accountNumber || finalRecipient.memberId || '';
+  var q = (document.getElementById('convSearch').value||'').trim();
+  if(q){
+    var nq = normPhone(q);
+    convs = convs.filter(c=>{
+      var other = findUser(c.otherPhone);
+      return (other && other.name && other.name.indexOf(q)>=0) ||
+             (nq && c.otherPhone.indexOf(nq)>=0);
+    });
+  }
 
-if (!recipientId) {
-    showToast('❌ شناسه گیرنده معتبر نیست', 'error');
-    submitBtn.disabled = false;
-    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
+  if(convs.length === 0){
+    list.innerHTML = '<div class="empty"><span class="big">💬</span>هنوز مکالمه‌ای ندارید<br>با دکمه ✏️ یک چت جدید شروع کنید</div>';
     return;
-}
-        console.log('  ✅ نهایی:');
-        console.log('    to_user:', recipientId);
-        console.log('    to_name:', recipientName);
-        
-        apiCall('sendMessageToMember', {
-            from_user: myId,
-            from_name: fromName,
-            to_user: recipientId,
-            to_name: recipientName,
-            subject: subject,
-            message: message,
-            is_urgent: isUrgent ? 'true' : 'false'
-        }).then(function(d) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پیام</span>';
-            
-            if (d.ok) {
-                showToast('✅ پیام برای ' + recipientName + ' ارسال شد');
-                validatedRecipient = null;
-                closeComposeModal();
-                setTimeout(loadMessages, 1000);
-            } else {
-                showToast('❌ ' + (d.error || 'خطا در ارسال'), 'error');
-            }
-        });
-    }
+  }
+  var html = '';
+  convs.forEach(c=>{
+    var other = findUser(c.otherPhone);
+    var name = other ? other.name : c.otherPhone;
+    var color = other ? (other.color||'#8b5cf6') : '#8b5cf6';
+    var initial = (name||'?')[0];
+    var last = c.last || {};
+    var preview = '';
+    if(last.type === 'text') preview = last.text || '';
+    else if(last.type === 'image') preview = '🖼️ تصویر';
+    else if(last.type === 'video') preview = '🎬 فیلم';
+    else if(last.type === 'audio') preview = '🎤 صوت';
+    else preview = '📄 فایل';
+    if(last.fromPhone && normPhone(last.fromPhone) === normPhone(ME.phone)) preview = 'شما: ' + preview;
+
+    html += '<div class="conv" onclick="openChat(\''+c.convId+'\',\''+c.otherPhone+'\')">';
+    html += '<div class="avatar" style="background:'+color+'">'+esc(initial)+'</div>';
+    html += '<div class="conv-info"><div class="conv-name"><span>'+esc(name)+'</span>'+
+            '<span class="time">'+fmtTime(last.createdAt)+'</span></div>';
+    html += '<div class="conv-last"><span style="flex:1;overflow:hidden;text-overflow:ellipsis">'+
+            esc(preview)+'</span>'+
+            (c.unread>0 ? '<span class="badge">'+faNum(c.unread)+'</span>' : '')+
+            '</div></div></div>';
+  });
+  list.innerHTML = html;
 }
 
-// ============================================================
-// ارسال پاسخ
-// ============================================================
-function sendReply(event) {
-    event.preventDefault();
-    var text = document.getElementById('replyInput').value.trim();
-    if (!text) return;
-    
-    var parent = allMessages.find(function(m) { return m.id === replyParentId; });
-    if (!parent) return;
-    
-    var myId = getUserId();
-    var fromName = getUserName();
-    
-    var submitBtn = event.target.querySelector('.submit-btn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال ارسال...';
-    
-    var action = parent.type === 'council' ? 'replyToMember' : 'replyToMemberMessage';
-    
-    var params;
-    if (parent.type === 'council') {
-        params = {
-            key: 'admin12345',
-            messageId: parent.id,
-            reply: text,
-            replyBy: fromName
-        };
+async function openChat(cid, otherPhone){
+  ACTIVE_CONV = { convId: cid, otherPhone: normPhone(otherPhone) };
+  var other = findUser(otherPhone);
+  document.getElementById('chatName').textContent = other ? other.name : otherPhone;
+  document.getElementById('chatStatus').textContent = 'آنلاین';
+  var av = document.getElementById('chatAvatar');
+  av.textContent = (other ? other.name : otherPhone)[0];
+  av.style.background = other ? (other.color||'#8b5cf6') : '#8b5cf6';
+  document.getElementById('chatView').classList.add('open');
+  await loadMessages(cid);
+  markConvRead(cid);
+  setTimeout(()=> document.getElementById('msgInput').focus(), 200);
+}
+
+function closeChat(){
+  ACTIVE_CONV = null;
+  document.getElementById('chatView').classList.remove('open');
+  loadConversations();
+}
+
+async function loadMessages(cid){
+  try{
+    var d = await apiCall('getMessengerMessages', { convId: cid, user: ME.phone });
+    if(d.ok && d.messages){
+      CACHE.messages[cid] = d.messages;
+      renderMessages();
+    }
+  }catch(e){
+    console.log('خطا در لود پیام‌ها:', e.message);
+  }
+}
+
+async function markConvRead(cid){
+  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.phone }); }catch(e){}
+}
+
+function renderMessages(){
+  if(!ACTIVE_CONV) return;
+  var area = document.getElementById('messagesArea');
+  var msgs = CACHE.messages[ACTIVE_CONV.convId] || [];
+  var myPhone = normPhone(ME.phone);
+
+  if(msgs.length === 0){
+    area.innerHTML = '<div class="empty" style="margin:auto"><span class="big">👋</span>شروع مکالمه<br>اولین پیام را بفرستید</div>';
+    return;
+  }
+  var html = '';
+  var lastDay = '';
+  msgs.forEach(m=>{
+    var day = fmtDay(m.createdAt);
+    if(day !== lastDay){ html += '<div class="day-sep">'+esc(day)+'</div>'; lastDay = day; }
+    var isMine = normPhone(m.fromPhone) === myPhone;
+    html += '<div class="bubble-row '+(isMine?'me':'them')+'"><div class="bubble">';
+    if(m.type === 'text'){
+      html += esc(m.text);
+    } else if(m.type === 'image'){
+      html += '<img class="thumb" src="'+m.fileUrl+'" onclick="openMedia(\''+m.fileUrl+'\')">';
+    } else if(m.type === 'video'){
+      html += '<video class="thumb" controls src="'+m.fileUrl+'"></video>';
+    } else if(m.type === 'audio'){
+      html += '<audio controls src="'+m.fileUrl+'"></audio>';
+    } else if(m.type === 'file'){
+      html += '<div class="file-card"><span class="fc-icon">📄</span>'+
+              '<div class="fc-info"><div class="fc-name">'+esc(m.fileName||'فایل')+'</div>'+
+              '<div class="fc-size">'+fmtSize(m.fileSize||0)+'</div></div>'+
+              '<a class="dl" href="'+m.fileUrl+'" download="'+esc(m.fileName||'file')+'" target="_blank">⬇️</a>'+
+              '</div>';
+    }
+    html += '<div class="meta">'+fmtTime(m.createdAt);
+    if(isMine) html += ' <span class="ticks">'+(m.status==='read'?'✓✓':'✓')+'</span>';
+    html += '</div></div></div>';
+  });
+  area.innerHTML = html;
+  area.scrollTop = area.scrollHeight;
+}
+
+function openMedia(url){
+  var w = window.open('', '_blank');
+  if(w){ w.document.write('<body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;height:100vh"><img src="'+url+'" style="max-width:100%;max-height:100vh"></body>'); }
+}
+
+function autoGrow(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+  document.getElementById('sendBtn').disabled = !el.value.trim();
+}
+
+async function sendText(){
+  if(!ACTIVE_CONV || !ME) return;
+  var input = document.getElementById('msgInput');
+  var text = input.value.trim();
+  if(!text) return;
+
+  var msg = {
+    id: uid(),
+    convId: ACTIVE_CONV.convId,
+    fromPhone: normPhone(ME.phone),
+    toPhone: ACTIVE_CONV.otherPhone,
+    fromName: ME.name || '',
+    toName: (findUser(ACTIVE_CONV.otherPhone)||{}).name || '',
+    type: 'text',
+    text: text,
+    fileUrl: '',
+    fileName: '',
+    fileSize: 0,
+    mimeType: '',
+    status: 'new',
+    createdAt: nowISO()
+  };
+
+  if(!CACHE.messages[ACTIVE_CONV.convId]) CACHE.messages[ACTIVE_CONV.convId] = [];
+  CACHE.messages[ACTIVE_CONV.convId].push(msg);
+  renderMessages();
+  input.value = '';
+  input.style.height = '40px';
+  document.getElementById('sendBtn').disabled = true;
+
+  try{
+    var d = await apiPost('sendMessengerMessage', { message: msg });
+    if(!d.ok){
+      toast('❌ خطا در ارسال: '+(d.error||'نامشخص'), 'err');
     } else {
-        params = {
-            from_user: myId,
-            from_name: fromName,
-            parent_id: parent.id,
-            message: text
-        };
+      loadConversations();
     }
-    
-    apiCall(action, params).then(function(d) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>ارسال پاسخ</span>';
-        
-        if (d.ok) {
-            showToast('✅ پاسخ ارسال شد');
-            closeReplyModal();
-            closeViewModal();
-            setTimeout(loadMessages, 1000);
-        } else {
-            showToast('❌ ' + (d.error || 'خطا در ارسال'), 'error');
-        }
+  }catch(e){
+    toast('❌ خطای شبکه: '+e.message, 'err');
+  }
+}
+
+/* ============================================================
+   آپلود فایل
+   ============================================================ */
+function toggleAttachMenu(){
+  document.getElementById('attachMenu').classList.toggle('open');
+}
+function pickFile(accept){
+  var inp = document.getElementById('fileInput');
+  inp.accept = accept;
+  inp.value = '';
+  inp.click();
+  document.getElementById('attachMenu').classList.remove('open');
+}
+
+document.getElementById('fileInput').addEventListener('change', async function(e){
+  var file = e.target.files[0];
+  if(!file || !ACTIVE_CONV || !ME) return;
+  if(file.size > MAX_FILE_MB*1024*1024){
+    toast('⚠️ حجم فایل بیش از '+MAX_FILE_MB+' مگابایت است', 'err');
+    return;
+  }
+  toast('⏳ در حال آپلود...', '');
+  try{
+    var dataUrl = await readAsDataURL(file);
+    var type = 'file';
+    if(file.type.startsWith('image/')) type='image';
+    else if(file.type.startsWith('video/')) type='video';
+    else if(file.type.startsWith('audio/')) type='audio';
+
+    var up = await apiPost('uploadMessengerFile', {
+      fileName: file.name,
+      mimeType: file.type,
+      dataUrl: dataUrl
     });
-}
 
-function openReplyModal(id) {
-    replyParentId = id;
-    document.getElementById('replyInput').value = '';
-    document.getElementById('replyModal').classList.add('show');
-}
-
-function closeReplyModal() {
-    document.getElementById('replyModal').classList.remove('show');
-}
-
-// ============================================================
-// حذف پیام
-// ============================================================
-function deleteMessage(id) {
-    if (!confirm('آیا از حذف این پیام مطمئن هستید؟')) return;
-    
-    apiCall('deleteCouncilMessage', { id: id }).then(function(d) {
-        if (d.ok) {
-            showToast('🗑️ پیام حذف شد');
-            closeViewModal();
-            setTimeout(loadMessages, 500);
-        } else {
-            showToast('❌ ' + (d.error || 'خطا در حذف'), 'error');
-        }
-    });
-}
-
-// ============================================================
-// لیست گیرندگان
-// ============================================================
-f// ============================================================
-// دریافت لیست اعضا از API
-// ============================================================
-function updateRecipientList() {
-    console.log('📥 دریافت لیست اعضا از API...');
-    
-    apiCall('getMembersForMessaging', { user: getUserId() }).then(function(d) {
-        if (d.ok && d.members) {
-            membersList = d.members;
-            console.log('✅ ' + membersList.length + ' عضو از API لود شد');
-            
-            if (membersList.length > 0) {
-                console.log('📋 نمونه:', membersList[0]);
-                console.log('📋 فیلدها:', Object.keys(membersList[0]));
-            }
-        } else {
-            console.error('❌ خطا در دریافت اعضا:', d.error);
-            membersList = [];
-        }
-    });
-}
-
-function getRecipientName(id) {
-    var m = membersList.find(function(x) { return String(x.id) === String(id); });
-    return m ? m.firstName : 'کاربر';
-}
-
-// ============================================================
-// badge‌ها
-// ============================================================
-function updateBadges() {
-    var myId = getUserId();
-    
-    ['council', 'members'].forEach(function(tab) {
-        var unread = allMessages.filter(function(m) {
-            return m.type === tab &&
-                   m.status === 'new' &&
-                   String(m.from_id) !== String(myId);
-        }).length;
-        
-        var badge = document.getElementById('badge-' + tab);
-        if (badge) {
-            if (unread > 0) {
-                badge.textContent = unread;
-                badge.style.display = 'inline-block';
-            } else {
-                badge.style.display = 'none';
-            }
-        }
-    });
-}
-
-// ============================================================
-// توست
-// ============================================================
-function showToast(text, type) {
-    var toast = document.getElementById('toast');
-    document.getElementById('toastText').textContent = text;
-    toast.className = 'toast' + (type === 'error' ? ' error' : '') + ' show';
-    
-    setTimeout(function() {
-        toast.classList.remove('show');
-    }, 3000);
-}
-
-// ============================================================
-// در معرض عموم
-// ============================================================
-window.switchTab = switchTab;
-window.toggleSearch = toggleSearch;
-window.filterMessages = filterMessages;
-window.loadMessages = loadMessages;
-window.openComposeModal = openComposeModal;
-window.closeComposeModal = closeComposeModal;
-window.openMessage = openMessage;
-window.closeViewModal = closeViewModal;
-window.openReplyModal = openReplyModal;
-window.closeReplyModal = closeReplyModal;
-window.sendMessage = sendMessage;
-window.sendReply = sendReply;
-window.deleteMessage = deleteMessage;
-    window.closeMessages = closeMessages;
-// ============================================================
-// بستن پیام‌رسان و بازگشت به برنامه اصلی
-// ============================================================
-function closeMessages() {
-    console.log('🔙 بستن پیام‌رسان...');
-    
-    // تلاش برای بستن پنجره
-    try {
-        // اگه از window.open باز شده
-        if (window.opener && !window.opener.closed) {
-            window.close();
-            return;
-        }
-    } catch(e) {}
-    
-    // اگه نتونست، برو به برنامه اصلی
-    try {
-        // پاک کردن تاریخچه برای جلوگیری از بازگشت
-        if (window.history && window.history.length > 1) {
-            window.location.replace('index.html');
-        } else {
-            window.location.href = 'index.html';
-        }
-    } catch(e) {
-        window.location.href = 'index.html';
+    if(!up.ok || !up.url){
+      toast('❌ خطا در آپلود فایل', 'err');
+      return;
     }
-}
 
-// جلوگیری از دکمه Back گوشی
-function preventBackToLogin() {
-    try {
-        // جایگزینی وضعیت فعلی
-        window.history.pushState(null, '', window.location.href);
-        
-        window.addEventListener('popstate', function() {
-            // به جای برگشت، برو به برنامه اصلی
-            window.history.pushState(null, '', window.location.href);
-            closeMessages();
-        });
-    } catch(e) {}
-}
+    var msg = {
+      id: uid(),
+      convId: ACTIVE_CONV.convId,
+      fromPhone: normPhone(ME.phone),
+      toPhone: ACTIVE_CONV.otherPhone,
+      fromName: ME.name || '',
+      toName: (findUser(ACTIVE_CONV.otherPhone)||{}).name || '',
+      type: type,
+      text: '',
+      fileUrl: up.url,
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType: file.type,
+      status: 'new',
+      createdAt: nowISO()
+    };
 
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('📨 پیام‌رسان بارگذاری شد');
-    
-    try {
-        var userStr = localStorage.getItem('currentUser');
-        if (userStr) {
-            currentUser = JSON.parse(userStr);
-            console.log('👤 کاربر:', currentUser.firstName || currentUser.username);
-        }
-        
-        if (!currentUser || !currentUser.accountNumber) {
-            alert('❌ لطفاً ابتدا از طریق برنامه اصلی وارد شوید');
-            window.close();
-            return;
-        }
-        
-        console.log('✅ اطلاعات کاربر لود شد:', currentUser.firstName);
-        
-    } catch(e) {
-        console.error('خطا:', e);
+    if(!CACHE.messages[ACTIVE_CONV.convId]) CACHE.messages[ACTIVE_CONV.convId] = [];
+    CACHE.messages[ACTIVE_CONV.convId].push(msg);
+    renderMessages();
+
+    var d = await apiPost('sendMessengerMessage', { message: msg });
+    if(d.ok){
+      toast('✅ فایل ارسال شد', 'ok');
+      loadConversations();
+    } else {
+      toast('❌ خطا در ارسال', 'err');
     }
-    
-       // 🆕 از API لیست اعضا رو بگیر
-    loadMessages();
-    updateRecipientList();
-    setInterval(loadMessages, REFRESH_INTERVAL);
-    updateOnlineStatus();
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
+  }catch(err){
+    toast('❌ خطا: '+err.message, 'err');
+  }
 });
 
-// ============================================================
-// 🔙 بستن پیام‌رسان و بازگشت به برنامه اصلی
-// ============================================================
-function closeMessages() {
-    console.log('🔙 بستن پیام‌رسان...');
-    
-    try {
-        if (window.opener && !window.opener.closed) {
-            window.opener.focus();
-            window.close();
-            setTimeout(function() {
-                window.location.replace('index.html');
-            }, 300);
-            return;
-        }
-    } catch(e) {}
-    
-    try {
-        window.location.replace('index.html');
-    } catch(e) {
-        window.location.href = 'index.html';
-    }
+function readAsDataURL(file){
+  return new Promise((resolve,reject)=>{
+    var r = new FileReader();
+    r.onload = e=> resolve(e.target.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
 }
 
-// جلوگیری از دکمه Back
-(function preventBackToLogin() {
-    try {
-        window.history.pushState(null, '', window.location.href);
-        
-        window.addEventListener('popstate', function() {
-            window.history.pushState(null, '', window.location.href);
-            closeMessages();
-        });
-    } catch(e) {}
-})();
+/* ============================================================
+   🆕 ارسال به شورا
+   ============================================================ */
+async function sendToCouncil(){
+  var txt = document.getElementById('councilMsgText');
+  var btn = document.getElementById('councilSendBtn');
+  var message = txt.value.trim();
+  if(message.length < 5){
+    toast('⚠️ پیام باید حداقل ۵ کاراکتر باشد', 'err');
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = '⏳ در حال ارسال...';
+  try{
+    var uid_ = ME.id || ME.accountNumber || ME.phone;
+    var url = ADMIN_URL + '?action=sendMessageToCouncil'
+      + '&user=' + encodeURIComponent(uid_)
+      + '&name=' + encodeURIComponent(ME.name || 'کاربر')
+      + '&message=' + encodeURIComponent(message);
+    var res = await fetch(url, {cache:'no-cache'});
+    var data = await res.json();
+    if(data.ok){
+      toast('✅ پیام شما ارسال شد', 'ok');
+      txt.value = '';
+      document.getElementById('councilCharCount').textContent = '0';
+      setTimeout(()=> switchMainTab('chats'), 600);
+    } else {
+      toast('❌ خطا: '+(data.error||'نامشخص'), 'err');
+    }
+  }catch(e){
+    toast('❌ خطای شبکه: '+e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📤 ارسال به شورا';
+  }
+}
 
-window.closeMessages = closeMessages;
+/* ============================================================
+   🆕 پاسخ‌های من
+   ============================================================ */
+async function loadMyReplies(){
+  var list = document.getElementById('repliesList');
+  if(!list) return;
+  list.innerHTML = '<div class="empty"><span class="big">📬</span>در حال بارگذاری...</div>';
+  try{
+    var uid_ = ME.id || ME.accountNumber || ME.phone;
+    var url = ADMIN_URL + '?action=getMyReplies&user=' + encodeURIComponent(uid_);
+    var res = await fetch(url, {cache:'no-cache'});
+    var data = await res.json();
+    var replies = (data && data.replies) || [];
 
-console.log('✅ پیام‌رسان آماده است');
+    if(replies.length === 0){
+      list.innerHTML = '<div class="empty"><span class="big">📭</span>هنوز پاسخی دریافت نکرده‌اید</div>';
+      return;
+    }
+    var html = '';
+    replies.forEach(r=>{
+      var isNew = !r.seen;
+      html += '<div class="reply-card'+(isNew?' new':'')+'">';
+      html += '<div class="reply-meta"><span>📅 '+fmtDateFull(r.replyAt)+'</span>';
+      if(isNew) html += '<span class="reply-new-tag">جدید</span>';
+      html += '</div>';
+      html += '<div class="reply-q"><b>پیام شما:</b>'+esc(r.message)+'</div>';
+      html += '<div class="reply-a"><b>✅ پاسخ شورا:</b>'+esc(r.reply)+'</div>';
+      html += '</div>';
+    });
+    list.innerHTML = html;
+
+    // مارک خوانده‌شده
+    var uid2 = ME.id || ME.accountNumber || ME.phone;
+    fetch(ADMIN_URL + '?action=markRepliesSeen&user=' + encodeURIComponent(uid2), {cache:'no-cache'})
+      .then(()=> { loadRepliesBadge(); });
+  }catch(e){
+    list.innerHTML = '<div class="empty">❌ خطا در بارگذاری: '+esc(e.message)+'</div>';
+  }
+}
+
+async function loadRepliesBadge(){
+  try{
+    var uid_ = ME.id || ME.accountNumber || ME.phone;
+    var res = await fetch(ADMIN_URL + '?action=getUnreadCount&user=' + encodeURIComponent(uid_), {cache:'no-cache'});
+    var data = await res.json();
+    var badge = document.getElementById('repliesBadge');
+    if(badge){
+      if(data && data.count > 0){
+        badge.textContent = faNum(data.count);
+        badge.classList.add('show');
+      } else {
+        badge.classList.remove('show');
+      }
+    }
+  }catch(e){}
+}
+
+/* ============================================================
+   مودال جستجوی شماره
+   ============================================================ */
+function openSearchModal(){
+  document.getElementById('searchModal').classList.add('open');
+  document.getElementById('phoneInput').value = '';
+  document.getElementById('searchResult').innerHTML = '';
+  setTimeout(()=> document.getElementById('phoneInput').focus(), 150);
+}
+function closeSearchModal(){
+  document.getElementById('searchModal').classList.remove('open');
+}
+function onPhoneInput(){
+  var v = document.getElementById('phoneInput').value;
+  document.getElementById('phoneInput').value = v.replace(/[^\d+]/g,'');
+  document.getElementById('searchResult').innerHTML = '';
+}
+async function searchContact(){
+  var raw = document.getElementById('phoneInput').value;
+  var res = document.getElementById('searchResult');
+  var np = normPhone(raw);
+  if(np.length < 11){
+    res.innerHTML = '<div class="notfound">شماره وارد شده معتبر نیست</div>';
+    return;
+  }
+  res.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px">در حال جستجو...</div>';
+  try{
+    var d = await apiCall('searchMessengerContact', { phone: np });
+    if(!d.ok || !d.contact){
+      res.innerHTML = '<div class="notfound">❌ کاربری با این شماره پیدا نشد</div>';
+      return;
+    }
+    var user = d.contact;
+    if(normPhone(user.phone) === normPhone(ME.phone)){
+      res.innerHTML = '<div class="notfound">این شماره متعلق به خودتان است</div>';
+      return;
+    }
+    if(!findUser(user.phone)) ALL_USERS.push(user);
+    res.innerHTML =
+      '<div class="contact-card" onclick="startChatWith(\''+esc(user.phone)+'\')">'+
+      '<div class="avatar" style="background:'+(user.color||'#8b5cf6')+'">'+esc((user.name||'?')[0])+'</div>'+
+      '<div class="cc-info"><div class="cc-name">'+esc(user.name||'ناشناس')+'</div>'+
+      '<div class="cc-phone">'+esc(user.phone)+'</div></div>'+
+      '<div class="go">💬</div></div>';
+  }catch(e){
+    res.innerHTML = '<div class="notfound">❌ خطا: '+esc(e.message)+'</div>';
+  }
+}
+function startChatWith(phone){
+  closeSearchModal();
+  var cid = convId(ME.phone, phone);
+  openChat(cid, phone);
+}
+
+/* ============================================================
+   پنل مدیریت — دو بخش
+   ============================================================ */
+function openAdminPanel(){
+  if(!ME || !ME.isCouncil){ toast('دسترسی ندارید', 'err'); return; }
+  document.getElementById('adminModal').classList.add('open');
+  CURRENT_ADMIN_TAB = 'chats';
+  document.getElementById('adminTabChats').classList.add('active');
+  document.getElementById('adminTabCouncil').classList.remove('active');
+  loadAdminChats();
+}
+function closeAdminPanel(){
+  document.getElementById('adminModal').classList.remove('open');
+}
+function switchAdminTab(tab){
+  CURRENT_ADMIN_TAB = tab;
+  document.getElementById('adminTabChats').classList.toggle('active', tab==='chats');
+  document.getElementById('adminTabCouncil').classList.toggle('active', tab==='council');
+  if(tab === 'chats') loadAdminChats();
+  else loadAdminCouncilMessages();
+}
+
+async function loadAdminChats(){
+  var c = document.getElementById('adminContent');
+  c.innerHTML = '<div class="empty">در حال بارگذاری...</div>';
+  try{
+    var d = await apiCall('getAllMessengerConversations', { key: ADMIN_KEY });
+    if(!d.ok || !d.conversations){ c.innerHTML = '<div class="notfound">❌ خطا</div>'; return; }
+    if(d.conversations.length === 0){
+      c.innerHTML = '<div class="empty">📭 هیچ چتی وجود ندارد</div>';
+      return;
+    }
+    var html = '';
+    d.conversations.forEach(conv=>{
+      var u1 = findUser(conv.fromPhone) || {name: conv.fromPhone};
+      var u2 = findUser(conv.toPhone) || {name: conv.toPhone};
+      html += '<div class="admin-item">';
+      html += '<div class="ai-head">💬 '+esc(u1.name||conv.fromPhone)+' ↔ '+esc(u2.name||conv.toPhone)+'</div>';
+      html += '<div class="ai-sub">'+faNum(conv.count||0)+' پیام — آخرین: '+fmtTime(conv.lastAt)+'</div>';
+      html += '<div class="ai-preview">'+esc((conv.lastText||'').substring(0,80))+'</div>';
+      html += '<button class="ai-btn" onclick="viewAdminChat(\''+esc(conv.convId)+'\')">مشاهده کامل</button>';
+      html += '</div>';
+    });
+    c.innerHTML = html;
+  }catch(e){
+    c.innerHTML = '<div class="notfound">❌ '+esc(e.message)+'</div>';
+  }
+}
+
+async function viewAdminChat(cid){
+  try{
+    var d = await apiCall('getAdminConversationMessages', { convId: cid, key: ADMIN_KEY });
+    if(!d.ok || !d.messages){ toast('خطا', 'err'); return; }
+    var html = '<button onclick="loadAdminChats()" style="margin-bottom:10px;padding:6px 14px;border-radius:8px;border:none;background:var(--panel2);color:var(--text);cursor:pointer;font-family:inherit;font-size:.78rem">→ بازگشت</button>';
+    html += '<div style="max-height:55vh;overflow-y:auto">';
+    d.messages.forEach(m=>{
+      var u = findUser(m.fromPhone) || {name:m.fromPhone};
+      html += '<div style="padding:8px;border-radius:8px;background:var(--panel2);margin-bottom:6px;font-size:.8rem">';
+      html += '<div style="color:var(--gold);font-weight:800;font-size:.72rem;margin-bottom:4px">'+esc(u.name||m.fromPhone)+' — '+fmtTime(m.createdAt)+'</div>';
+      if(m.type === 'text') html += '<div>'+esc(m.text)+'</div>';
+      else if(m.type === 'image') html += '<a href="'+m.fileUrl+'" target="_blank">🖼️ تصویر</a>';
+      else if(m.type === 'video') html += '<a href="'+m.fileUrl+'" target="_blank">🎬 فیلم</a>';
+      else if(m.type === 'audio') html += '<a href="'+m.fileUrl+'" target="_blank">🎤 صوت</a>';
+      else html += '<a href="'+m.fileUrl+'" target="_blank">📄 '+esc(m.fileName||'فایل')+'</a>';
+      html += '</div>';
+    });
+    html += '</div>';
+    document.getElementById('adminContent').innerHTML = html;
+  }catch(e){ toast('خطا: '+e.message, 'err'); }
+}
+
+async function loadAdminCouncilMessages(){
+  var c = document.getElementById('adminContent');
+  c.innerHTML = '<div class="empty">در حال بارگذاری...</div>';
+  try{
+    var url = ADMIN_URL + '?action=getCouncilMessages&key=' + encodeURIComponent(ADMIN_KEY);
+    var res = await fetch(url, {cache:'no-cache'});
+    var data = await res.json();
+    var messages = (data && data.messages) || [];
+    if(messages.length === 0){
+      c.innerHTML = '<div class="empty">📭 هیچ پیامی دریافت نشده</div>';
+      return;
+    }
+    var html = '';
+    messages.forEach(m=>{
+      var status = m.status === 'answered' ? '✅ پاسخ داده شده' : '⏳ در انتظار';
+      var statusColor = m.status === 'answered' ? '#10b981' : '#f59e0b';
+      html += '<div class="admin-item">';
+      html += '<div class="ai-head">👤 '+esc(m.name||'ناشناس')+'</div>';
+      html += '<div class="ai-sub">'+fmtDateFull(m.timestamp)+' — <span style="color:'+statusColor+'">'+status+'</span></div>';
+      html += '<div class="ai-preview">'+esc(m.message)+'</div>';
+      if(m.reply) html += '<div class="ai-preview" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);margin-top:6px">✅ پاسخ شما: '+esc(m.reply)+'</div>';
+      if(m.status !== 'answered'){
+        html += '<div style="display:flex;gap:6px;margin-top:8px">'+
+                '<input type="text" id="replyInput_'+esc(m.id)+'" placeholder="پاسخ..." style="flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-family:inherit;font-size:.8rem;outline:none">'+
+                '<button class="ai-btn" onclick="submitCouncilReply(\''+esc(m.id)+'\')">ارسال</button></div>';
+      }
+      html += '</div>';
+    });
+    c.innerHTML = html;
+  }catch(e){
+    c.innerHTML = '<div class="notfound">❌ '+esc(e.message)+'</div>';
+  }
+}
+
+async function submitCouncilReply(messageId){
+  var inp = document.getElementById('replyInput_'+messageId);
+  if(!inp) return;
+  var reply = inp.value.trim();
+  if(reply.length < 3){ toast('پاسخ خیلی کوتاه است', 'err'); return; }
+  try{
+    var url = ADMIN_URL + '?action=replyToMember'
+      + '&key=' + encodeURIComponent(ADMIN_KEY)
+      + '&messageId=' + encodeURIComponent(messageId)
+      + '&reply=' + encodeURIComponent(reply)
+      + '&replyBy=' + encodeURIComponent(ME.name || 'شورا');
+    var res = await fetch(url, {cache:'no-cache'});
+    var data = await res.json();
+    if(data.ok){
+      toast('✅ پاسخ ثبت شد', 'ok');
+      loadAdminCouncilMessages();
+    } else {
+      toast('❌ خطا: '+(data.error||'نامشخص'), 'err');
+    }
+  }catch(e){ toast('❌ '+e.message, 'err'); }
+}
+
+/* ============================================================
+   Polling
+   ============================================================ */
+function startPolling(){
+  if(POLL_TIMER) clearInterval(POLL_TIMER);
+  POLL_TIMER = setInterval(async ()=>{
+    if(!ME) return;
+    if(ACTIVE_CONV){
+      await loadMessages(ACTIVE_CONV.convId);
+      markConvRead(ACTIVE_CONV.convId);
+    }
+    if(CURRENT_MAIN_TAB === 'chats'){
+      await loadConversations();
+    } else if(CURRENT_MAIN_TAB === 'replies'){
+      await loadRepliesBadge();
+    }
+  }, 4000);
+}
+
+document.addEventListener('click', function(e){
+  var menu = document.getElementById('attachMenu');
+  if(menu && menu.classList.contains('open')){
+    if(!e.target.closest('.composer')) menu.classList.remove('open');
+  }
+});
+
+initUserPicker();
 </script>
 </body>
 </html>
-
