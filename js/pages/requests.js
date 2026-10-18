@@ -111,7 +111,7 @@ function renderRequestsContent() {
                         </button>
                     </div>
                     
-                                                          <!-- امضای درخواست وام -->
+                                                                             <!-- امضای درخواست وام -->
                     <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #8b5cf6;">
                         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
                             <i class="fas fa-file-signature" style="font-size:1.5rem;color:#8b5cf6;"></i>
@@ -427,11 +427,12 @@ async function openLoanSignModal() {
     var old = document.getElementById('loanSignModal');
     if (old) old.remove();
 
-    // گرفتن اطلاعات کاربر
     var member = members.find(m => m.id === currentUser.memberId) || {};
     var memberName = member.firstName || currentUser.firstName || 'نامشخص';
     var accountNum = member.accountNumber || currentUser.accountNumber || 'نامشخص';
     var phone = member.phone1 || member.phone || 'نامشخص';
+
+    var isCouncil = (currentUser.isCouncil === true || currentUser.role === 'council' || currentUser.role === 'admin');
 
     var modalHtml = `
         <div id="loanSignModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:10px;backdrop-filter:blur(6px);">
@@ -445,31 +446,48 @@ async function openLoanSignModal() {
                     <button onclick="closeLoanSignModal()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-size:1rem;font-family:tahoma;">✕</button>
                 </div>
                 
-                <!-- متن قرارداد -->
-                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;font-size:0.85rem;line-height:2;text-align:justify;color:#d1d5db;margin-bottom:16px;direction:rtl;">
-                    <div style="text-align:center;font-weight:900;color:#f59e0b;margin-bottom:12px;">به نام خدا</div>
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;font-size:0.85rem;line-height:2.2;text-align:justify;color:#d1d5db;margin-bottom:16px;direction:rtl;">
+                    <div style="text-align:center;font-weight:900;color:#f59e0b;margin-bottom:12px;font-size:1rem;">به نام خدا</div>
                     شورای محترم صندوق اتحاد<br><br>
-                    اینجانب <b style="color:#10b981;">${escapeHtml(memberName)}</b> با شماره تلفن <b style="color:#10b981;">${escapeHtml(phone)}</b> و شماره حساب <b style="color:#10b981;">${escapeHtml(accountNum)}</b> و کد ملی <span style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">...........</span> مبلغ وام یا قرض <b style="color:#10b981;">......... ریال</b> با بازپرداخت <b style="color:#10b981;">......... قسط</b> و هر قسط به مبلغ <b style="color:#10b981;">......... ریال</b> در تاریخ <b style="color:#10b981;">......... </b> از این صندوق دریافت نمودم.
+                    اینجانب <b style="color:#10b981;">${escapeHtml(memberName)}</b> با شماره تلفن <b style="color:#10b981;">${escapeHtml(phone)}</b> و شماره حساب <b style="color:#10b981;">${escapeHtml(accountNum)}</b> و کد ملی 
+                    <input type="text" id="signNationalId" placeholder="کد ملی" style="width:120px;padding:4px;border-radius:6px;border:1px solid #8b5cf6;background:#16213e;color:#fff;text-align:center;font-family:tahoma;font-size:0.85rem;">
+                    
+                    مبلغ وام یا قرض 
+                    <input type="text" id="signLoanAmount" placeholder="مبلغ" style="width:100px;padding:4px;border-radius:6px;border:1px solid #8b5cf6;background:#16213e;color:#fff;text-align:center;font-family:tahoma;font-size:0.85rem;"> ریال
+                    با بازپرداخت 
+                    <input type="text" id="signInstallments" placeholder="تعداد" style="width:60px;padding:4px;border-radius:6px;border:1px solid #8b5cf6;background:#16213e;color:#fff;text-align:center;font-family:tahoma;font-size:0.85rem;"> قسط
+                    و هر قسط به مبلغ 
+                    <input type="text" id="signInstallmentAmount" placeholder="مبلغ قسط" style="width:100px;padding:4px;border-radius:6px;border:1px solid #8b5cf6;background:#16213e;color:#fff;text-align:center;font-family:tahoma;font-size:0.85rem;"> ریال
+                    در تاریخ 
+                    <input type="text" id="signDate" placeholder="تاریخ" value="${new Date().toLocaleDateString('fa-IR')}" style="width:100px;padding:4px;border-radius:6px;border:1px solid #8b5cf6;background:#16213e;color:#fff;text-align:center;font-family:tahoma;font-size:0.85rem;">
+                    از این صندوق دریافت نمودم.
+                    
                     <br><br>
                     و موظف هستم این مبلغ را به طور کامل طی اقساط تعیین شده بصورت ماهانه پرداخت نمایم. لذا اینجانب و چنانچه شخصاً نتوانستم پرداخت نمایم، بعد از تاریخ اقساط معوقه، وارثین و خانواده من موظف به پرداخت آن هستند و این دین برگردن اینجانب و خانواده‌ام می‌باشد.
                     <br><br>
                     این فرم الکترونیکی را شخصاً با اطلاع کامل خوانده و امضا نموده‌ام و این فرم الکترونیکی در تمام محاکم قضایی قابل اجرا می‌باشد.
                 </div>
 
-                <!-- بوم امضا -->
                 <div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:10px;position:relative;">
                     <canvas id="signatureCanvas" style="width:100%;height:200px;touch-action:none;cursor:crosshair;display:block;"></canvas>
                     <div id="signPlaceholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:1.2rem;pointer-events:none;font-family:tahoma;user-select:none;">✍️ اینجا امضا کنید</div>
                 </div>
 
                 <div style="display:flex;gap:10px;margin-bottom:10px;">
-                    <button onclick="clearSignature()" style="flex:1;padding:10px;border:none;border-radius:8px;background:rgba(239,68,68,0.1);color:#fca5a5;font-weight:700;cursor:pointer;font-family:tahoma;">🗑️ پاک کردن</button>
+                    <button onclick="clearSignature()" style="flex:1;padding:10px;border:none;border-radius:8px;background:rgba(239,68,68,0.1);color:#fca5a5;font-weight:700;cursor:pointer;font-family:tahoma;">🗑️ پاک کردن امضا</button>
                 </div>
 
                 <div style="display:flex;gap:10px;">
                     <button onclick="submitSignedLoan()" style="flex:2;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.95rem;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
                         ✅ ثبت و امضا
                     </button>
+                    
+                    ${isCouncil ? `
+                    <button onclick="approveLoanSignature()" style="flex:1;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.9rem;box-shadow:0 4px 15px rgba(245,158,11,0.4);">
+                        👑 تایید نهایی
+                    </button>
+                    ` : ''}
+                    
                     <button onclick="closeLoanSignModal()" style="flex:1;padding:14px;border:1px solid rgba(255,255,255,0.2);border-radius:12px;background:rgba(255,255,255,0.05);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.9rem;">
                         ❌ لغو
                     </button>
@@ -487,9 +505,6 @@ function closeLoanSignModal() {
     if (modal) modal.remove();
 }
 
-// ============================================================
-// کدهای مربوط به بوم نقاشی (امضا)
-// ============================================================
 var sigCanvas, sigCtx, sigDrawing = false;
 
 function initSignatureCanvas() {
@@ -551,13 +566,22 @@ function clearSignature() {
 async function submitSignedLoan() {
     if (!sigCanvas) return;
     
-    // بررسی اینکه آیا امضا کرده یا نه (با چک کردن پیکسل‌های سیاه)
     var blank = document.createElement('canvas');
     blank.width = sigCanvas.width;
     blank.height = sigCanvas.height;
-    var blankCtx = blank.getContext('2d');
     if (sigCanvas.toDataURL() === blank.toDataURL()) {
         alert('⚠️ لطفاً ابتدا در کادر سفید امضا کنید.');
+        return;
+    }
+
+    var nationalId = document.getElementById('signNationalId').value.trim();
+    var loanAmount = document.getElementById('signLoanAmount').value.trim();
+    var installments = document.getElementById('signInstallments').value.trim();
+    var installmentAmount = document.getElementById('signInstallmentAmount').value.trim();
+    var signDate = document.getElementById('signDate').value.trim();
+
+    if (!nationalId || !loanAmount || !installments) {
+        alert('⚠️ لطفاً کد ملی، مبلغ وام و تعداد اقساط را وارد کنید.');
         return;
     }
 
@@ -575,6 +599,11 @@ async function submitSignedLoan() {
             + '&name=' + encodeURIComponent(member.firstName || currentUser.firstName || '')
             + '&accountNumber=' + encodeURIComponent(member.accountNumber || '')
             + '&phone=' + encodeURIComponent(member.phone1 || member.phone || '')
+            + '&nationalId=' + encodeURIComponent(nationalId)
+            + '&loanAmount=' + encodeURIComponent(loanAmount)
+            + '&installments=' + encodeURIComponent(installments)
+            + '&installmentAmount=' + encodeURIComponent(installmentAmount)
+            + '&signDate=' + encodeURIComponent(signDate)
             + '&signature=' + encodeURIComponent(imgData);
 
         var res = await fetch(url, { cache: 'no-cache' });
@@ -595,16 +624,31 @@ async function submitSignedLoan() {
     }
 }
 
+async function approveLoanSignature() {
+    if (!confirm('آیا مطمئنید که می‌خواهید این قرارداد را تایید نهایی کنید؟')) return;
+
+    try {
+        var member = members.find(m => m.id === currentUser.memberId) || {};
+        var url = ADMIN_URL + '?action=approveSignedLoan'
+            + '&key=admin12345'
+            + '&user=' + encodeURIComponent(member.id || member.accountNumber || currentUser.username);
+
+        var res = await fetch(url, { cache: 'no-cache' });
+        var data = await res.json();
+
+        if (data.ok) {
+            alert('✅ قرارداد با موفقیت تایید نهایی شد.');
+            closeLoanSignModal();
+        } else {
+            alert('❌ خطا: ' + (data.error || 'نامشخص'));
+        }
+    } catch(e) {
+        alert('❌ خطای شبکه: ' + e.message);
+    }
+}
+
 window.openLoanSignModal = openLoanSignModal;
 window.closeLoanSignModal = closeLoanSignModal;
 window.clearSignature = clearSignature;
 window.submitSignedLoan = submitSignedLoan;
-// ============================================================
-// در معرض عموم
-// ============================================================
-window.showRequestsTab = showRequestsTab;
-window.sendSmsRequest = sendSmsRequest;
-window.loadMyRequests = loadMyRequests;
-window.openLoanRequestModal = openLoanRequestModal;
-window.closeLoanRequestModal = closeLoanRequestModal;
-window.sendLoanRequest = sendLoanRequest;
+window.approveLoanSignature = approveLoanSignature;
