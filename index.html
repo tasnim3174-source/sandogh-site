@@ -852,20 +852,23 @@ try {
 // 🆕 توابع پنجره شناور پیام‌رسان
 // ============================================================
 window.openMessagesWindow = function() {
-    console.log('📨 باز کردن پنجره پیام‌رسان...');
-    var overlay = document.getElementById('messagesOverlay');
-    var frame = document.getElementById('messagesFrame');
-    
-    if (overlay && frame) {
-        // ست کردن src اگه خالی بود
-        if (!frame.src || frame.src === 'about:blank' || frame.src.indexOf('messages.html') === -1) {
-            frame.src = 'messages.html?v=' + Date.now();
-        }
-        overlay.style.display = 'block';
-        
-        // جلوگیری از اسکرول بک‌گراند
-        document.body.style.overflow = 'hidden';
-    }
+  var overlay = document.getElementById('messagesOverlay');
+  var frame = document.getElementById('messagesFrame');
+  if (overlay && frame) {
+    var userId = '', userName = '';
+    try {
+      if (typeof currentUser !== 'undefined' && currentUser) {
+        userId = currentUser.id || currentUser.accountNumber || currentUser.username || currentUser.memberId || '';
+        userName = currentUser.firstName || currentUser.name || '';
+      }
+    } catch(e) {}
+    var url = 'messages.html?v=' + Date.now();
+    if (userId) url += '&user=' + encodeURIComponent(userId);
+    if (userName) url += '&name=' + encodeURIComponent(userName);
+    frame.src = url;
+    overlay.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+  }
 };
 
 window.closeMessagesWindow = function() {
