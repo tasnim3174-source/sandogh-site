@@ -177,6 +177,7 @@
   .modal.open{display:flex}
   .modal-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;
     width:100%;max-width:400px;padding:20px;animation:pop .2s}
+  .modal-card.wide{max-width:500px}
   .modal-card h3{margin:0 0 6px;color:var(--gold);font-size:1.05rem}
   .modal-card p{margin:0 0 16px;color:var(--muted);font-size:.78rem;line-height:1.7}
   .modal-card input{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
@@ -188,14 +189,15 @@
     font-weight:800;font-size:.88rem;cursor:pointer}
   .btn-primary{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff}
   .btn-ghost{background:var(--panel2);color:var(--muted);border:1px solid var(--border)!important}
-  #searchResult{margin-top:12px}
+  #searchResult{margin-top:12px;max-height:50vh;overflow-y:auto}
   .contact-card{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
-    background:var(--panel2);border:1px solid var(--green);animation:pop .2s;cursor:pointer}
-  .contact-card .avatar{width:44px;height:44px}
+    background:var(--panel2);border:1px solid var(--green);animation:pop .2s;cursor:pointer;margin-bottom:8px}
+  .contact-card:active{transform:scale(.98)}
+  .contact-card .avatar{width:44px;height:44px;flex-shrink:0}
   .contact-card .cc-info{flex:1;min-width:0}
   .contact-card .cc-name{font-weight:800;font-size:.92rem}
-  .contact-card .cc-phone{font-size:.72rem;color:var(--muted);direction:ltr;text-align:right;margin-top:2px}
-  .contact-card .go{color:var(--green);font-size:1.3rem}
+  .contact-card .cc-phone{font-size:.72rem;color:var(--muted);margin-top:2px}
+  .contact-card .go{color:var(--green);font-size:1.3rem;flex-shrink:0}
   .notfound{text-align:center;padding:14px;border-radius:12px;background:rgba(239,68,68,.1);
     color:#fca5a5;font-size:.82rem;border:1px solid rgba(239,68,68,.3)}
 
@@ -313,9 +315,9 @@
   <button id="fabPen" onclick="openSearchModal()" title="چت جدید">✏️</button>
 
   <div class="modal" id="searchModal">
-    <div class="modal-card">
+    <div class="modal-card wide">
       <h3>✏️ چت جدید</h3>
-      <p>شماره تلفن مخاطب را وارد کنید. اگر در سیستم باشد، پیدا می‌شود.</p>
+      <p>شماره تلفن مخاطب را وارد کنید. اگر چند نفر با این شماره باشند، همه نمایش داده می‌شوند تا یکی را انتخاب کنید.</p>
       <input id="phoneInput" placeholder="09123456789" inputmode="tel" maxlength="13"
         oninput="onPhoneInput()" onkeydown="if(event.key==='Enter')searchContact()">
       <div id="searchResult"></div>
@@ -327,7 +329,7 @@
   </div>
 
   <div class="modal" id="adminModal">
-    <div class="modal-card" style="max-width:560px;max-height:85vh;overflow-y:auto">
+    <div class="modal-card wide" style="max-width:560px;max-height:85vh;overflow-y:auto">
       <h3>⚙️ پنل مدیریت</h3>
       <div class="admin-tabs">
         <button class="admin-tab active" id="adminTabChats" onclick="switchAdminTab('chats')">💬 چت‌ها</button>
@@ -345,7 +347,7 @@
 
 <script>
 /* ============================================================
-   تنظیمات — این‌ها را با مقادیر واقعی خودتان عوض کنید
+   تنظیمات
    ============================================================ */
 var API_URL = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
 var ADMIN_KEY = 'admin12345';
@@ -354,9 +356,9 @@ var MAX_FILE_MB = 5;
 /* ============================================================
    State
    ============================================================ */
-var ME = null;                 // کاربر جاری { id, name, phone, isCouncil }
-var ALL_USERS = [];            // همه کاربران سیستم
-var ACTIVE_CONV = null;        // گفتگوی باز
+var ME = null;
+var ALL_USERS = [];
+var ACTIVE_CONV = null;
 var POLL_TIMER = null;
 var CACHE = { conversations: [], messages: {} };
 var CURRENT_MAIN_TAB = 'chats';
@@ -406,10 +408,6 @@ function uid(){ return 'mm_'+Date.now()+'_'+Math.random().toString(36).slice(2,7
 function findUserById(id){
   return ALL_USERS.find(u => String(u.id) === String(id)) || null;
 }
-function findUserByPhone(phone){
-  var np = normPhone(phone);
-  return ALL_USERS.find(u => normPhone(u.phone) === np) || null;
-}
 
 function toast(msg, type){
   var c = document.getElementById('toasts');
@@ -418,6 +416,11 @@ function toast(msg, type){
   el.textContent = msg;
   c.appendChild(el);
   setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2600);
+}
+
+function setLoadingMsg(txt){
+  var el = document.getElementById('loadingMsg');
+  if(el) el.textContent = txt;
 }
 
 /* ============================================================
@@ -441,45 +444,40 @@ async function apiPost(action, body){
 }
 
 /* ============================================================
-   🆕 شروع — گرفتن کاربر از parent / URL / localStorage
+   🆕 شروع — گرفتن کاربر از URL / localStorage / parent
    ============================================================ */
-function setLoadingMsg(txt){
-  var el = document.getElementById('loadingMsg');
-  if(el) el.textContent = txt;
-}
-
 async function initFromParent() {
   setLoadingMsg('در حال شناسایی کاربر...');
 
   var parentUserId = '';
   var parentUserName = '';
+  var parentPhone = '';
 
-  // ۱. از پارامتر URL
   try {
     var urlParams = new URLSearchParams(window.location.search);
     parentUserId = urlParams.get('user') || '';
     parentUserName = urlParams.get('name') || '';
   } catch(e) {}
 
-  // ۲. از localStorage
   if (!parentUserId) {
     try {
       var lsUser = localStorage.getItem('currentUser');
       if (lsUser) {
         var u = JSON.parse(lsUser);
-        parentUserId = u.id || u.accountNumber || u.username || u.memberId || '';
+        parentUserId = u.accountNumber || u.id || u.username || u.memberId || '';
         parentUserName = u.firstName || u.name || '';
+        parentPhone = u.phone || '';
       }
     } catch(e) {}
   }
 
-  // ۳. از window.parent
   if (!parentUserId && window.parent !== window) {
     try {
       var pU = window.parent.currentUser;
       if (pU) {
-        parentUserId = pU.id || pU.accountNumber || pU.username || pU.memberId || '';
+        parentUserId = pU.accountNumber || pU.id || pU.username || pU.memberId || '';
         parentUserName = pU.firstName || pU.name || '';
+        parentPhone = pU.phone || '';
       }
     } catch(e) {}
   }
@@ -491,7 +489,6 @@ async function initFromParent() {
 
   setLoadingMsg('در حال بارگذاری کاربران...');
 
-  // گرفتن لیست کاربران
   try {
     var d = await apiCall('getMessengerUsers');
     if (!d.ok || !d.users) {
@@ -502,12 +499,15 @@ async function initFromParent() {
 
     var me = findUserById(parentUserId);
     if (!me) {
-      // اگر کاربر در data1.xlsx نبود، از اطلاعات parent استفاده کن
       me = {
         id: String(parentUserId),
         name: parentUserName || String(parentUserId),
-        phone: '',
-        accountNumber: '',
+        phone: parentPhone || '',
+        phone1: '',
+        phone2: '',
+        accountNumber: String(parentUserId),
+        username: '',
+        memberId: '',
         isCouncil: false,
         color: '#8b5cf6'
       };
@@ -522,11 +522,9 @@ async function initFromParent() {
       document.getElementById('adminBtn').style.display = 'flex';
     }
 
-    // نمایش app
     document.getElementById('loadingScreen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
 
-    // شروع
     await loadConversations();
     loadRepliesBadge();
     startPolling();
@@ -537,7 +535,7 @@ async function initFromParent() {
 }
 
 /* ============================================================
-   تب‌های اصلی
+   تب‌ها
    ============================================================ */
 function switchMainTab(tab){
   CURRENT_MAIN_TAB = tab;
@@ -559,12 +557,15 @@ function switchMainTab(tab){
 }
 
 /* ============================================================
-   چت‌ها
+   لیست مکالمات
    ============================================================ */
 async function loadConversations(){
   if(!ME) return;
   try{
-    var d = await apiCall('getMessengerConversations', { user: ME.id });
+    var d = await apiCall('getMessengerConversations', {
+      user: ME.id,
+      phone: ME.phone || ''
+    });
     if(d.ok && d.conversations){
       CACHE.conversations = d.conversations;
       if(CURRENT_MAIN_TAB === 'chats') renderConvList();
@@ -580,10 +581,12 @@ function renderConvList(){
   var convs = CACHE.conversations.slice();
   var q = (document.getElementById('convSearch').value||'').trim();
   if(q){
+    var nq = normPhone(q);
     convs = convs.filter(c=>{
       var other = findUserById(c.otherId);
       return (other && other.name && other.name.indexOf(q)>=0) ||
-             (String(c.otherId).indexOf(q)>=0);
+             (String(c.otherId).indexOf(q)>=0) ||
+             (nq && other && normPhone(other.phone||'') === nq);
     });
   }
   if(convs.length === 0){
@@ -593,7 +596,7 @@ function renderConvList(){
   var html = '';
   convs.forEach(c=>{
     var other = findUserById(c.otherId);
-    var name = other ? (other.name || other.id) : c.otherId;
+    var name = other ? (other.name || other.id) : (c.otherId || 'کاربر');
     var initial = (name||'?')[0];
     var last = c.last || {};
     var preview = '';
@@ -604,9 +607,9 @@ function renderConvList(){
     else preview = '📄 فایل';
     if(String(last.fromId) === String(ME.id)) preview = 'شما: ' + preview;
 
-    var otherPhone = other ? normPhone(other.phone) : '';
+    var otherPhone = other ? normPhone(other.phone || '') : (c.otherPhone || '');
     var safeName = esc(name).replace(/'/g,"\\'");
-    var safeId = esc(c.otherId).replace(/'/g,"\\'");
+    var safeId = esc(c.otherId || '').replace(/'/g,"\\'");
     var safePhone = esc(otherPhone).replace(/'/g,"\\'");
 
     html += '<div class="conv" onclick="openChat(\''+c.convId+'\',\''+safeId+'\',\''+safeName+'\',\''+safePhone+'\')">';
@@ -622,7 +625,7 @@ function renderConvList(){
 }
 
 async function openChat(cid, otherId, otherName, otherPhone){
-  ACTIVE_CONV = { convId: cid, otherId: otherId, otherName: otherName, otherPhone: otherPhone || '' };
+  ACTIVE_CONV = { convId: cid, otherId: String(otherId), otherName: otherName, otherPhone: otherPhone || '' };
   document.getElementById('chatName').textContent = otherName || otherId;
   document.getElementById('chatStatus').textContent = 'آنلاین';
   var av = document.getElementById('chatAvatar');
@@ -643,7 +646,7 @@ function closeChat(){
 async function loadMessages(cid){
   if(!ME) return;
   try{
-    var d = await apiCall('getMessengerMessages', { convId: cid, user: ME.id });
+    var d = await apiCall('getMessengerMessages', { convId: cid });
     if(d.ok && d.messages){
       CACHE.messages[cid] = d.messages;
       renderMessages();
@@ -655,7 +658,7 @@ async function loadMessages(cid){
 
 async function markConvRead(cid){
   if(!ME) return;
-  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.id }); }catch(e){}
+  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.id, phone: ME.phone || '' }); }catch(e){}
 }
 
 function renderMessages(){
@@ -929,7 +932,7 @@ async function loadRepliesBadge(){
 }
 
 /* ============================================================
-   جستجوی شماره
+   جستجوی شماره — چند نتیجه
    ============================================================ */
 function openSearchModal(){
   document.getElementById('searchModal').classList.add('open');
@@ -945,6 +948,7 @@ function onPhoneInput(){
   document.getElementById('phoneInput').value = v.replace(/[^\d+]/g,'');
   document.getElementById('searchResult').innerHTML = '';
 }
+
 async function searchContact(){
   var raw = document.getElementById('phoneInput').value;
   var res = document.getElementById('searchResult');
@@ -956,34 +960,53 @@ async function searchContact(){
   res.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px">در حال جستجو...</div>';
   try{
     var d = await apiCall('searchMessengerContact', { phone: np });
-    if(!d.ok || !d.contact){
+    if(!d.ok || !d.contacts || d.contacts.length === 0){
       res.innerHTML = '<div class="notfound">❌ کاربری با این شماره پیدا نشد</div>';
       return;
     }
-    var user = d.contact;
-    if(String(user.id) === String(ME.id)){
-      res.innerHTML = '<div class="notfound">این شماره متعلق به خودتان است</div>';
+
+    // فیلتر خودم
+    var filtered = d.contacts.filter(function(u){
+      return String(u.id) !== String(ME.id);
+    });
+    if(filtered.length === 0){
+      res.innerHTML = '<div class="notfound">این شماره فقط متعلق به خودتان است</div>';
       return;
     }
-    if(!findUserById(user.id)) ALL_USERS.push(user);
-    var safeId = esc(user.id).replace(/'/g,"\\'");
-    res.innerHTML =
-      '<div class="contact-card" onclick="startChatWith(\''+safeId+'\')">'+
-      '<div class="avatar">'+esc((user.name||'?')[0])+'</div>'+
-      '<div class="cc-info"><div class="cc-name">'+esc(user.name||'ناشناس')+'</div>'+
-      '<div class="cc-phone">'+esc(user.phone)+'</div></div>'+
-      '<div class="go">💬</div></div>';
+
+    // اضافه به ALL_USERS
+    filtered.forEach(function(u){
+      if(!findUserById(u.id)) ALL_USERS.push(u);
+    });
+
+    var html = '<div style="font-size:.78rem;color:var(--muted);margin-bottom:8px;padding:0 4px">'+
+               '👥 '+faNum(filtered.length)+' نفر با این شماره پیدا شد — یکی را انتخاب کنید:'+
+               '</div>';
+
+    filtered.forEach(function(u){
+      var safeId = esc(u.id).replace(/'/g,"\\'");
+      var safeName = esc(u.name||'ناشناس').replace(/'/g,"\\'");
+      var safePhone = esc(u.phone||'').replace(/'/g,"\\'");
+      html += '<div class="contact-card" onclick="startChatWith(\''+safeId+'\',\''+safeName+'\',\''+safePhone+'\')">'+
+              '<div class="avatar">'+esc((u.name||'?')[0])+'</div>'+
+              '<div class="cc-info"><div class="cc-name">'+esc(u.name||'ناشناس')+'</div>'+
+              '<div class="cc-phone">'+
+                (u.accountNumber ? 'حساب: '+esc(u.accountNumber) : '')+
+                (u.phone ? ' | تلفن: '+esc(u.phone) : '')+
+              '</div></div>'+
+              '<div class="go">💬</div></div>';
+    });
+    res.innerHTML = html;
   }catch(e){
     res.innerHTML = '<div class="notfound">❌ خطا: '+esc(e.message)+'</div>';
   }
 }
 
-function startChatWith(userId){
+function startChatWith(userId, userName, userPhone){
   closeSearchModal();
   var user = findUserById(userId);
-  if(!user){ toast('کاربر پیدا نشد', 'err'); return; }
-  var cid = [String(ME.id), String(user.id)].sort().join('_');
-  openChat(cid, user.id, user.name, user.phone);
+  var cid = [String(ME.id), String(userId)].sort().join('_');
+  openChat(cid, userId, userName || (user ? user.name : userId), userPhone || (user ? user.phone : ''));
 }
 
 /* ============================================================
@@ -1129,9 +1152,6 @@ function startPolling(){
   }, 4000);
 }
 
-/* ============================================================
-   شروع
-   ============================================================ */
 document.addEventListener('click', function(e){
   var menu = document.getElementById('attachMenu');
   if(menu && menu.classList.contains('open')){
