@@ -294,78 +294,54 @@
         window.location.href = 'install.html';
     };
 
-    // ============================================================
     // 🆕 وضعیت دسترسی کاربر
-    // ============================================================
     var userAccessStatus = 'active';
 
-    // ============================================================
     // 🆕 قفل کردن بخش‌ها
-    // ============================================================
     function lockRestrictedSections() {
         var reqBtns = document.querySelectorAll('[onclick*="requests"], [onclick*="Requests"], [onclick*="showRequests"]');
         reqBtns.forEach(function(btn) {
             btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به بخش درخواست‌ها مسدود است.'); return false; };
             btn.style.opacity = '0.5';
         });
-
         var smsBtns = document.querySelectorAll('[onclick*="sms"], [onclick*="Sms"], [onclick*="SMS"]');
         smsBtns.forEach(function(btn) {
             btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به سامانه پیامکی مسدود است.'); return false; };
             btn.style.opacity = '0.5';
         });
-
         var onlineBtns = document.querySelectorAll('[onclick*="online"], [onclick*="Online"], [onclick*="service"]');
         onlineBtns.forEach(function(btn) {
             btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به خدمات آنلاین مسدود است.'); return false; };
             btn.style.opacity = '0.5';
         });
-
         var adminBtns = document.querySelectorAll('[onclick*="admin"], [onclick*="Admin"]');
         adminBtns.forEach(function(btn) {
             btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به پنل مدیریت مسدود است.'); return false; };
             btn.style.opacity = '0.5';
         });
-        
-        var menuLinks = document.querySelectorAll('.menu-item, .nav-link');
-        menuLinks.forEach(function(link) {
-            var text = (link.innerText || '').trim();
-            if (text.includes('درخواست') || text.includes('پیامک') || text.includes('آنلاین') || text.includes('مدیریت')) {
-                link.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به این بخش مسدود است.'); return false; };
-                link.style.opacity = '0.5';
-            }
-        });
-        
         console.log('🔒 بخش‌های حساس قفل شدند.');
     }
 
-    // ============================================================
     // 🆕 تابع تغییر کاربر
-    // ============================================================
     window.goToFamilySelect = function() {
         console.log('👥 تغییر کاربر...');
-        
         if (typeof showFamilySelectScreen !== 'function') {
             alert('❌ صفحه انتخاب کاربر در دسترس نیست');
             return;
         }
-        
         var cm = members.find(function(m) {
             return String(m.accountNumber) === String(currentUser.accountNumber) ||
                    String(m.id) === String(currentUser.memberId);
         });
         var fm = cm && cm.heh1 ? members.filter(function(m) { return String(m.heh1) === String(cm.heh1); }) : [];
-        
         if (fm.length <= 1) {
             alert('ℹ️ اعضای دیگه‌ای در خانواده نیست.');
             return;
         }
-        
         var n1 = document.getElementById('bottomNavDirect');
         if (n1) n1.style.display = 'none';
         var n2 = document.getElementById('mainBottomNav');
         if (n2) n2.style.display = 'none';
-        
         showFamilySelectScreen();
     };
 
@@ -375,28 +351,22 @@
     function updateBottomNavVisibility() {
     var nav = document.getElementById('bottomNavDirect');
     if (!nav) return;
-    
     var loginPage = document.getElementById('loginPage');
     var newLoader = document.getElementById('newLoader');
     var loaderOk = document.getElementById('loaderOk');
-    
     var isLoginVisible = loginPage && loginPage.style.display !== 'none' && loginPage.offsetParent !== null;
     var isLoaderVisible = (newLoader && newLoader.offsetParent !== null) || (loaderOk && loaderOk.offsetParent !== null);
-    
     if (isLoginVisible || isLoaderVisible) {
         nav.style.display = 'none';
         return;
     }
-    
     var isLoggedIn = false;
     try {
         if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) {
             isLoggedIn = true;
         }
     } catch(e) {}
-    
     var isInMenu = (typeof currentPage !== 'undefined' && currentPage === 'menu');
-    
     if (isLoggedIn && isInMenu) {
         nav.style.display = 'flex';
     } else {
@@ -410,7 +380,7 @@
 
     <script>
     // ============================================================
-    // 🆕 Override doLogout (بعد از لود کامل)
+    // Override doLogout (بعد از لود کامل)
     // ============================================================
     (function() {
         function initOverride() {
@@ -418,12 +388,9 @@
                 setTimeout(initOverride, 500);
                 return;
             }
-            
             console.log('🔧 Override doLogout...');
-            
             window.doLogout = function() {
                 console.log('🚪 doLogout جدید');
-                
                 var cm = null;
                 var fm = [];
                 try {
@@ -433,28 +400,22 @@
                     });
                     fm = cm && cm.heh1 ? members.filter(function(m) { return String(m.heh1) === String(cm.heh1); }) : [];
                 } catch(e) {}
-                
                 var hasFamily = fm.length > 1;
-                
                 var modal = '<div id="logoutChoiceModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.75);z-index:99999999;display:flex;align-items:center;justify-content:center;padding:20px;direction:rtl;">';
                 modal += '<div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:24px;max-width:400px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.6);">';
                 modal += '<div style="font-size:3rem;margin-bottom:12px;">🚪</div>';
                 modal += '<h3 style="color:#ffc94d;font-size:1.2rem;font-weight:900;margin-bottom:8px;">می‌خوای کجا بری؟</h3>';
                 modal += '<p style="color:#9ca3af;font-size:0.85rem;margin-bottom:20px;">یکی از گزینه‌های زیر رو انتخاب کن</p>';
-                
                 if (hasFamily) {
                     modal += '<button onclick="window.goToFamilySelectFromModal()" style="width:100%;padding:14px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;border:none;border-radius:12px;font-size:0.95rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 15px rgba(139,92,246,0.4);display:flex;align-items:center;justify-content:center;gap:8px;"><i class="fas fa-users"></i> تغییر کاربر (اعضای خانواده)</button>';
                 }
-                
                 modal += '<button onclick="window.realLogout()" style="width:100%;padding:14px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:12px;font-size:0.95rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;box-shadow:0 4px 15px rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;gap:8px;"><i class="fas fa-sign-out-alt"></i> خروج کامل از برنامه</button>';
                 modal += '<button onclick="document.getElementById(\'logoutChoiceModal\').remove()" style="width:100%;padding:12px;background:rgba(255,255,255,0.05);color:#9ca3af;border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;font-family:inherit;">❌ لغو</button>';
                 modal += '</div></div>';
-                
                 var old = document.getElementById('logoutChoiceModal');
                 if (old) old.remove();
                 document.body.insertAdjacentHTML('beforeend', modal);
             };
-            
             window.goToFamilySelectFromModal = function() {
                 var modal = document.getElementById('logoutChoiceModal');
                 if (modal) modal.remove();
@@ -462,11 +423,9 @@
                     window.goToFamilySelect();
                 }
             };
-            
             window.realLogout = function() {
                 var modal = document.getElementById('logoutChoiceModal');
                 if (modal) modal.remove();
-                
                 try { currentUser = null; } catch(e) {}
                 try { if (typeof autoUpdateInterval !== 'undefined' && autoUpdateInterval) { clearInterval(autoUpdateInterval); autoUpdateInterval = null; } } catch(e) {}
                 try { if (typeof stopKeepAlive === 'function') stopKeepAlive(); } catch(e) {}
@@ -477,13 +436,10 @@
     localStorage.removeItem('selectedMemberId');
     localStorage.removeItem('sandogh_members_cache');
 } catch(e) {}
-                
                 location.reload();
             };
-            
             console.log('✅ doLogout override شد');
         }
-        
         setTimeout(initOverride, 1500);
     })();
     </script>
@@ -500,7 +456,6 @@
             var isLoggedIn = (typeof currentUser !== 'undefined' && currentUser && currentUser.memberId);
             var hasMembers = (typeof members !== 'undefined' && members.length > 10);
             var hasPage = (typeof currentPage !== 'undefined' && currentPage);
-
             if (isLoggedIn && hasMembers && hasPage) {
                 clearInterval(checkInterval);
                 ['newLoader', 'loaderOk', 'loaderFx'].forEach(function(id) {
@@ -584,33 +539,35 @@
         ldrDone = true;
         clearInterval(ldrSecT);
         ldrRender();
-        
         var res = loginResult;
         currentUser = res.user;
-
-try {
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-    console.log('✅ currentUser ذخیره شد');
-} catch(e) {
-    console.warn('⚠️ خطا در ذخیره currentUser:', e);
-}
-
-// 🆕 چک کردن وضعیت مسدودی کاربر
-var API_URL_STATUS = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber || currentUser.username))
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-        if (data.ok) {
-            userAccessStatus = data.status;
-            if (userAccessStatus === 'blocked' || userAccessStatus === 'closed') {
-                setTimeout(function() {
-                    alert('🚫 حساب شما ' + (userAccessStatus === 'blocked' ? 'مسدود' : 'بسته') + ' شده است.\n\nلطفاً با حسابداری صندوق تماس بگیرید.');
-                    lockRestrictedSections();
-                }, 1500);
-            }
+        try {
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            console.log('✅ currentUser ذخیره شد');
+        } catch(e) {
+            console.warn('⚠️ خطا در ذخیره currentUser:', e);
         }
-    })
-    .catch(function(e) { console.log('خطا در چک وضعیت:', e); });
+
+        // 🆕 چک کردن وضعیت مسدودی
+        var API_URL_STATUS = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+        fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber || currentUser.username))
+            .then(function(r) { 
+                var ct = r.headers.get('content-type');
+                if (ct && ct.indexOf('application/json') !== -1) return r.json();
+                return { ok: false };
+            })
+            .then(function(data) {
+                if (data && data.ok) {
+                    userAccessStatus = data.status;
+                    if (userAccessStatus === 'blocked' || userAccessStatus === 'closed') {
+                        setTimeout(function() {
+                            alert('🚫 حساب شما ' + (userAccessStatus === 'blocked' ? 'مسدود' : 'بسته') + ' شده است.\n\nلطفاً با حسابداری صندوق تماس بگیرید.');
+                            lockRestrictedSections();
+                        }, 1500);
+                    }
+                }
+            })
+            .catch(function(e) { console.log('خطا در چک وضعیت:', e); });
 
         var tempMember = {
             id: currentUser.id || currentUser.accountNumber || currentUser.username,
@@ -626,32 +583,23 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
             paidInstallments: 0, overdueInstallments: 0, remainingInstallments: 0, monthlySalary: 0,
             active: true, _isTemp: true
         };
-        
         members = [tempMember];
         transactions = [];
         users = res.data.users || [];
-        
         if (!currentUser.memberId) currentUser.memberId = tempMember.id;
-        
         transactionsByMember = new Map();
         memberScores = {};
         memberScores[tempMember.id] = { score: 0, tier: 'برنزی', points: 0 };
-        
         window.__dataReady = false;
         window.__bgProcessing = true;
-        
         saveRememberMe(res.username, res.password);
-        
         setTimeout(function() {
             var __waitAttempts = 0;
             var __maxWait = 400;
-            
             console.log('⏳ شروع لود data.xlsx...');
-            
             if (typeof loadMainDataWithCache === 'function') {
                 loadMainDataWithCache(false).then(function(fullData) {
                     console.log('✅ data.xlsx لود شد');
-                    
                     if (fullData.members && fullData.members.length > 0) {
                         members = fullData.members;
                         window.__fullMembers = members;
@@ -664,13 +612,11 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
                         users = fullData.users;
                         window.__fullUsers = users;
                     }
-                    
                     var realMember = members.find(function(m) {
                         return String(m.accountNumber) === String(currentUser.accountNumber) ||
                                String(m.accountNumber) === String(currentUser.username);
                     });
                     if (realMember) currentUser.memberId = realMember.id;
-                    
                     transactionsByMember = new Map();
                     if (transactions && transactions.length > 0) {
                         transactions.forEach(function(t) {
@@ -679,19 +625,15 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
                             transactionsByMember.get(id).push(t);
                         });
                     }
-                    
                     if (members && members.length > 0 && typeof calculateMemberScore === 'function') {
                         members.forEach(function(m) {
                             try { memberScores[m.id] = calculateMemberScore(m); }
                             catch(e) { memberScores[m.id] = 0; }
                         });
                     }
-                    
                     try { if (typeof loadCoins === 'function') loadCoins(); } catch(e) {}
                     try { if (typeof loadNotifications === 'function') loadNotifications(); } catch(e) {}
-                    
                     if (typeof renderPage === 'function') renderPage('menu');
-                    
                     window.__dataReady = true;
                     window.__bgProcessing = false;
                     console.log('🎉 همه داده‌ها آماده است');
@@ -700,24 +642,18 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
                     window.__bgProcessing = false;
                 });
             }
-            
             var __waitInterval = setInterval(function() {
                 __waitAttempts++;
-                
                 var isReallyReady = (members && members.length > 10) || 
                                     (window.__fullMembers && window.__fullMembers.length > 10);
-                
                 if (!isReallyReady && __waitAttempts < __maxWait) {
                     return;
                 }
-                
                 clearInterval(__waitInterval);
-                
                 var __nl = document.getElementById('newLoader');
                 if (__nl) __nl.classList.add('away');
                 var __ok = document.getElementById('loaderOk');
                 if (__ok) __ok.classList.remove('show');
-                
                 var __currentMember = null;
                 if (currentUser) {
                     __currentMember = members.find(function(m) {
@@ -725,19 +661,16 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
                                String(m.id) === String(currentUser.memberId);
                     });
                 }
-                
                 var __familyMembers = [];
                 if (__currentMember && __currentMember.heh1) {
                     __familyMembers = members.filter(function(m) {
                         return String(m.heh1) === String(__currentMember.heh1);
                     });
                 }
-                
                 if (members.length <= 10 && window.__fullMembers && window.__fullMembers.length > 10) {
                     members = window.__fullMembers;
                     if (window.__fullTransactions) transactions = window.__fullTransactions;
                     if (window.__fullUsers) users = window.__fullUsers;
-                    
                     if (currentUser) {
                         __currentMember = members.find(function(m) {
                             return String(m.accountNumber) === String(currentUser.accountNumber) ||
@@ -751,10 +684,8 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
                         });
                     }
                 }
-                
                 var __isHead = __currentMember && String(__currentMember.heh2) === '01';
                 var __hasFamilySelect = (typeof showFamilySelectScreen === 'function');
-                
                 if (__isHead && __familyMembers.length > 1 && __hasFamilySelect) {
                     var __nav1 = document.getElementById('bottomNavDirect');
                     if (__nav1) __nav1.style.display = 'none';
@@ -764,11 +695,9 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
                     if (appContainer) appContainer.innerHTML = '<div class="app-page"><div id="contentArea"></div></div>';
                     if (typeof renderPage === 'function') renderPage('menu');
                 }
-                
                 if (typeof updateVisitInfo === 'function') { try { updateVisitInfo(); } catch(e) {} }
                 if (typeof updateFloatingButtons === 'function') { try { updateFloatingButtons(); } catch(e) {} }
                 if (typeof startKeepAlive === 'function') { try { startKeepAlive(); } catch(e) {} }
-                
                 setTimeout(function() {
                     var nl = document.getElementById('newLoader');
                     if (nl) { nl.style.display = 'none'; nl.classList.remove('active', 'away'); }
@@ -790,11 +719,9 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
             var el = document.getElementById('ldrTm');
             if (el) el.textContent = ldrFa(ldrSecs);
         }, 250);
-        
         var ldr = document.getElementById('newLoader');
         if (ldr) { ldr.style.display = 'flex'; ldr.classList.add('active'); }
         document.querySelectorAll('.loaderGlow').forEach(function(el) { el.classList.add('active'); });
-        
         ldrP = 0; ldrDone = false; ldrSecs = 0;
         ldrRender();
         setTimeout(ldrTick, 500);
@@ -815,7 +742,6 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
     function renderPage(page) {
         const content = document.getElementById('contentArea');
         if (!content) return;
-        
         if (window.LazyLoader && page !== 'menu' && page !== 'profile' && LazyLoader.SECTION_DEPS[page] && !LazyLoader.isLoaded(page)) {
             LazyLoader.ensureSectionLoaded(page).then(function() {
                 _renderPageNow(page, content);
@@ -880,326 +806,157 @@ fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(
 
     console.log('✅ سیستم صندوق اتحاد بارگذاری شد');
     </script>
-    <!-- 🆕 پنجره شناور پیام‌رسان -->
-<div id="messagesOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;backdrop-filter:blur(4px);">
-    <div id="messagesWindow" style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;height:85vh;max-height:700px;background:#1a1a2e;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.7);border:2px solid rgba(139,92,246,0.4);display:flex;flex-direction:column;animation:msgOpen 0.3s ease;">
-        
-        <!-- هدر پنجره -->
-        <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-            <div style="display:flex;align-items:center;gap:8px;color:#fff;font-weight:900;font-size:1rem;">
-                <i class="fas fa-envelope"></i>
-                <span>پیام‌رسان</span>
-            </div>
-            <button onclick="closeMessagesWindow()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;font-family:inherit;">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        
-        <!-- iframe پیام‌رسان -->
-        <iframe id="messagesFrame" src="" style="flex:1;width:100%;border:none;background:#1a1a2e;" allow="clipboard-write"></iframe>
-    </div>
-</div>
 
-<style>
-@keyframes msgOpen {
-    from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-</style>
-
-<script>
-// ============================================================
-// 🆕 توابع پنجره شناور پیام‌رسان
-// ============================================================
-window.openMessagesWindow = function() {
-  var overlay = document.getElementById('messagesOverlay');
-  var frame = document.getElementById('messagesFrame');
-  if (overlay && frame) {
-    var userId = '', userName = '';
-    try {
-      if (typeof currentUser !== 'undefined' && currentUser) {
-        userId = currentUser.id || currentUser.accountNumber || currentUser.username || currentUser.memberId || '';
-        userName = currentUser.firstName || currentUser.name || '';
-      }
-    } catch(e) {}
-    var url = 'messages.html?v=' + Date.now();
-    if (userId) url += '&user=' + encodeURIComponent(userId);
-    if (userName) url += '&name=' + encodeURIComponent(userName);
-    frame.src = url;
-    overlay.style.display = 'block';
-    document.body.style.overflow = 'hidden';
-  }
-};
-
-window.closeMessagesWindow = function() {
-    console.log('🔙 بستن پنجره پیام‌رسان...');
-    var overlay = document.getElementById('messagesOverlay');
-    if (overlay) overlay.style.display = 'none';
-    
-    // برگردوندن اسکرول
-    document.body.style.overflow = '';
-    
-    // پاک کردن src که دفعه بعد دوباره لود بشه
-    var frame = document.getElementById('messagesFrame');
-    if (frame) frame.src = 'about:blank';
-    
-    // چک کردن پیام‌های جدید
-    if (typeof checkUnreadMessages === 'function') {
-        checkUnreadMessages();
-    }
-};
-</script>
     <!-- 🆕 آیکون پاکت نامه شناور -->
-<button id="messagesBell" onclick="openMessagesWindow()" style="display:none;position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);display:none;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;transition:all 0.3s;">
-    <i class="fas fa-envelope"></i>
-    <span id="messagesBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;width:24px;height:24px;border-radius:50%;font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 8px rgba(239,68,68,0.6);">0</span>
-</button>
+    <button id="messagesBell" onclick="openMessagesWindow()" style="display:none;position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);align-items:center;justify-content:center;font-size:1.6rem;color:#fff;transition:all 0.3s;">
+        <i class="fas fa-envelope"></i>
+        <span id="messagesBadge" style="display:none;position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;width:24px;height:24px;border-radius:50%;font-size:0.75rem;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 2px 8px rgba(239,68,68,0.6);">0</span>
+    </button>
 
-<style>
-#messagesBell:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 30px rgba(139,92,246,0.8) !important;
-}
-#messagesBell.pulse {
-    animation: bellPulse 2s infinite;
-}
-@keyframes bellPulse {
-    0%, 100% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 0 rgba(139,92,246,0.7); }
-    50% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 15px rgba(139,92,246,0); }
-}
-</style>
-
-<script>
-// ============================================================
-// 🆕 چک کردن پیام‌های خوانده‌نشده
-// ============================================================
-window.checkUnreadMessages = function() {
-    if (typeof currentUser === 'undefined' || !currentUser) return;
-    if (typeof currentPage !== 'undefined' && currentPage === 'login') return;
-    
-    var userId = currentUser.accountNumber || currentUser.username;
-    if (!userId) return;
-
-    var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-    
-    fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { cache: 'no-cache' })
-        .then(function(r) { 
-            // 🆕 چک کردن اینکه پاسخ JSON است یا HTML (خطا)
-            var contentType = r.headers.get('content-type');
-            if (contentType && contentType.indexOf('application/json') !== -1) {
-                return r.json();
-            } else {
-                throw new Error('پاسخ سرور معتبر نیست (HTML دریافت شد)');
-            }
-        })
-        .then(function(d) {
-            if (d && d.ok && d.messages) {
-                var unread = d.messages.filter(function(m) {
-                    return m.status === 'new' && String(m.from_id) !== String(userId);
-                }).length;
-                
-                var bell = document.getElementById('messagesBell');
-                var badge = document.getElementById('messagesBadge');
-                
-                if (bell) {
-                    bell.style.display = 'flex';
-                    if (unread > 0) {
-                        if (badge) { badge.textContent = unread; badge.style.display = 'flex'; }
-                        bell.classList.add('pulse');
-                    } else {
-                        if (badge) badge.style.display = 'none';
-                        bell.classList.remove('pulse');
-                    }
-                }
-            }
-        })
-        .catch(function(e) {
-            // 🆕 فقط لاگ کن، کاری به UI نداشته باش که کرش کنه
-            console.log('⚠️ خطا در چک پیام‌ها:', e.message);
-        });
-};
-
-// ============================================================
-// شروع چک کردن پیام‌ها بعد از لاگین
-// ============================================================
-document.addEventListener('DOMContentLoaded', function() {
-    // هر ۳۰ ثانیه چک کن
-    setTimeout(function() {
-        checkUnreadMessages();
-        setInterval(checkUnreadMessages, 30000);
-    }, 3000);
-});
-</script>
-    <script>
-// ============================================================
-// 🆕 دریافت پیام از iframe پیام‌رسان
-// ============================================================
-window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'messagesUpdate') {
-        console.log('📩 پیام از iframe:', event.data);
-        
-        var unread = event.data.unread || 0;
-        var bell = document.getElementById('messagesBell');
-        var badge = document.getElementById('messagesBadge');
-        
-        if (bell) {
-            bell.style.display = 'flex';
-            
-            if (unread > 0) {
-                if (badge) {
-                    badge.textContent = unread;
-                    badge.style.display = 'flex';
-                }
-                bell.classList.add('pulse');
-            } else {
-                if (badge) badge.style.display = 'none';
-                bell.classList.remove('pulse');
-            }
-        }
-    }
-});
-</script>
-    <!-- 🆕 آیکون پاکت نامه -->
-<button id="messagesBell" onclick="openMessagesWindow()" style="position:fixed;bottom:100px;right:16px;width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);border:3px solid #ffd700;cursor:pointer;z-index:9998;box-shadow:0 6px 25px rgba(139,92,246,0.6);display:none;align-items:center;justify-content:center;font-size:1.6rem;color:#fff;">
-    <i class="fas fa-envelope"></i>
-    <span id="messagesBadge" style="position:absolute;top:-6px;right:-6px;background:#ef4444;color:#fff;width:24px;height:24px;border-radius:50%;font-size:0.75rem;font-weight:900;display:none;align-items:center;justify-content:center;border:2px solid #fff;">0</span>
-</button>
-
-<!-- 🆕 پنجره شناور پیام‌رسان -->
-<div id="messagesOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;backdrop-filter:blur(4px);">
-    <div id="messagesWindow" style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;height:85vh;max-height:700px;background:#1a1a2e;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.7);border:2px solid rgba(139,92,246,0.4);display:flex;flex-direction:column;">
-        <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-            <div style="display:flex;align-items:center;gap:8px;color:#fff;font-weight:900;font-size:1rem;">
-                <i class="fas fa-envelope"></i>
-                <span>پیام‌رسان</span>
-            </div>
-            <button onclick="closeMessagesWindow()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;font-family:inherit;">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <iframe id="messagesFrame" src="" style="flex:1;width:100%;border:none;background:#1a1a2e;"></iframe>
-    </div>
-</div>
-
-<script>
-console.log('🚀 کد پیام‌رسان بارگذاری شد');
-
-window.openMessagesWindow = function() {
-    console.log('📨 باز کردن پنجره پیام‌رسان...');
-    var overlay = document.getElementById('messagesOverlay');
-    var frame = document.getElementById('messagesFrame');
-    
-    if (overlay && frame) {
-        if (!frame.src || frame.src === 'about:blank' || frame.src.indexOf('messages.html') === -1) {
-            frame.src = 'messages.html?v=' + Date.now();
-        }
-        overlay.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
-};
-
-window.closeMessagesWindow = function() {
-    console.log('🔙 بستن پنجره پیام‌رسان...');
-    var overlay = document.getElementById('messagesOverlay');
-    if (overlay) overlay.style.display = 'none';
-    document.body.style.overflow = '';
-    
-    var frame = document.getElementById('messagesFrame');
-    if (frame) frame.src = 'about:blank';
-    
-    if (typeof checkUnreadMessages === 'function') {
-        setTimeout(checkUnreadMessages, 500);
-    }
-};
-
-window.checkUnreadMessages = function() {
-    console.log('🔍 چک پیام‌های جدید...');
-    
-    if (typeof currentUser === 'undefined' || !currentUser) {
-        console.log('❌ currentUser نیست');
-        return;
-    }
-    
-    if (!currentUser.accountNumber && !currentUser.username) {
-        console.log('❌ accountNumber/username نیست');
-        return;
-    }
-    
-    if (typeof currentPage !== 'undefined' && currentPage === 'login') {
-        return;
-    }
-    
-    var userId = currentUser.accountNumber || currentUser.username;
-    var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
-    
-    fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { cache: 'no-cache' })
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-            console.log('📩 نتیجه:', d.ok ? '✅' : '❌', d.messages ? d.messages.length + ' پیام' : '');
-            
-            if (d.ok && d.messages) {
-                var unread = d.messages.filter(function(m) {
-                    return m.status === 'new' && String(m.from_id) !== String(userId);
-                }).length;
-                
-                var bell = document.getElementById('messagesBell');
-                var badge = document.getElementById('messagesBadge');
-                
-                if (bell) {
-                    bell.style.display = 'flex';
-                    console.log('✅ پاکت نمایش داده شد. نخوانده:', unread);
-                    
-                    if (unread > 0) {
-                        if (badge) {
-                            badge.textContent = unread;
-                            badge.style.display = 'flex';
-                        }
-                    } else {
-                        if (badge) badge.style.display = 'none';
-                    }
-                }
-            }
-        })
-        .catch(function(e) {
-            console.log('⚠️ خطا:', e.message);
-        });
-};
-
-window.addEventListener('message', function(event) {
-    if (event.data && event.data.type === 'messagesUpdate') {
-        checkUnreadMessages();
-    }
-});
-
-// شروع خودکار بعد از لاگین
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        checkUnreadMessages();
-        setInterval(checkUnreadMessages, 30000);
-    }, 3000);
-});
-
-console.log('✅ توابع پیام‌رسان آماده است');
-</script>
     <style>
-/* 🆕 پیش‌فرض: بدون padding-top */
-body {
-    padding-top: 0 !important;
-}
-</style>
-
-<script>
-// 🆕 چک کن اگه هدر مخفی بود، padding-top رو صفر کن
-setInterval(function() {
-    var hdr = document.getElementById('mainHeader');
-    if (!hdr || hdr.style.display === 'none' || hdr.offsetHeight === 0) {
-        if (document.body.style.paddingTop !== '0px') {
-            document.body.style.paddingTop = '0px';
-        }
+    #messagesBell:hover {
+        transform: scale(1.1);
+        box-shadow: 0 8px 30px rgba(139,92,246,0.8) !important;
     }
-}, 300);
+    #messagesBell.pulse {
+        animation: bellPulse 2s infinite;
+    }
+    @keyframes bellPulse {
+        0%, 100% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 0 rgba(139,92,246,0.7); }
+        50% { box-shadow: 0 6px 25px rgba(139,92,246,0.6), 0 0 0 15px rgba(139,92,246,0); }
+    }
+    </style>
 
-console.log('✅ ریست padding-top فعال شد');
-</script>
+    <!-- 🆕 پنجره شناور پیام‌رسان -->
+    <div id="messagesOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;backdrop-filter:blur(4px);">
+        <div id="messagesWindow" style="position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);width:90%;max-width:500px;height:85vh;max-height:700px;background:#1a1a2e;border-radius:20px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,0.7);border:2px solid rgba(139,92,246,0.4);display:flex;flex-direction:column;">
+            <div style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:8px;color:#fff;font-weight:900;font-size:1rem;">
+                    <i class="fas fa-envelope"></i>
+                    <span>پیام‌رسان</span>
+                </div>
+                <button onclick="closeMessagesWindow()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;font-family:inherit;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <iframe id="messagesFrame" src="" style="flex:1;width:100%;border:none;background:#1a1a2e;"></iframe>
+        </div>
+    </div>
+
+    <script>
+    console.log('🚀 کد پیام‌رسان بارگذاری شد');
+
+    window.openMessagesWindow = function() {
+        console.log('📨 باز کردن پنجره پیام‌رسان...');
+        var overlay = document.getElementById('messagesOverlay');
+        var frame = document.getElementById('messagesFrame');
+        if (overlay && frame) {
+            var userId = '', userName = '';
+            try {
+                if (typeof currentUser !== 'undefined' && currentUser) {
+                    userId = currentUser.id || currentUser.accountNumber || currentUser.username || currentUser.memberId || '';
+                    userName = currentUser.firstName || currentUser.name || '';
+                }
+            } catch(e) {}
+            var url = 'messages.html?v=' + Date.now();
+            if (userId) url += '&user=' + encodeURIComponent(userId);
+            if (userName) url += '&name=' + encodeURIComponent(userName);
+            frame.src = url;
+            overlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    };
+
+    window.closeMessagesWindow = function() {
+        console.log('🔙 بستن پنجره پیام‌رسان...');
+        var overlay = document.getElementById('messagesOverlay');
+        if (overlay) overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        var frame = document.getElementById('messagesFrame');
+        if (frame) frame.src = 'about:blank';
+        if (typeof checkUnreadMessages === 'function') {
+            setTimeout(checkUnreadMessages, 500);
+        }
+    };
+
+    window.checkUnreadMessages = function() {
+        console.log('🔍 چک پیام‌های جدید...');
+        if (typeof currentUser === 'undefined' || !currentUser) {
+            console.log('❌ currentUser نیست');
+            return;
+        }
+        if (!currentUser.accountNumber && !currentUser.username) {
+            console.log('❌ accountNumber/username نیست');
+            return;
+        }
+        if (typeof currentPage !== 'undefined' && currentPage === 'login') {
+            return;
+        }
+        var userId = currentUser.accountNumber || currentUser.username;
+        var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+        fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { 
+            cache: 'no-cache',
+            headers: { 'Accept': 'application/json' }
+        })
+            .then(function(r) { 
+                var ct = r.headers.get('content-type');
+                if (ct && ct.indexOf('application/json') !== -1) return r.json();
+                return { ok: false, messages: [] };
+            })
+            .then(function(d) {
+                if (d && d.ok && d.messages) {
+                    var unread = d.messages.filter(function(m) {
+                        return m.status === 'new' && String(m.from_id) !== String(userId);
+                    }).length;
+                    var bell = document.getElementById('messagesBell');
+                    var badge = document.getElementById('messagesBadge');
+                    if (bell) {
+                        bell.style.display = 'flex';
+                        if (unread > 0) {
+                            if (badge) { badge.textContent = unread; badge.style.display = 'flex'; }
+                            bell.classList.add('pulse');
+                        } else {
+                            if (badge) badge.style.display = 'none';
+                            bell.classList.remove('pulse');
+                        }
+                    }
+                }
+            })
+            .catch(function(e) { console.log('⚠️ خطا در چک پیام‌ها (احتمالاً CORS):', e.message); });
+    };
+
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'messagesUpdate') {
+            checkUnreadMessages();
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            checkUnreadMessages();
+            setInterval(checkUnreadMessages, 30000);
+        }, 3000);
+    });
+
+    console.log('✅ توابع پیام‌رسان آماده است');
+    </script>
+
+    <style>
+    body {
+        padding-top: 0 !important;
+    }
+    </style>
+
+    <script>
+    setInterval(function() {
+        var hdr = document.getElementById('mainHeader');
+        if (!hdr || hdr.style.display === 'none' || hdr.offsetHeight === 0) {
+            if (document.body.style.paddingTop !== '0px') {
+                document.body.style.paddingTop = '0px';
+            }
+        }
+    }, 300);
+    console.log('✅ ریست padding-top فعال شد');
+    </script>
 </body>
 </html>
