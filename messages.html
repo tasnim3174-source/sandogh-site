@@ -214,20 +214,12 @@
     background:var(--violet);color:#fff;cursor:pointer;font-family:inherit;
     font-size:.78rem;font-weight:700}
 
-  #userPicker{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(6px);
-    display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
-  #userPicker.hidden{display:none}
-  .up-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;
-    padding:24px;width:100%;max-width:400px;text-align:center;max-height:80vh;overflow-y:auto}
-  .up-card h2{margin:0 0 6px;color:var(--gold);font-size:1.15rem}
-  .up-card p{margin:0 0 18px;color:var(--muted);font-size:.78rem;line-height:1.7}
-  .up-user{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
-    background:var(--panel2);border:1px solid var(--border);margin-bottom:8px;cursor:pointer;transition:.15s}
-  .up-user:active{transform:scale(.98);border-color:var(--violet)}
-  .up-user .avatar{width:42px;height:42px;font-size:1rem}
-  .up-user .uu-info{flex:1;text-align:right}
-  .up-user .uu-name{font-weight:800;font-size:.9rem}
-  .up-user .uu-phone{font-size:.72rem;color:var(--muted);direction:ltr;text-align:right;margin-top:2px}
+  #loadingScreen{position:fixed;inset:0;background:var(--bg);display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:300}
+  #loadingScreen .spinner{width:50px;height:50px;border:4px solid var(--border);
+    border-top-color:var(--violet);border-radius:50%;animation:spin 1s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  #loadingScreen .msg{color:var(--muted);font-size:.9rem;text-align:center;padding:0 20px;line-height:1.8}
 
   #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:999;
     display:flex;flex-direction:column;gap:8px;width:calc(100% - 32px);max-width:400px;pointer-events:none}
@@ -244,24 +236,20 @@
 </head>
 <body>
 
-<div id="userPicker">
-  <div class="up-card">
-    <h2>📨 پیام‌رسان صندوق اتحاد</h2>
-    <p>یک کاربر را انتخاب کنید تا وارد شوید.</p>
-    <div id="userPickerList"><div style="color:var(--muted);padding:20px">در حال بارگذاری...</div></div>
-  </div>
-</div>
-
 <div id="toasts"></div>
 
-<div id="app">
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <div class="msg" id="loadingMsg">در حال شناسایی کاربر...</div>
+</div>
+
+<div id="app" style="display:none">
   <div class="topbar">
     <div>
       <h1>📨 پیام‌رسان</h1>
       <div class="who" id="whoAmI"></div>
     </div>
     <div style="display:flex;gap:6px">
-      <button class="iconbtn" title="تغییر کاربر" onclick="switchUser()">🔄</button>
       <button class="iconbtn" title="پنل مدیریت" id="adminBtn" onclick="openAdminPanel()" style="display:none">⚙️</button>
     </div>
   </div>
@@ -276,7 +264,7 @@
     <div class="searchbox">
       <input id="convSearch" placeholder="🔍 جستجو در مکالمات..." oninput="renderConvList()">
     </div>
-    <div id="convList"></div>
+    <div id="convList"><div class="empty"><span class="big">💬</span>در حال بارگذاری...</div></div>
   </div>
 
   <div class="main-panel" id="panelToCouncil">
@@ -357,20 +345,26 @@
 
 <script>
 /* ============================================================
-   تنظیمات
+   تنظیمات — این‌ها را با مقادیر واقعی خودتان عوض کنید
    ============================================================ */
 var API_URL = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
 var ADMIN_KEY = 'admin12345';
 var MAX_FILE_MB = 5;
 
-var ME = null;
-var ALL_USERS = [];
-var ACTIVE_CONV = null;
+/* ============================================================
+   State
+   ============================================================ */
+var ME = null;                 // کاربر جاری { id, name, phone, isCouncil }
+var ALL_USERS = [];            // همه کاربران سیستم
+var ACTIVE_CONV = null;        // گفتگوی باز
 var POLL_TIMER = null;
 var CACHE = { conversations: [], messages: {} };
 var CURRENT_MAIN_TAB = 'chats';
 var CURRENT_ADMIN_TAB = 'chats';
 
+/* ============================================================
+   ابزارها
+   ============================================================ */
 function normPhone(p){
   if(!p) return '';
   p = String(p).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
@@ -409,8 +403,10 @@ function esc(s){
                        .replace(/\n/g,'<br>');
 }
 function uid(){ return 'mm_'+Date.now()+'_'+Math.random().toString(36).slice(2,7); }
-function convId(a,b){ return [normPhone(a),normPhone(b)].sort().join('_'); }
-function findUser(phone){
+function findUserById(id){
+  return ALL_USERS.find(u => String(u.id) === String(id)) || null;
+}
+function findUserByPhone(phone){
   var np = normPhone(phone);
   return ALL_USERS.find(u => normPhone(u.phone) === np) || null;
 }
@@ -424,6 +420,9 @@ function toast(msg, type){
   setTimeout(()=>{el.style.opacity='0';el.style.transition='opacity .3s';setTimeout(()=>el.remove(),300);},2600);
 }
 
+/* ============================================================
+   API
+   ============================================================ */
 async function apiCall(action, params){
   var qs = new URLSearchParams(Object.assign({action:action}, params||{}));
   var url = API_URL + '?' + qs.toString();
@@ -441,56 +440,105 @@ async function apiPost(action, body){
   return await res.json();
 }
 
-async function initUserPicker(){
-  var list = document.getElementById('userPickerList');
-  list.innerHTML = '<div style="color:var(--muted);padding:20px">در حال بارگذاری کاربران...</div>';
-  try{
+/* ============================================================
+   🆕 شروع — گرفتن کاربر از parent / URL / localStorage
+   ============================================================ */
+function setLoadingMsg(txt){
+  var el = document.getElementById('loadingMsg');
+  if(el) el.textContent = txt;
+}
+
+async function initFromParent() {
+  setLoadingMsg('در حال شناسایی کاربر...');
+
+  var parentUserId = '';
+  var parentUserName = '';
+
+  // ۱. از پارامتر URL
+  try {
+    var urlParams = new URLSearchParams(window.location.search);
+    parentUserId = urlParams.get('user') || '';
+    parentUserName = urlParams.get('name') || '';
+  } catch(e) {}
+
+  // ۲. از localStorage
+  if (!parentUserId) {
+    try {
+      var lsUser = localStorage.getItem('currentUser');
+      if (lsUser) {
+        var u = JSON.parse(lsUser);
+        parentUserId = u.id || u.accountNumber || u.username || u.memberId || '';
+        parentUserName = u.firstName || u.name || '';
+      }
+    } catch(e) {}
+  }
+
+  // ۳. از window.parent
+  if (!parentUserId && window.parent !== window) {
+    try {
+      var pU = window.parent.currentUser;
+      if (pU) {
+        parentUserId = pU.id || pU.accountNumber || pU.username || pU.memberId || '';
+        parentUserName = pU.firstName || pU.name || '';
+      }
+    } catch(e) {}
+  }
+
+  if (!parentUserId) {
+    setLoadingMsg('⚠️ کاربر شناسایی نشد. لطفاً از داخل برنامه وارد شوید.');
+    return;
+  }
+
+  setLoadingMsg('در حال بارگذاری کاربران...');
+
+  // گرفتن لیست کاربران
+  try {
     var d = await apiCall('getMessengerUsers');
-    if(!d.ok || !d.users || d.users.length === 0){
-      list.innerHTML = '<div style="color:#fca5a5;padding:20px">❌ کاربری یافت نشد<br>'+
-        '<button onclick="initUserPicker()" style="margin-top:12px;padding:8px 16px;border:none;border-radius:8px;background:var(--violet);color:#fff;cursor:pointer;font-family:inherit">تلاش دوباره</button></div>';
+    if (!d.ok || !d.users) {
+      setLoadingMsg('❌ خطا در بارگذاری کاربران');
       return;
     }
     ALL_USERS = d.users;
-    list.innerHTML = '';
-    ALL_USERS.forEach(u=>{
-      var div = document.createElement('div');
-      div.className = 'up-user';
-      div.innerHTML =
-        '<div class="avatar" style="background:'+(u.color||'#8b5cf6')+'">'+esc((u.name||'?')[0])+'</div>'+
-        '<div class="uu-info"><div class="uu-name">'+esc(u.name||'ناشناس')+
-        (u.isCouncil ? ' <span style="color:#ffc94d;font-size:.7rem">(شورا)</span>' : '')+'</div>'+
-        '<div class="uu-phone">'+esc(u.phone||'—')+'</div></div>';
-      div.onclick = ()=> selectUser(u);
-      list.appendChild(div);
-    });
-  }catch(e){
-    list.innerHTML = '<div style="color:#fca5a5;padding:20px">❌ خطا: '+esc(e.message)+'</div>';
+
+    var me = findUserById(parentUserId);
+    if (!me) {
+      // اگر کاربر در data1.xlsx نبود، از اطلاعات parent استفاده کن
+      me = {
+        id: String(parentUserId),
+        name: parentUserName || String(parentUserId),
+        phone: '',
+        accountNumber: '',
+        isCouncil: false,
+        color: '#8b5cf6'
+      };
+      ALL_USERS.push(me);
+    }
+    if (parentUserName) me.name = parentUserName;
+
+    ME = me;
+    document.getElementById('whoAmI').textContent = 'وارد شده: ' + (me.name || me.id);
+
+    if (me.isCouncil) {
+      document.getElementById('adminBtn').style.display = 'flex';
+    }
+
+    // نمایش app
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+
+    // شروع
+    await loadConversations();
+    loadRepliesBadge();
+    startPolling();
+
+  } catch(e) {
+    setLoadingMsg('❌ خطا: ' + esc(e.message));
   }
 }
 
-function selectUser(u){
-  ME = u;
-  document.getElementById('userPicker').classList.add('hidden');
-  document.getElementById('whoAmI').textContent = 'وارد شده: ' + (u.name||u.phone||u.id);
-  if(u.isCouncil){
-    document.getElementById('adminBtn').style.display = 'flex';
-  }
-  loadConversations();
-  loadRepliesBadge();
-  startPolling();
-}
-
-function switchUser(){
-  ME = null;
-  ACTIVE_CONV = null;
-  CACHE = { conversations: [], messages: {} };
-  document.getElementById('chatView').classList.remove('open');
-  document.getElementById('adminBtn').style.display = 'none';
-  document.getElementById('userPicker').classList.remove('hidden');
-  initUserPicker();
-}
-
+/* ============================================================
+   تب‌های اصلی
+   ============================================================ */
 function switchMainTab(tab){
   CURRENT_MAIN_TAB = tab;
   document.querySelectorAll('.main-tab').forEach(t=>t.classList.remove('active'));
@@ -510,9 +558,13 @@ function switchMainTab(tab){
   }
 }
 
+/* ============================================================
+   چت‌ها
+   ============================================================ */
 async function loadConversations(){
+  if(!ME) return;
   try{
-    var d = await apiCall('getMessengerConversations', { user: ME.phone || ME.id });
+    var d = await apiCall('getMessengerConversations', { user: ME.id });
     if(d.ok && d.conversations){
       CACHE.conversations = d.conversations;
       if(CURRENT_MAIN_TAB === 'chats') renderConvList();
@@ -528,11 +580,10 @@ function renderConvList(){
   var convs = CACHE.conversations.slice();
   var q = (document.getElementById('convSearch').value||'').trim();
   if(q){
-    var nq = normPhone(q);
     convs = convs.filter(c=>{
-      var other = findUser(c.otherPhone);
+      var other = findUserById(c.otherId);
       return (other && other.name && other.name.indexOf(q)>=0) ||
-             (nq && c.otherPhone.indexOf(nq)>=0);
+             (String(c.otherId).indexOf(q)>=0);
     });
   }
   if(convs.length === 0){
@@ -541,9 +592,8 @@ function renderConvList(){
   }
   var html = '';
   convs.forEach(c=>{
-    var other = findUser(c.otherPhone);
-    var name = other ? other.name : c.otherPhone;
-    var color = other ? (other.color||'#8b5cf6') : '#8b5cf6';
+    var other = findUserById(c.otherId);
+    var name = other ? (other.name || other.id) : c.otherId;
     var initial = (name||'?')[0];
     var last = c.last || {};
     var preview = '';
@@ -552,10 +602,15 @@ function renderConvList(){
     else if(last.type === 'video') preview = '🎬 فیلم';
     else if(last.type === 'audio') preview = '🎤 صوت';
     else preview = '📄 فایل';
-    if(last.fromPhone && normPhone(last.fromPhone) === normPhone(ME.phone)) preview = 'شما: ' + preview;
+    if(String(last.fromId) === String(ME.id)) preview = 'شما: ' + preview;
 
-    html += '<div class="conv" onclick="openChat(\''+c.convId+'\',\''+c.otherPhone+'\')">';
-    html += '<div class="avatar" style="background:'+color+'">'+esc(initial)+'</div>';
+    var otherPhone = other ? normPhone(other.phone) : '';
+    var safeName = esc(name).replace(/'/g,"\\'");
+    var safeId = esc(c.otherId).replace(/'/g,"\\'");
+    var safePhone = esc(otherPhone).replace(/'/g,"\\'");
+
+    html += '<div class="conv" onclick="openChat(\''+c.convId+'\',\''+safeId+'\',\''+safeName+'\',\''+safePhone+'\')">';
+    html += '<div class="avatar">'+esc(initial)+'</div>';
     html += '<div class="conv-info"><div class="conv-name"><span>'+esc(name)+'</span>'+
             '<span class="time">'+fmtTime(last.createdAt)+'</span></div>';
     html += '<div class="conv-last"><span style="flex:1;overflow:hidden;text-overflow:ellipsis">'+
@@ -566,14 +621,13 @@ function renderConvList(){
   list.innerHTML = html;
 }
 
-async function openChat(cid, otherPhone){
-  ACTIVE_CONV = { convId: cid, otherPhone: normPhone(otherPhone) };
-  var other = findUser(otherPhone);
-  document.getElementById('chatName').textContent = other ? other.name : otherPhone;
+async function openChat(cid, otherId, otherName, otherPhone){
+  ACTIVE_CONV = { convId: cid, otherId: otherId, otherName: otherName, otherPhone: otherPhone || '' };
+  document.getElementById('chatName').textContent = otherName || otherId;
   document.getElementById('chatStatus').textContent = 'آنلاین';
   var av = document.getElementById('chatAvatar');
-  av.textContent = (other ? other.name : otherPhone)[0];
-  av.style.background = other ? (other.color||'#8b5cf6') : '#8b5cf6';
+  av.textContent = (otherName || otherId || '?')[0];
+  av.style.background = '#8b5cf6';
   document.getElementById('chatView').classList.add('open');
   await loadMessages(cid);
   markConvRead(cid);
@@ -587,8 +641,9 @@ function closeChat(){
 }
 
 async function loadMessages(cid){
+  if(!ME) return;
   try{
-    var d = await apiCall('getMessengerMessages', { convId: cid, user: ME.phone || ME.id });
+    var d = await apiCall('getMessengerMessages', { convId: cid, user: ME.id });
     if(d.ok && d.messages){
       CACHE.messages[cid] = d.messages;
       renderMessages();
@@ -599,14 +654,15 @@ async function loadMessages(cid){
 }
 
 async function markConvRead(cid){
-  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.phone || ME.id }); }catch(e){}
+  if(!ME) return;
+  try{ await apiCall('markMessengerRead', { convId: cid, user: ME.id }); }catch(e){}
 }
 
 function renderMessages(){
-  if(!ACTIVE_CONV) return;
+  if(!ACTIVE_CONV || !ME) return;
   var area = document.getElementById('messagesArea');
   var msgs = CACHE.messages[ACTIVE_CONV.convId] || [];
-  var myPhone = normPhone(ME.phone || ME.id);
+  var myId = String(ME.id || '');
 
   if(msgs.length === 0){
     area.innerHTML = '<div class="empty" style="margin:auto"><span class="big">👋</span>شروع مکالمه<br>اولین پیام را بفرستید</div>';
@@ -617,7 +673,7 @@ function renderMessages(){
   msgs.forEach(m=>{
     var day = fmtDay(m.createdAt);
     if(day !== lastDay){ html += '<div class="day-sep">'+esc(day)+'</div>'; lastDay = day; }
-    var isMine = normPhone(m.fromPhone) === myPhone;
+    var isMine = String(m.fromId) === myId;
     html += '<div class="bubble-row '+(isMine?'me':'them')+'"><div class="bubble">';
     if(m.type === 'text'){
       html += esc(m.text);
@@ -653,20 +709,24 @@ function autoGrow(el){
   document.getElementById('sendBtn').disabled = !el.value.trim();
 }
 
+/* ============================================================
+   ارسال متن
+   ============================================================ */
 async function sendText(){
   if(!ACTIVE_CONV || !ME) return;
   var input = document.getElementById('msgInput');
   var text = input.value.trim();
   if(!text) return;
 
-  var myPhone = normPhone(ME.phone || ME.id);
   var msg = {
     id: uid(),
     convId: ACTIVE_CONV.convId,
-    fromPhone: myPhone,
-    toPhone: ACTIVE_CONV.otherPhone,
+    fromId: ME.id,
+    fromPhone: normPhone(ME.phone || ''),
     fromName: ME.name || '',
-    toName: (findUser(ACTIVE_CONV.otherPhone)||{}).name || '',
+    toId: ACTIVE_CONV.otherId,
+    toPhone: ACTIVE_CONV.otherPhone || '',
+    toName: ACTIVE_CONV.otherName || '',
     type: 'text',
     text: text,
     fileUrl: '',
@@ -696,6 +756,9 @@ async function sendText(){
   }
 }
 
+/* ============================================================
+   آپلود فایل
+   ============================================================ */
 function toggleAttachMenu(){
   document.getElementById('attachMenu').classList.toggle('open');
 }
@@ -733,14 +796,15 @@ document.getElementById('fileInput').addEventListener('change', async function(e
       return;
     }
 
-    var myPhone = normPhone(ME.phone || ME.id);
     var msg = {
       id: uid(),
       convId: ACTIVE_CONV.convId,
-      fromPhone: myPhone,
-      toPhone: ACTIVE_CONV.otherPhone,
+      fromId: ME.id,
+      fromPhone: normPhone(ME.phone || ''),
       fromName: ME.name || '',
-      toName: (findUser(ACTIVE_CONV.otherPhone)||{}).name || '',
+      toId: ACTIVE_CONV.otherId,
+      toPhone: ACTIVE_CONV.otherPhone || '',
+      toName: ACTIVE_CONV.otherName || '',
       type: type,
       text: '',
       fileUrl: up.url,
@@ -776,6 +840,9 @@ function readAsDataURL(file){
   });
 }
 
+/* ============================================================
+   ارسال به شورا
+   ============================================================ */
 async function sendToCouncil(){
   var txt = document.getElementById('councilMsgText');
   var btn = document.getElementById('councilSendBtn');
@@ -808,6 +875,9 @@ async function sendToCouncil(){
   }
 }
 
+/* ============================================================
+   پاسخ‌های شورا
+   ============================================================ */
 async function loadMyReplies(){
   var list = document.getElementById('repliesList');
   if(!list) return;
@@ -842,6 +912,7 @@ async function loadMyReplies(){
 }
 
 async function loadRepliesBadge(){
+  if(!ME) return;
   try{
     var uid_ = ME.id || ME.accountNumber || ME.phone;
     var d = await apiCall('getUnreadCount', { user: uid_ });
@@ -857,6 +928,9 @@ async function loadRepliesBadge(){
   }catch(e){}
 }
 
+/* ============================================================
+   جستجوی شماره
+   ============================================================ */
 function openSearchModal(){
   document.getElementById('searchModal').classList.add('open');
   document.getElementById('phoneInput').value = '';
@@ -887,14 +961,15 @@ async function searchContact(){
       return;
     }
     var user = d.contact;
-    if(normPhone(user.phone) === normPhone(ME.phone || ME.id)){
+    if(String(user.id) === String(ME.id)){
       res.innerHTML = '<div class="notfound">این شماره متعلق به خودتان است</div>';
       return;
     }
-    if(!findUser(user.phone)) ALL_USERS.push(user);
+    if(!findUserById(user.id)) ALL_USERS.push(user);
+    var safeId = esc(user.id).replace(/'/g,"\\'");
     res.innerHTML =
-      '<div class="contact-card" onclick="startChatWith(\''+esc(user.phone)+'\')">'+
-      '<div class="avatar" style="background:'+(user.color||'#8b5cf6')+'">'+esc((user.name||'?')[0])+'</div>'+
+      '<div class="contact-card" onclick="startChatWith(\''+safeId+'\')">'+
+      '<div class="avatar">'+esc((user.name||'?')[0])+'</div>'+
       '<div class="cc-info"><div class="cc-name">'+esc(user.name||'ناشناس')+'</div>'+
       '<div class="cc-phone">'+esc(user.phone)+'</div></div>'+
       '<div class="go">💬</div></div>';
@@ -902,13 +977,18 @@ async function searchContact(){
     res.innerHTML = '<div class="notfound">❌ خطا: '+esc(e.message)+'</div>';
   }
 }
-function startChatWith(phone){
+
+function startChatWith(userId){
   closeSearchModal();
-  var myPhone = normPhone(ME.phone || ME.id);
-  var cid = convId(myPhone, phone);
-  openChat(cid, phone);
+  var user = findUserById(userId);
+  if(!user){ toast('کاربر پیدا نشد', 'err'); return; }
+  var cid = [String(ME.id), String(user.id)].sort().join('_');
+  openChat(cid, user.id, user.name, user.phone);
 }
 
+/* ============================================================
+   پنل مدیریت
+   ============================================================ */
 function openAdminPanel(){
   if(!ME || !ME.isCouncil){ toast('دسترسی ندارید', 'err'); return; }
   document.getElementById('adminModal').classList.add('open');
@@ -940,10 +1020,10 @@ async function loadAdminChats(){
     }
     var html = '';
     d.conversations.forEach(conv=>{
-      var u1 = findUser(conv.fromPhone) || {name: conv.fromPhone};
-      var u2 = findUser(conv.toPhone) || {name: conv.toPhone};
+      var u1 = findUserById(conv.fromId) || { name: conv.fromId };
+      var u2 = findUserById(conv.toId) || { name: conv.toId };
       html += '<div class="admin-item">';
-      html += '<div class="ai-head">💬 '+esc(u1.name||conv.fromPhone)+' ↔ '+esc(u2.name||conv.toPhone)+'</div>';
+      html += '<div class="ai-head">💬 '+esc(u1.name||conv.fromId)+' ↔ '+esc(u2.name||conv.toId)+'</div>';
       html += '<div class="ai-sub">'+faNum(conv.count||0)+' پیام — آخرین: '+fmtTime(conv.lastAt)+'</div>';
       html += '<div class="ai-preview">'+esc((conv.lastText||'').substring(0,80))+'</div>';
       html += '<button class="ai-btn" onclick="viewAdminChat(\''+esc(conv.convId)+'\')">مشاهده کامل</button>';
@@ -962,9 +1042,9 @@ async function viewAdminChat(cid){
     var html = '<button onclick="loadAdminChats()" style="margin-bottom:10px;padding:6px 14px;border-radius:8px;border:none;background:var(--panel2);color:var(--text);cursor:pointer;font-family:inherit;font-size:.78rem">→ بازگشت</button>';
     html += '<div style="max-height:55vh;overflow-y:auto">';
     d.messages.forEach(m=>{
-      var u = findUser(m.fromPhone) || {name:m.fromPhone};
+      var u = findUserById(m.fromId) || { name: m.fromId };
       html += '<div style="padding:8px;border-radius:8px;background:var(--panel2);margin-bottom:6px;font-size:.8rem">';
-      html += '<div style="color:var(--gold);font-weight:800;font-size:.72rem;margin-bottom:4px">'+esc(u.name||m.fromPhone)+' — '+fmtTime(m.createdAt)+'</div>';
+      html += '<div style="color:var(--gold);font-weight:800;font-size:.72rem;margin-bottom:4px">'+esc(u.name||m.fromId)+' — '+fmtTime(m.createdAt)+'</div>';
       if(m.type === 'text') html += '<div>'+esc(m.text)+'</div>';
       else if(m.type === 'image') html += '<a href="'+m.fileUrl+'" target="_blank">🖼️ تصویر</a>';
       else if(m.type === 'video') html += '<a href="'+m.fileUrl+'" target="_blank">🎬 فیلم</a>';
@@ -1030,6 +1110,9 @@ async function submitCouncilReply(messageId){
   }catch(e){ toast('❌ '+e.message, 'err'); }
 }
 
+/* ============================================================
+   Polling
+   ============================================================ */
 function startPolling(){
   if(POLL_TIMER) clearInterval(POLL_TIMER);
   POLL_TIMER = setInterval(async ()=>{
@@ -1046,6 +1129,9 @@ function startPolling(){
   }, 4000);
 }
 
+/* ============================================================
+   شروع
+   ============================================================ */
 document.addEventListener('click', function(e){
   var menu = document.getElementById('attachMenu');
   if(menu && menu.classList.contains('open')){
@@ -1053,7 +1139,9 @@ document.addEventListener('click', function(e){
   }
 });
 
-initUserPicker();
+document.addEventListener('DOMContentLoaded', function(){
+  initFromParent();
+});
 </script>
 </body>
 </html>
