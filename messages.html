@@ -364,7 +364,7 @@ var POLL_TIMER = null;
 var CACHE = { conversations: [], messages: {} };
 var CURRENT_MAIN_TAB = 'chats';
 var CURRENT_ADMIN_TAB = 'chats';
-var ONLINE_STATUSES = {}; // 🆕
+var ONLINE_STATUSES = {};
 
 /* ============================================================
    ابزارها
@@ -433,7 +433,9 @@ async function apiCall(action, params){
   var url = API_URL + '?' + qs.toString();
   var res = await fetch(url, {cache:'no-cache'});
   if(!res.ok) throw new Error('HTTP ' + res.status);
-  return await res.json();
+  var ct = res.headers.get('content-type');
+  if(ct && ct.indexOf('application/json') !== -1) return await res.json();
+  throw new Error('پاسخ سرور JSON نیست');
 }
 async function apiPost(action, body){
   var res = await fetch(API_URL, {
@@ -446,7 +448,7 @@ async function apiPost(action, body){
 }
 
 /* ============================================================
-   🆕 شروع — گرفتن کاربر از URL / localStorage / parent
+   شروع
    ============================================================ */
 async function initFromParent() {
   setLoadingMsg('در حال شناسایی کاربر...');
@@ -582,6 +584,7 @@ function renderConvList(){
   if(!ME){ list.innerHTML=''; return; }
   var convs = CACHE.conversations.slice();
   var q = (document.getElementById('convSearch').value||'').trim();
+  
   if(q){
     var nq = normPhone(q);
     convs = convs.filter(c=>{
@@ -591,10 +594,12 @@ function renderConvList(){
              (nq && other && normPhone(other.phone||'') === nq);
     });
   }
+  
   if(convs.length === 0){
     list.innerHTML = '<div class="empty"><span class="big">💬</span>هنوز مکالمه‌ای ندارید<br>با دکمه ✏️ یک چت جدید شروع کنید</div>';
     return;
   }
+  
   var html = '';
   convs.forEach(c=>{
     var other = findUserById(c.otherId);
@@ -635,7 +640,7 @@ async function openChat(cid, otherId, otherName, otherPhone){
   av.style.background = '#8b5cf6';
   document.getElementById('chatView').classList.add('open');
   
-  updateChatStatus(otherId); // 🆕 آپدیت وضعیت اولیه
+  updateChatStatus(otherId);
   
   await loadMessages(cid);
   markConvRead(cid);
@@ -1149,7 +1154,7 @@ async function submitCouncilReply(messageId){
 }
 
 /* ============================================================
-   🆕 وضعیت آنلاین و Polling
+   وضعیت آنلاین و Polling
    ============================================================ */
 function updateChatStatus(otherId) {
   var el = document.getElementById('chatStatus');
