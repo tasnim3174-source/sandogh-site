@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - درخواست‌ها
-   نسخه: 4.0 - با ۳ بخش (پیامکی + تاریخچه + سیستمی)
+   نسخه: 5.0 - با ۲ بخش (پیامکی + سیستمی ادغام شده + تاریخچه)
    ============================================================ */
 
 function renderRequestsContent() {
@@ -25,20 +25,71 @@ function renderRequestsContent() {
     return `
         <div class="info-box"><i class="fas fa-file-signature"></i> درخواست‌ها</div>
         
-        <!-- ۳ تب -->
+        <!-- ۲ تب -->
         <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
-            <button onclick="showRequestsTab('sms')" id="reqTabSms" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">📱 درخواست‌های پیامکی</button>
+            <button onclick="showRequestsTab('sms')" id="reqTabSms" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">📱 درخواست‌ها</button>
             <button onclick="showRequestsTab('history')" id="reqTabHistory" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">📜 تاریخچه درخواست‌ها</button>
-            <button onclick="showRequestsTab('system')" id="reqTabSystem" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">⚙️ درخواست‌های سیستمی</button>
         </div>
         
-        <!-- بخش ۱: پیامکی -->
+        <!-- بخش ۱: پیامکی + سیستمی (ادغام شده) -->
         <div id="reqSmsPanel">
             <div class="dashboard-section" style="border-right-color:var(--gold-color);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(217,119,6,0.06));">
-                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;">
+                
+                <!-- 🔹 کارت‌های سیستمی (منتقل شده از تب حذف شده) -->
+                <div style="margin-bottom:16px;">
+                    <div style="font-weight:900;color:var(--text-primary);font-size:0.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+                        <i class="fas fa-cogs" style="color:#3b82f6;"></i>
+                        درخواست‌های سیستمی
+                    </div>
+
+                    <!-- درخواست وام -->
+                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #10b981;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                            <i class="fas fa-hand-holding-usd" style="font-size:1.5rem;color:#10b981;"></i>
+                            <div style="flex:1;">
+                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">🏦 درخواست وام</div>
+                                <div style="font-size:0.7rem;color:var(--text-secondary);">درخواست دریافت وام جدید</div>
+                            </div>
+                        </div>
+                        <button onclick="openLoanRequestModal()" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.85rem;">
+                            📝 ثبت درخواست وام
+                        </button>
+                    </div>
+
+                    <!-- بستن حساب -->
+                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #ef4444;opacity:0.6;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                            <i class="fas fa-user-slash" style="font-size:1.5rem;color:#ef4444;"></i>
+                            <div style="flex:1;">
+                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">🚫 درخواست بستن حساب</div>
+                                <div style="font-size:0.7rem;color:var(--text-secondary);">🚧 به‌زودی</div>
+                            </div>
+                        </div>
+                        <button disabled style="width:100%;padding:10px;border:none;border-radius:10px;background:#666;color:#fff;font-weight:800;cursor:not-allowed;font-family:tahoma;font-size:0.85rem;">
+                            🚧 در حال ساخت
+                        </button>
+                    </div>
+
+                    <!-- امضای درخواست وام -->
+                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #8b5cf6;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                            <i class="fas fa-file-signature" style="font-size:1.5rem;color:#8b5cf6;"></i>
+                            <div style="flex:1;">
+                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">✍️ امضای قرارداد وام</div>
+                                <div style="font-size:0.7rem;color:var(--text-secondary);">مشاهده و امضای الکترونیکی قرارداد</div>
+                            </div>
+                        </div>
+                        <button onclick="openLoanSignModal()" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.85rem;">
+                            ✍️ مشاهده و امضا
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 🔹 هدر و لیست درخواست‌های پیامکی -->
+                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border-color);">
                     <i class="fas fa-info-circle" style="font-size:1.5rem;color:var(--gold-color);"></i>
                     <div>
-                        <div style="font-weight:bold;color:var(--text-primary);font-size:0.95rem;">📱 درخواست‌ها به صورت پیامکی و سیستمی ثبت می‌شوند</div>
+                        <div style="font-weight:bold;color:var(--text-primary);font-size:0.95rem;">📱 درخواست‌های پیامکی</div>
                         <div style="color:var(--text-secondary);font-size:0.8rem;">شماره صندوق: <strong style="color:var(--gold-color);">${FUND_PHONE}</strong></div>
                         <div style="color:var(--text-muted);font-size:0.6rem;margin-top:2px;">${requests.length} نوع درخواست مختلف</div>
                     </div>
@@ -70,84 +121,23 @@ function renderRequestsContent() {
                 </div>
             </div>
         </div>
-        
-        <!-- بخش ۳: سیستمی -->
-        <div id="reqSystemPanel" style="display:none;">
-            <div class="dashboard-section" style="border-right-color:#3b82f6;background:linear-gradient(135deg,rgba(59,130,246,0.05),rgba(37,99,235,0.05));">
-                <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
-                    <i class="fas fa-cogs" style="font-size:1.8rem;color:#3b82f6;"></i>
-                    <div>
-                        <div style="font-weight:bold;color:var(--text-primary);font-size:0.95rem;">⚙️ درخواست‌های سیستمی</div>
-                        <div style="color:var(--text-secondary);font-size:0.8rem;">درخواست‌های خودکار با ثبت در سرور</div>
-                    </div>
-                </div>
-                
-                <div id="systemRequestsList">
-                    <!-- درخواست وام -->
-                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #10b981;">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                            <i class="fas fa-hand-holding-usd" style="font-size:1.5rem;color:#10b981;"></i>
-                            <div style="flex:1;">
-                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">🏦 درخواست وام</div>
-                                <div style="font-size:0.7rem;color:var(--text-secondary);">درخواست دریافت وام جدید</div>
-                            </div>
-                        </div>
-                        <button onclick="openLoanRequestModal()" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.85rem;">
-                            📝 ثبت درخواست وام
-                        </button>
-                    </div>
-                    
-                    <!-- بستن حساب -->
-                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #ef4444;opacity:0.6;">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                            <i class="fas fa-user-slash" style="font-size:1.5rem;color:#ef4444;"></i>
-                            <div style="flex:1;">
-                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">🚫 درخواست بستن حساب</div>
-                                <div style="font-size:0.7rem;color:var(--text-secondary);">🚧 به‌زودی</div>
-                            </div>
-                        </div>
-                        <button disabled style="width:100%;padding:10px;border:none;border-radius:10px;background:#666;color:#fff;font-weight:800;cursor:not-allowed;font-family:tahoma;font-size:0.85rem;">
-                            🚧 در حال ساخت
-                        </button>
-                    </div>
-                    
-                                                                             <!-- امضای درخواست وام -->
-                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #8b5cf6;">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                            <i class="fas fa-file-signature" style="font-size:1.5rem;color:#8b5cf6;"></i>
-                            <div style="flex:1;">
-                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">✍️ امضای قرارداد وام</div>
-                                <div style="font-size:0.7rem;color:var(--text-secondary);">مشاهده و امضای الکترونیکی قرارداد</div>
-                            </div>
-                        </div>
-                        <button onclick="openLoanSignModal()" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.85rem;">
-                            ✍️ مشاهده و امضا
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
     `;
 }
 
 function showRequestsTab(tab) {
     var smsPanel = document.getElementById('reqSmsPanel');
     var historyPanel = document.getElementById('reqHistoryPanel');
-    var systemPanel = document.getElementById('reqSystemPanel');
     var smsBtn = document.getElementById('reqTabSms');
     var historyBtn = document.getElementById('reqTabHistory');
-    var systemBtn = document.getElementById('reqTabSystem');
     
     if (smsPanel) smsPanel.style.display = 'none';
     if (historyPanel) historyPanel.style.display = 'none';
-    if (systemPanel) systemPanel.style.display = 'none';
     
     var inactiveStyle = 'flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;';
     var activeStyle = 'flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:none;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;';
     
     if (smsBtn) smsBtn.style.cssText = inactiveStyle;
     if (historyBtn) historyBtn.style.cssText = inactiveStyle;
-    if (systemBtn) systemBtn.style.cssText = inactiveStyle;
     
     if (tab === 'sms') {
         if (smsPanel) smsPanel.style.display = 'block';
@@ -156,9 +146,6 @@ function showRequestsTab(tab) {
         if (historyPanel) historyPanel.style.display = 'block';
         if (historyBtn) historyBtn.style.cssText = activeStyle;
         loadMyRequests();
-    } else if (tab === 'system') {
-        if (systemPanel) systemPanel.style.display = 'block';
-        if (systemBtn) systemBtn.style.cssText = activeStyle;
     }
 }
 
