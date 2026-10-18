@@ -974,26 +974,26 @@ window.closeMessagesWindow = function() {
 // 🆕 چک کردن پیام‌های خوانده‌نشده
 // ============================================================
 window.checkUnreadMessages = function() {
-    // اگه کاربر لاگین نکرده، کاری نکن
-    if (typeof currentUser === 'undefined' || !currentUser || !currentUser.accountNumber) {
-        return;
-    }
+    if (typeof currentUser === 'undefined' || !currentUser) return;
+    if (typeof currentPage !== 'undefined' && currentPage === 'login') return;
     
-    // مخفی کردن دکمه اگه توی صفحه لاگین هستیم
-    if (typeof currentPage !== 'undefined' && (currentPage === 'login' || !currentPage)) {
-        var bell = document.getElementById('messagesBell');
-        if (bell) bell.style.display = 'none';
-        return;
-    }
-    
-    var userId = currentUser.accountNumber;
+    var userId = currentUser.accountNumber || currentUser.username;
+    if (!userId) return;
+
     var API = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
     
     fetch(API + '?action=getAllMessagesForUser&user=' + encodeURIComponent(userId), { cache: 'no-cache' })
-        .then(function(r) { return r.json(); })
+        .then(function(r) { 
+            // 🆕 چک کردن اینکه پاسخ JSON است یا HTML (خطا)
+            var contentType = r.headers.get('content-type');
+            if (contentType && contentType.indexOf('application/json') !== -1) {
+                return r.json();
+            } else {
+                throw new Error('پاسخ سرور معتبر نیست (HTML دریافت شد)');
+            }
+        })
         .then(function(d) {
-            if (d.ok && d.messages) {
-                // پیام‌های خوانده‌نشده
+            if (d && d.ok && d.messages) {
                 var unread = d.messages.filter(function(m) {
                     return m.status === 'new' && String(m.from_id) !== String(userId);
                 }).length;
@@ -1003,12 +1003,8 @@ window.checkUnreadMessages = function() {
                 
                 if (bell) {
                     bell.style.display = 'flex';
-                    
                     if (unread > 0) {
-                        if (badge) {
-                            badge.textContent = unread;
-                            badge.style.display = 'flex';
-                        }
+                        if (badge) { badge.textContent = unread; badge.style.display = 'flex'; }
                         bell.classList.add('pulse');
                     } else {
                         if (badge) badge.style.display = 'none';
@@ -1018,6 +1014,7 @@ window.checkUnreadMessages = function() {
             }
         })
         .catch(function(e) {
+            // 🆕 فقط لاگ کن، کاری به UI نداشته باش که کرش کنه
             console.log('⚠️ خطا در چک پیام‌ها:', e.message);
         });
 };
