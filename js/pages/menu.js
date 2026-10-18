@@ -92,36 +92,125 @@ async function openScriptService(tabName) {
 }
 
 // ============================================================
-// توابع باز کردن بخش‌های ویژه
+// توابع باز کردن بخش‌های ویژه (نسخه هوشمند با لودینگ)
 // ============================================================
-async function openToddlerGames() {
-    if (window.LazyLoader && !LazyLoader.isLoaded('toddler')) {
-        try { await LazyLoader.ensureSectionLoaded('toddler'); }
-        catch (err) { alert('❌ ' + err.message); return; }
+
+function showSectionLoading(title) {
+    var contentArea = document.getElementById('contentArea');
+    if (contentArea) {
+        contentArea.style.display = 'block';
+        contentArea.innerHTML = `
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;text-align:center;animation:fadeIn 0.3s ease;">
+                <div style="width:60px;height:60px;border:5px solid rgba(245,158,11,0.15);border-top-color:#f59e0b;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px;box-shadow:0 0 20px rgba(245,158,11,0.3);"></div>
+                <div style="font-size:1.3rem;font-weight:900;color:#ffc94d;margin-bottom:8px;">${title}</div>
+                <div style="font-size:0.85rem;color:#9ca3af;">در حال آماده‌سازی بخش...</div>
+            </div>
+            <style>
+                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+            </style>
+        `;
     }
-    if (typeof openToddlerGamesHandler === 'function') openToddlerGamesHandler();
-    else if (typeof renderToddlerPage === 'function') renderToddlerPage(document.getElementById('contentArea'));
-    else alert('⚠️ بخش رشد خردسالان هنوز آماده نیست');
+}
+
+function showSectionNotReady(title) {
+    var contentArea = document.getElementById('contentArea');
+    if (contentArea) {
+        contentArea.innerHTML = `
+            <div class="info-box" style="text-align:center;padding:40px 20px;animation:fadeIn 0.3s ease;">
+                <i class="fas fa-tools" style="font-size:3rem;color:#f59e0b;margin-bottom:20px;display:inline-block;animation:pulse 2s infinite;"></i>
+                <h3 style="color:var(--text-primary);margin-bottom:10px;font-size:1.2rem;">${title}</h3>
+                <p style="color:var(--text-secondary);line-height:1.8;font-size:0.9rem;">
+                    این بخش در حال تکمیل است و به‌زودی با امکانات کامل در اختیار شما قرار می‌گیرد.<br>
+                    از صبر و شکیبایی شما سپاسگزاریم.
+                </p>
+                <button onclick="renderPage('menu')" style="margin-top:24px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e;font-weight:900;border:none;cursor:pointer;font-family:inherit;font-size:0.9rem;box-shadow:0 4px 15px rgba(245,158,11,0.4);">
+                    <i class="fas fa-arrow-right"></i> بازگشت به منو
+                </button>
+            </div>
+            <style>
+                @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+                @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+            </style>
+        `;
+    }
+}
+
+// تابع کمکی برای لود با تایم‌اوت
+async function tryLoadSection(sectionKey, timeoutMs) {
+    var timeoutPromise = new Promise(function(resolve) {
+        setTimeout(function() { resolve({ success: false, timeout: true }); }, timeoutMs);
+    });
+
+    var loadPromise = new Promise(async function(resolve) {
+        try {
+            if (window.LazyLoader && !LazyLoader.isLoaded(sectionKey)) {
+                await LazyLoader.ensureSectionLoaded(sectionKey);
+            }
+            resolve({ success: true, timeout: false });
+        } catch (err) {
+            resolve({ success: false, error: err });
+        }
+    });
+
+    return Promise.race([loadPromise, timeoutPromise]);
+}
+
+async function openToddlerGames() {
+    showSectionLoading('🧸 رشد خردسالان');
+    
+    var result = await tryLoadSection('toddler', 2500);
+    
+    if (result.success) {
+        if (typeof openToddlerGamesHandler === 'function') {
+            openToddlerGamesHandler();
+        } else if (typeof renderToddlerPage === 'function') {
+            renderToddlerPage(document.getElementById('contentArea'));
+        } else {
+            showSectionNotReady('🧸 بخش رشد خردسالان');
+        }
+    } else {
+        console.warn('⚠️ لود بخش toddler ناموفق بود:', result);
+        showSectionNotReady('🧸 بخش رشد خردسالان');
+    }
 }
 
 async function openLadySection() {
-    if (window.LazyLoader && !LazyLoader.isLoaded('ladySection')) {
-        try { await LazyLoader.ensureSectionLoaded('ladySection'); }
-        catch (err) { alert('❌ ' + err.message); return; }
+    showSectionLoading('🌸 بخش بانوان');
+    
+    var result = await tryLoadSection('ladySection', 2500);
+    
+    if (result.success) {
+        if (typeof openLadySectionHandler === 'function') {
+            openLadySectionHandler();
+        } else if (typeof renderLadySection === 'function') {
+            renderLadySection(document.getElementById('contentArea'));
+        } else {
+            showSectionNotReady('🌸 بخش بانوان');
+        }
+    } else {
+        console.warn('⚠️ لود بخش ladySection ناموفق بود:', result);
+        showSectionNotReady('🌸 بخش بانوان');
     }
-    if (typeof openLadySectionHandler === 'function') openLadySectionHandler();
-    else if (typeof renderLadySection === 'function') renderLadySection(document.getElementById('contentArea'));
-    else alert('⚠️ بخش بانوان هنوز آماده نیست');
 }
 
 async function openTeenPiggy() {
-    if (window.LazyLoader && !LazyLoader.isLoaded('teenPiggy')) {
-        try { await LazyLoader.ensureSectionLoaded('teenPiggy'); }
-        catch (err) { alert('❌ ' + err.message); return; }
+    showSectionLoading('🐷 قلک نوجوانان');
+    
+    var result = await tryLoadSection('teenPiggy', 2500);
+    
+    if (result.success) {
+        if (typeof openTeenPiggyHandler === 'function') {
+            openTeenPiggyHandler();
+        } else if (typeof renderTeenPiggyPage === 'function') {
+            renderTeenPiggyPage(document.getElementById('contentArea'));
+        } else {
+            showSectionNotReady('🐷 قلک نوجوانان');
+        }
+    } else {
+        console.warn('⚠️ لود بخش teenPiggy ناموفق بود:', result);
+        showSectionNotReady('🐷 قلک نوجوانان');
     }
-    if (typeof openTeenPiggyHandler === 'function') openTeenPiggyHandler();
-    else if (typeof renderTeenPiggyPage === 'function') renderTeenPiggyPage(document.getElementById('contentArea'));
-    else alert('⚠️ بخش قلک نوجوانان هنوز آماده نیست');
 }
 
 // ============================================================
@@ -171,7 +260,6 @@ function checkAccessRights(member) {
     
     return result;
 }
-
 // ============================================================
 // رندر صفحه منو
 // ============================================================
