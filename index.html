@@ -7,6 +7,77 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>صندوق اتحاد</title>
+        <!-- 🛡️ سپر محافظ دائمی و مدیریت خطای صفحه -->
+    <script>
+    (function() {
+        var originalFetch = window.fetch;
+        window.fetch = function(url, options) {
+            var urlStr = typeof url === 'string' ? url : (url && url.url) || '';
+            
+            if (urlStr.includes('script.google.com') || urlStr.includes('macros')) {
+                return originalFetch(url, options).then(function(res) {
+                    return res.text().then(function(text) {
+                        if (text.trim().startsWith('<')) {
+                            console.warn('🛡️ خطای CORS گوگل مسدود شد.');
+                            return new Response(JSON.stringify({ ok: false, error: 'CORS Blocked' }), {
+                                status: 200, headers: { 'Content-Type': 'application/json' }
+                            });
+                        }
+                        return new Response(text, { status: res.status, headers: res.headers });
+                    });
+                }).catch(function(err) {
+                    console.warn('🛡️ خطای شبکه مسدود شد:', err.message);
+                    return new Response(JSON.stringify({ ok: false, error: 'Network Error' }), {
+                        status: 200, headers: { 'Content-Type': 'application/json' }
+                    });
+                });
+            }
+            return originalFetch(url, options);
+        };
+        console.log('✅ سپر محافظ دائمی فعال شد.');
+    })();
+    </script>
+
+    <!-- 🛠️ مدیریت خطا برای صفحاتی که به گوگل وصل می‌شوند -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            // پیدا کردن دکمه‌های کلیک روی منو
+            document.body.addEventListener('click', function(e) {
+                var target = e.target.closest('button, .menu-item, [onclick]');
+                if (!target) return;
+                
+                var text = target.innerText || '';
+                
+                // اگر روی دکمه صندوق من یا کلیدهای کاربردی کلیک شد
+                if (text.includes('صندوق من') || text.includes('کلیدهای کاربردی')) {
+                    setTimeout(function() {
+                        var content = document.getElementById('contentArea');
+                        if (content) {
+                            var html = content.innerHTML;
+                            // اگر محتوا خالی بود یا فقط لودینگ داشت
+                            if (html.includes('در حال بارگذاری') || html.trim() === '' || html.includes('بخش یافت نشد')) {
+                                content.innerHTML = `
+                                    <div style="text-align:center;padding:40px 20px;background:rgba(239,68,68,0.05);border-radius:16px;border:1px solid rgba(239,68,68,0.2);margin:20px;">
+                                        <i class="fas fa-exclamation-triangle" style="font-size:3rem;color:#ef4444;margin-bottom:15px;"></i>
+                                        <h3 style="color:var(--text-primary);font-weight:900;margin-bottom:10px;">ارتباط با سرور برقرار نشد</h3>
+                                        <p style="color:var(--text-secondary);line-height:1.8;font-size:0.9rem;">
+                                            در حال حاضر امکان دریافت اطلاعات از سرور وجود ندارد.<br>
+                                            لطفاً از اتصال اینترنت خود مطمئن شوید.
+                                        </p>
+                                        <button onclick="location.reload()" style="margin-top:20px;padding:12px 24px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#1a1a2e;font-weight:900;border:none;cursor:pointer;font-family:inherit;">
+                                            🔄 تلاش مجدد
+                                        </button>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }, 2500); // ۲.۵ ثانیه فرصت می‌دهد تا لود شود
+                }
+            });
+        }, 1000);
+    });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
