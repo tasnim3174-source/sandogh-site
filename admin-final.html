@@ -113,7 +113,8 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="12" data-role="all" onclick="showTab(12)">🔐 اطلاعات کاربری اعضا</div>
     <div class="menu-item" data-tab="13" data-role="all" onclick="showTab(13)">📤 آپلود فایل اکسل</div>
     <div class="menu-item" data-tab="14" data-role="all" onclick="showTab(14)">📨 درخواست‌های اعضا</div>
-     <div class="menu-item" data-tab="15" data-role="all" onclick="showTab(15)">📩 پیام‌های اعضا</div>
+    <div class="menu-item" data-tab="15" data-role="all" onclick="showTab(15)">📩 پیام‌های اعضا</div>
+    <div class="menu-item" data-tab="16" data-role="all" onclick="showTab(16)">✍️ امضاهای وام</div>
   </div>
 
   <div class="main-content">
@@ -279,9 +280,6 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       <iframe id="reportFrame" src="about:blank" style="width:100%;height:calc(100vh - 140px);border:none;border-radius:16px"></iframe>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 🆕 تب ۱۲: اطلاعات کاربری اعضا -->
-    <!-- ============================================================ -->
     <div id="sec12" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -352,7 +350,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       </div>
     </div>
 
-        <div id="sec14" style="display:none">
+    <div id="sec14" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
           <h3 style="color:#ffd700;margin:0">📨 درخواست‌های اعضا</h3>
@@ -387,9 +385,6 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       </div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- 🆕 تب ۱۵: پیام‌های بین اعضا -->
-    <!-- ============================================================ -->
     <div id="sec15" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -422,6 +417,23 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
         </div>
       </div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- 🆕 تب ۱۶: امضاهای وام -->
+    <!-- ============================================================ -->
+    <div id="sec16" style="display:none">
+      <div class="box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
+          <h3 style="color:#ffd700;margin:0">✍️ قراردادهای وام امضا شده</h3>
+          <button class="refresh" onclick="loadSignedLoans()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+        </div>
+        
+        <div id="signedLoansList">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+      </div>
+    </div>
+
 <script>
 var URL = "https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec";
 var STMT_API = URL;
@@ -567,6 +579,8 @@ function showTab(n){
   var sec12 = document.getElementById('sec12'); if (sec12) sec12.style.display = 'none';
   var sec13 = document.getElementById('sec13'); if (sec13) sec13.style.display = 'none';
   var sec14 = document.getElementById('sec14'); if (sec14) sec14.style.display = 'none';
+  var sec15 = document.getElementById('sec15'); if (sec15) sec15.style.display = 'none';
+  var sec16 = document.getElementById('sec16'); if (sec16) sec16.style.display = 'none'; // 🆕
   
   document.querySelectorAll('.menu-item').forEach(function(t) { t.classList.remove('active'); });
   var items = document.querySelectorAll('.menu-item');
@@ -598,13 +612,17 @@ function showTab(n){
   else if (n === 13) {
     if (sec13) sec13.style.display = 'block';
   }
-    else if (n === 14) {
+  else if (n === 14) {
     if (sec14) sec14.style.display = 'block';
     loadMemberRequests();
   }
   else if (n === 15) {
     if (sec15) sec15.style.display = 'block';
     loadMemberMessages();
+  }
+  else if (n === 16) { // 🆕
+    if (sec16) sec16.style.display = 'block';
+    loadSignedLoans();
   }
   
   var qEl = document.getElementById('q');
@@ -1622,6 +1640,98 @@ function deleteMemberMessage(id) {
             }
         })
         .catch(function() { alert('❌ خطا در اتصال'); });
+}
+
+// ============================================================
+// 🆕 تب ۱۶: امضاهای وام
+// ============================================================
+
+async function loadSignedLoans() {
+    var listEl = document.getElementById('signedLoansList');
+    if (!listEl) return;
+    listEl.innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+    
+    try {
+        var res = await fetch(URL + '?action=getSignedLoans&key=' + encodeURIComponent(KEY) + '&_=' + Date.now());
+        var d = await res.json();
+        
+        if (!d.ok || !d.loans) {
+            listEl.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت اطلاعات</div>';
+            return;
+        }
+        
+        if (d.loans.length === 0) {
+            listEl.innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 هیچ قراردادی امضا نشده است</div>';
+            return;
+        }
+        
+        var html = '';
+        d.loans.forEach(function(loan) {
+            var statusColor = loan.status === 'approved' ? '#22c55e' : '#f59e0b';
+            var statusText = loan.status === 'approved' ? '✅ تایید نهایی شده' : '⏳ در انتظار تایید';
+            var dt = loan.signedAt ? new Date(loan.signedAt) : null;
+            var dateStr = dt ? fmtFull(dt) : '-';
+            
+            html += '<div class="req-card" style="border-right:3px solid ' + statusColor + ';">';
+            
+            // هدر
+            html += '<div class="req-head">';
+            html += '<div>';
+            html += '<div style="font-weight:800;color:#ffd700;font-size:.9rem;">👤 ' + escapeHtmlAdmin(loan.name || 'ناشناس') + '</div>';
+            html += '<div style="font-size:.72rem;color:rgba(255,255,255,.5);margin-top:3px;">حساب: ' + escapeHtmlAdmin(loan.accountNumber || '-') + ' | کد ملی: ' + escapeHtmlAdmin(loan.nationalId || '-') + '</div>';
+            html += '<div style="font-size:.72rem;color:rgba(255,255,255,.5);">📅 ' + dateStr + '</div>';
+            html += '</div>';
+            html += '<span style="background:' + statusColor + '22;color:' + statusColor + ';padding:4px 10px;border-radius:99px;font-size:.72rem;font-weight:800;">' + statusText + '</span>';
+            html += '</div>';
+            
+            // اطلاعات قرارداد
+            html += '<div style="background:rgba(139,92,246,.08);padding:10px;border-radius:8px;margin:8px 0;font-size:.8rem;line-height:1.9;">';
+            html += '<b>💰 مبلغ وام:</b> ' + escapeHtmlAdmin(loan.loanAmount || '-') + ' ریال<br>';
+            html += '<b>📊 تعداد اقساط:</b> ' + escapeHtmlAdmin(loan.installments || '-') + ' قسط<br>';
+            html += '<b>💵 مبلغ هر قسط:</b> ' + escapeHtmlAdmin(loan.installmentAmount || '-') + ' ریال<br>';
+            html += '<b>📅 تاریخ قرارداد:</b> ' + escapeHtmlAdmin(loan.signDate || '-');
+            html += '</div>';
+            
+            // دکمه مشاهده امضا
+            if (loan.signatureUrl) {
+                html += '<div style="text-align:center;margin:10px 0;">';
+                html += '<a href="' + loan.signatureUrl + '" target="_blank" style="display:inline-block;padding:8px 16px;border-radius:8px;background:rgba(139,92,246,.15);color:#8b5cf6;text-decoration:none;font-weight:800;font-size:.8rem;">🖼️ مشاهده تصویر امضا</a>';
+                html += '</div>';
+            }
+            
+            // دکمه تایید
+            if (loan.status !== 'approved') {
+                html += '<button onclick="approveSignedLoanAdmin(\'' + loan.id + '\')" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:.85rem;">👑 تایید نهایی</button>';
+            } else {
+                html += '<div style="text-align:center;font-size:.75rem;color:#22c55e;padding:8px;">✅ تایید شده در: ' + (loan.approvedAt ? fmtFull(new Date(loan.approvedAt)) : '-') + '</div>';
+            }
+            
+            html += '</div>';
+        });
+        
+        listEl.innerHTML = html;
+        
+    } catch(e) {
+        listEl.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ ' + e.message + '</div>';
+    }
+}
+
+async function approveSignedLoanAdmin(loanId) {
+    if (!confirm('آیا از تایید نهایی این قرارداد مطمئن هستید؟')) return;
+    
+    try {
+        var res = await fetch(URL + '?action=approveSignedLoan&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(loanId));
+        var d = await res.json();
+        
+        if (d.ok) {
+            alert('✅ قرارداد با موفقیت تایید نهایی شد');
+            loadSignedLoans();
+        } else {
+            alert('❌ خطا: ' + (d.error || 'نامشخص'));
+        }
+    } catch(e) {
+        alert('❌ خطای شبکه: ' + e.message);
+    }
 }
 
 console.log('✅ پنل مدیریت آماده است');
