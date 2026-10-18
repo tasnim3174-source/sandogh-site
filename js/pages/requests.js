@@ -111,17 +111,17 @@ function renderRequestsContent() {
                         </button>
                     </div>
                     
-                    <!-- امضای درخواست وام -->
-                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #8b5cf6;opacity:0.6;">
+                                                          <!-- امضای درخواست وام -->
+                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #8b5cf6;">
                         <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                            <i class="fas fa-signature" style="font-size:1.5rem;color:#8b5cf6;"></i>
+                            <i class="fas fa-file-signature" style="font-size:1.5rem;color:#8b5cf6;"></i>
                             <div style="flex:1;">
-                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">✍️ امضای درخواست وام</div>
-                                <div style="font-size:0.7rem;color:var(--text-secondary);">🚧 به‌زودی</div>
+                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">✍️ امضای قرارداد وام</div>
+                                <div style="font-size:0.7rem;color:var(--text-secondary);">مشاهده و امضای الکترونیکی قرارداد</div>
                             </div>
                         </div>
-                        <button disabled style="width:100%;padding:10px;border:none;border-radius:10px;background:#666;color:#fff;font-weight:800;cursor:not-allowed;font-family:tahoma;font-size:0.85rem;">
-                            🚧 در حال ساخت
+                        <button onclick="openLoanSignModal()" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.85rem;">
+                            ✍️ مشاهده و امضا
                         </button>
                     </div>
                 </div>
@@ -419,7 +419,186 @@ async function sendLoanRequest() {
         btn.innerHTML = originalText;
     }
 }
+// ============================================================
+// ✍️ فرم امضای الکترونیکی وام (Canvas)
+// ============================================================
 
+async function openLoanSignModal() {
+    var old = document.getElementById('loanSignModal');
+    if (old) old.remove();
+
+    // گرفتن اطلاعات کاربر
+    var member = members.find(m => m.id === currentUser.memberId) || {};
+    var memberName = member.firstName || currentUser.firstName || 'نامشخص';
+    var accountNum = member.accountNumber || currentUser.accountNumber || 'نامشخص';
+    var phone = member.phone1 || member.phone || 'نامشخص';
+
+    var modalHtml = `
+        <div id="loanSignModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:10px;backdrop-filter:blur(6px);">
+            <div style="background:#1a1a2e;border:2px solid rgba(139,92,246,0.5);border-radius:20px;padding:20px;max-width:650px;width:100%;max-height:95vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
+                
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;">✍️</div>
+                        <div style="font-weight:900;color:#fff;font-size:1.1rem;">فرم قرارداد وام</div>
+                    </div>
+                    <button onclick="closeLoanSignModal()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-size:1rem;font-family:tahoma;">✕</button>
+                </div>
+                
+                <!-- متن قرارداد -->
+                <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px;font-size:0.85rem;line-height:2;text-align:justify;color:#d1d5db;margin-bottom:16px;direction:rtl;">
+                    <div style="text-align:center;font-weight:900;color:#f59e0b;margin-bottom:12px;">به نام خدا</div>
+                    شورای محترم صندوق اتحاد<br><br>
+                    اینجانب <b style="color:#10b981;">${escapeHtml(memberName)}</b> با شماره تلفن <b style="color:#10b981;">${escapeHtml(phone)}</b> و شماره حساب <b style="color:#10b981;">${escapeHtml(accountNum)}</b> و کد ملی <span style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">...........</span> مبلغ وام یا قرض <b style="color:#10b981;">......... ریال</b> با بازپرداخت <b style="color:#10b981;">......... قسط</b> و هر قسط به مبلغ <b style="color:#10b981;">......... ریال</b> در تاریخ <b style="color:#10b981;">......... </b> از این صندوق دریافت نمودم.
+                    <br><br>
+                    و موظف هستم این مبلغ را به طور کامل طی اقساط تعیین شده بصورت ماهانه پرداخت نمایم. لذا اینجانب و چنانچه شخصاً نتوانستم پرداخت نمایم، بعد از تاریخ اقساط معوقه، وارثین و خانواده من موظف به پرداخت آن هستند و این دین برگردن اینجانب و خانواده‌ام می‌باشد.
+                    <br><br>
+                    این فرم الکترونیکی را شخصاً با اطلاع کامل خوانده و امضا نموده‌ام و این فرم الکترونیکی در تمام محاکم قضایی قابل اجرا می‌باشد.
+                </div>
+
+                <!-- بوم امضا -->
+                <div style="background:#fff;border-radius:12px;overflow:hidden;margin-bottom:10px;position:relative;">
+                    <canvas id="signatureCanvas" style="width:100%;height:200px;touch-action:none;cursor:crosshair;display:block;"></canvas>
+                    <div id="signPlaceholder" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#ccc;font-size:1.2rem;pointer-events:none;font-family:tahoma;user-select:none;">✍️ اینجا امضا کنید</div>
+                </div>
+
+                <div style="display:flex;gap:10px;margin-bottom:10px;">
+                    <button onclick="clearSignature()" style="flex:1;padding:10px;border:none;border-radius:8px;background:rgba(239,68,68,0.1);color:#fca5a5;font-weight:700;cursor:pointer;font-family:tahoma;">🗑️ پاک کردن</button>
+                </div>
+
+                <div style="display:flex;gap:10px;">
+                    <button onclick="submitSignedLoan()" style="flex:2;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:900;cursor:pointer;font-family:tahoma;font-size:0.95rem;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
+                        ✅ ثبت و امضا
+                    </button>
+                    <button onclick="closeLoanSignModal()" style="flex:1;padding:14px;border:1px solid rgba(255,255,255,0.2);border-radius:12px;background:rgba(255,255,255,0.05);color:#fff;font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.9rem;">
+                        ❌ لغو
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    setTimeout(initSignatureCanvas, 100);
+}
+
+function closeLoanSignModal() {
+    var modal = document.getElementById('loanSignModal');
+    if (modal) modal.remove();
+}
+
+// ============================================================
+// کدهای مربوط به بوم نقاشی (امضا)
+// ============================================================
+var sigCanvas, sigCtx, sigDrawing = false;
+
+function initSignatureCanvas() {
+    sigCanvas = document.getElementById('signatureCanvas');
+    if (!sigCanvas) return;
+    
+    sigCanvas.width = sigCanvas.offsetWidth;
+    sigCanvas.height = sigCanvas.offsetHeight;
+    sigCtx = sigCanvas.getContext('2d');
+    sigCtx.strokeStyle = '#000';
+    sigCtx.lineWidth = 3;
+    sigCtx.lineCap = 'round';
+    sigCtx.lineJoin = 'round';
+
+    function getPos(e) {
+        var rect = sigCanvas.getBoundingClientRect();
+        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function startDrawing(e) {
+        e.preventDefault();
+        sigDrawing = true;
+        var pos = getPos(e);
+        sigCtx.beginPath();
+        sigCtx.moveTo(pos.x, pos.y);
+        document.getElementById('signPlaceholder').style.display = 'none';
+    }
+    function draw(e) {
+        if (!sigDrawing) return;
+        e.preventDefault();
+        var pos = getPos(e);
+        sigCtx.lineTo(pos.x, pos.y);
+        sigCtx.stroke();
+    }
+    function stopDrawing(e) {
+        if (!sigDrawing) return;
+        e.preventDefault();
+        sigDrawing = false;
+    }
+
+    sigCanvas.addEventListener('mousedown', startDrawing);
+    sigCanvas.addEventListener('mousemove', draw);
+    sigCanvas.addEventListener('mouseup', stopDrawing);
+    sigCanvas.addEventListener('mouseleave', stopDrawing);
+    
+    sigCanvas.addEventListener('touchstart', startDrawing, {passive: false});
+    sigCanvas.addEventListener('touchmove', draw, {passive: false});
+    sigCanvas.addEventListener('touchend', stopDrawing);
+}
+
+function clearSignature() {
+    if (!sigCtx) return;
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+    document.getElementById('signPlaceholder').style.display = 'block';
+}
+
+async function submitSignedLoan() {
+    if (!sigCanvas) return;
+    
+    // بررسی اینکه آیا امضا کرده یا نه (با چک کردن پیکسل‌های سیاه)
+    var blank = document.createElement('canvas');
+    blank.width = sigCanvas.width;
+    blank.height = sigCanvas.height;
+    var blankCtx = blank.getContext('2d');
+    if (sigCanvas.toDataURL() === blank.toDataURL()) {
+        alert('⚠️ لطفاً ابتدا در کادر سفید امضا کنید.');
+        return;
+    }
+
+    var btn = event.target;
+    var originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ در حال ثبت...';
+
+    try {
+        var member = members.find(m => m.id === currentUser.memberId) || {};
+        var imgData = sigCanvas.toDataURL('image/png');
+        
+        var url = ADMIN_URL + '?action=saveSignedLoan'
+            + '&user=' + encodeURIComponent(member.id || member.accountNumber || currentUser.username)
+            + '&name=' + encodeURIComponent(member.firstName || currentUser.firstName || '')
+            + '&accountNumber=' + encodeURIComponent(member.accountNumber || '')
+            + '&phone=' + encodeURIComponent(member.phone1 || member.phone || '')
+            + '&signature=' + encodeURIComponent(imgData);
+
+        var res = await fetch(url, { cache: 'no-cache' });
+        var data = await res.json();
+
+        if (data.ok) {
+            alert('✅ قرارداد با موفقیت امضا و ثبت شد!\n\nلطفاً منتظر تایید نهایی شورا باشید.');
+            closeLoanSignModal();
+        } else {
+            alert('❌ خطا در ثبت: ' + (data.error || 'نامشخص'));
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    } catch(e) {
+        alert('❌ خطای شبکه: ' + e.message);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+    }
+}
+
+window.openLoanSignModal = openLoanSignModal;
+window.closeLoanSignModal = closeLoanSignModal;
+window.clearSignature = clearSignature;
+window.submitSignedLoan = submitSignedLoan;
 // ============================================================
 // در معرض عموم
 // ============================================================
