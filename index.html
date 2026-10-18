@@ -295,6 +295,51 @@
     };
 
     // ============================================================
+    // 🆕 وضعیت دسترسی کاربر
+    // ============================================================
+    var userAccessStatus = 'active';
+
+    // ============================================================
+    // 🆕 قفل کردن بخش‌ها
+    // ============================================================
+    function lockRestrictedSections() {
+        var reqBtns = document.querySelectorAll('[onclick*="requests"], [onclick*="Requests"], [onclick*="showRequests"]');
+        reqBtns.forEach(function(btn) {
+            btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به بخش درخواست‌ها مسدود است.'); return false; };
+            btn.style.opacity = '0.5';
+        });
+
+        var smsBtns = document.querySelectorAll('[onclick*="sms"], [onclick*="Sms"], [onclick*="SMS"]');
+        smsBtns.forEach(function(btn) {
+            btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به سامانه پیامکی مسدود است.'); return false; };
+            btn.style.opacity = '0.5';
+        });
+
+        var onlineBtns = document.querySelectorAll('[onclick*="online"], [onclick*="Online"], [onclick*="service"]');
+        onlineBtns.forEach(function(btn) {
+            btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به خدمات آنلاین مسدود است.'); return false; };
+            btn.style.opacity = '0.5';
+        });
+
+        var adminBtns = document.querySelectorAll('[onclick*="admin"], [onclick*="Admin"]');
+        adminBtns.forEach(function(btn) {
+            btn.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به پنل مدیریت مسدود است.'); return false; };
+            btn.style.opacity = '0.5';
+        });
+        
+        var menuLinks = document.querySelectorAll('.menu-item, .nav-link');
+        menuLinks.forEach(function(link) {
+            var text = (link.innerText || '').trim();
+            if (text.includes('درخواست') || text.includes('پیامک') || text.includes('آنلاین') || text.includes('مدیریت')) {
+                link.onclick = function(e) { e.preventDefault(); e.stopPropagation(); alert('🚫 دسترسی به این بخش مسدود است.'); return false; };
+                link.style.opacity = '0.5';
+            }
+        });
+        
+        console.log('🔒 بخش‌های حساس قفل شدند.');
+    }
+
+    // ============================================================
     // 🆕 تابع تغییر کاربر
     // ============================================================
     window.goToFamilySelect = function() {
@@ -331,7 +376,6 @@
     var nav = document.getElementById('bottomNavDirect');
     if (!nav) return;
     
-    // 🆕 چک کن توی صفحه لاگین یا لودر هستیم
     var loginPage = document.getElementById('loginPage');
     var newLoader = document.getElementById('newLoader');
     var loaderOk = document.getElementById('loaderOk');
@@ -339,13 +383,11 @@
     var isLoginVisible = loginPage && loginPage.style.display !== 'none' && loginPage.offsetParent !== null;
     var isLoaderVisible = (newLoader && newLoader.offsetParent !== null) || (loaderOk && loaderOk.offsetParent !== null);
     
-    // 🆕 اگه توی لاگین یا لودر هستیم → مخفی
     if (isLoginVisible || isLoaderVisible) {
         nav.style.display = 'none';
         return;
     }
     
-    // 🆕 فقط اگه کاربر لاگین کرده و توی منو هستیم → نمایش
     var isLoggedIn = false;
     try {
         if (typeof currentUser !== 'undefined' && currentUser && currentUser.id) {
@@ -545,13 +587,31 @@
         
         var res = loginResult;
         currentUser = res.user;
-       // 🆕 ذخیره در localStorage برای دسترسی از صفحات دیگه
+
 try {
     localStorage.setItem('currentUser', JSON.stringify(currentUser));
     console.log('✅ currentUser ذخیره شد');
 } catch(e) {
     console.warn('⚠️ خطا در ذخیره currentUser:', e);
 }
+
+// 🆕 چک کردن وضعیت مسدودی کاربر
+var API_URL_STATUS = 'https://script.google.com/macros/s/AKfycbxN3lDjLcnSDGNwWqhpi1n0YsYXVPfuTv08_EO1Vys0YNauITE0cGrKYypxHeNhLcjr/exec';
+fetch(API_URL_STATUS + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber || currentUser.username))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.ok) {
+            userAccessStatus = data.status;
+            if (userAccessStatus === 'blocked' || userAccessStatus === 'closed') {
+                setTimeout(function() {
+                    alert('🚫 حساب شما ' + (userAccessStatus === 'blocked' ? 'مسدود' : 'بسته') + ' شده است.\n\nلطفاً با حسابداری صندوق تماس بگیرید.');
+                    lockRestrictedSections();
+                }, 1500);
+            }
+        }
+    })
+    .catch(function(e) { console.log('خطا در چک وضعیت:', e); });
+
         var tempMember = {
             id: currentUser.id || currentUser.accountNumber || currentUser.username,
             firstName: currentUser.firstName || 'کاربر',
