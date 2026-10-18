@@ -433,9 +433,7 @@ async function apiCall(action, params){
   var url = API_URL + '?' + qs.toString();
   var res = await fetch(url, {cache:'no-cache'});
   if(!res.ok) throw new Error('HTTP ' + res.status);
-  var ct = res.headers.get('content-type');
-  if(ct && ct.indexOf('application/json') !== -1) return await res.json();
-  throw new Error('پاسخ سرور JSON نیست');
+  return await res.json();
 }
 async function apiPost(action, body){
   var res = await fetch(API_URL, {
