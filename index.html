@@ -1333,5 +1333,42 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 1000);
     });
 </script>
+    <script>
+    // 🆕 اجرای افکت پیش‌فرض بعد از لاگین
+    window.addEventListener('load', function() {
+        // کمی صبر می‌کنیم تا برنامه کاملاً لود شود
+        setTimeout(function() {
+            // بررسی می‌کنیم که آیا کاربر لاگین کرده است یا نه
+            var isLoggedIn = (typeof currentUser !== 'undefined' && currentUser && currentUser.id);
+            
+            if (isLoggedIn) {
+                // ۱. لود کردن تنظیمات
+                if (window.loadEffectSettings) {
+                    window.loadEffectSettings();
+                }
+                
+                // ۲. اگر تنظیمات خالی بود (کاربر جدید)، برف را روشن کن
+                if (!localStorage.getItem('sandogh_effects_settings')) {
+                    window.EFFECTS = { rain: false, snow: true, stars: false };
+                    localStorage.setItem('sandogh_effects_settings', JSON.stringify(window.EFFECTS));
+                }
+                
+                // ۳. اعمال افکت‌ها
+                if (window.applyEffects) {
+                    window.applyEffects();
+                }
+                
+                // ۴. آپدیت دکمه‌ها
+                if (window.updateEffectButtons) {
+                    window.updateEffectButtons();
+                }
+                
+                console.log("✅ افکت پیش‌فرض (برف) برای کاربر جدید اعمال شد.");
+            } else {
+                console.log("⏳ کاربر لاگین نکرده است، منتظر می‌مانیم...");
+            }
+        }, 2000); // ۲ ثانیه صبر می‌کنیم تا برنامه لود شود
+    });
+</script>
 </body>
 </html>
