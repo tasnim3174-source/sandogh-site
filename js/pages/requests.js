@@ -156,6 +156,22 @@ async function sendSmsRequest(code, title) {
     const FUND_PHONE = '09138944709';
     const message = `درخواست ${code} - ${title}\nشماره حساب: ${member.accountNumber}\nنام: ${member.firstName}`;
     
+    // ۱. ذخیره در حافظه محلی (تاریخچه)
+    var localReqs = [];
+    try {
+        localReqs = JSON.parse(localStorage.getItem('sandogh_my_requests') || '[]');
+    } catch(e) {}
+    
+    localReqs.unshift({
+        code: code,
+        title: title,
+        status: 'pending',
+        timestamp: new Date().toISOString(),
+        reply: 'در انتظار بررسی توسط شورا'
+    });
+    localStorage.setItem('sandogh_my_requests', JSON.stringify(localReqs));
+    
+    // ۲. تلاش برای ارسال به سرور (با no-cors تا کرش نکند)
     try {
         var url = ADMIN_URL + '?action=submitMemberRequest'
             + '&user=' + encodeURIComponent(member.id || member.accountNumber)
@@ -166,20 +182,17 @@ async function sendSmsRequest(code, title) {
             + '&title=' + encodeURIComponent(title)
             + '&type=general';
         
-        fetch(url, { cache: 'no-cache' })
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-                if (d.ok) console.log('✅ درخواست در سرور ثبت شد');
-                else console.log('⚠️ خطا در ثبت:', d.error);
-            })
-            .catch(function(e) { console.log('⚠️ خطا:', e); });
+        fetch(url, { cache: 'no-cache', mode: 'no-cors' })
+            .then(function() { console.log('✅ درخواست به سرور ارسال شد.'); })
+            .catch(function(e) { console.log('⚠️ خطا در ارسال:', e); });
+            
     } catch(e) {
         console.log('⚠️ خطا در ثبت سرور:', e);
     }
     
+    // ۳. باز کردن پیامک
     window.location.href = `sms:${FUND_PHONE}?body=${encodeURIComponent(message)}`;
 }
-
 async function loadMyRequests() {
     var list = document.getElementById('myRequestsList');
     if (!list) return;
