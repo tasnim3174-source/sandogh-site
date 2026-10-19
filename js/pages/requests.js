@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - درخواست‌ها
-   نسخه: 6.0 (نهایی - با ذخیره محلی و مدیریت خطا)
+   نسخه: 7.0 (نهایی - جداسازی تاریخچه هر کاربر + ذخیره محلی + ارسال به ایتا)
    ============================================================ */
 
 function renderRequestsContent() {
@@ -156,10 +156,11 @@ async function sendSmsRequest(code, title) {
     const FUND_PHONE = '09138944709';
     const message = `درخواست ${code} - ${title}\nشماره حساب: ${member.accountNumber}\nنام: ${member.firstName}`;
     
-    // ۱. ذخیره در حافظه محلی (تاریخچه)
+    // ۱. ذخیره در حافظه محلی (تاریخچه) با کلید مخصوص هر کاربر
+    var reqKey = 'sandogh_my_requests_' + currentUser.memberId;
     var localReqs = [];
     try {
-        localReqs = JSON.parse(localStorage.getItem('sandogh_my_requests') || '[]');
+        localReqs = JSON.parse(localStorage.getItem(reqKey) || '[]');
     } catch(e) {}
     
     localReqs.unshift({
@@ -169,9 +170,9 @@ async function sendSmsRequest(code, title) {
         timestamp: new Date().toISOString(),
         reply: 'در انتظار بررسی توسط شورا'
     });
-    localStorage.setItem('sandogh_my_requests', JSON.stringify(localReqs));
+    localStorage.setItem(reqKey, JSON.stringify(localReqs));
     
-    // ۲. تلاش برای ارسال به سرور (با no-cors تا کرش نکند)
+    // ۲. ارسال به سرور
     try {
         var url = ADMIN_URL + '?action=submitMemberRequest'
             + '&user=' + encodeURIComponent(member.id || member.accountNumber)
@@ -202,16 +203,17 @@ async function loadMyRequests() {
     
     var html = '';
     
-    // ۱. خواندن و نمایش درخواست‌های ذخیره شده در حافظه گوشی
+    // ۱. خواندن از حافظه با کلید مخصوص هر کاربر
+    var reqKey = 'sandogh_my_requests_' + currentUser.memberId;
     var localReqs = [];
     try {
-        localReqs = JSON.parse(localStorage.getItem('sandogh_my_requests') || '[]');
+        localReqs = JSON.parse(localStorage.getItem(reqKey) || '[]');
     } catch(e) {}
     
     if (localReqs.length > 0) {
         localReqs.forEach(function(r) {
             var date = formatDate(r.timestamp);
-            var statusColor = '#f59e0b'; // نارنجی برای در انتظار
+            var statusColor = '#f59e0b'; // نارنجی
             html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:12px;margin-bottom:8px;border-right:3px solid ' + statusColor + ';">';
             html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">';
             html += '<div style="font-weight:700;color:var(--text-primary);font-size:0.85rem;">' + escapeHtml(r.title || '') + '</div>';
@@ -222,13 +224,12 @@ async function loadMyRequests() {
         });
     }
     
-    // ۲. تلاش برای دریافت از سرور (اگر سرور پاسخ داد، درخواست‌های جدید را هم اضافه کن)
+    // ۲. تلاش برای دریافت از سرور
     try {
         var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
         var url = ADMIN_URL + '?action=getMyMemberRequests&user=' + encodeURIComponent(uid);
         var res = await fetch(url, { cache: 'no-cache' });
         
-        // چک می‌کنیم که پاسخ JSON باشد (نه HTML)
         var text = await res.text();
         if (!text.trim().startsWith('<')) {
             var data = JSON.parse(text);
@@ -389,10 +390,11 @@ async function sendLoanRequest() {
     var messageText = 'اینجانب ' + (member.firstName || '') + 
                      ' با توجه به اینکه بدهی من تمام شده درخواست وام را از آن صندوق دارم، لطفاً اقدام لازم را مبذول فرمایید.';
     
-    // ذخیره در حافظه محلی
+    // ۱. ذخیره در حافظه محلی با کلید مخصوص هر کاربر
+    var reqKey = 'sandogh_my_requests_' + currentUser.memberId;
     var localReqs = [];
     try {
-        localReqs = JSON.parse(localStorage.getItem('sandogh_my_requests') || '[]');
+        localReqs = JSON.parse(localStorage.getItem(reqKey) || '[]');
     } catch(e) {}
     localReqs.unshift({
         code: 'LOAN',
@@ -401,8 +403,9 @@ async function sendLoanRequest() {
         timestamp: new Date().toISOString(),
         reply: 'در انتظار بررسی توسط شورا'
     });
-    localStorage.setItem('sandogh_my_requests', JSON.stringify(localReqs));
+    localStorage.setItem(reqKey, JSON.stringify(localReqs));
     
+    // ۲. ارسال به سرور
     try {
         var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
         var url = ADMIN_URL + '?action=submitMemberRequest'
