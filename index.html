@@ -1174,21 +1174,25 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- ============================================================ -->
 <script>
     // ۱. تنظیمات پیش‌فرض
-    window.EFFECTS = { rain: false, snow: false, stars: false };
+    window.EFFECTS = { rain: false, snow:true, stars: false };
     var rainAnim, snowAnim, starsAnim;
 
     // ۲. خواندن تنظیمات از حافظه
-    window.loadEffectSettings = function() {
-        try {
-            var saved = localStorage.getItem('sandogh_effects_settings');
-            if (saved) {
-                var parsed = JSON.parse(saved);
-                window.EFFECTS.rain = !!parsed.rain;
-                window.EFFECTS.snow = !!parsed.snow;
-                window.EFFECTS.stars = !!parsed.stars;
-            }
-        } catch(e) {}
-    };
+   window.loadEffectSettings = function() {
+    try {
+        var saved = localStorage.getItem('sandogh_effects_settings');
+        if (saved) {
+            var parsed = JSON.parse(saved);
+            window.EFFECTS.rain = !!parsed.rain;
+            window.EFFECTS.snow = !!parsed.snow;
+            window.EFFECTS.stars = !!parsed.stars;
+        } else {
+            // 🆕 اگر کاربر تنظیماتی نداشت، برف را پیش‌فرض روشن کن
+            window.EFFECTS.snow = true;
+            localStorage.setItem('sandogh_effects_settings', JSON.stringify(window.EFFECTS));
+        }
+    } catch(e) {}
+};
 
     // ۳. ساخت کانواس
     function createCanvas(id) {
