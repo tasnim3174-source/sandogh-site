@@ -1169,30 +1169,30 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- ============================================================ -->
-<!-- 🆕 سیستم افکت‌های بصری (نسخه نهایی و یکپارچه) -->
-<!-- ============================================================ -->
 <script>
-    // ۱. تنظیمات پیش‌فرض
-    window.EFFECTS = { rain: false, snow:true, stars: false };
+    // ============================================================
+    // 🆕 سیستم افکت‌های بصری (نسخه نهایی و یکپارچه)
+    // ============================================================
+    
+    // ۱. تنظیمات پیش‌فرض (برف روشن)
+    window.EFFECTS = { rain: false, snow: true, stars: false };
     var rainAnim, snowAnim, starsAnim;
 
-    // ۲. خواندن تنظیمات از حافظه
-   window.loadEffectSettings = function() {
-    try {
-        var saved = localStorage.getItem('sandogh_effects_settings');
-        if (saved) {
-            var parsed = JSON.parse(saved);
-            window.EFFECTS.rain = !!parsed.rain;
-            window.EFFECTS.snow = !!parsed.snow;
-            window.EFFECTS.stars = !!parsed.stars;
-        } else {
-            // 🆕 اگر کاربر تنظیماتی نداشت، برف را پیش‌فرض روشن کن
-            window.EFFECTS.snow = true;
-            localStorage.setItem('sandogh_effects_settings', JSON.stringify(window.EFFECTS));
-        }
-    } catch(e) {}
-};
+    // ۲. خواندن تنظیمات
+    window.loadEffectSettings = function() {
+        try {
+            var saved = localStorage.getItem('sandogh_effects_settings');
+            if (saved) {
+                var parsed = JSON.parse(saved);
+                window.EFFECTS.rain = !!parsed.rain;
+                window.EFFECTS.snow = !!parsed.snow;
+                window.EFFECTS.stars = !!parsed.stars;
+            } else {
+                window.EFFECTS.snow = true;
+                localStorage.setItem('sandogh_effects_settings', JSON.stringify(window.EFFECTS));
+            }
+        } catch(e) {}
+    };
 
     // ۳. ساخت کانواس
     function createCanvas(id) {
@@ -1206,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         canvas.style.width = '100%';
         canvas.style.height = '100%';
         canvas.style.pointerEvents = 'none';
-        canvas.style.zIndex = '0';
+        canvas.style.zIndex = '1';
         document.body.insertBefore(canvas, document.body.firstChild);
         return canvas;
     }
@@ -1295,9 +1295,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             localStorage.setItem('sandogh_effects_settings', JSON.stringify(window.EFFECTS));
-        } catch(e) {
-            console.warn("⚠️ حافظه پر است، اما افکت اعمال شد.");
-        }
+        } catch(e) {}
     };
 
     // ۸. تابع تغییر وضعیت (برای دکمه‌ها)
@@ -1326,7 +1324,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 
-    // ۱۰. اجرای اولیه بعد از بارگذاری
+    // ۱۰. اجرای اولیه
     document.addEventListener('DOMContentLoaded', function() {
         window.loadEffectSettings();
         setTimeout(function() {
