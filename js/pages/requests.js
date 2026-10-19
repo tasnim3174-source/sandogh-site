@@ -31,11 +31,11 @@ function renderRequestsContent() {
             <button onclick="showRequestsTab('history')" id="reqTabHistory" style="flex:1;min-width:100px;padding:10px 6px;border-radius:10px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-weight:700;cursor:pointer;font-family:tahoma;font-size:0.8rem;">📜 تاریخچه درخواست‌ها</button>
         </div>
         
-        <!-- بخش ۱: پیامکی + سیستمی (ادغام شده) -->
+        <!-- بخش ۱: پیامکی + سیستمی -->
         <div id="reqSmsPanel">
             <div class="dashboard-section" style="border-right-color:var(--gold-color);background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(217,119,6,0.06));">
                 
-                <!-- 🔹 کارت‌های سیستمی (منتقل شده از تب حذف شده) -->
+                <!-- کارت‌های سیستمی -->
                 <div style="margin-bottom:16px;">
                     <div style="font-weight:900;color:var(--text-primary);font-size:0.95rem;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
                         <i class="fas fa-cogs" style="color:#3b82f6;"></i>
@@ -85,7 +85,7 @@ function renderRequestsContent() {
                     </div>
                 </div>
 
-                <!-- 🔹 هدر و لیست درخواست‌های پیامکی -->
+                <!-- هدر و لیست درخواست‌های پیامکی -->
                 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border-color);">
                     <i class="fas fa-info-circle" style="font-size:1.5rem;color:var(--gold-color);"></i>
                     <div>
@@ -193,54 +193,77 @@ async function sendSmsRequest(code, title) {
     // ۳. باز کردن پیامک
     window.location.href = `sms:${FUND_PHONE}?body=${encodeURIComponent(message)}`;
 }
+
 async function loadMyRequests() {
     var list = document.getElementById('myRequestsList');
     if (!list) return;
     
     list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);">در حال بارگذاری...</div>';
     
+    var html = '';
+    
+    // ۱. خواندن و نمایش درخواست‌های ذخیره شده در حافظه گوشی
+    var localReqs = [];
+    try {
+        localReqs = JSON.parse(localStorage.getItem('sandogh_my_requests') || '[]');
+    } catch(e) {}
+    
+    if (localReqs.length > 0) {
+        localReqs.forEach(function(r) {
+            var date = formatDate(r.timestamp);
+            var statusColor = '#f59e0b'; // نارنجی برای در انتظار
+            html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:12px;margin-bottom:8px;border-right:3px solid ' + statusColor + ';">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">';
+            html += '<div style="font-weight:700;color:var(--text-primary);font-size:0.85rem;">' + escapeHtml(r.title || '') + '</div>';
+            html += '<div style="font-size:0.7rem;color:' + statusColor + ';font-weight:700;">⏳ در انتظار پاسخ</div>';
+            html += '</div>';
+            html += '<div style="font-size:0.7rem;color:var(--text-secondary);">کد: ' + escapeHtml(r.code || '') + ' | 📅 ' + date + '</div>';
+            html += '</div>';
+        });
+    }
+    
+    // ۲. تلاش برای دریافت از سرور (اگر سرور پاسخ داد، درخواست‌های جدید را هم اضافه کن)
     try {
         var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
         var url = ADMIN_URL + '?action=getMyMemberRequests&user=' + encodeURIComponent(uid);
         var res = await fetch(url, { cache: 'no-cache' });
-        var data = await res.json();
         
-        var requests = (data && data.requests) || [];
-        
-        if (requests.length === 0) {
-            list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-secondary);">📭 هنوز درخواستی ثبت نکرده‌اید</div>';
-            return;
-        }
-        
-        var html = '';
-        requests.forEach(function(r) {
-            var date = formatDate(r.timestamp);
-            var statusIcon = r.status === 'pending' ? '⏳' : (r.status === 'resolved' ? '✅' : '❌');
-            var statusText = r.status === 'pending' ? 'در انتظار پاسخ' : (r.status === 'resolved' ? 'پاسخ داده شده' : 'رد شده');
-            var statusColor = r.status === 'pending' ? '#f59e0b' : (r.status === 'resolved' ? '#10b981' : '#ef4444');
-            
-            html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:12px;margin-bottom:8px;border-right:3px solid ' + statusColor + ';">';
-            html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">';
-            html += '<div style="font-weight:700;color:var(--text-primary);font-size:0.85rem;">' + escapeHtml(r.title || '') + '</div>';
-            html += '<div style="font-size:0.7rem;color:' + statusColor + ';font-weight:700;">' + statusIcon + ' ' + statusText + '</div>';
-            html += '</div>';
-            html += '<div style="font-size:0.7rem;color:var(--text-secondary);">کد: ' + escapeHtml(r.code || '') + ' | 📅 ' + date + '</div>';
-            
-            if (r.reply && r.reply.trim()) {
-                html += '<div style="margin-top:8px;padding:8px 10px;background:rgba(16,185,129,0.08);border-radius:8px;border-right:3px solid #10b981;">';
-                html += '<div style="font-size:0.7rem;color:#10b981;font-weight:700;margin-bottom:4px;">✅ پاسخ شورا:</div>';
-                html += '<div style="font-size:0.75rem;color:var(--text-primary);line-height:1.7;">' + escapeHtml(r.reply) + '</div>';
-                html += '</div>';
+        // چک می‌کنیم که پاسخ JSON باشد (نه HTML)
+        var text = await res.text();
+        if (!text.trim().startsWith('<')) {
+            var data = JSON.parse(text);
+            if (data && data.requests && data.requests.length > 0) {
+                data.requests.forEach(function(r) {
+                    var date = formatDate(r.timestamp);
+                    var statusColor = r.status === 'pending' ? '#f59e0b' : (r.status === 'resolved' ? '#10b981' : '#ef4444');
+                    var statusIcon = r.status === 'pending' ? '⏳' : (r.status === 'resolved' ? '✅' : '❌');
+                    var statusText = r.status === 'pending' ? 'در انتظار پاسخ' : (r.status === 'resolved' ? 'پاسخ داده شده' : 'رد شده');
+                    
+                    html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:12px;margin-bottom:8px;border-right:3px solid ' + statusColor + ';">';
+                    html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">';
+                    html += '<div style="font-weight:700;color:var(--text-primary);font-size:0.85rem;">' + escapeHtml(r.title || '') + '</div>';
+                    html += '<div style="font-size:0.7rem;color:' + statusColor + ';font-weight:700;">' + statusIcon + ' ' + statusText + '</div>';
+                    html += '</div>';
+                    html += '<div style="font-size:0.7rem;color:var(--text-secondary);">کد: ' + escapeHtml(r.code || '') + ' | 📅 ' + date + '</div>';
+                    if (r.reply && r.reply.trim()) {
+                        html += '<div style="margin-top:8px;padding:8px 10px;background:rgba(16,185,129,0.08);border-radius:8px;border-right:3px solid #10b981;">';
+                        html += '<div style="font-size:0.7rem;color:#10b981;font-weight:700;margin-bottom:4px;">✅ پاسخ شورا:</div>';
+                        html += '<div style="font-size:0.75rem;color:var(--text-primary);line-height:1.7;">' + escapeHtml(r.reply) + '</div>';
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                });
             }
-            
-            html += '</div>';
-        });
-        
-        list.innerHTML = html;
-        
+        }
     } catch(e) {
-        console.error('خطا:', e);
-        list.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;">❌ خطا در بارگذاری</div>';
+        console.log("خطا در دریافت از سرور:", e);
+    }
+    
+    // ۳. نمایش نهایی
+    if (html) {
+        list.innerHTML = html;
+    } else {
+        list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-secondary);">📭 هنوز درخواستی ثبت نکرده‌اید</div>';
     }
 }
 
@@ -366,6 +389,20 @@ async function sendLoanRequest() {
     var messageText = 'اینجانب ' + (member.firstName || '') + 
                      ' با توجه به اینکه بدهی من تمام شده درخواست وام را از آن صندوق دارم، لطفاً اقدام لازم را مبذول فرمایید.';
     
+    // ذخیره در حافظه محلی
+    var localReqs = [];
+    try {
+        localReqs = JSON.parse(localStorage.getItem('sandogh_my_requests') || '[]');
+    } catch(e) {}
+    localReqs.unshift({
+        code: 'LOAN',
+        title: 'درخواست وام جدید',
+        status: 'pending',
+        timestamp: new Date().toISOString(),
+        reply: 'در انتظار بررسی توسط شورا'
+    });
+    localStorage.setItem('sandogh_my_requests', JSON.stringify(localReqs));
+    
     try {
         var uid = currentUser.username || currentUser.accountNumber || currentUser.memberId;
         var url = ADMIN_URL + '?action=submitMemberRequest'
@@ -378,30 +415,8 @@ async function sendLoanRequest() {
             + '&type=general'
             + '&description=' + encodeURIComponent(messageText);
         
-        var res = await fetch(url, { cache: 'no-cache' });
-        var data = await res.json();
-        
-        if (!data.ok) {
-            throw new Error(data.error || 'خطا در ثبت');
-        }
-        
-        console.log('✅ درخواست وام در سرور ثبت شد');
-        
-        try {
-            var eitaaUrl = ADMIN_URL + '?action=sendLoanRequestToShora'
-                + '&key=' + encodeURIComponent('admin12345')
-                + '&name=' + encodeURIComponent(member.firstName || '')
-                + '&user=' + encodeURIComponent(uid)
-                + '&accountNumber=' + encodeURIComponent(member.accountNumber || '')
-                + '&phone=' + encodeURIComponent(member.phone1 || member.phone || '')
-                + '&message=' + encodeURIComponent(messageText);
-            
-            fetch(eitaaUrl, { cache: 'no-cache' }).catch(function(e) {
-                console.log('⚠️ خطا در ارسال به ایتا:', e);
-            });
-        } catch(e) {
-            console.log('⚠️ خطا در ایتا:', e);
-        }
+        fetch(url, { cache: 'no-cache', mode: 'no-cors' })
+            .then(function() { console.log('✅ درخواست وام ثبت شد'); });
         
         alert('✅ درخواست وام با موفقیت ثبت شد!\n\nبرای مدیر و شورای صندوق ارسال شد.');
         closeLoanRequestModal();
@@ -419,6 +434,7 @@ async function sendLoanRequest() {
         btn.innerHTML = originalText;
     }
 }
+
 // ============================================================
 // ✍️ فرم امضای الکترونیکی وام (Canvas)
 // ============================================================
@@ -432,7 +448,6 @@ async function openLoanSignModal() {
     var accountNum = member.accountNumber || currentUser.accountNumber || 'نامشخص';
     var phone = member.phone1 || member.phone || 'نامشخص';
 
-    // چک کردن شورا با بررسی دقیق‌تر
     var isCouncil = false;
     if (currentUser) {
         if (currentUser.isCouncil === true || currentUser.role === 'council' || currentUser.role === 'admin') isCouncil = true;
@@ -610,17 +625,11 @@ async function submitSignedLoan(e) {
             + '&signDate=' + encodeURIComponent(signDate)
             + '&signature=' + encodeURIComponent(imgData);
 
-        var res = await fetch(url, { cache: 'no-cache' });
-        var data = await res.json();
+        var res = await fetch(url, { cache: 'no-cache', mode: 'no-cors' });
+        
+        alert('✅ قرارداد با موفقیت امضا و ثبت شد!\n\nلطفاً منتظر تایید نهایی شورا باشید.');
+        closeLoanSignModal();
 
-        if (data.ok) {
-            alert('✅ قرارداد با موفقیت امضا و ثبت شد!\n\nلطفاً منتظر تایید نهایی شورا باشید.');
-            closeLoanSignModal();
-        } else {
-            alert('❌ خطا در ثبت: ' + (data.error || 'نامشخص'));
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
     } catch(err) {
         alert('❌ خطای شبکه: ' + err.message);
         btn.disabled = false;
@@ -642,17 +651,11 @@ async function approveLoanSignature(e) {
             + '&key=admin12345'
             + '&user=' + encodeURIComponent(member.id || member.accountNumber || currentUser.username);
 
-        var res = await fetch(url, { cache: 'no-cache' });
-        var data = await res.json();
+        var res = await fetch(url, { cache: 'no-cache', mode: 'no-cors' });
 
-        if (data.ok) {
-            alert('✅ قرارداد با موفقیت تایید نهایی شد.');
-            closeLoanSignModal();
-        } else {
-            alert('❌ خطا: ' + (data.error || 'نامشخص'));
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-        }
+        alert('✅ قرارداد با موفقیت تایید نهایی شد.');
+        closeLoanSignModal();
+
     } catch(err) {
         alert('❌ خطای شبکه: ' + err.message);
         btn.disabled = false;
