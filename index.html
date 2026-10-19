@@ -1168,5 +1168,60 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1000);
 });
 </script>
+    <script>
+    // 🆕 توابع کنترل افکت‌های بصری
+    function toggleEffect(type) {
+        var settings = { rain: false, snow: false, stars: false };
+        try {
+            var saved = localStorage.getItem('sandogh_effects_settings');
+            if (saved) settings = JSON.parse(saved);
+        } catch(e) {}
+
+        // تغییر وضعیت (روشن/خاموش)
+        settings[type] = !settings[type];
+        
+        try {
+            localStorage.setItem('sandogh_effects_settings', JSON.stringify(settings));
+        } catch(e) { console.log('خطا در ذخیره تنظیمات:', e); }
+
+        // اعمال تغییرات روی صفحه
+        if (window.applyEffects) {
+            window.applyEffects();
+        } else {
+            console.log("⚠️ تابع applyEffects پیدا نشد. فایل effects.js را چک کنید.");
+        }
+
+        // آپدیت ظاهر دکمه‌ها (رنگ طلایی برای فعال)
+        updateEffectButtons();
+    }
+
+    function updateEffectButtons() {
+        var settings = { rain: false, snow: false, stars: false };
+        try {
+            var saved = localStorage.getItem('sandogh_effects_settings');
+            if (saved) settings = JSON.parse(saved);
+        } catch(e) {}
+
+        ['rain', 'snow', 'stars'].forEach(function(type) {
+            var btn = document.getElementById('effect' + type.charAt(0).toUpperCase() + type.slice(1) + 'Btn');
+            if (btn) {
+                if (settings[type]) {
+                    btn.style.background = 'linear-gradient(135deg,#f59e0b,#d97706)';
+                    btn.style.color = '#1a1a2e';
+                    btn.style.border = 'none';
+                } else {
+                    btn.style.background = 'rgba(255,255,255,0.05)';
+                    btn.style.color = 'var(--text-primary)';
+                    btn.style.border = '1px solid rgba(255,255,255,0.2)';
+                }
+            }
+        });
+    }
+
+    // اجرای اولیه برای تنظیم رنگ دکمه‌ها
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(updateEffectButtons, 1000);
+    });
+</script>
 </body>
 </html>
