@@ -126,7 +126,7 @@ function renderFamilySelectContent() {
                         color: #9ca3af;
                         font-size: 0.9rem;
                         line-height: 1.7;
-                    "> وکمی صبر کن از بین اعضای خانواده‌ات انتخاب کن</p>
+                    ">  از بین اعضای خانواده‌ات انتخاب کن و کمی صبر کن</p>
                 </div>
                 
                 <!-- کارت‌های اعضا -->
