@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - صورتحساب و داشبورد
-   نسخه: 3.0 (اطلاعات بر اساس بزرگترین ID - جدیدترین تراکنش)
+   نسخه: 4.0 (اطلاعات بر اساس بزرگترین ID + صورتحساب کامل)
    ============================================================ */
 
 function renderDashboardContent() {
@@ -27,7 +27,7 @@ function renderDashboardContent() {
         }
     });
 
-    // ۴. استخراج اطلاعات از جدیدترین تراکنش (یا کاربر اگر تراکنشی نبود)
+    // ۴. استخراج اطلاعات از جدیدترین تراکنش
     const loanBalance = latestTx ? (parseFloat(latestTx['مانده وام']) || 0) : (member.loanBalance || 0);
     const paidInstallments = latestTx ? (parseFloat(latestTx['تعداد قسط پرداخت شده']) || 0) : (member.paidInstallments || 0);
     const remainingInstallments = latestTx ? (parseFloat(latestTx['تعداد قسط مانده']) || 0) : (member.remainingInstallments || 0);
@@ -99,7 +99,7 @@ function renderDashboardContent() {
     } catch(e) {}
 
     // ============================================================
-    // خلاصه حساب (کارت‌های بالا)
+    // خلاصه حساب
     // ============================================================
     const summaryBox = `
     <div class="dashboard-section summary-section">
@@ -145,7 +145,7 @@ function renderDashboardContent() {
     `;
 
     // ============================================================
-    // اطلاعات کامل وام (با استفاده از جدیدترین تراکنش)
+    // اطلاعات کامل وام
     // ============================================================
     const loanInfoHtml = `
         <div class="dashboard-section" style="border-right-color:var(--danger-color);">
@@ -188,7 +188,7 @@ function renderDashboardContent() {
     `;
 
     // ============================================================
-    // برنامه اقساط (با اطلاعات جدید)
+    // برنامه اقساط
     // ============================================================
     const installmentDates = generateInstallmentDates(member.loanReceiveDate, totalInstallments);
     let installmentPlanHtml = '';
@@ -284,7 +284,7 @@ function renderDashboardContent() {
     }
 
     // ============================================================
-    // وضعیت (کارت رنگی)
+    // وضعیت
     // ============================================================
     const statusHtml =
         '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:14px 16px;">' +
@@ -323,7 +323,46 @@ function renderDashboardContent() {
         root.querySelectorAll('.statement-panel').forEach(function(panel) {
             panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
         });
+        
+        // 🆕 بعد از تغییر تب، جدول را دوباره رندر کن
+        setTimeout(function() {
+            document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+                if (el.offsetParent !== null && el.innerHTML.trim() === '') {
+                    var member = members.find(m => 
+                        String(m.id) === String(currentUser.memberId) || 
+                        String(m.accountNumber) === String(currentUser.accountNumber)
+                    );
+                    if (member) {
+                        var txns = (transactionsByMember.get(String(member.id)) || [])
+                            .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
+                        if (txns.length > 0) renderExcelTransactions(txns, el);
+                    }
+                }
+            });
+        }, 100);
     };
+
+    // 🆕 بخش صورتحساب کامل
+    const allTxnsHtml = `
+        <div class="dashboard-section" style="margin-top:15px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                <h3 style="font-size:1.05rem;margin:0;">
+                    <i class="fas fa-file-invoice" style="color:#ec4899;"></i> 
+                    صورتحساب کامل (${memberTxns.length} تراکنش)
+                </h3>
+            </div>
+            <div class="tx-excel-container"></div>
+        </div>
+    `;
+
+    // 🆕 رندر جدول بعد از رندر داشبورد
+    setTimeout(function() {
+        document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+            if (el.innerHTML.trim() === '') {
+                renderExcelTransactions(memberTxns, el);
+            }
+        });
+    }, 100);
 
     return '<div id="dashboardStatementRoot">' +
         installBannerHtml +
@@ -354,12 +393,7 @@ function renderDashboardContent() {
             installmentPlanHtml +
             lastTxHtml +
             approvedHtml +
-            '<div class="dashboard-section">' +
-                '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">' +
-                    '<h3 style="font-size:1.05rem;margin:0;"><i class="fas fa-file-invoice" style="color:#ec4899;"></i> صورتحساب کامل (' + memberTxns.length + ' تراکنش)</h3>' +
-                '</div>' +
-                '<div class="tx-excel-container"></div>' +
-            '</div>' +
+            allTxnsHtml +
         '</div>' +
     '</div>';
 }
@@ -442,25 +476,23 @@ function filterExcelTransactions() {
         renderExcelTransactions(filtered, el);
     });
 }
+
 // ============================================================
-// 🆕 افکت شمارش اعداد در داشبورد (نسخه اصلاح‌شده)
+// 🆕 افکت شمارش اعداد
 // ============================================================
 function initDashboardAnimations() {
     if (!window.Animations) return;
     
-    // پیدا کردن کارت موجودی
     var balanceEl = document.querySelector('.sc-balance .sc-value');
     if (balanceEl) {
         var currentText = balanceEl.textContent.replace(/[^\d]/g, '');
         var finalValue = parseInt(currentText) || 0;
         if (finalValue > 0) {
-            // ذخیره مقدار اصلی برای بازگردانی در صورت نیاز
             balanceEl.setAttribute('data-final-value', finalValue);
             Animations.animateValue(balanceEl, 0, finalValue, 2000);
         }
     }
     
-    // پیدا کردن کارت بدهی
     var debtEl = document.querySelector('.sc-debt .sc-value');
     if (debtEl) {
         var currentText = debtEl.textContent.replace(/[^\d]/g, '');
@@ -470,16 +502,12 @@ function initDashboardAnimations() {
             Animations.animateValue(debtEl, 0, finalValue, 2000);
         }
     }
-    
-    console.log('✅ افکت شمارش اعداد اعمال شد.');
 }
 
-// اجرای افکت بعد از رندر داشبورد
 var originalRenderDashboard = window.renderDashboardContent;
 if (originalRenderDashboard) {
     window.renderDashboardContent = function() {
         var html = originalRenderDashboard.apply(this, arguments);
-        // بعد از رندر، افکت را اجرا کن
         setTimeout(initDashboardAnimations, 500);
         return html;
     };
