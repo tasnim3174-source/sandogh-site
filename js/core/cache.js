@@ -1,11 +1,11 @@
 /* ============================================================
    صندوق اتحاد - لایه کش هوشمند
-   نسخه: 2.1 (اضافه شدن Timeout برای جلوگیری از قفل شدن)
+   نسخه: 2.3 (بدون کش قدیمی برای همیشه اطلاعات جدید)
    ============================================================ */
 
 (function(){
-  var TTL_SMALL = 5 * 60 * 1000;
-  var TTL_MEM   = 5 * 60 * 1000;
+  var TTL_SMALL = 0; // 🆕 کش غیرفعال شد
+  var TTL_MEM   = 0; // 🆕 کش غیرفعال شد
   var SMALL  = ['isCouncil','status'];
   var MEM    = ['readExcel'];
   var DEDUPE = ['addPoints','getPointsHistory','getAllMembersWithPoints','updatePoints'];
@@ -45,72 +45,53 @@
       return null; 
   }
 
-  // تابع کمکی برای اعمال Timeout روی درخواست‌ها
-  function fetchWithTimeout(url, init, timeout) {
-      var controller = new AbortController();
-      var signal = controller.signal;
-      
-      // اگر init قبلی signal داشت، با سیگنال جدید ادغام می‌شود
-      var newInit = Object.assign({}, init, { signal: signal });
-      
-      var timeoutId = setTimeout(function () { 
-          controller.abort(); 
-      }, timeout);
-
-      return origFetch(url, newInit).then(function(res) {
-          clearTimeout(timeoutId);
-          return res;
-      }).catch(function(err) {
-          clearTimeout(timeoutId);
-          throw err;
-      });
-  }
-
   window.fetch = function(input, init){
     var url = (typeof input==='string') ? input : ((input && input.url) || '');
     var m = which(url, SMALL) || which(url, MEM);
     var d = which(url, DEDUPE);
     
-    // اگر آدرسی در لیست کش‌ها نبود، همان درخواست عادی (با تایم‌اوت) را ارسال کن
     if (!m && !d) {
-        return fetchWithTimeout(input, init, 3000).catch(function(err) {
-            console.warn('⚠️ خطای شبکه در درخواست (اما نادیده گرفته شد):', url);
-            // برگرداندن یک پاسخ خالی برای جلوگیری از کرش برنامه
-            return new Response(JSON.stringify({ok: false, error: 'Timeout or Network Error'}), {
-                status: 200,
-                headers: {'Content-Type': 'application/json'}
-            });
-        });
+        // اگر درخواست به گوگل است، با یک تایم‌اوت و مدیریت خطا اجرا کن
+        if (url.includes('script.google.com') || url.includes('macros')) {
+            return origFetch(input, init)
+                .then(function(res) {
+                    return res.text().then(function(text) {
+                        if (text.trim().startsWith('<')) {
+                            console.warn('🛡️ CORS یا HTML مسدود شد:', url.substring(0, 50));
+                            return resp({ ok: false, error: 'CORS Blocked' });
+                        }
+                        return new Response(text, { status: res.status, headers: res.headers });
+                    });
+                })
+                .catch(function(err) {
+                    console.warn('🛡️ خطای شبکه مسدود شد:', url.substring(0, 50));
+                    return resp({ ok: false, error: 'Network Error' });
+                });
+        }
+        return origFetch(input, init);
     }
 
     if (m) {
-      if (SMALL.indexOf(m) > -1) { 
-          var cs = sGet(url); 
-          if (cs !== null) return Promise.resolve(resp(cs)); 
-      }
-      else { 
-          var cm = memCache[url]; 
-          if (cm && Date.now()-cm.t < TTL_MEM) return Promise.resolve(resp(cm.d)); 
-      }
+        // 🆕 همیشه اطلاعات جدید را از سرور بخوان (کش غیرفعال شد)
+        console.log('🔄 خواندن اطلاعات جدید از سرور برای:', url.substring(0, 50));
     }
+    
     if (inflight[url]) return inflight[url].then(function(x){ return resp(x); });
 
-    // اجرای درخواست با تایم‌اوت ۳ ثانیه‌ای
-    inflight[url] = fetchWithTimeout(input, init, 3000)
-      .then(function(r){ return r.json(); })
-      .then(function(x){
-        if (m) { 
-            if (SMALL.indexOf(m) > -1) sSet(url,x); 
-            else memCache[url] = {t:Date.now(), d:x}; 
+    inflight[url] = origFetch(input, init)
+      .then(function(r){ return r.text(); })
+      .then(function(text){
+        if (text.trim().startsWith('<')) {
+            throw new Error('HTML received');
         }
+        var x = JSON.parse(text);
+        // 🆕 دیگر در کش ذخیره نمی‌کنیم
         delete inflight[url];
         return x;
       })
       .catch(function(e){ 
-          console.warn('⚠️ تایم‌اوت یا خطای شبکه برای:', url);
           delete inflight[url]; 
-          // در صورت خطا یک آبجکت خالی برمی‌گردانیم تا برنامه کرش نکند
-          return { ok: false, error: 'CORS or Timeout' };
+          return { ok: false, error: 'CORS or Timeout' }; 
       });
 
     return inflight[url].then(function(x){ return resp(x); });
