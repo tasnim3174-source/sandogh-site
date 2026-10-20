@@ -442,3 +442,32 @@ function filterExcelTransactions() {
         renderExcelTransactions(filtered, el);
     });
 }
+// ============================================================
+// 🆕 افکت شمارش اعداد در داشبورد
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // کمی صبر می‌کنیم تا داشبورد لود شود
+    setTimeout(function() {
+        if (!window.Animations) return;
+        
+        // پیدا کردن کارت موجودی
+        var balanceEl = document.querySelector('.sc-balance .sc-value');
+        if (balanceEl && balanceEl.textContent.trim() !== '۰') {
+            var currentText = balanceEl.textContent.replace(/[^\d]/g, '');
+            var finalValue = parseInt(currentText) || 0;
+            if (finalValue > 0) {
+                Animations.animateValue(balanceEl, 0, finalValue, 2000);
+            }
+        }
+        
+        // پیدا کردن کارت بدهی
+        var debtEl = document.querySelector('.sc-debt .sc-value');
+        if (debtEl && debtEl.textContent.trim() !== '۰') {
+            var currentText = debtEl.textContent.replace(/[^\d]/g, '');
+            var finalValue = parseInt(currentText) || 0;
+            if (finalValue > 0) {
+                Animations.animateValue(debtEl, 0, finalValue, 2000);
+            }
+        }
+    }, 1500);
+});
