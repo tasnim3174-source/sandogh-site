@@ -4,7 +4,11 @@
    ============================================================ */
 
 function renderDashboardContent() {
-    const member = members.find(m => m.id === currentUser.memberId);
+    const member = members.find(m => 
+    String(m.id) === String(currentUser.memberId) || 
+    String(m.accountNumber) === String(currentUser.accountNumber) ||
+    String(m.accountNumber) === String(currentUser.username)
+);
     if (!member) return '<div style="text-align:center;padding:30px;">خطا</div>';
 
     const memberTxns = (transactionsByMember.get(String(member.id)) || [])
