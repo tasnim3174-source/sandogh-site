@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>🛠️ پنل مدیر</title>
+<script src="js/pages/upload-history.js?v=1"></script>   
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:tahoma}
 body{min-height:100vh;background:linear-gradient(135deg,#0f0f23,#1a1a2e);color:#fff;overflow-x:hidden}
@@ -329,28 +330,44 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     </div>
 
     <div id="sec13" style="display:none">
-      <div class="box" style="text-align:center">
-        <h3 style="color:#ffd700;margin-bottom:15px">📤 آپلود فایل اکسل جدید</h3>
-        <p style="color:rgba(255,255,255,.7);margin-bottom:16px;line-height:2;font-size:.85rem">
-          فایل <b style="color:#ffd700">data1.xlsx</b> جدید رو انتخاب کن.<br>
-          این فایل جایگزین فایل قبلی در گیت‌هاب می‌شه.
-        </p>
-        <input type="file" id="adminExcelFile" accept=".xlsx,.xls" 
-               style="width:100%;max-width:500px;padding:12px;border:2px dashed #ffc94d;border-radius:12px;box-sizing:border-box;background:rgba(0,0,0,0.3);color:#fff;cursor:pointer;font-size:.85rem;margin-bottom:14px;font-family:tahoma">
-        <button id="adminUploadBtn" onclick="adminUploadExcelToGitHub()" 
-                style="width:100%;max-width:500px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffc94d,#d97706);color:#1a1a2e;font-size:1rem;font-weight:900;cursor:pointer;font-family:tahoma">
-          🚀 آپلود به گیت‌هاب
-        </button>
-        <div id="adminUploadStatus" style="margin-top:16px;padding:14px;border-radius:12px;display:none;font-size:.85rem;text-align:center;line-height:2;max-width:500px;margin-left:auto;margin-right:auto"></div>
-        <div style="margin-top:20px;padding:14px;background:rgba(255,215,0,.06);border:1px dashed rgba(255,215,0,.4);border-radius:12px;max-width:500px;margin-left:auto;margin-right:auto;font-size:.75rem;color:rgba(255,255,255,.6);line-height:2;text-align:right">
-          <b style="color:#ffd700">💡 نکات مهم:</b><br>
-          • فایل باید از نوع <b style="color:#ffd700">.xlsx</b> باشد<br>
-          • نام فایل باید <b style="color:#ffd700">data1.xlsx</b> باشد<br>
-          • بعد از آپلود، برنامه را رفرش کن
+  <div class="box" style="text-align:center">
+    <h3 style="color:#ffd700;margin-bottom:15px">📤 آپلود فایل اکسل جدید</h3>
+    <p style="color:rgba(255,255,255,.7);margin-bottom:16px;line-height:2;font-size:.85rem">
+      فایل <b style="color:#ffd700">data1.xlsx</b> جدید رو انتخاب کن.<br>
+      این فایل جایگزین فایل قبلی در گیت‌هاب می‌شه.
+    </p>
+    <input type="file" id="adminExcelFile" accept=".xlsx,.xls" 
+           style="width:100%;max-width:500px;padding:12px;border:2px dashed #ffc94d;border-radius:12px;box-sizing:border-box;background:rgba(0,0,0,0.3);color:#fff;cursor:pointer;font-size:.85rem;margin-bottom:14px;font-family:tahoma">
+    <button id="adminUploadBtn" onclick="adminUploadExcelToGitHub()" 
+            style="width:100%;max-width:500px;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffc94d,#d97706);color:#1a1a2e;font-size:1rem;font-weight:900;cursor:pointer;font-family:tahoma">
+      🚀 آپلود به گیت‌هاب
+    </button>
+    <div id="adminUploadStatus" style="margin-top:16px;padding:14px;border-radius:12px;display:none;font-size:.85rem;text-align:center;line-height:2;max-width:500px;margin-left:auto;margin-right:auto"></div>
+    
+    <!-- 🆕 باکس تاریخچه آپلود -->
+    <div style="margin-top:20px;padding:14px;background:rgba(255,215,0,.06);border:1px dashed rgba(255,215,0,.4);border-radius:12px;max-width:500px;margin-left:auto;margin-right:auto;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+            <h4 style="color:#ffd700;margin:0;font-size:0.9rem;">
+                <i class="fas fa-history"></i> تاریخچه آپلودها
+            </h4>
+            <button onclick="if(window.UploadHistory) UploadHistory.clear()" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.1);color:#ef4444;cursor:pointer;font-size:0.7rem;font-family:tahoma;font-weight:700;">
+                <i class="fas fa-trash"></i> پاک کردن
+            </button>
         </div>
-      </div>
+        <div id="uploadHistoryContainer">
+            <div style="text-align:center;padding:15px;color:rgba(255,255,255,.5);font-size:0.8rem;">📭 هنوز فایلی آپلود نشده است.</div>
+        </div>
     </div>
+    <!-- 🆕 پایان باکس تاریخچه -->
 
+    <div style="margin-top:20px;padding:14px;background:rgba(255,215,0,.06);border:1px dashed rgba(255,215,0,.4);border-radius:12px;max-width:500px;margin-left:auto;margin-right:auto;font-size:.75rem;color:rgba(255,255,255,.6);line-height:2;text-align:right">
+      <b style="color:#ffd700">💡 نکات مهم:</b><br>
+      • فایل باید از نوع <b style="color:#ffd700">.xlsx</b> باشد<br>
+      • نام فایل باید <b style="color:#ffd700">data1.xlsx</b> باشد<br>
+      • بعد از آپلود، برنامه را رفرش کن
+    </div>
+  </div>
+</div>
     <div id="sec14" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
@@ -1372,14 +1389,32 @@ async function adminUploadExcelToGitHub() {
         var text = await response.text();
         var result = JSON.parse(text);
         
-        if (result.ok) {
+                if (result.ok) {
             showAdminUploadStatus('✅ آپلود شد!', 'success');
             fileInput.value = '';
+            
+            // 🆕 ثبت در تاریخچه آپلود (موفق)
+            if (window.UploadHistory) {
+                UploadHistory.save(file.name, file.size, 'success');
+                UploadHistory.render();
+            }
         } else {
             showAdminUploadStatus('❌ ' + (result.error || 'خطا'), 'error');
+            
+            // 🆕 ثبت در تاریخچه آپلود (ناموفق)
+            if (window.UploadHistory) {
+                UploadHistory.save(file.name, file.size, 'error');
+                UploadHistory.render();
+            }
         }
     } catch (e) {
         showAdminUploadStatus('❌ ' + e.message, 'error');
+        
+        // 🆕 ثبت در تاریخچه آپلود (خطا)
+        if (window.UploadHistory) {
+            UploadHistory.save(file.name, file.size, 'error');
+            UploadHistory.render();
+        }
     }
     
     btn.disabled = false;
@@ -1864,7 +1899,11 @@ async function changeUserAccess(accountNum, newStatus) {
         alert('❌ خطای شبکه: ' + e.message);
     }
 }
-
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        if (window.UploadHistory) UploadHistory.inject();
+    }, 1000);
+});
 console.log('✅ پنل مدیریت آماده است');
 </script>
 </body>
