@@ -1,51 +1,14 @@
 /* ============================================================
    صندوق اتحاد - بارگذاری داده از اکسل
-   نسخه: 3.0 (بدون کش - همیشه اطلاعات جدید از گیت‌هاب)
+   نسخه: 4.0 (بدون کش + محاسبه بر اساس بزرگترین ID)
    ============================================================ */
 
 // ============================================================
-// توابع کمکی برای کش کاربران (اختیاری)
+// توابع کمکی
 // ============================================================
-function saveUsersToCache(usersList) {
-    try {
-        const cacheData = {
-            version: 1,
-            timestamp: Date.now(),
-            users: usersList
-        };
-        localStorage.setItem('sandogh_users_cache', JSON.stringify(cacheData));
-    } catch (e) {
-        console.warn('⚠️ خطا در ذخیره کاربران:', e);
-    }
-}
-
-function loadUsersFromCache() {
-    try {
-        const cached = localStorage.getItem('sandogh_users_cache');
-        if (!cached) return null;
-
-        const data = JSON.parse(cached);
-        if (!data.users || !Array.isArray(data.users)) return null;
-
-        const age = Date.now() - (data.timestamp || 0);
-        const MAX_AGE = 24 * 60 * 60 * 1000;
-
-        if (age > MAX_AGE) {
-            console.log('⏰ کش کاربران منقضی شده');
-            return null;
-        }
-
-        return data.users;
-    } catch (e) {
-        return null;
-    }
-}
-
-function clearUsersCache() {
-    try {
-        localStorage.removeItem('sandogh_users_cache');
-    } catch (e) {}
-}
+function saveUsersToCache(usersList) { try { localStorage.setItem('sandogh_users_cache', JSON.stringify({ version: 1, timestamp: Date.now(), users: usersList })); } catch (e) {} }
+function loadUsersFromCache() { try { const c = localStorage.getItem('sandogh_users_cache'); if (!c) return null; const d = JSON.parse(c); if (Date.now() - (d.timestamp || 0) > 24*60*60*1000) return null; return d.users; } catch (e) { return null; } }
+function clearUsersCache() { try { localStorage.removeItem('sandogh_users_cache'); } catch (e) {} }
 
 // ============================================================
 // خواندن فایل اکسل از گیت‌هاب
@@ -55,10 +18,8 @@ async function parseOneExcelFile(url) {
     const timeout = setTimeout(() => controller.abort(), 15000);
 
     try {
-        // 🆕 اضافه کردن پارامتر زمان برای جلوگیری از کش مرورگر
         const finalUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
         const response = await fetch(finalUrl, { cache: 'no-cache', signal: controller.signal });
-        
         clearTimeout(timeout);
         if (!response.ok) throw new Error('خطای سرور: ' + response.status);
 
@@ -70,7 +31,8 @@ async function parseOneExcelFile(url) {
         if (!rows.length) return { members: [], transactions: [], users: [] };
 
         const headers = Object.keys(rows[0]);
-
+        
+        // ذخیره اطلاعات پشتیبانی
         if (url === DATA_URL && rows.length > 0) {
             const firstRow = rows[0];
             const supportPhone = findCol(['telepon', 'تلفن', 'شماره تماس'], headers);
@@ -149,97 +111,27 @@ async function parseOneExcelFile(url) {
         if (url === DATA_URL) {
             let waitingLoanCount = 0;
             if (rows.length > 0 && colMap.waitingLoan) {
-                const firstRow = rows[0];
-                const rawValue = firstRow[colMap.waitingLoan];
-                waitingLoanCount = parseInt(rawValue) || 0;
+                waitingLoanCount = parseInt(rows[0][colMap.waitingLoan]) || 0;
             }
             window.WAITING_LOAN_COUNT = waitingLoanCount;
         }
 
-        const productsMap = new Map();
-        rows.forEach(row => {
-            const shenaseh = colMap.shenaseh ? String(row[colMap.shenaseh] || '').trim() : '';
-            if (shenaseh && !productsMap.has(shenaseh)) {
-                productsMap.set(shenaseh, {
-                    shenaseh,
-                    name: colMap.namemahsool ? String(row[colMap.namemahsool] || '').trim() : '',
-                    description: colMap.tozihmahsool ? String(row[colMap.tozihmahsool] || '').trim() : '',
-                    price: colMap.price ? parseNum(row[colMap.price]) : 0,
-                    stock: colMap.mojodiSekeh ? parseNum(row[colMap.mojodiSekeh]) : 0
-                });
-            }
-        });
-        if (url === DATA_URL) {
-            window.SHOP_PRODUCTS = Array.from(productsMap.values());
-        }
-
+        // ============================================================
+        // 🆕 محاسبه اعضا بر اساس بزرگترین ID (جدیدترین تراکنش)
+        // ============================================================
         const membersMap = new Map();
         const txs = [];
+        const latestTxByAcc = new Map(); // ذخیره جدیدترین تراکنش هر حساب
 
         rows.forEach((row, index) => {
             const accNum = String(row[colMap.accountNumber] || '').trim();
             if (!accNum) return;
 
-            const smsOmomi = colMap.kodOmomi ? parseBool(row[colMap.kodOmomi]) : false;
-            const smsOverdue = colMap.kodOverdue ? parseBool(row[colMap.kodOverdue]) : false;
-            const smsSarparast = colMap.kodSarparast ? parseBool(row[colMap.kodSarparast]) : false;
-            const smsMoavaghe = colMap.kodMoavaghe ? parseBool(row[colMap.kodMoavaghe]) : false;
-            const smsMosabegheh = colMap.kodMosabegheh ? parseBool(row[colMap.kodMosabegheh]) : false;
-            const smsKhabarnameh = colMap.kodKhabarnameh ? parseBool(row[colMap.kodKhabarnameh]) : false;
-            const smsTavalod = colMap.kodTavalod ? parseBool(row[colMap.kodTavalod]) : false;
-            const smsMonasebat = colMap.kodMonasebat ? parseBool(row[colMap.kodMonasebat]) : false;
-
-            if (!membersMap.has(accNum)) {
-                const memberId = membersMap.size + 1;
-                const isCouncil = colMap.kodOverdue ? parseBool(row[colMap.kodOverdue]) : false;
-                const karbari = colMap.karbari ? String(row[colMap.karbari] || '').trim() : '';
-                const ramz = colMap.ramz ? String(row[colMap.ramz] || '').trim() : '';
-                const heh1 = colMap.heh1 ? String(row[colMap.heh1] || '').trim() : '';
-                const heh2 = colMap.heh2 ? String(row[colMap.heh2] || '').trim() : '';
-                const mabVam1 = colMap.mabVam1 ? parseNum(row[colMap.mabVam1]) : 0;
-                const tedad = colMap.tedad ? parseNum(row[colMap.tedad]) : 0;
-
-                membersMap.set(accNum, {
-                    id: memberId,
-                    firstName: colMap.name ? String(row[colMap.name] || '').trim() : '',
-                    accountNumber: accNum,
-                    phone1: colMap.phone ? String(row[colMap.phone] || '').trim() : '',
-                    phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
-                    openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',
-                    datMiladi: colMap.datMiladi ? String(row[colMap.datMiladi] || '').trim() : '',
-                    birthDateShamsi: colMap.dateBirth ? String(row[colMap.dateBirth] || '').trim() : '',
-                    active: colMap.active ? parseBool(row[colMap.active]) : true,
-                    balance: colMap.balance ? parseNum(row[colMap.balance]) : 0,
-                    currentMonthBalance: colMap.mojodiTaInLahzeh ? parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
-                    savingsStatus: colMap.savingsStatus ? parseNum(row[colMap.savingsStatus]) : 0,
-                    loanReceivedAmount: colMap.mablaghVamReceived ? parseNum(row[colMap.mablaghVamReceived]) : 0,
-                    loanBalance: colMap.loanBalanceO ? parseNum(row[colMap.loanBalanceO]) : (colMap.loanBalanceCol ? parseNum(row[colMap.loanBalanceCol]) : 0),
-                    paidInstallments: colMap.paidInstallments ? parseNum(row[colMap.paidInstallments]) : 0,
-                    overdueInstallments: colMap.overdueInstallments ? parseNum(row[colMap.overdueInstallments]) : 0,
-                    remainingInstallments: colMap.remainingInstallments ? parseNum(row[colMap.remainingInstallments]) : 0,
-                    monthlySalary: colMap.monthlySalary ? parseNum(row[colMap.monthlySalary]) : 0,
-                    monthlySalaryApproved: colMap.monthlySalaryApproved ? parseNum(row[colMap.monthlySalaryApproved]) : 0,
-                    loanRequestDate: colMap.dateSabt ? String(row[colMap.dateSabt] || '').trim() : '',
-                    loanReceiveDate: colMap.dateVam ? String(row[colMap.dateVam] || '').trim() : '',
-                    lastInstallmentDate: colMap.akharinGhest ? String(row[colMap.akharinGhest] || '').trim() : '',
-                    installmentAmount: colMap.mablaghHarGhest ? parseNum(row[colMap.mablaghHarGhest]) : 0,
-                    feeAmount: colMap.mablaghKarmozd ? parseNum(row[colMap.mablaghKarmozd]) : 0,
-                    totalInstallments: colMap.tedadAghsat ? parseNum(row[colMap.tedadAghsat]) : 0,
-                    loanNumber: colMap.noVam ? String(row[colMap.noVam] || '').trim() : accNum,
-                    isCouncil: isCouncil,
-                    karbari: karbari,
-                    ramz: ramz,
-                    heh1: heh1,
-                    heh2: heh2,
-                    mabVam1: mabVam1,
-                    tedad: tedad,
-                    isLocked: colMap.lock ? parseBool(row[colMap.lock]) : false
-                });
-            }
-
-            const member = membersMap.get(accNum);
             const rowId = colMap.id ? String(row[colMap.id] || '') : String(index + 1);
-            txs.push({
+            const txIdNum = parseInt(rowId) || 0;
+
+            // ساخت آبجکت تراکنش
+            const tx = {
                 'ID': rowId,
                 'شماره حساب': accNum,
                 'مقرری ماهانه': colMap.monthlySalary ? parseNum(row[colMap.monthlySalary]) : 0,
@@ -254,36 +146,85 @@ async function parseOneExcelFile(url) {
                 'تعداد قسط پرداخت شده': colMap.paidInstallments ? parseNum(row[colMap.paidInstallments]) : 0,
                 'تعداد قسط مانده': colMap.remainingInstallments ? parseNum(row[colMap.remainingInstallments]) : 0,
                 'وضعیت پس انداز': colMap.savingsStatus ? parseNum(row[colMap.savingsStatus]) : 0,
-                'پیامک واریز': smsOmomi ? '✅' : '❌',
-                'پیامک اخطار': smsOverdue ? '❌' : '✅',
+                'پیامک واریز': colMap.kodOmomi ? (parseBool(row[colMap.kodOmomi]) ? '✅' : '❌') : '❌',
+                'پیامک اخطار': colMap.kodOverdue ? (parseBool(row[colMap.kodOverdue]) ? '❌' : '✅') : '✅',
                 'توضیحات': colMap.description ? String(row[colMap.description] || '') : '',
                 'مانده وام': colMap.loanBalanceO ? parseNum(row[colMap.loanBalanceO]) : (colMap.loanBalanceCol ? parseNum(row[colMap.loanBalanceCol]) : 0),
                 _transactionId: rowId,
-                _memberId: member.id,
                 _amount: colMap.amount ? parseNum(row[colMap.amount]) : 0,
-                smsActive: colMap.active ? parseBool(row[colMap.active]) : false,
-                smsOmomi: smsOmomi,
-                smsKod: smsOverdue,
-                smsSarparast: smsSarparast,
-                smsMoavaghe: smsMoavaghe,
-                smsMosabegheh: smsMosabegheh,
-                smsKhabarnameh: smsKhabarnameh,
-                smsTavalod: smsTavalod,
-                smsMonasebat: smsMonasebat
+            };
+            txs.push(tx);
+
+            // بررسی اینکه آیا این تراکنش جدیدترین تراکنش این حساب است یا نه
+            const existingLatest = latestTxByAcc.get(accNum);
+            if (!existingLatest || txIdNum > existingLatest.idNum) {
+                latestTxByAcc.set(accNum, { idNum: txIdNum, tx: tx, row: row });
+            }
+        });
+
+        // حالا برای هر حساب، اطلاعات عضو را از جدیدترین تراکنش می‌سازیم
+        latestTxByAcc.forEach((data, accNum) => {
+            const row = data.row;
+            const memberId = membersMap.size + 1;
+            
+            const isCouncil = colMap.kodOverdue ? parseBool(row[colMap.kodOverdue]) : false;
+            const karbari = colMap.karbari ? String(row[colMap.karbari] || '').trim() : '';
+            const ramz = colMap.ramz ? String(row[colMap.ramz] || '').trim() : '';
+            const heh1 = colMap.heh1 ? String(row[colMap.heh1] || '').trim() : '';
+            const heh2 = colMap.heh2 ? String(row[colMap.heh2] || '').trim() : '';
+
+            membersMap.set(accNum, {
+                id: memberId,
+                firstName: colMap.name ? String(row[colMap.name] || '').trim() : '',
+                accountNumber: accNum,
+                phone1: colMap.phone ? String(row[colMap.phone] || '').trim() : '',
+                phone2: colMap.phone2 ? String(row[colMap.phone2] || '').trim() : '',
+                openDate: colMap.openDate ? String(row[colMap.openDate] || '').trim() : '',
+                datMiladi: colMap.datMiladi ? String(row[colMap.datMiladi] || '').trim() : '',
+                birthDateShamsi: colMap.dateBirth ? String(row[colMap.dateBirth] || '').trim() : '',
+                active: colMap.active ? parseBool(row[colMap.active]) : true,
+                // 🆕 استفاده از مقادیر جدیدترین تراکنش
+                balance: data.tx['موجودی'],
+                currentMonthBalance: colMap.mojodiTaInLahzeh ? parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
+                savingsStatus: data.tx['وضعیت پس انداز'],
+                loanReceivedAmount: colMap.mablaghVamReceived ? parseNum(row[colMap.mablaghVamReceived]) : 0,
+                loanBalance: data.tx['مانده وام'],
+                paidInstallments: data.tx['تعداد قسط پرداخت شده'],
+                overdueInstallments: colMap.overdueInstallments ? parseNum(row[colMap.overdueInstallments]) : 0,
+                remainingInstallments: data.tx['تعداد قسط مانده'],
+                monthlySalary: data.tx['مقرری ماهانه'],
+                monthlySalaryApproved: colMap.monthlySalaryApproved ? parseNum(row[colMap.monthlySalaryApproved]) : 0,
+                loanRequestDate: colMap.dateSabt ? String(row[colMap.dateSabt] || '').trim() : '',
+                loanReceiveDate: colMap.dateVam ? String(row[colMap.dateVam] || '').trim() : '',
+                lastInstallmentDate: colMap.akharinGhest ? String(row[colMap.akharinGhest] || '').trim() : '',
+                installmentAmount: colMap.mablaghHarGhest ? parseNum(row[colMap.mablaghHarGhest]) : 0,
+                feeAmount: colMap.mablaghKarmozd ? parseNum(row[colMap.mablaghKarmozd]) : 0,
+                totalInstallments: colMap.tedadAghsat ? parseNum(row[colMap.tedadAghsat]) : 0,
+                loanNumber: colMap.noVam ? String(row[colMap.noVam] || '').trim() : accNum,
+                isCouncil: isCouncil,
+                karbari: karbari,
+                ramz: ramz,
+                heh1: heh1,
+                heh2: heh2,
+                mabVam1: colMap.mabVam1 ? parseNum(row[colMap.mabVam1]) : 0,
+                tedad: colMap.tedad ? parseNum(row[colMap.tedad]) : 0,
+                isLocked: colMap.lock ? parseBool(row[colMap.lock]) : false
             });
         });
 
         const membersArr = Array.from(membersMap.values());
+        
+        // اتصال تراکنش‌ها به ID عضو
+        const accToIdMap = new Map();
+        membersArr.forEach(m => accToIdMap.set(m.accountNumber, m.id));
+        txs.forEach(tx => {
+            tx._memberId = accToIdMap.get(tx['شماره حساب']) || 0;
+        });
+
         const usersArr = membersArr.map(m => {
             const username = (m.karbari && m.karbari.trim() !== '') ? m.karbari.trim() : m.accountNumber;
             const password = (m.ramz && m.ramz.trim() !== '') ? m.ramz.trim() : m.accountNumber;
-            return {
-                id: m.id,
-                username,
-                password,
-                role: m.isCouncil ? 'council' : 'member',
-                memberId: username
-            };
+            return { id: m.id, username, password, role: m.isCouncil ? 'council' : 'member', memberId: username };
         });
         if (url === DATA_URL) {
             usersArr.push({ id: 999, username: 'admin', password: 'admin123', role: 'admin', memberId: null });
@@ -345,15 +286,16 @@ async function loadMainData() {
         const oldMember = membersMap.get(newMember.accountNumber);
         if (oldMember) {
             const merged = {...oldMember};
+            // 🆕 برای فیلدهای مالی، مقدار جدید را جایگزین می‌کنیم (نه فقط بزرگتر)
             const financialFields = ['balance', 'savingsStatus', 'totalInstallments',
                                    'paidInstallments', 'overdueInstallments',
                                    'remainingInstallments', 'currentMonthBalance',
                                    'loanBalance', 'loanReceivedAmount', 'monthlySalary',
                                    'monthlySalaryApproved'];
             financialFields.forEach(field => {
-                const newVal = parseFloat(newMember[field]) || 0;
-                const oldVal = parseFloat(oldMember[field]) || 0;
-                if (newVal > oldVal) merged[field] = newMember[field];
+                if (newMember[field] !== undefined && newMember[field] !== null && newMember[field] !== '') {
+                    merged[field] = newMember[field];
+                }
             });
             const textFields = ['phone1', 'phone2', 'openDate', 'datMiladi',
                                'birthDateShamsi', 'loanRequestDate', 'loanReceiveDate',
@@ -430,25 +372,20 @@ async function loadMainData() {
 }
 
 // ============================================================
-// 🆕 بارگذاری بدون کش (همیشه اطلاعات جدید)
+// بارگذاری بدون کش
 // ============================================================
 async function loadMainDataWithCache(forceRefresh = false) {
-    // همیشه اطلاعات جدید از گیت‌هاب خوانده می‌شود (بدون کش)
-    console.log('📥 بارگذاری اطلاعات جدید از گیت‌هاب (بدون کش)...');
-    
+    console.log('📥 بارگذاری اطلاعات جدید از گیت‌هاب...');
     try {
-        // پاک کردن کش‌های قدیمی
         try {
             sessionStorage.removeItem('sandogh_data_v2');
             sessionStorage.removeItem('sandogh_data_time_v2');
             localStorage.removeItem('sandogh_data_v2');
             localStorage.removeItem('sandogh_data_time_v2');
         } catch(e) {}
-        
-        const data = await loadMainData();
-        return data;
+        return await loadMainData();
     } catch (e) {
-        console.error('❌ خطا در بارگذاری اطلاعات:', e);
+        console.error('❌ خطا:', e);
         throw e;
     }
 }
@@ -478,9 +415,7 @@ async function forceUpdateData() {
         });
         members.forEach(m => { memberScores[m.id] = calculateMemberScore(m); });
 
-        try {
-            localStorage.setItem('sandogh_data_time_v2', String(Date.now()));
-        } catch(e) {}
+        try { localStorage.setItem('sandogh_data_time_v2', String(Date.now())); } catch(e) {}
         
         if (currentPage) renderPage(currentPage);
         showToast({ type: 'success', title: 'بروزرسانی موفق', message: 'اطلاعات به‌روز شد.' });
@@ -490,74 +425,15 @@ async function forceUpdateData() {
 }
 
 // ============================================================
-// بارگذاری از Apps Script (fallback)
+// Lazy Data Loading
 // ============================================================
-async function parseOneExcelFromAppsScript(url) {
-    try {
-        const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel&_t=' + Date.now();
-        const response = await fetch(fullUrl, { cache: 'no-cache' });
-        const json = await response.json();
-
-        if (json.error) {
-            console.warn('⚠️ خطای Apps Script:', json.error);
-            return { members: [], transactions: [], users: [] };
-        }
-
-        const rows = json.rows || [];
-        if (!rows.length) return { members: [], transactions: [], users: [] };
-
-        const headers = Object.keys(rows[0]);
-        const colMap = {
-            accountNumber: findCol(['شماره حساب'], headers),
-            name: findCol(['name', 'نام'], headers),
-            karbari: findCol(['karbari', 'کاربری', 'username'], headers),
-            ramz: findCol(['ramz', 'رمز', 'password'], headers),
-            id: findCol(['ID', 'id'], headers)
-        };
-
-        if (!colMap.accountNumber) {
-            return { members: [], transactions: [], users: [] };
-        }
-
-        const membersArr = [];
-        rows.forEach((row, index) => {
-            const accNum = String(row[colMap.accountNumber] || '').trim();
-            if (!accNum) return;
-            membersArr.push({
-                id: index + 1,
-                firstName: colMap.name ? String(row[colMap.name] || '').trim() : '',
-                accountNumber: accNum,
-                karbari: colMap.karbari ? String(row[colMap.karbari] || '').trim() : '',
-                ramz: colMap.ramz ? String(row[colMap.ramz] || '').trim() : ''
-            });
-        });
-
-        return { members: membersArr, transactions: [], users: [] };
-    } catch (error) {
-        console.warn('⚠️ خطای Apps Script:', error.message);
-        return { members: [], transactions: [], users: [] };
-    }
-}
-
-/* ============================================================
-   🟢 Lazy Data Loading - بارگذاری تنبل داده‌های بخش‌ها
-   ============================================================ */
-
 var _lazyDataCache = {};
-
 async function loadLazyData(sectionName) {
-    if (_lazyDataCache[sectionName]) {
-        console.log('📦 Lazy data from cache:', sectionName);
-        return _lazyDataCache[sectionName];
-    }
-
-    console.log('⬇️ Lazy loading data:', sectionName);
-
+    if (_lazyDataCache[sectionName]) return _lazyDataCache[sectionName];
     var fileName = null;
     switch (sectionName) {
         case 'reports':     fileName = 'reports.xlsx'; break;
-        case 'stats':
-        case 'infoStats':   fileName = 'stats.xlsx'; break;
+        case 'stats': case 'infoStats': fileName = 'stats.xlsx'; break;
         case 'club':        fileName = 'club.xlsx'; break;
         case 'quizzes':     fileName = 'quizzes.xlsx'; break;
         case 'games':       fileName = 'games.xlsx'; break;
@@ -565,51 +441,21 @@ async function loadLazyData(sectionName) {
         case 'manageCoins': fileName = 'coins.xlsx'; break;
         case 'family':      fileName = 'family.xlsx'; break;
         case 'familyInfo':  fileName = 'family-info.xlsx'; break;
-        case 'dashboard':
-        case 'sms':         fileName = 'sms.xlsx'; break;
+        case 'dashboard': case 'sms': fileName = 'sms.xlsx'; break;
         case 'requests':    fileName = 'requests.xlsx'; break;
-        default:
-            console.warn('⚠️ بخش ناشناخته برای داده تنبل:', sectionName);
-            return null;
+        default: return null;
     }
-
     try {
         var data = null;
-        if (typeof readExcelFile === 'function') {
-            data = await readExcelFile(fileName);
-        } else if (typeof loadExcelFromServer === 'function') {
-            data = await loadExcelFromServer(fileName);
-        } else if (typeof fetchExcelData === 'function') {
-            data = await fetchExcelData(fileName);
-        } else {
-            console.warn('⚠️ تابع خواندن اکسل پیدا نشد - از fetch استفاده می‌شود');
-            var resp = await fetch('data/' + fileName);
-            if (resp.ok) {
-                var arrayBuffer = await resp.arrayBuffer();
-                var workbook = XLSX.read(arrayBuffer, { type: 'array' });
-                var firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                data = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
-            }
-        }
-
+        if (typeof readExcelFile === 'function') data = await readExcelFile(fileName);
+        else if (typeof loadExcelFromServer === 'function') data = await loadExcelFromServer(fileName);
+        else if (typeof fetchExcelData === 'function') data = await fetchExcelData(fileName);
         _lazyDataCache[sectionName] = data;
         return data;
-    } catch (err) {
-        console.error('❌ خطا در بارگذاری داده تنبل ' + sectionName + ':', err);
-        return null;
-    }
+    } catch (err) { return null; }
 }
-
 function invalidateLazyData(sectionName) {
-    if (sectionName) {
-        delete _lazyDataCache[sectionName];
-    } else {
-        _lazyDataCache = {};
-    }
-    console.log('🗑️ Lazy data cache invalidated:', sectionName || 'all');
+    if (sectionName) delete _lazyDataCache[sectionName];
+    else _lazyDataCache = {};
 }
-
-window.DataLoader = {
-    loadLazyData: loadLazyData,
-    invalidateLazyData: invalidateLazyData
-};
+window.DataLoader = { loadLazyData: loadLazyData, invalidateLazyData: invalidateLazyData };
