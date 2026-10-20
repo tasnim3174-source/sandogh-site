@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - ورود و Remember Me
-   نسخه: 3.1 - login-users.json + شروع لود داده‌های سنگین
+   نسخه: 3.2 - login-users.json + شروع لود داده‌های سنگین + ذرات جادویی
    ============================================================ */
 
 // ============================================================
@@ -260,6 +260,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (usernameInput.value.trim() && this.value.trim()) handleLogin();
             }
         });
+    }
+
+    // 🆕 فعال‌سازی ذرات جادویی در صفحه لاگین
+    if (window.Animations) {
+        setTimeout(function() {
+            Animations.enableMagicParticles();
+            console.log('✨ ذرات جادویی در صفحه لاگین فعال شدند.');
+        }, 1000);
     }
 
     hideBottomNav();
