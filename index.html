@@ -1373,5 +1373,51 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000); // ۲ ثانیه صبر می‌کنیم تا برنامه لود شود
     });
 </script>
+    <style>
+    /* 🎨 تغییر رنگ صفحه بارگذاری به آبی پررنگ و درخشان */
+    
+    /* پس‌زمینه اصلی لودر */
+    #newLoader, #loaderOk {
+        background: linear-gradient(135deg, #001f3f 0%, #003366 30%, #00509e 70%, #007bff 100%) !important;
+    }
+    
+    /* درخشش‌های پس‌زمینه */
+    .loaderGlow.g1, .loaderGlow.g2 {
+        background: radial-gradient(circle, #007bff 0%, transparent 70%) !important;
+        opacity: 0.6 !important;
+    }
+    
+    /* متن خوش‌آمدگویی */
+    #newLoader .wlc {
+        color: #e0f2fe !important;
+    }
+    
+    /* نوار پیشرفت */
+    #newLoader .bar {
+        background: rgba(255, 255, 255, 0.15) !important;
+    }
+    #newLoader .fill {
+        background: linear-gradient(90deg, #007bff, #00bfff, #87ceeb) !important;
+        box-shadow: 0 0 20px rgba(0, 123, 255, 0.8) !important;
+    }
+    
+    /* درصد و متن وضعیت */
+    #newLoader .pct, 
+    #newLoader .sg {
+        color: #e0f2fe !important;
+    }
+    #newLoader .stt {
+        color: #bfdbfe !important;
+    }
+    #newLoader .stp-txt {
+        color: #93c5fd !important;
+    }
+    
+    /* نشان زمان */
+    #newLoader .time-badge {
+        background: rgba(0, 51, 102, 0.9) !important;
+        color: #e0f2fe !important;
+    }
+</style>
 </body>
 </html>
