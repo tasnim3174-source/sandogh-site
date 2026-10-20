@@ -194,8 +194,15 @@ function selectFamilyUser(memberId) {
     var screen = document.getElementById('familySelectScreen');
     if (screen) screen.remove();
     
-    // رفتن به منو
-    showMenuAfterSelect();
+    // 🆕 نمایش افکت پرده‌برداری (خوش‌آمدگویی)
+    if (window.Animations) {
+        Animations.showWelcomeReveal(selectedMember.firstName || selectedMember.accountNumber || 'کاربر');
+    }
+    
+    // رفتن به منو (با تأخیر ۳.۵ ثانیه‌ای برای دیده شدن افکت)
+    setTimeout(function() {
+        showMenuAfterSelect();
+    }, 3500);
 }
 
 // ============================================================
