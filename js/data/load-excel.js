@@ -1,10 +1,10 @@
 /* ============================================================
    صندوق اتحاد - بارگذاری داده از اکسل
-   نسخه: 2.1 (با کش بهینه sessionStorage)
+   نسخه: 3.0 (بدون کش - همیشه اطلاعات جدید از گیت‌هاب)
    ============================================================ */
 
 // ============================================================
-// کش کاربران (localStorage)
+// توابع کمکی برای کش کاربران (اختیاری)
 // ============================================================
 function saveUsersToCache(usersList) {
     try {
@@ -48,14 +48,17 @@ function clearUsersCache() {
 }
 
 // ============================================================
-// بارگذاری اکسل از گیت‌هاب
+// خواندن فایل اکسل از گیت‌هاب
 // ============================================================
 async function parseOneExcelFile(url) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
 
     try {
-        const response = await fetch(url, { cache: 'no-cache', signal: controller.signal });
+        // 🆕 اضافه کردن پارامتر زمان برای جلوگیری از کش مرورگر
+        const finalUrl = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+        const response = await fetch(finalUrl, { cache: 'no-cache', signal: controller.signal });
+        
         clearTimeout(timeout);
         if (!response.ok) throw new Error('خطای سرور: ' + response.status);
 
@@ -427,44 +430,27 @@ async function loadMainData() {
 }
 
 // ============================================================
-// بارگذاری با کش (sessionStorage - حجم بیشتر + پاک خودکار)
+// 🆕 بارگذاری بدون کش (همیشه اطلاعات جدید)
 // ============================================================
 async function loadMainDataWithCache(forceRefresh = false) {
-    const CACHE_KEY = 'sandogh_data_v2';
-    const CACHE_TIME_KEY = 'sandogh_data_time_v2';
+    // همیشه اطلاعات جدید از گیت‌هاب خوانده می‌شود (بدون کش)
+    console.log('📥 بارگذاری اطلاعات جدید از گیت‌هاب (بدون کش)...');
     
-    if (!forceRefresh) {
-        try {
-            const cached = sessionStorage.getItem(CACHE_KEY);
-            const cachedTime = sessionStorage.getItem(CACHE_TIME_KEY);
-            if (cached && cachedTime) {
-                const age = Date.now() - parseInt(cachedTime);
-                if (age < 60 * 60 * 1000) {
-                    console.log('⚡ داده از sessionStorage خوانده شد');
-                    return JSON.parse(cached);
-                }
-            }
-        } catch (e) { 
-            try {
-                sessionStorage.removeItem(CACHE_KEY); 
-                sessionStorage.removeItem(CACHE_TIME_KEY); 
-            } catch(err) {}
-        }
-    }
-    
-    console.log('📥 داده از گیت‌هاب دانلود می‌شود...');
-    const data = await loadMainData();
-    
-    // ✅ تلاش برای کش، ولی اگه خطا داد، ادامه بده (کرش نکن)
     try {
-        sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-        sessionStorage.setItem(CACHE_TIME_KEY, String(Date.now()));
-        console.log('💾 داده در sessionStorage ذخیره شد');
+        // پاک کردن کش‌های قدیمی
+        try {
+            sessionStorage.removeItem('sandogh_data_v2');
+            sessionStorage.removeItem('sandogh_data_time_v2');
+            localStorage.removeItem('sandogh_data_v2');
+            localStorage.removeItem('sandogh_data_time_v2');
+        } catch(e) {}
+        
+        const data = await loadMainData();
+        return data;
     } catch (e) {
-        console.warn('⚠️ کش نشد (حجم بزرگ)، ولی داده لود شد:', e.message);
+        console.error('❌ خطا در بارگذاری اطلاعات:', e);
+        throw e;
     }
-    
-    return data;
 }
 
 // ============================================================
@@ -508,7 +494,7 @@ async function forceUpdateData() {
 // ============================================================
 async function parseOneExcelFromAppsScript(url) {
     try {
-        const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel';
+        const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel&_t=' + Date.now();
         const response = await fetch(fullUrl, { cache: 'no-cache' });
         const json = await response.json();
 
