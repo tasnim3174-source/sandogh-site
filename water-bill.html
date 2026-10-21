@@ -1,428 +1,125 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاسبه‌گر دقیق و قانونی قبض آب ساختمان</title>
-    <style>
-        body { font-family: Tahoma, Arial, sans-serif; background-color: #f0f2f5; color: #333; padding: 20px; display: flex; justify-content: center; }
-        .container { background-color: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 1200px; }
-        
-        .header-email { text-align: center; font-size: 14px; color: #7f8c8d; margin-bottom: 10px; font-weight: bold; letter-spacing: 1px; }
-        .warning-box { background-color: #fff3cd; border: 2px solid #ffc107; color: #856404; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; line-height: 1.6; font-size: 14px; }
-        
-        h2 { text-align: center; color: #2c3e50; margin-bottom: 10px; }
-        h3 { color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; margin-top: 30px;}
-        
-        .help-icon { display: inline-block; width: 16px; height: 16px; background-color: #3498db; color: white; border-radius: 50%; text-align: center; line-height: 16px; font-size: 12px; cursor: help; position: relative; margin-right: 5px; font-weight: bold; }
-        .help-icon:hover::after { content: attr(data-tooltip); position: absolute; background-color: #2c3e50; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: normal; width: 220px; top: 25px; right: 0; z-index: 100; box-shadow: 0 4px 6px rgba(0,0,0,0.2); text-align: right; line-height: 1.5; white-space: normal; }
-        .help-icon:hover::before { content: ''; position: absolute; border: 6px solid transparent; border-bottom-color: #2c3e50; top: 13px; right: 2px; z-index: 101; }
-
-        .input-group { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .input-group .form-group { flex: 1; min-width: 200px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #2c3e50; }
-        input[type="number"], input[type="text"], select { width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 5px; font-family: inherit; font-size: 14px; box-sizing: border-box; transition: border 0.3s; }
-        input:focus, select:focus { border-color: #3498db; outline: none; }
-
-        #unitsContainer { display: flex; flex-wrap: wrap; gap: 15px; margin-top: 15px; }
-        .unit-card { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; width: 220px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
-        .unit-card .btn-remove-card { position: absolute; top: 5px; left: 5px; background: #e74c3c; color: white; border: none; border-radius: 50%; width: 22px; height: 22px; cursor: pointer; font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center; }
-        .unit-card .btn-remove-card:hover { background: #c0392b; }
-
-        .btn { padding: 10px 15px; background-color: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 15px; transition: 0.3s; }
-        .btn:hover { background-color: #2980b9; }
-        .btn-add { background-color: #2ecc71; margin-top: 15px; }
-        .btn-add:hover { background-color: #27ae60; }
-        .btn-calc { background-color: #9b59b6; margin-top: 25px; width: 100%; padding: 15px; font-size: 16px; font-weight: bold;}
-        .btn-calc:hover { background-color: #8e44ad; }
-        
-        .btn-print { background-color: #e67e22; font-size: 12px; padding: 5px 10px; margin-top: 5px; width: 100%; }
-        .btn-print:hover { background-color: #d35400; }
-        .btn-print-all { background-color: #c0392b; margin-top: 20px; width: 100%; padding: 15px; font-size: 16px; font-weight: bold; display: none; }
-        .btn-print-all:hover { background-color: #a93226; }
-
-        .result-box { margin-top: 25px; padding: 20px; background-color: #f8fcfb; border-right: 5px solid #1abc9c; border-radius: 5px; display: none; overflow-x: auto; }
-        
-        .vertical-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; text-align: center; }
-        .vertical-table th, .vertical-table td { border: 1px solid #bdc3c7; padding: 10px; }
-        .vertical-table th { background-color: #ecf0f1; color: #2c3e50; font-weight: bold; width: 160px; text-align: right; }
-        .vertical-table td { background-color: #fff; font-weight: bold; color: #2c3e50; }
-        .vertical-table tr:nth-child(even) th { background-color: #dfe6e9; }
-        .vertical-table tr:nth-child(even) td { background-color: #f9f9f9; }
-        
-        .final-row th { background-color: #ffeaa7 !important; color: #d35400 !important; font-size: 14px;}
-        .final-row td { background-color: #fff3cd !important; color: #d35400 !important; font-size: 15px;}
-        .masha-row th { background-color: #d1f2eb !important; color: #16a085 !important; }
-        .masha-row td { background-color: #e8f8f5 !important; color: #16a085 !important; }
-        .sum-row th, .sum-row td { background-color: #e8f4f8 !important; color: #2980b9 !important; border-top: 2px solid #2980b9; }
-
-        .tag { font-size: 11px; padding: 3px 8px; border-radius: 12px; color: #fff; display: inline-block;}
-        .tag-low { background-color: #27ae60; }
-        .tag-high { background-color: #c0392b; }
-        
-        .summary-box { margin-top: 20px; background: #e8f8f5; padding: 15px; border-radius: 8px; border: 1px solid #1abc9c; }
-        .summary-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #bdc3c7; font-size: 15px; }
-        .summary-row:last-child { border-bottom: none; font-weight: bold; color: #d35400; font-size: 16px; }
-
-        .footer-box { margin-top: 30px; padding-top: 15px; border-top: 2px solid #ecf0f1; text-align: center; font-size: 12px; color: #7f8c8d; line-height: 1.8; }
-        .footer-box strong { color: #c0392b; }
-
-        @media print {
-            body { background: #fff; padding: 0; }
-            .container { box-shadow: none; padding: 0; max-width: 100%; }
-            .no-print { display: none !important; }
-            .result-box { display: block !important; border: none; padding: 0; }
-            .vertical-table th, .vertical-table td { border: 1px solid #000; padding: 8px; font-size: 12px; }
-            .vertical-table th { background-color: #eee !important; }
-            .final-row td { background-color: #eee !important; }
-            .masha-row td { background-color: #eee !important; }
-            .sum-row td { background-color: #eee !important; }
-            .summary-box { border: 1px solid #000; }
-            .warning-box { border: 2px solid #000; background: #fff; color: #000; }
-            .header-email { color: #000; }
-            .footer-box { color: #000; border-top: 1px solid #000; }
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <div class="header-email no-print">tasnim3174@gmail.com</div>
+Sub CalculateWaterBill()
+    Dim ws As Worksheet
+    Dim newWs As Worksheet
+    Dim i As Integer
     
-    <div class="warning-box">
-        ⚠️ <strong>هشدار مهم و قانونی:</strong> 
-        خواهشمند است این صورتحساب را ابتدا به <strong>رویت اداره آبفای محل سکونت</strong> برسانید و پس از تایید نهایی، آن را به واحدهای محل سکونت خود ابلاغ کنید تا از هرگونه بدهی و مسئولیت قانونی جلوگیری شود.
-    </div>
-
-    <h2>محاسبه‌گر دقیق و قانونی قبض آب ساختمان</h2>
+    ' 1. تعریف متغیرها بر اساس اطلاعات شما
+    Dim totalBill As Double: totalBill = 38642000       ' جمع کل مبلغ قبض
+    Dim totalWater As Double: totalWater = 20022288      ' آب بها
+    Dim totalSewage As Double: totalSewage = 14386258    ' فاضلاب
+    Dim totalTax As Double: totalTax = 2494375           ' مالیات و عوارض
+    Dim totalLegal As Double: totalLegal = 739200        ' تکالیف قانونی
+    Dim mainMeter As Double: mainMeter = 204             ' کارکرد کنتور اصلی
+    Dim pattern As Double: pattern = 13                  ' الگوی مصرف
     
-    <h3 class="no-print">۱. اطلاعات قبض اصلی (صادر شده توسط آبفا)</h3>
-    <div class="input-group no-print">
-        <div class="form-group">
-            <label>مبلغ کل قابل پرداخت (ریال) <span class="help-icon" data-tooltip="مبلغ نهایی نوشته شده در پایین قبض آبفا">?</span></label>
-            <input type="number" id="totalBill" placeholder="مثلاً 2500000">
-        </div>
-        <div class="form-group">
-            <label>کارمزد دفع فاضلاب (ریال) <span class="help-icon" data-tooltip="مبلغ بخش فاضلاب در قبض">?</span></label>
-            <input type="number" id="wasteBill" placeholder="مثلاً 1000000">
-        </div>
-        <div class="form-group">
-            <label>مالیات و عوارض (ریال) <span class="help-icon" data-tooltip="مبلغ مالیات بر ارزش افزوده و عوارض در قبض">?</span></label>
-            <input type="number" id="taxBill" placeholder="مثلاً 200000">
-        </div>
-        <div class="form-group">
-            <label>تکالیف قانونی (ریال) <span class="help-icon" data-tooltip="مبلغ ثابت ماهانه کنتور اصلی (آبونمان سابق)">?</span></label>
-            <input type="number" id="fixedFee" value="58500">
-        </div>
-    </div>
-    <div class="input-group no-print">
-        <div class="form-group">
-            <label>کارکرد اصلی کنتور (قبض) <span class="help-icon" data-tooltip="عدد مصرف کل نوشته شده روی قبض آبفا (متر مکعب)">?</span></label>
-            <input type="number" id="mainMeter" placeholder="مثلاً 150" step="0.1">
-        </div>
-        <div class="form-group">
-            <label>الگوی مصرف (S) <span class="help-icon" data-tooltip="سقف مصرف مجاز ماهانه (اصفهان: ۱۳)">?</span></label>
-            <select id="pattern">
-                <option value="11">الگوی ۱۱ متر مکعب</option>
-                <option value="12">الگوی ۱۲ متر مکعب</option>
-                <option value="13" selected>الگوی ۱۳ متر مکعب (اصفهان)</option>
-                <option value="14">الگوی ۱۴ متر مکعب</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>ماه قبض <span class="help-icon" data-tooltip="در ماه‌های گرم (خرداد تا شهریور) ۲۰٪ افزایش اعمال می‌شود">?</span></label>
-            <select id="season">
-                <option value="1">ماه‌های عادی (بدون ضریب فصلی)</option>
-                <option value="1.2">ماه‌های گرم (۲۰٪ افزایش)</option>
-            </select>
-        </div>
-    </div>
-
-    <h3 class="no-print">۲. اطلاعات مصرف واحدها (زیرکنتور)</h3>
-    <div id="unitsContainer" class="no-print"></div>
-    <button class="btn btn-add no-print" onclick="addUnit()">+ افزودن واحد جدید</button>
-
-    <button class="btn btn-calc no-print" onclick="calculate()">محاسبه و تقسیم عادلانه قبض</button>
-
-    <div id="result" class="result-box">
-        <h3>۳. نتیجه محاسبات (به تفکیک هر واحد)</h3>
-        <div id="resultContent"></div>
+    ' 2. ایجاد یک شیت جدید برای خروجی
+    On Error Resume Next
+    Application.DisplayAlerts = False
+    Sheets("تسویه حساب").Delete
+    Application.DisplayAlerts = True
+    On Error GoTo 0
+    Set newWs = Sheets.Add(After:=Sheets(Sheets.Count))
+    newWs.Name = "تسویه حساب"
+    
+    ' 3. محاسبات پایه
+    Dim totalVariable As Double
+    totalVariable = totalWater + totalSewage + totalTax ' کل هزینه متغیر
+    
+    Dim basePrice As Double
+    basePrice = totalVariable / mainMeter               ' قیمت پایه هر مترمکعب
+    
+    ' مصرف واحدها
+    Dim units(1 To 9) As Double
+    units(1) = 16: units(2) = 10: units(3) = 26: units(4) = 29: units(5) = 21
+    units(6) = 10: units(7) = 19: units(8) = 22: units(9) = 6
+    
+    ' محاسبه اختلاف (مشاعات)
+    Dim sumUnits As Double: sumUnits = 0
+    For i = 1 To 9
+        sumUnits = sumUnits + units(i)
+    Next i
+    
+    Dim sharedWater As Double: sharedWater = mainMeter - sumUnits ' 45 متر مکعب
+    Dim sharedCost As Double: sharedCost = sharedWater * basePrice ' هزینه ریالی مشاعات
+    Dim sharedPerUnit As Double: sharedPerUnit = sharedCost / 9    ' سهم هر واحد
+    
+    Dim legalPerUnit As Double: legalPerUnit = totalLegal / 9      ' سهم تکالیف قانونی
+    
+    ' 4. محاسبه واحدهای معادل (با ضریب جریمه 2 برابر برای مازاد الگو)
+    Dim equivUnits(1 To 9) As Double
+    Dim sumEquiv As Double: sumEquiv = 0
+    
+    For i = 1 To 9
+        If units(i) <= pattern Then
+            equivUnits(i) = units(i)
+        Else
+            equivUnits(i) = pattern + ((units(i) - pattern) * 2)
+        End If
+        sumEquiv = sumEquiv + equivUnits(i)
+    Next i
+    
+    Dim equivPrice As Double
+    ' مبلغ کل متغیر منهای هزینه مشاعات، تقسیم بر مجموع واحدهای معادل
+    equivPrice = (totalVariable - sharedCost) / sumEquiv
+    
+    ' 5. ساخت جدول در شیت جدید
+    With newWs
+        ' تنظیم عنوان‌ها
+        .Cells(1, 1).Value = "ردیف"
+        .Cells(1, 2).Value = "واحد"
+        .Cells(1, 3).Value = "مصرف کنتور"
+        .Cells(1, 4).Value = "مازاد الگو"
+        .Cells(1, 5).Value = "واحد معادل"
+        .Cells(1, 6).Value = "هزینه آب اختصاصی"
+        .Cells(1, 7).Value = "سهم مشاعات"
+        .Cells(1, 8).Value = "تکالیف قانونی"
+        .Cells(1, 9).Value = "مبلغ کل (ریال)"
         
-        <button class="btn btn-print-all no-print" id="btnPrintAll" onclick="printAll()">🖨️ پرینت / دانلود PDF کل صورتحساب‌ها</button>
-    </div>
-
-    <div class="footer-box">
-        <strong>سازنده برنامه هیچ مسئولیت و دینی در خصوص محاسبه مبالغ ندارد.</strong><br>
-        تمام حقوق برای سازنده برنامه با ایمیل <strong>tasnim3174@gmail.com</strong> محفوظ است.
-    </div>
-</div>
-
-<script>
-    let unitCounter = 1;
-
-    // *** این بخش اصلاح شد تا کارت‌های واحدها مجدداً ساخته شوند ***
-    function addUnit() {
-        const container = document.getElementById('unitsContainer');
-        const card = document.createElement('div');
-        card.className = 'unit-card';
+        ' استایل هدر
+        .Range("A1:I1").Font.Bold = True
+        .Range("A1:I1").Interior.Color = RGB(200, 220, 255)
+        .Range("A1:I1").HorizontalAlignment = xlCenter
         
-        card.innerHTML = `
-            <button class="btn-remove-card no-print" onclick="removeUnit(this)" title="حذف واحد">×</button>
-            <div class="form-group" style="margin-bottom: 10px;">
-                <label>نام واحد</label>
-                <input type="text" class="unitName" value="واحد ${unitCounter}">
-            </div>
-            <div class="form-group">
-                <label>مصرف (متر مکعب) <span class="help-icon" data-tooltip="عدد روی زیرکنتور این واحد">?</span></label>
-                <input type="number" class="unitUsage" placeholder="0" step="0.1">
-            </div>
-        `;
+        Dim totalFinal As Double: totalFinal = 0
         
-        container.appendChild(card);
-        unitCounter++;
-    }
-
-    function removeUnit(btn) { btn.closest('.unit-card').remove(); }
-
-    function calcProgressive(usage, S, seasonFactor) {
-        const C = 90000;
-        let baseWater = 0;
-        let penalties = 0;
-
-        if (usage <= S) {
-            baseWater = C * usage;
-        } else if (usage <= 3 * S) {
-            baseWater = (C * S) + (C * (usage - S)) + (0.02 * C * Math.pow(usage - S, 2));
-        } else {
-            baseWater = (C * S) + (C * (3 * S - S)) + (0.02 * C * Math.pow(3 * S - S, 2)) + (C * (usage - 3 * S)) + (0.03 * C * Math.pow(usage - 3 * S, 2));
-        }
-
-        if (usage > S) {
-            let excess = usage - S;
-            penalties += excess * 1000; 
-            penalties += excess * 4000; 
-        }
-
-        let totalBeforeSeason = baseWater + penalties;
-        let finalWater = totalBeforeSeason * seasonFactor;
-
-        return { rawWater: baseWater, penalties: penalties, finalWater: finalWater };
-    }
-
-    let globalUnits = [];
-    let globalMashaInfo = {};
-
-    function calculate() {
-        const totalBill = parseFloat(document.getElementById('totalBill').value);
-        const wasteBill = parseFloat(document.getElementById('wasteBill').value);
-        const taxBill = parseFloat(document.getElementById('taxBill').value);
-        const fixedFee = parseFloat(document.getElementById('fixedFee').value);
-        const mainMeter = parseFloat(document.getElementById('mainMeter').value);
-        const S = parseInt(document.getElementById('pattern').value);
-        const seasonFactor = parseFloat(document.getElementById('season').value);
-
-        if (isNaN(totalBill) || isNaN(wasteBill) || isNaN(taxBill) || isNaN(fixedFee) || isNaN(mainMeter)) { 
-            alert("لطفاً تمام فیلدهای قبض اصلی را پر کنید."); return; 
-        }
-
-        const cards = document.querySelectorAll('.unit-card');
-        if (cards.length === 0) { alert("لطفاً حداقل یک واحد اضافه کنید."); return; }
-
-        let units = []; let sumSubUsages = 0;
-        cards.forEach(card => {
-            const name = card.querySelector('.unitName').value;
-            const usage = parseFloat(card.querySelector('.unitUsage').value) || 0;
-            units.push({ name, usage });
-            sumSubUsages += usage;
-        });
-
-        let mashaUsage = mainMeter - sumSubUsages;
-        if (mashaUsage < 0) {
-            alert("خطا: مجموع مصرف واحدها بیشتر از کارکرد کنتور اصلی است! لطفاً اعداد را بررسی کنید.");
-            return;
-        }
-
-        // حق مشا با نرخ معمولی و بدون جریمه
-        const C = 90000;
-        const mashaCostNormal = mashaUsage * C; 
+        ' پر کردن داده‌ها
+        For i = 1 To 9
+            Dim excess As Double
+            If units(i) > pattern Then excess = units(i) - pattern Else excess = 0
+            
+            Dim waterCost As Double
+            waterCost = equivUnits(i) * equivPrice
+            
+            Dim finalCost As Double
+            finalCost = waterCost + sharedPerUnit + legalPerUnit
+            
+            .Cells(i + 1, 1).Value = i
+            .Cells(i + 1, 2).Value = "واحد " & i
+            .Cells(i + 1, 3).Value = units(i)
+            .Cells(i + 1, 4).Value = excess
+            .Cells(i + 1, 5).Value = equivUnits(i)
+            .Cells(i + 1, 6).Value = Round(waterCost, 0)
+            .Cells(i + 1, 7).Value = Round(sharedPerUnit, 0)
+            .Cells(i + 1, 8).Value = Round(legalPerUnit, 0)
+            .Cells(i + 1, 9).Value = Round(finalCost, 0)
+            
+            totalFinal = totalFinal + Round(finalCost, 0)
+        Next i
         
-        const waterBillTotal = totalBill - wasteBill - taxBill - fixedFee;
-        if (waterBillTotal <= 0) { alert("مبالغ قبض همخوانی ندارند (آب‌بها منفی می‌شود)."); return; }
-
-        let rawProgressiveSum = mashaCostNormal; 
-
-        units.forEach(u => {
-            const res = calcProgressive(u.usage, S, seasonFactor);
-            u.rawWater = res.rawWater;
-            u.penalties = res.penalties;
-            u.calcWater = res.finalWater;
-            u.waste = wasteBill * (u.usage / sumSubUsages);
-            u.tax = taxBill * (u.usage / sumSubUsages);
-            u.fixed = fixedFee / units.length;
-            rawProgressiveSum += u.calcWater; 
-        });
-
-        const correctionFactor = waterBillTotal / rawProgressiveSum;
+        ' جمع کل
+        .Cells(11, 2).Value = "جمع کل"
+        .Cells(11, 3).Value = sumUnits
+        .Cells(11, 5).Value = sumEquiv
+        .Range("B11:I11").Font.Bold = True
+        .Range("B11:I11").Interior.Color = RGB(230, 230, 230)
+        .Cells(11, 9).Value = totalFinal
         
-        let sumFinal = 0;
-        const mashaFinalTotal = mashaCostNormal * correctionFactor;
-        const mashaSharePerUnit = mashaFinalTotal / units.length;
+        ' قالب‌بندی اعداد و ستون‌ها
+        .Range("C2:E10").NumberFormat = "0"
+        .Range("F2:I11").NumberFormat = "#,##0"
+        .Columns("A:I").AutoFit
+    End With
+    
+    MsgBox "محاسبات با موفقیت انجام شد و در شیت 'تسویه حساب' قرار گرفت.", vbInformation, "پایان محاسبات"
 
-        units.forEach(u => {
-            u.finalWater = u.calcWater * correctionFactor;
-            u.mashaCost = mashaSharePerUnit; 
-            u.finalTotal = u.finalWater + u.mashaCost + u.waste + u.tax + u.fixed;
-            sumFinal += u.finalTotal;
-        });
-
-        globalUnits = units;
-        globalMashaInfo = { usage: mashaUsage, totalCost: mashaFinalTotal, sharePerUnit: mashaSharePerUnit };
-
-        let resultHTML = `<table class="vertical-table"><thead><tr><th>شرح</th>`;
-        units.forEach((u, index) => {
-            resultHTML += `<th>
-                ${u.name}
-                <br>
-                <button class="btn btn-print no-print" onclick="printSingleUnit(${index})">🖨️ پرینت</button>
-            </th>`;
-        });
-        resultHTML += `<th style="background:#2980b9; color:#fff;">جمع کل<br>(ریال)</th>`; 
-        resultHTML += `</tr></thead><tbody>`;
-
-        let sumUsage = 0, sumRaw = 0, sumPenalties = 0, sumCalcWater = 0, sumFinalWater = 0, sumMasha = 0, sumWaste = 0, sumFixed = 0, sumTax = 0, sumFinalSum = 0;
-
-        resultHTML += `<tr><th>مصرف (m³) <span class="help-icon" data-tooltip="مصرف زیرکنتور">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${u.usage.toLocaleString()}</td>`; sumUsage += u.usage; });
-        resultHTML += `<td>${sumUsage.toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>وضعیت <span class="help-icon" data-tooltip="در الگو یا مازاد الگو">?</span></th>`;
-        units.forEach(u => {
-            let statusTag = (u.usage <= S) ? '<span class="tag tag-low">در الگو</span>' : '<span class="tag tag-high">مازاد الگو</span>';
-            resultHTML += `<td>${statusTag}</td>`;
-        });
-        resultHTML += `<td>-</td></tr>`;
-
-        resultHTML += `<tr><th>آب‌بهای پایه <span class="help-icon" data-tooltip="هزینه پلکانی بدون جریمه">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.rawWater).toLocaleString()}</td>`; sumRaw += u.rawWater; });
-        resultHTML += `<td>${Math.round(sumRaw).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>جریمه مازاد <span class="help-icon" data-tooltip="جریمه بندهای ۳-۱ و ۳-۲">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.penalties).toLocaleString()}</td>`; sumPenalties += u.penalties; });
-        resultHTML += `<td>${Math.round(sumPenalties).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>آب‌بها با ضریب فصلی <span class="help-icon" data-tooltip="شامل ۲۰٪ افزایش در ماه‌های گرم">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.calcWater).toLocaleString()}</td>`; sumCalcWater += u.calcWater; });
-        resultHTML += `<td>${Math.round(sumCalcWater).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>آب‌بهای نهایی <span class="help-icon" data-tooltip="هماهنگ شده با قبض اصلی">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.finalWater).toLocaleString()}</td>`; sumFinalWater += u.finalWater; });
-        resultHTML += `<td>${Math.round(sumFinalWater).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr class="masha-row"><th>حق مشا (تقسیم مساوی) <span class="help-icon" data-tooltip="هزینه اختلاف کنتور اصلی و واحدها که مساوی تقسیم شده است">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.mashaCost).toLocaleString()}</td>`; sumMasha += u.mashaCost; });
-        resultHTML += `<td>${Math.round(sumMasha).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>فاضلاب <span class="help-icon" data-tooltip="سهم از کارمزد فاضلاب">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.waste).toLocaleString()}</td>`; sumWaste += u.waste; });
-        resultHTML += `<td>${Math.round(sumWaste).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>تکالیف قانونی <span class="help-icon" data-tooltip="تقسیم مساوی بین واحدها">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.fixed).toLocaleString()}</td>`; sumFixed += u.fixed; });
-        resultHTML += `<td>${Math.round(sumFixed).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr><th>مالیات و عوارض <span class="help-icon" data-tooltip="سهم از مالیات قبض">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.tax).toLocaleString()}</td>`; sumTax += u.tax; });
-        resultHTML += `<td>${Math.round(sumTax).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr class="final-row"><th>مبلغ نهایی قابل پرداخت <span class="help-icon" data-tooltip="کل مبلغی که این واحد باید بپردازد">?</span></th>`;
-        units.forEach(u => { resultHTML += `<td>${Math.round(u.finalTotal).toLocaleString()}</td>`; sumFinalSum += u.finalTotal; });
-        resultHTML += `<td>${Math.round(sumFinalSum).toLocaleString()}</td></tr>`;
-
-        resultHTML += `<tr class="sum-row"><th>جمع ستون (ریال)</th>`;
-        units.forEach(() => resultHTML += `<td>-</td>`); 
-        resultHTML += `<td>${Math.round(sumFinalSum).toLocaleString()}</td></tr>`;
-
-        resultHTML += `</tbody></table>`;
-
-        resultHTML += `
-            <div class="summary-box">
-                <div class="summary-row"><span>کارکرد کنتور اصلی (قبض):</span><span>${mainMeter.toLocaleString()} متر مکعب</span></div>
-                <div class="summary-row"><span>مجموع کارکرد واحدها:</span><span>${sumSubUsages.toLocaleString()} متر مکعب</span></div>
-                <div class="summary-row" style="color:#16a085; font-weight:bold;"><span>حق مشا (اختلاف):</span><span>${mashaUsage.toLocaleString()} متر مکعب</span></div>
-                <div class="summary-row"><span>هزینه کل حق مشا (نرخ معمولی + ضریب):</span><span>${Math.round(mashaFinalTotal).toLocaleString()} ریال</span></div>
-                <div class="summary-row"><span>سهم هر واحد از حق مشا:</span><span>${Math.round(mashaSharePerUnit).toLocaleString()} ریال</span></div>
-                <hr style="border:0; border-top:1px dashed #bdc3c7; margin:10px 0;">
-                <div class="summary-row"><span>ضریب اصلاح اعمال شده:</span><span style="color:#8e44ad;">${correctionFactor.toFixed(4)}</span></div>
-                <div class="summary-row"><span>جمع مبالغ محاسبه شده واحدها:</span><span style="color:green;">${Math.round(sumFinalSum).toLocaleString()} ریال</span></div>
-                <div class="summary-row"><span>مبلغ اصلی قبض آبفا:</span><span>${totalBill.toLocaleString()} ریال</span></div>
-            </div>
-        `;
-
-        document.getElementById('resultContent').innerHTML = resultHTML;
-        document.getElementById('result').style.display = 'block';
-        document.getElementById('btnPrintAll').style.display = 'block';
-    }
-
-    function printAll() { window.print(); }
-
-    function printSingleUnit(index) {
-        const unit = globalUnits[index];
-        const S = parseInt(document.getElementById('pattern').value);
-        const status = (unit.usage <= S) ? 'در الگو' : 'مازاد الگو';
-
-        let printContent = `
-            <html dir="rtl">
-            <head>
-                <title>قبض آب - ${unit.name}</title>
-                <style>
-                    body { font-family: Tahoma; padding: 20px; }
-                    .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border: 1px solid #000; padding: 10px; text-align: right; }
-                    th { background-color: #f0f0f0; width: 200px; }
-                    .total { font-weight: bold; background-color: #fff3cd; font-size: 18px; }
-                    .footer { margin-top: 30px; font-size: 12px; text-align: center; border-top: 1px solid #000; padding-top: 10px; }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <h2>صورتحساب آب‌بهای واحد مسکونی</h2>
-                    <p><strong>نام واحد:</strong> ${unit.name}</p>
-                </div>
-                <table>
-                    <tr><th>مصرف (متر مکعب)</th><td>${unit.usage}</td></tr>
-                    <tr><th>وضعیت مصرف</th><td>${status}</td></tr>
-                    <tr><th>آب‌بهای پایه (ریال)</th><td>${Math.round(unit.rawWater).toLocaleString()}</td></tr>
-                    <tr><th>جریمه مازاد (ریال)</th><td>${Math.round(unit.penalties).toLocaleString()}</td></tr>
-                    <tr><th>آب‌بها با ضریب فصلی (ریال)</th><td>${Math.round(unit.calcWater).toLocaleString()}</td></tr>
-                    <tr><th>آب‌بهای نهایی (ریال)</th><td>${Math.round(unit.finalWater).toLocaleString()}</td></tr>
-                    <tr><th>حق مشا (تقسیم مساوی) (ریال)</th><td>${Math.round(unit.mashaCost).toLocaleString()}</td></tr>
-                    <tr><th>فاضلاب (ریال)</th><td>${Math.round(unit.waste).toLocaleString()}</td></tr>
-                    <tr><th>تکالیف قانونی (ریال)</th><td>${Math.round(unit.fixed).toLocaleString()}</td></tr>
-                    <tr><th>مالیات و عوارض (ریال)</th><td>${Math.round(unit.tax).toLocaleString()}</td></tr>
-                    <tr class="total"><th>مبلغ نهایی قابل پرداخت (ریال)</th><td>${Math.round(unit.finalTotal).toLocaleString()}</td></tr>
-                </table>
-                <div class="footer">
-                    <p><strong>هشدار:</strong> این صورتحساب ابتدا باید به رویت اداره آبفا رسیده و پس از تایید به واحد ابلاغ شود.</p>
-                    <p>سازنده برنامه هیچ مسئولیتی در قبال محاسبات ندارد. تمام حقوق برای tasnim3174@gmail.com محفوظ است.</p>
-                </div>
-            </body>
-            </html>
-        `;
-
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => { printWindow.print(); }, 500);
-    }
-
-    // هنگام باز شدن صفحه، ۳ واحد پیش‌فرض اضافه می‌شود
-    window.onload = function() { 
-        addUnit(); 
-        addUnit(); 
-        addUnit(); 
-    };
-</script>
-</body>
-</html>
+End Sub
