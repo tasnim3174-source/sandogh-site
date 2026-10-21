@@ -140,6 +140,29 @@
             text-align: justify;
         }
 
+        /* استایل بخش قوانین و کپی‌رایت پایین صفحه */
+        .footer-disclaimer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ccc;
+            text-align: center;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #555;
+        }
+        .footer-disclaimer .red-text {
+            color: #c0392b;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .footer-disclaimer .email {
+            color: var(--secondary);
+            font-weight: bold;
+            direction: ltr;
+            display: inline-block;
+        }
+
         @media print {
             body { background: #fff; padding: 0; }
             .card { box-shadow: none; padding: 0; }
@@ -147,6 +170,7 @@
             th { background: #eee !important; color: #000 !important; border: 1px solid #000; }
             td { border: 1px solid #000; }
             .final-col { background-color: #eee !important; }
+            .footer-disclaimer { border-top: 1px solid #000; }
         }
     </style>
 </head>
@@ -213,6 +237,12 @@
         <button class="btn btn-add" onclick="addUnit()">+ افزودن واحد جدید</button>
 
         <button class="btn btn-calc" style="margin-top: 20px;" onclick="calculateBill()">محاسبه و تقسیم عادلانه قبض</button>
+        
+        <!-- بخش قوانین و کپی رایت -->
+        <div class="footer-disclaimer">
+            <span class="red-text">سازنده برنامه هیچگونه مسئولیت و دینی در قبال اعداد محاسبه شده ندارد. کلیه افراد ساختمان نسبت به حسابرسی قبض خود اقدام و مدیر ساختمان نیز از موارد مندرج در قبض شخصاً عهده‌دار است.</span>
+            کلیه حقوق این برنامه برای <span class="email">tasnim3174@gmail.com</span> محفوظ است.
+        </div>
     </div>
 
     <!-- بخش نتایج -->
