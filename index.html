@@ -268,111 +268,110 @@
                         <div class="remember-me"><input type="checkbox" id="rememberMe"><label for="rememberMe">🔒 من را به خاطر بسپار</label></div>
             <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
             
-           <!-- 🆕 خدمات بدون ورود (کامل) -->
-<div style="margin-top:20px;padding:18px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(37,99,235,0.06));border:2px solid rgba(59,130,246,0.35);border-radius:20px;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-        <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.2rem;box-shadow:0 4px 15px rgba(59,130,246,0.4);">
-            <i class="fas fa-globe"></i>
-        </div>
-        <div>
-            <div style="font-weight:900;color:var(--text-primary);font-size:1rem;">خدمات آنلاین و مشابه به اپلیکیشن</div>
-            <div style="font-size:0.7rem;color:var(--text-secondary);">دسترسی سریع به سرویس‌های پرکاربرد</div>
-        </div>
-    </div>
-    
-    <!-- 🚗 حمل و نقل -->
-    <div style="margin-bottom:14px;">
-        <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-car"></i> حمل و نقل و سفر
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-            <a href="https://tapsi.ir" target="_blank" style="padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.7rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-car" style="color:#f59e0b;font-size:1.3rem;"></i>
-                <span>تپسی</span>
-            </a>
-            <a href="https://snapp.ir" target="_blank" style="padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.7rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-taxi" style="color:#10b981;font-size:1.3rem;"></i>
-                <span>اسنپ</span>
-            </a>
-            <a href="https://shamim.app" target="_blank" style="padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.7rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-map-marked-alt" style="color:#8b5cf6;font-size:1.3rem;"></i>
-                <span>شمیم</span>
-            </a>
-        </div>
-    </div>
-    
-    <!-- 💬 پیام‌رسان‌ها -->
-    <div style="margin-bottom:14px;">
-        <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-comments"></i> پیام‌رسان‌ها
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-            <a href="https://eitaa.com" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-comments" style="color:#ef4444;font-size:1.3rem;"></i>
-                <span>ایتا</span>
-            </a>
-            <a href="https://ble.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-comment-dots" style="color:#22c55e;font-size:1.3rem;"></i>
-                <span>بله</span>
-            </a>
-            <a href="https://splus.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-comment" style="color:#f59e0b;font-size:1.3rem;"></i>
-                <span>سروش</span>
-            </a>
-            <a href="https://gap.im" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-comment-alt" style="color:#3b82f6;font-size:1.3rem;"></i>
-                <span>گپ</span>
-            </a>
-        </div>
-    </div>
-    
-    <!-- 🏛️ خدمات دولتی -->
-    <div style="margin-bottom:14px;">
-        <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-landmark"></i> خدمات دولتی
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-            <a href="https://my.gov.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-id-card" style="color:#8b5cf6;font-size:1.3rem;"></i>
-                <span>دولت من</span>
-            </a>
-            <a href="https://www.tamin.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-shield-alt" style="color:#10b981;font-size:1.3rem;"></i>
-                <span>تامین من</span>
-            </a>
-            <a href="https://kalabarg.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-shopping-basket" style="color:#f59e0b;font-size:1.3rem;"></i>
-                <span>کالابرگ</span>
-            </a>
-        </div>
-    </div>
-    
-    <!-- 🏦 بانک‌ها -->
-    <div>
-        <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-university"></i> بانک‌ها و خدمات مالی
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-            <a href="https://www.bsi.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-building-columns" style="color:#3b82f6;font-size:1.3rem;"></i>
-                <span>صادرات</span>
-            </a>
-            <a href="https://www.bmi.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-building" style="color:#10b981;font-size:1.3rem;"></i>
-                <span>ملی</span>
-            </a>
-            <a href="https://www.banksepah.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-university" style="color:#f59e0b;font-size:1.3rem;"></i>
-                <span>سپه</span>
-            </a>
-            <a href="https://www.bmi.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
-                <i class="fas fa-credit-card" style="color:#8b5cf6;font-size:1.3rem;"></i>
-                <span>بام</span>
-            </a>
-        </div>
-    </div>
-</div>
-<!-- 🆕 پایان خدمات بدون ورود -->
+                      <!-- 🆕 دکمه خدمات بدون ورود -->
+            <div style="text-align:center;margin-top:12px;">
+                <button onclick="toggleServicesPanel()" style="width:100%;padding:12px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(59,130,246,0.4);display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.3s;" id="servicesToggleBtn">
+                    <i class="fas fa-globe"></i>
+                    <span>خدمات بدون ورود</span>
+                    <i class="fas fa-chevron-down" id="servicesArrow" style="transition:transform 0.3s;margin-right:auto;font-size:0.8rem;"></i>
+                </button>
+            </div>
+
+            <!-- 🆕 بخش خدمات بدون ورود (بازشو) -->
+            <div id="servicesPanel" style="display:none;margin-top:15px;padding:16px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(37,99,235,0.06));border:2px solid rgba(59,130,246,0.35);border-radius:20px;animation:slideDown 0.3s ease;">
+                
+                <!-- 🚗 حمل و نقل -->
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                        <i class="fas fa-car"></i> حمل و نقل و سفر
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+                        <a href="https://tapsi.ir" target="_blank" style="padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.7rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-car" style="color:#f59e0b;font-size:1.3rem;"></i>
+                            <span>تپسی</span>
+                        </a>
+                        <a href="https://snapp.ir" target="_blank" style="padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.7rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-taxi" style="color:#10b981;font-size:1.3rem;"></i>
+                            <span>اسنپ</span>
+                        </a>
+                        <a href="https://shamim.app" target="_blank" style="padding:10px 6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.7rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-map-marked-alt" style="color:#8b5cf6;font-size:1.3rem;"></i>
+                            <span>شمیم</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 💬 پیام‌رسان‌ها -->
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                        <i class="fas fa-comments"></i> پیام‌رسان‌ها
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                        <a href="https://eitaa.com" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-comments" style="color:#ef4444;font-size:1.3rem;"></i>
+                            <span>ایتا</span>
+                        </a>
+                        <a href="https://ble.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-comment-dots" style="color:#22c55e;font-size:1.3rem;"></i>
+                            <span>بله</span>
+                        </a>
+                        <a href="https://splus.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-comment" style="color:#f59e0b;font-size:1.3rem;"></i>
+                            <span>سروش</span>
+                        </a>
+                        <a href="https://gap.im" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-comment-alt" style="color:#3b82f6;font-size:1.3rem;"></i>
+                            <span>گپ</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 🏛️ خدمات دولتی -->
+                <div style="margin-bottom:14px;">
+                    <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                        <i class="fas fa-landmark"></i> خدمات دولتی
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+                        <a href="https://my.gov.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-id-card" style="color:#8b5cf6;font-size:1.3rem;"></i>
+                            <span>دولت من</span>
+                        </a>
+                        <a href="https://www.tamin.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-shield-alt" style="color:#10b981;font-size:1.3rem;"></i>
+                            <span>تامین من</span>
+                        </a>
+                        <a href="https://kalabarg.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-shopping-basket" style="color:#f59e0b;font-size:1.3rem;"></i>
+                            <span>کالابرگ</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- 🏦 بانک‌ها -->
+                <div>
+                    <div style="font-size:0.75rem;color:#3b82f6;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                        <i class="fas fa-university"></i> بانک‌ها و خدمات مالی
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+                        <a href="https://www.bsi.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-building-columns" style="color:#3b82f6;font-size:1.3rem;"></i>
+                            <span>صادرات</span>
+                        </a>
+                        <a href="https://www.bmi.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-building" style="color:#10b981;font-size:1.3rem;"></i>
+                            <span>ملی</span>
+                        </a>
+                        <a href="https://www.banksepah.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-university" style="color:#f59e0b;font-size:1.3rem;"></i>
+                            <span>سپه</span>
+                        </a>
+                        <a href="https://www.bmi.ir" target="_blank" style="padding:10px 4px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;text-decoration:none;text-align:center;color:var(--text-primary);font-size:0.65rem;font-weight:700;transition:all 0.3s;display:flex;flex-direction:column;align-items:center;gap:5px;" onmouseover="this.style.background='rgba(255,255,255,0.12)';this.style.transform='translateY(-2px)';" onmouseout="this.style.background='rgba(255,255,255,0.05)';this.style.transform='translateY(0)';">
+                            <i class="fas fa-credit-card" style="color:#8b5cf6;font-size:1.3rem;"></i>
+                            <span>بام</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div style="text-align:center;margin-top:14px;font-size:0.85rem;">
                 <a onclick="openForgotPasswordModal()" style="color:var(--gradient-start);text-decoration:none;cursor:pointer;font-weight:bold;padding:8px 16px;border-radius:10px;">
                     <i class="fas fa-key"></i> رمز عبور خود را فراموش کرده‌اید؟
@@ -939,6 +938,22 @@
     window.sendPasswordChangeSms = sendPasswordChangeSms;
 
     console.log('✅ سیستم صندوق اتحاد بارگذاری شد');
+    // ============================================================
+// 🆕 تابع باز و بسته کردن پنل خدمات بدون ورود
+// ============================================================
+function toggleServicesPanel() {
+    var panel = document.getElementById('servicesPanel');
+    var arrow = document.getElementById('servicesArrow');
+    if (!panel) return;
+    
+    if (panel.style.display === 'none' || !panel.style.display) {
+        panel.style.display = 'block';
+        if (arrow) arrow.style.transform = 'rotate(180deg)';
+    } else {
+        panel.style.display = 'none';
+        if (arrow) arrow.style.transform = 'rotate(0deg)';
+    }
+}    
     </script>
     <!-- 🆕 پنجره شناور پیام‌رسان -->
 <div id="messagesOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;backdrop-filter:blur(4px);">
@@ -1524,5 +1539,9 @@ document.addEventListener('DOMContentLoaded', function() {
         color: #e0f2fe !important;
     }
 </style>
+        @keyframes slideDown {
+    from { opacity: 0; max-height: 0; }
+    to { opacity: 1; max-height: 1000px; }
+}
 </body>
 </html>
