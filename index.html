@@ -265,144 +265,15 @@
                 <input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید" autocomplete="current-password">
                 <button type="button" onclick="togglePassword('loginPassword','loginPwdIcon')"><i id="loginPwdIcon" class="fas fa-eye"></i></button>
             </div>
-                        <div class="remember-me"><input type="checkbox" id="rememberMe"><label for="rememberMe">🔒 من را به خاطر بسپار</label></div>
+            <div class="remember-me"><input type="checkbox" id="rememberMe"><label for="rememberMe">🔒 من را به خاطر بسپار</label></div>
             <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
-            
-                      <!-- 🆕 دکمه خدمات بدون ورود -->
-            <div style="text-align:center;margin-top:12px;">
-                <button onclick="toggleServicesPanel()" style="width:100%;padding:12px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(59,130,246,0.4);display:flex;align-items:center;justify-content:center;gap:8px;transition:all 0.3s;" id="servicesToggleBtn">
-                    <i class="fas fa-globe"></i>
-                    <span>خدمات بدون ورود</span>
-                    <i class="fas fa-chevron-down" id="servicesArrow" style="transition:transform 0.3s;margin-right:auto;font-size:0.8rem;"></i>
-                </button>
-            </div>
-
-          <!-- 🆕 خدمات بدون ورود (کامل + شیشه‌ای) -->
-<div style="margin-top:20px;padding:18px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(37,99,235,0.06));border:2px solid rgba(59,130,246,0.35);border-radius:20px;">
-    
-    <!-- هدر -->
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
-        <div style="width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1.3rem;box-shadow:0 4px 15px rgba(59,130,246,0.4);">
-            <i class="fas fa-globe"></i>
-        </div>
-        <div>
-            <div style="font-weight:900;color:var(--text-primary);font-size:1.05rem;">خدمات آنلاین و مشابه به اپلیکیشن</div>
-            <div style="font-size:0.7rem;color:var(--text-secondary);">دسترسی سریع به سرویس‌های پرکاربرد</div>
-        </div>
-    </div>
-
-    <!-- 🚗 حمل و نقل -->
-    <div class="section-transport" style="margin-bottom:14px;padding:14px;border-radius:14px;">
-        <div style="font-size:0.78rem;color:#f59e0b;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-car"></i> حمل و نقل و سفر
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-            <a href="https://accounts.tapsi.ir/login?client_id=tapsi.cab.passenger&redirect_uri=https%3A%2F%2Fapp.tapsi.cab&response_type=code&scope=PASSENGER&state=a8f8a582d11f420e867f8995233ef981&code_challenge=3vBekWF6enY7Uqr_8ZjRx79RLj2l2GCz9bZQ_tiCB6k&code_challenge_method=S256&response_mode=query" target="_blank" class="service-btn">
-                <i class="fas fa-car icon-orange" style="font-size:1.3rem;"></i>
-                <span>تپسی</span>
-            </a>
-            <a href="https://app.snapp.taxi/?utm_source=website&utm_medium=webapp-button&utm_campaign=body" target="_blank" class="service-btn">
-                <i class="fas fa-taxi icon-green" style="font-size:1.3rem;"></i>
-                <span>اسنپ</span>
-            </a>
-            <a href="https://kala.sfara.ir/" target="_blank" class="service-btn">
-                <i class="fas fa-map-marked-alt icon-purple" style="font-size:1.3rem;"></i>
-                <span>شمیم</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- 💬 پیام‌رسان‌ها -->
-    <div class="section-messengers" style="margin-bottom:14px;padding:14px;border-radius:14px;">
-        <div style="font-size:0.78rem;color:#10b981;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-comments"></i> پیام‌رسان‌ها
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-            <a href="https://web.eitaa.com/" target="_blank" class="service-btn">
-                <i class="fas fa-comments icon-red" style="font-size:1.3rem;"></i>
-                <span>ایتا</span>
-            </a>
-            <a href="https://ble.ir" target="_blank" class="service-btn">
-                <i class="fas fa-comment-dots icon-green" style="font-size:1.3rem;"></i>
-                <span>بله</span>
-            </a>
-            <a href="https://splus.ir" target="_blank" class="service-btn">
-                <i class="fas fa-comment icon-orange" style="font-size:1.3rem;"></i>
-                <span>سروش</span>
-            </a>
-            <a href="https://gap.im" target="_blank" class="service-btn">
-                <i class="fas fa-comment-alt icon-blue" style="font-size:1.3rem;"></i>
-                <span>گپ</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- 🏛️ خدمات دولتی -->
-    <div class="section-government" style="margin-bottom:14px;padding:14px;border-radius:14px;">
-        <div style="font-size:0.78rem;color:#8b5cf6;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-landmark"></i> خدمات دولتی
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-            <a href="https://my.gov.ir" target="_blank" class="service-btn">
-                <i class="fas fa-id-card icon-purple" style="font-size:1.3rem;"></i>
-                <span>دولت من</span>
-            </a>
-            <a href="https://app.tamin.ir/pwa/#/main" target="_blank" class="service-btn">
-                <i class="fas fa-shield-alt icon-green" style="font-size:1.3rem;"></i>
-                <span>تامین من</span>
-            </a>
-            <a href="https://sso.my.gov.ir/login" target="_blank" class="service-btn">
-                <i class="fas fa-shopping-basket icon-orange" style="font-size:1.3rem;"></i>
-                <span>کالابرگ</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- 🏦 بانک‌ها -->
-    <div class="section-banks" style="margin-bottom:14px;padding:14px;border-radius:14px;">
-        <div style="font-size:0.78rem;color:#3b82f6;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-university"></i> بانک‌ها و خدمات مالی
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-            <a href="https://www.bsi.ir" target="_blank" class="service-btn">
-                <i class="fas fa-building-columns icon-blue" style="font-size:1.3rem;"></i>
-                <span>صادرات</span>
-            </a>
-            <a href="https://www.bmi.ir" target="_blank" class="service-btn">
-                <i class="fas fa-building icon-green" style="font-size:1.3rem;"></i>
-                <span>ملی</span>
-            </a>
-            <a href="https://www.banksepah.ir" target="_blank" class="service-btn">
-                <i class="fas fa-university icon-orange" style="font-size:1.3rem;"></i>
-                <span>سپه</span>
-            </a>
-            <a href="https://bank-melli.ir/FA/UploadedFiles/LandingPages/bmi-services/" target="_blank" class="service-btn">
-                <i class="fas fa-credit-card icon-purple" style="font-size:1.3rem;"></i>
-                <span>بام</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- 🆕 برنامه‌های کاربردی -->
-    <div class="section-apps" style="padding:14px;border-radius:14px;">
-        <div style="font-size:0.78rem;color:#06b6d4;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
-            <i class="fas fa-calculator"></i> برنامه‌های کاربردی
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;">
-            <a href="water-bill.html" target="_blank" class="service-btn" style="padding:14px 8px !important;">
-                <i class="fas fa-tint icon-cyan" style="font-size:1.5rem;"></i>
-                <span>محاسبه آنلاین آب‌بهای آپارتمان</span>
-            </a>
-        </div>
-    </div>
-</div>
-<!-- 🆕 پایان خدمات بدون ورود -->
             <div style="text-align:center;margin-top:14px;font-size:0.85rem;">
                 <a onclick="openForgotPasswordModal()" style="color:var(--gradient-start);text-decoration:none;cursor:pointer;font-weight:bold;padding:8px 16px;border-radius:10px;">
                     <i class="fas fa-key"></i> رمز عبور خود را فراموش کرده‌اید؟
                 </a>
             </div>
         </div>
+    </div>
 
     <script src="js/core/globals.js"></script>
     <script src="js/core/utils.js"></script>
@@ -963,22 +834,6 @@
     window.sendPasswordChangeSms = sendPasswordChangeSms;
 
     console.log('✅ سیستم صندوق اتحاد بارگذاری شد');
-    // ============================================================
-// 🆕 تابع باز و بسته کردن پنل خدمات بدون ورود
-// ============================================================
-function toggleServicesPanel() {
-    var panel = document.getElementById('servicesPanel');
-    var arrow = document.getElementById('servicesArrow');
-    if (!panel) return;
-    
-    if (panel.style.display === 'none' || !panel.style.display) {
-        panel.style.display = 'block';
-        if (arrow) arrow.style.transform = 'rotate(180deg)';
-    } else {
-        panel.style.display = 'none';
-        if (arrow) arrow.style.transform = 'rotate(0deg)';
-    }
-}    
     </script>
     <!-- 🆕 پنجره شناور پیام‌رسان -->
 <div id="messagesOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:99999;backdrop-filter:blur(4px);">
@@ -1564,113 +1419,5 @@ document.addEventListener('DOMContentLoaded', function() {
         color: #e0f2fe !important;
     }
 </style>
-        @keyframes slideDown {
-    from { opacity: 0; max-height: 0; }
-    to { opacity: 1; max-height: 1000px; }
-}
- <style>
-/* ============================================================
-   🎨 استایل شیشه‌ای و برجسته برای دکمه‌های خدمات
-   ============================================================ */
-
-/* دکمه‌های شیشه‌ای (Glassmorphism) */
-.service-btn {
-    padding: 10px 6px !important;
-    background: rgba(255, 255, 255, 0.08) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 14px !important;
-    box-shadow: 
-        0 4px 15px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
-    transition: all 0.3s ease !important;
-    text-decoration: none !important;
-    text-align: center !important;
-    color: var(--text-primary) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 5px !important;
-    position: relative;
-    overflow: hidden;
-}
-
-/* افکت درخشش روی دکمه‌ها */
-.service-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transition: left 0.5s;
-}
-
-.service-btn:hover::before {
-    left: 100%;
-}
-
-/* حالت هاور (برجسته شدن) */
-.service-btn:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
-    transform: translateY(-4px) scale(1.02) !important;
-    box-shadow: 
-        0 8px 25px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(59, 130, 246, 0.5) !important;
-}
-
-/* حالت کلیک (فشرده شدن) */
-.service-btn:active {
-    transform: translateY(-1px) scale(0.98) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2) !important;
-}
-
-/* ============================================================
-   🎨 رنگ پس‌زمینه بخش‌ها (به دلخواه تغییر دهید)
-   ============================================================ */
-
-/* بخش حمل و نقل - آبی ملایم */
-.section-transport {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(37, 99, 235, 0.04)) !important;
-    border: 1px solid rgba(59, 130, 246, 0.2) !important;
-}
-
-/* بخش پیام‌رسان‌ها - سبز ملایم */
-.section-messengers {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(5, 150, 105, 0.04)) !important;
-    border: 1px solid rgba(16, 185, 129, 0.2) !important;
-}
-
-/* بخش خدمات دولتی - بنفش ملایم */
-.section-government {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(124, 58, 237, 0.04)) !important;
-    border: 1px solid rgba(139, 92, 246, 0.2) !important;
-}
-
-/* بخش بانک‌ها - نارنجی ملایم */
-.section-banks {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.04)) !important;
-    border: 1px solid rgba(245, 158, 11, 0.2) !important;
-}
-
-/* بخش برنامه‌های کاربردی - فیروزه‌ای ملایم */
-.section-apps {
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(8, 145, 178, 0.05)) !important;
-    border: 2px solid rgba(6, 182, 212, 0.3) !important;
-}
-
-/* ============================================================
-   🎨 رنگ‌بندی آیکون‌ها
-   ============================================================ */
-.icon-blue { color: #3b82f6 !important; }
-.icon-green { color: #10b981 !important; }
-.icon-purple { color: #8b5cf6 !important; }
-.icon-orange { color: #f59e0b !important; }
-.icon-cyan { color: #06b6d4 !important; }
-.icon-red { color: #ef4444 !important; }
-</style>       
 </body>
 </html>
