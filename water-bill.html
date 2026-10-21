@@ -18,10 +18,7 @@
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1100px; margin: 0 auto; } /* عرض را کمی بیشتر کردم تا جدول جا شود */
         
         .card {
             background: var(--card-bg);
@@ -36,139 +33,64 @@
 
         .input-group { margin-bottom: 15px; }
         .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #555;
-            display: flex;
-            align-items: center;
+            display: block; margin-bottom: 8px; font-size: 14px; font-weight: bold; color: #555;
+            display: flex; align-items: center;
         }
         .input-group label span {
-            background: var(--secondary);
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            margin-right: 5px;
+            background: var(--secondary); color: white; border-radius: 50%; width: 18px; height: 18px;
+            display: inline-flex; justify-content: center; align-items: center; font-size: 12px; margin-right: 5px;
         }
         .input-group input, .input-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 14px;
-            font-family: inherit;
-            background-color: #fafafa;
-            direction: ltr;
-            text-align: right;
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px;
+            font-size: 14px; font-family: inherit; background-color: #fafafa; direction: ltr; text-align: right;
         }
-        .input-group input:focus, .input-group select:focus {
-            outline: none;
-            border-color: var(--secondary);
-            background-color: #fff;
-        }
+        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--secondary); background-color: #fff; }
 
-        /* بخش واحدها */
         .unit-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 8px;
+            display: flex; gap: 10px; margin-bottom: 10px; align-items: center;
+            background: #f9f9f9; padding: 10px; border-radius: 8px;
         }
-        .unit-row input {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
+        .unit-row input { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
         .unit-row .unit-name { flex: 1; text-align: center; }
         .unit-row .unit-usage { flex: 1; direction: ltr; text-align: right;}
-        .btn-remove {
-            background: var(--danger);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: bold;
-        }
+        .btn-remove { background: var(--danger); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; }
 
         .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-            transition: opacity 0.2s;
+            width: 100%; padding: 15px; border: none; border-radius: 8px; font-size: 16px;
+            font-weight: bold; cursor: pointer; margin-bottom: 10px; transition: opacity 0.2s;
         }
         .btn:hover { opacity: 0.9; }
         .btn-add { background: var(--success); color: white; }
         .btn-calc { background: var(--primary); color: white; font-size: 18px; }
 
-        /* نتایج */
         #resultsSection { display: none; }
         .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; } /* فونت جدول را کمی کوچک کردم تا ستون‌ها جا شوند */
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
         th { background: var(--secondary); color: white; }
         tr:nth-child(even) { background: #f9f9f9; }
         .total-row { background: #e8f8f5 !important; font-weight: bold; }
         
-        /* استایل ستون مبلغ نهایی */
         .final-col { background-color: #fcf3cf; font-weight: bold; color: #b9770e; }
 
         .warning-box {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 13px;
-            margin-bottom: 15px;
-            text-align: justify;
+            background: #fff3cd; border: 1px solid #ffeeba; color: #856404;
+            padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 15px; text-align: justify;
         }
 
-        /* استایل بخش قوانین و کپی‌رایت پایین صفحه */
         .footer-disclaimer {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px dashed #ccc;
-            text-align: center;
-            font-size: 13px;
-            line-height: 1.8;
-            color: #555;
+            margin-top: 20px; padding-top: 15px; border-top: 2px dashed #ccc;
+            text-align: center; font-size: 13px; line-height: 1.8; color: #555;
         }
-        .footer-disclaimer .red-text {
-            color: #c0392b;
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: block;
-        }
-        .footer-disclaimer .email {
-            color: var(--secondary);
-            font-weight: bold;
-            direction: ltr;
-            display: inline-block;
-        }
+        .footer-disclaimer .red-text { color: #c0392b; font-weight: bold; margin-bottom: 10px; display: block; }
+        .footer-disclaimer .email { color: var(--secondary); font-weight: bold; direction: ltr; display: inline-block; }
 
         @media print {
             body { background: #fff; padding: 0; }
             .card { box-shadow: none; padding: 0; }
             .btn, .warning-box { display: none; }
-            th { background: #eee !important; color: #000 !important; border: 1px solid #000; }
-            td { border: 1px solid #000; }
+            th { background: #eee !important; color: #000 !important; border: 1px solid #000; font-size: 10px; }
+            td { border: 1px solid #000; font-size: 11px; }
             .final-col { background-color: #eee !important; }
             .footer-disclaimer { border-top: 1px solid #000; }
         }
@@ -183,7 +105,6 @@
             ⚠️ <strong>هشدار:</strong> این صورت‌حساب را ابتدا به رویت اداره آبفا برسانید. کارکرد کنتور اصلی، مبالغ فاضلاب و مالیات باید دقیقاً مطابق قبض صادره باشد.
         </div>
 
-        <!-- 1. اطلاعات اصلی -->
         <h3>۱. اطلاعات قبض اصلی (آبفا)</h3>
         <div class="input-group">
             <label>مبلغ کل پرداخت (ریال)</label>
@@ -210,7 +131,6 @@
             <input type="number" id="mainMeter" placeholder="مثلاً 204">
         </div>
         
-        <!-- حق مشاعات -->
         <div class="input-group" style="background: #e8f4f8; padding: 10px; border-radius: 8px; border-right: 4px solid var(--secondary);">
             <label style="margin-bottom: 5px;">حالت تقسیم حق مشاعات (نشتی و شستشو)</label>
             <select id="sharedMode" style="direction: rtl;">
@@ -229,23 +149,17 @@
             </select>
         </div>
 
-        <!-- 2. اطلاعات واحدها -->
         <h3 style="margin-top: 30px;">۲. اطلاعات مصرف واحدها (زیرکنتور)</h3>
-        <div id="unitsContainer">
-            <!-- ردیف‌های واحدها با جاوااسکریپت ساخته می‌شوند -->
-        </div>
+        <div id="unitsContainer"></div>
         <button class="btn btn-add" onclick="addUnit()">+ افزودن واحد جدید</button>
-
         <button class="btn btn-calc" style="margin-top: 20px;" onclick="calculateBill()">محاسبه و تقسیم عادلانه قبض</button>
         
-        <!-- بخش قوانین و کپی رایت -->
         <div class="footer-disclaimer">
             <span class="red-text">سازنده برنامه هیچگونه مسئولیت و دینی در قبال اعداد محاسبه شده ندارد. کلیه افراد ساختمان نسبت به حسابرسی قبض خود اقدام و مدیر ساختمان نیز از موارد مندرج در قبض شخصاً عهده‌دار است.</span>
             کلیه حقوق این برنامه برای <span class="email">tasnim3174@gmail.com</span> محفوظ است.
         </div>
     </div>
 
-    <!-- بخش نتایج -->
     <div class="card" id="resultsSection">
         <h2>📑 نتیجه محاسبات (به تفکیک هر واحد)</h2>
         <div class="table-responsive">
@@ -254,11 +168,13 @@
                     <tr>
                         <th>واحد</th>
                         <th>مصرف<br>(m³)</th>
-                        <th>مازاد الگو<br>(m³)</th>
-                        <th>هزینه آب اختصاصی<br>(ریال)</th>
-                        <th>سهم حق مشاعات<br>(ریال)</th>
+                        <th>مازاد<br>(m³)</th>
+                        <th>آب‌بها<br>(ریال)</th>
+                        <th>فاضلاب<br>(ریال)</th>
+                        <th>مالیات<br>(ریال)</th>
+                        <th>حق مشاعات<br>(ریال)</th>
                         <th>تکالیف قانونی<br>(ریال)</th>
-                        <th class="final-col">مبلغ کل قابل پرداخت<br>(ریال)</th>
+                        <th class="final-col">مبلغ کل<br>(ریال)</th>
                     </tr>
                 </thead>
                 <tbody id="resultBody"></tbody>
@@ -270,7 +186,6 @@
 </div>
 
 <script>
-    // --- 1. مدیریت واحدها ---
     let unitCount = 0;
 
     function addUnit(name = "", usage = "") {
@@ -279,7 +194,6 @@
         const row = document.createElement('div');
         row.className = 'unit-row';
         row.id = `unit-row-${unitCount}`;
-        
         row.innerHTML = `
             <input type="text" class="unit-name" placeholder="نام واحد" value="${name || 'واحد ' + unitCount}">
             <input type="number" class="unit-usage" placeholder="مصرف (m³)" value="${usage}">
@@ -293,26 +207,14 @@
         if (row) row.remove();
     }
 
-    // اضافه کردن ۹ واحد اولیه به صورت پیش‌فرض
     window.onload = function() {
-        for (let i = 1; i <= 9; i++) {
-            addUnit(`واحد ${i}`);
-        }
-        
-        // نمایش/مخفی کردن فیلد حق مشاعات دستی
+        for (let i = 1; i <= 9; i++) { addUnit(`واحد ${i}`); }
         document.getElementById('sharedMode').addEventListener('change', function(e) {
-            const directInput = document.getElementById('directSharedCost');
-            if (e.target.value === 'direct_rials') {
-                directInput.style.display = 'block';
-            } else {
-                directInput.style.display = 'none';
-            }
+            document.getElementById('directSharedCost').style.display = (e.target.value === 'direct_rials') ? 'block' : 'none';
         });
     }
 
-    // --- 2. محاسبه اصلی ---
     function calculateBill() {
-        // دریافت مبالغ
         const totalWater = parseFloat(document.getElementById('waterCost').value) || 0;
         const totalSewage = parseFloat(document.getElementById('sewageCost').value) || 0;
         const totalTax = parseFloat(document.getElementById('taxCost').value) || 0;
@@ -322,7 +224,6 @@
         const sharedMode = document.getElementById('sharedMode').value;
         const directShared = parseFloat(document.getElementById('directSharedCost').value) || 0;
 
-        // دریافت داده‌های واحدها
         const unitRows = document.querySelectorAll('.unit-row');
         let units = [];
         let sumUnits = 0;
@@ -334,16 +235,11 @@
             sumUnits += usage;
         });
 
-        if (units.length === 0) {
-            alert("لطفاً حداقل یک واحد وارد کنید.");
-            return;
-        }
+        if (units.length === 0) { alert("لطفاً حداقل یک واحد وارد کنید."); return; }
 
-        // محاسبات پایه
         const totalVariable = totalWater + totalSewage + totalTax;
         const basePrice = mainMeter > 0 ? (totalVariable / mainMeter) : 0;
         
-        // محاسبه حق مشاعات
         let sharedCost = 0;
         if (sharedMode === 'direct_rials') {
             sharedCost = directShared;
@@ -354,30 +250,38 @@
         const sharedPerUnit = sharedCost / units.length;
         const legalPerUnit = totalLegal / units.length;
 
-        // محاسبه واحدهای معادل (ضریب جریمه 2 برابر)
         let sumEquiv = 0;
         units.forEach(u => {
             u.equivalent = u.usage <= pattern ? u.usage : pattern + ((u.usage - pattern) * 2);
             sumEquiv += u.equivalent;
         });
 
+        // محاسبه قیمت هر واحد معادل (فقط برای هزینه آب و فاضلاب و مالیات)
         const equivPrice = sumEquiv > 0 ? ((totalVariable - sharedCost) / sumEquiv) : 0;
+        
+        // نسبت‌های تفکیک هزینه‌ها
+        const ratioWater = totalWater / totalVariable;
+        const ratioSewage = totalSewage / totalVariable;
+        const ratioTax = totalTax / totalVariable;
 
-        // ساخت جدول نتایج
         const tbody = document.getElementById('resultBody');
         tbody.innerHTML = '';
-        let totalFinalSum = 0;
-        let totalWaterCostSum = 0;
-        let totalSharedSum = 0;
-        let totalLegalSum = 0;
+        let totalFinalSum = 0, totalWaterSum = 0, totalSewageSum = 0, totalTaxSum = 0, totalSharedSum = 0, totalLegalSum = 0;
 
-        units.forEach((u, index) => {
+        units.forEach((u) => {
             const excess = u.usage > pattern ? u.usage - pattern : 0;
-            const waterCost = u.equivalent * equivPrice;
-            const finalCost = waterCost + sharedPerUnit + legalPerUnit;
+            const totalVarCost = u.equivalent * equivPrice;
             
-            // جمع کردن برای ردیف آخر
-            totalWaterCostSum += Math.round(waterCost);
+            // تفکیک هزینه‌های متغیر بر اساس نسبت‌های قبض اصلی
+            const waterCost = totalVarCost * ratioWater;
+            const sewageCost = totalVarCost * ratioSewage;
+            const taxCost = totalVarCost * ratioTax;
+
+            const finalCost = waterCost + sewageCost + taxCost + sharedPerUnit + legalPerUnit;
+            
+            totalWaterSum += Math.round(waterCost);
+            totalSewageSum += Math.round(sewageCost);
+            totalTaxSum += Math.round(taxCost);
             totalSharedSum += Math.round(sharedPerUnit);
             totalLegalSum += Math.round(legalPerUnit);
             totalFinalSum += Math.round(finalCost);
@@ -388,6 +292,8 @@
                 <td>${u.usage}</td>
                 <td>${excess}</td>
                 <td>${Math.round(waterCost).toLocaleString('fa-IR')}</td>
+                <td>${Math.round(sewageCost).toLocaleString('fa-IR')}</td>
+                <td>${Math.round(taxCost).toLocaleString('fa-IR')}</td>
                 <td>${Math.round(sharedPerUnit).toLocaleString('fa-IR')}</td>
                 <td>${Math.round(legalPerUnit).toLocaleString('fa-IR')}</td>
                 <td class="final-col">${Math.round(finalCost).toLocaleString('fa-IR')}</td>
@@ -395,24 +301,21 @@
             tbody.appendChild(tr);
         });
 
-        // ردیف جمع کل
-        const tfoot = document.getElementById('resultFooter');
-        tfoot.innerHTML = `
+        document.getElementById('resultFooter').innerHTML = `
             <tr class="total-row">
                 <td>جمع کل</td>
                 <td>${sumUnits}</td>
                 <td>-</td>
-                <td>${totalWaterCostSum.toLocaleString('fa-IR')}</td>
+                <td>${totalWaterSum.toLocaleString('fa-IR')}</td>
+                <td>${totalSewageSum.toLocaleString('fa-IR')}</td>
+                <td>${totalTaxSum.toLocaleString('fa-IR')}</td>
                 <td>${totalSharedSum.toLocaleString('fa-IR')}</td>
                 <td>${totalLegalSum.toLocaleString('fa-IR')}</td>
                 <td class="final-col">${totalFinalSum.toLocaleString('fa-IR')}</td>
             </tr>
         `;
 
-        // نمایش بخش نتایج
         document.getElementById('resultsSection').style.display = 'block';
-        
-        // اسکرول به بخش نتایج
         document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
     }
 </script>
