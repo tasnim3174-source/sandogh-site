@@ -1,32 +1,7 @@
 /* ============================================================
    صندوق اتحاد - API و ارتباط با سرور
-   نسخه: 2.1 (اضافه شدن مدیریت خطای CORS و پاسخ‌های HTML)
+   نسخه: 3.0 (با بررسی وضعیت دسترسی کاربر)
    ============================================================ */
-
-// ===== تابع امن برای دریافت اطلاعات (جلوگیری از کرش) =====
-async function safeFetch(url, options) {
-    try {
-        var res = await fetch(url, options || { cache: 'no-cache' });
-        
-        // چک کردن اینکه آیا سرور پاسخ HTML فرستاده یا JSON
-        var text = await res.text();
-        
-        if (text.trim().startsWith('<')) {
-            console.warn('⚠️ سرور به جای JSON، یک صفحه HTML برگرداند (خطای CORS یا قطعی):', url);
-            return { ok: false, error: 'CORS_ERROR' };
-        }
-        
-        try {
-            return JSON.parse(text);
-        } catch (parseError) {
-            console.warn('⚠️ خطا در تبدیل پاسخ به JSON:', parseError);
-            return { ok: false, error: 'JSON_PARSE_ERROR' };
-        }
-    } catch (networkError) {
-        console.warn('⚠️ خطای شبکه یا قطعی اینترنت:', networkError);
-        return { ok: false, error: 'NETWORK_ERROR' };
-    }
-}
 
 // ===== توابع ورود و خروج =====
 function logUserLogin(user, name) {
@@ -67,8 +42,10 @@ function handleLogoutFromNav() {
 function awardDailyLogin(user) {
     if (!user || !user.memberId) return;
     var today = new Date().toISOString().split('T')[0];
-    safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('ورود روزانه') + '&points=1&uniqueKey=daily_' + today + '_' + user.memberId)
-        .then(function(d) { console.log('📥 ورود روزانه:', d); });
+    fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('ورود روزانه') + '&points=1&uniqueKey=daily_' + today + '_' + user.memberId)
+        .then(function(r) { return r.json(); })
+        .then(function(d) { console.log('📥 ورود روزانه:', JSON.stringify(d)); })
+        .catch(function() {});
 }
 
 function awardBirthday(user, data) {
@@ -87,10 +64,12 @@ function awardBirthday(user, data) {
     var t = getPersianToday();
 
     if (bm + bd === t.month + t.day) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('🎂 تولدت مبارک!') + '&points=5&uniqueKey=birthday_' + t.year + '_' + user.memberId)
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('🎂 تولدت مبارک!') + '&points=5&uniqueKey=birthday_' + t.year + '_' + user.memberId)
+            .then(function(r) { return r.json(); })
             .then(function(d) {
                 if (d.ok) alert('🎂 تولدت مبارک! ۵ امتیاز هدیه گرفتی!');
-            });
+            })
+            .catch(function() {});
     }
 }
 
@@ -106,19 +85,27 @@ function awardMonthlyPoints(user, data) {
     var monthKey = t.year + '_' + t.month;
 
     if (member.monthlySalary > 0) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت مقرری ماهانه') + '&points=1&uniqueKey=salary_' + monthKey + '_' + user.memberId);
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت مقرری ماهانه') + '&points=1&uniqueKey=salary_' + monthKey + '_' + user.memberId)
+            .then(function(r) { return r.json(); })
+            .catch(function() {});
     }
 
     if (member.installmentAmount > 0 && member.paidInstallments > 0) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت اقساط ماهانه') + '&points=1&uniqueKey=installment_' + monthKey + '_' + user.memberId);
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('پرداخت اقساط ماهانه') + '&points=1&uniqueKey=installment_' + monthKey + '_' + user.memberId)
+            .then(function(r) { return r.json(); })
+            .catch(function() {});
     }
 
     if (member.balance > member.currentMonthBalance) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('افزایش موجودی') + '&points=1&uniqueKey=balance_' + monthKey + '_' + user.memberId);
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('افزایش موجودی') + '&points=1&uniqueKey=balance_' + monthKey + '_' + user.memberId)
+            .then(function(r) { return r.json(); })
+            .catch(function() {});
     }
 
     if (member.overdueInstallments === 0 && member.installmentAmount > 0) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('بدون قسط معوقه') + '&points=1&uniqueKey=nooverdue_' + monthKey + '_' + user.memberId);
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(user.memberId) + '&reason=' + encodeURIComponent('بدون قسط معوقه') + '&points=1&uniqueKey=nooverdue_' + monthKey + '_' + user.memberId)
+            .then(function(r) { return r.json(); })
+            .catch(function() {});
     }
 }
 
@@ -127,10 +114,14 @@ function awardQuizPoints(score, totalQuestions) {
     var memberId = currentUser.memberId;
     var today = new Date().toISOString().split('T')[0];
 
-    safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در بازی سوالات') + '&points=1&uniqueKey=quiz_play_' + today + '_' + memberId);
+    fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در بازی سوالات') + '&points=1&uniqueKey=quiz_play_' + today + '_' + memberId)
+        .then(function(r) { return r.json(); })
+        .catch(function() {});
 
     if (score > 0) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح سوالات (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=quiz_correct_' + today + '_' + memberId);
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح سوالات (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=quiz_correct_' + today + '_' + memberId)
+            .then(function(r) { return r.json(); })
+            .catch(function() {});
     }
 }
 
@@ -139,30 +130,33 @@ function awardCompetitionPoints(quizId, score) {
     var memberId = currentUser.memberId;
     var today = new Date().toISOString().split('T')[0];
 
-    safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در مسابقه') + '&points=1&uniqueKey=comp_participate_' + quizId + '_' + memberId);
+    fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('شرکت در مسابقه') + '&points=1&uniqueKey=comp_participate_' + quizId + '_' + memberId)
+        .then(function(r) { return r.json(); }).catch(function() {});
 
     if (score > 0) {
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح مسابقه (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=comp_correct_' + quizId + '_' + memberId);
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(memberId) + '&reason=' + encodeURIComponent('پاسخ صحیح مسابقه (' + score + ' سوال)') + '&points=' + score + '&uniqueKey=comp_correct_' + quizId + '_' + memberId)
+            .then(function(r) { return r.json(); }).catch(function() {});
     }
 }
 
 function mfAddPoints(n) {
     try {
         if (!currentUser || !currentUser.memberId) return;
-        safeFetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(currentUser.memberId) +
+        fetch(ADMIN_URL + '?action=addPoints&user=' + encodeURIComponent(currentUser.memberId) +
               '&name=' + encodeURIComponent(currentUser.name || currentUser.firstName || '') +
               '&reason=' + encodeURIComponent('تکمیل فعالیت مالی') + '&points=' + encodeURIComponent(n) +
               '&uniqueKey=' + encodeURIComponent('mf_' + Date.now() + '_' + currentUser.memberId))
-          .then(function(){ return loadClubFromAdmin(); });
+          .then(function(){ return loadClubFromAdmin(); }).catch(function(){});
     } catch (e) { }
 }
 
 function syncPointsToServer(userId, userName, points) {
     try {
-        safeFetch(ADMIN_URL + '?action=updatePoints&user=' + encodeURIComponent(userId) +
+        fetch(ADMIN_URL + '?action=updatePoints&user=' + encodeURIComponent(userId) +
               '&name=' + encodeURIComponent(userName) +
               '&points=' + encodeURIComponent(points) +
-              '&type=set');
+              '&type=set')
+            .catch(function(){});
     } catch(e) {}
 }
 
@@ -172,7 +166,7 @@ async function loadClubFromAdmin() {
     try {
         const d = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
             ? {history: window.__scriptServicesCache.points || []}
-            : await safeFetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(currentUser.memberId));
+            : await fetch(SHOP_URL + '?action=getPointsHistory&user=' + encodeURIComponent(currentUser.memberId)).then(function(r){return r.json();});
         if (d && Array.isArray(d.history)) {
             coinHistory = d.history.map(function(x){ return {
                 date: x.date || x.createdAt || '',
@@ -188,7 +182,7 @@ async function loadClubFromAdmin() {
     try {
         const d2 = (window.__scriptServicesCache && window.__scriptServicesCache.loaded)
             ? {products: window.__scriptServicesCache.products || []}
-            : await safeFetch(SHOP_URL + '?action=getShopProducts');
+            : await fetch(SHOP_URL + '?action=getShopProducts').then(function(r){return r.json();});
         if (d2 && Array.isArray(d2.products)) window.SHOP_PRODUCTS = d2.products;
     } catch(e) { console.warn('خطا در دریافت فروشگاه از پنل مدیریت', e); }
 }
@@ -201,8 +195,9 @@ async function buyProduct(shenaseh, name, price) {
             '&name=' + encodeURIComponent(currentUser.firstName || currentUser.username || '') +
             '&productId=' + encodeURIComponent(shenaseh) + '&product=' + encodeURIComponent(name) +
             '&price=' + encodeURIComponent(price);
-        const d = await safeFetch(url);
-        if (!d || d.ok === false) { alert('❌ ' + (d?.error || 'خرید انجام نشد')); return; }
+        const r = await fetch(url);
+        const d = await r.json();
+        if (d && d.ok === false) { alert('❌ ' + (d.error || 'خرید انجام نشد')); return; }
         userCoins -= price;
         coinHistory.push({date:new Date().toLocaleString('fa-IR'), amount:-Number(price), reason:'خرید از فروشگاه', detail:'محصول: '+name});
         userPurchases.push({orderCode:(d && (d.orderCode || d.id)) || ('ORD-' + Date.now().toString().slice(-6)), productId:shenaseh, productName:name, price:Number(price), date:new Date().toLocaleString('fa-IR'), delivered:false});
@@ -283,19 +278,19 @@ function updateNotifBadge() {
 function markAllRead() {
     notifications.forEach(n => n.read = true);
     saveNotifications();
-    if(typeof renderNotificationList === 'function') renderNotificationList();
+    if (typeof renderNotificationList === 'function') renderNotificationList();
 }
 
 function filterNotif(filter, btn) {
     document.querySelectorAll('.notification-filter-btn').forEach(b => b.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-    if(typeof renderNotificationList === 'function') renderNotificationList(filter);
+    if (btn) btn.classList.add('active');
+    if (typeof renderNotificationList === 'function') renderNotificationList(filter);
 }
 
 function deleteNotification(id) {
     notifications = notifications.filter(n => n.id !== id);
     saveNotifications();
-    if(typeof renderNotificationList === 'function') renderNotificationList();
+    if (typeof renderNotificationList === 'function') renderNotificationList();
 }
 
 function checkAutoNotifications(member) {
@@ -376,8 +371,9 @@ function getVisitInfo() {
 async function checkMaintenance() {
     try {
         if (window.location.search.includes('admin')) return true;
-        var s = await safeFetch(ADMIN_URL + '?action=status');
-        if (s && s.enabled === false) { showMaintenancePage(); return false; }
+        var r = await fetch(ADMIN_URL + '?action=status');
+        var s = await r.json();
+        if (s.enabled === false) { showMaintenancePage(); return false; }
         return true;
     } catch (e) { return true; }
 }
@@ -404,3 +400,89 @@ function downloadApp() {
     link.click();
     document.body.removeChild(link);
 }
+
+// ============================================================
+// 🆕 بررسی وضعیت دسترسی کاربر (مسدود یا بسته)
+// ============================================================
+async function checkUserAccessStatus() {
+    if (!currentUser || !currentUser.accountNumber) return;
+    
+    try {
+        var url = ADMIN_URL + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber) + '&t=' + Date.now();
+        var res = await fetch(url, { cache: 'no-cache' });
+        var data = await res.json();
+        
+        if (data && data.ok) {
+            var status = data.status || 'active';
+            var reason = data.reason || '';
+            
+            if (status === 'blocked' || status === 'closed') {
+                var statusText = status === 'blocked' ? 'مسدود' : 'بسته';
+                var statusColor = status === 'blocked' ? '#f59e0b' : '#ef4444';
+                
+                var alertHtml = `
+                    <div id="accessStatusAlert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,${statusColor},${statusColor}dd);color:#fff;padding:14px 24px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:999999;font-family:inherit;font-size:0.9rem;font-weight:800;text-align:center;max-width:90%;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        حساب شما توسط شورا ${statusText} شده است.
+                        ${reason ? '<br><span style="font-size:0.75rem;font-weight:400;opacity:0.9;">دلیل: ' + reason + '</span>' : ''}
+                        <br><span style="font-size:0.7rem;opacity:0.8;">دسترسی شما به بخش‌های مالی و خدماتی محدود شده است.</span>
+                    </div>
+                `;
+                document.body.insertAdjacentHTML('beforeend', alertHtml);
+                
+                var forbiddenSelectors = [
+                    '[onclick*="requests"]', '[onclick*="sms"]', '[onclick*="club"]',
+                    '[onclick*="reports"]', '[onclick*="support"]', '[onclick*="manageCoins"]',
+                    '[onclick*="access"]', '[onclick*="suggestions"]',
+                    '[data-page="requests"]', '[data-page="sms"]', '[data-page="club"]',
+                    '[data-page="reports"]', '[data-page="support"]', '[data-page="manageCoins"]',
+                    '[data-page="access"]', '[data-page="suggestions"]',
+                    'button[onclick*="renderPage(\'requests\')"]',
+                    'button[onclick*="renderPage(\'sms\')"]',
+                    'button[onclick*="renderPage(\'club\')"]',
+                    'button[onclick*="renderPage(\'reports\')"]',
+                    'button[onclick*="renderPage(\'support\')"]',
+                    'button[onclick*="renderPage(\'manageCoins\')"]',
+                    'button[onclick*="renderPage(\'access\')"]',
+                    'button[onclick*="renderPage(\'suggestions\')"]'
+                ];
+                
+                setTimeout(function() {
+                    forbiddenSelectors.forEach(function(selector) {
+                        document.querySelectorAll(selector).forEach(function(el) {
+                            el.style.opacity = '0.4';
+                            el.style.pointerEvents = 'none';
+                            el.style.cursor = 'not-allowed';
+                            if (el.tagName === 'BUTTON' || el.tagName === 'A') {
+                                var originalText = el.innerText || el.textContent || '';
+                                if (!originalText.includes('🔒')) {
+                                    el.innerHTML = '<i class="fas fa-lock"></i> ' + originalText;
+                                }
+                            }
+                            el.title = 'حساب شما ' + statusText + ' شده است.';
+                        });
+                    });
+                }, 1000);
+                
+                return { blocked: true, status: status, reason: reason };
+            }
+        }
+    } catch(e) {
+        console.log('⚠️ خطا در بررسی وضعیت دسترسی:', e);
+    }
+    
+    return { blocked: false };
+}
+
+// فراخوانی خودکار بعد از لاگین
+document.addEventListener('DOMContentLoaded', function() {
+    setInterval(function() {
+        if (typeof currentUser !== 'undefined' && currentUser && currentUser.accountNumber) {
+            if (!document.getElementById('accessStatusAlert')) {
+                if (typeof checkUserAccessStatus === 'function') {
+                    checkUserAccessStatus();
+                }
+            }
+        }
+    }, 5000);
+});
