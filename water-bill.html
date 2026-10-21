@@ -18,7 +18,7 @@
         * { box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; }
         body { background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; }
         
-        .container { max-width: 1100px; margin: 0 auto; } /* عرض را کمی بیشتر کردم تا جدول جا شود */
+        .container { max-width: 1200px; margin: 0 auto; }
         
         .card {
             background: var(--card-bg);
@@ -35,10 +35,6 @@
         .input-group label {
             display: block; margin-bottom: 8px; font-size: 14px; font-weight: bold; color: #555;
             display: flex; align-items: center;
-        }
-        .input-group label span {
-            background: var(--secondary); color: white; border-radius: 50%; width: 18px; height: 18px;
-            display: inline-flex; justify-content: center; align-items: center; font-size: 12px; margin-right: 5px;
         }
         .input-group input, .input-group select {
             width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px;
@@ -65,13 +61,14 @@
 
         #resultsSection { display: none; }
         .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; } /* فونت جدول را کمی کوچک کردم تا ستون‌ها جا شوند */
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
+        th, td { border: 1px solid #ddd; padding: 6px; text-align: center; }
         th { background: var(--secondary); color: white; }
         tr:nth-child(even) { background: #f9f9f9; }
         .total-row { background: #e8f8f5 !important; font-weight: bold; }
         
         .final-col { background-color: #fcf3cf; font-weight: bold; color: #b9770e; }
+        .penalty-col { background-color: #fadbd8; color: #922b21; }
 
         .warning-box {
             background: #fff3cd; border: 1px solid #ffeeba; color: #856404;
@@ -89,9 +86,10 @@
             body { background: #fff; padding: 0; }
             .card { box-shadow: none; padding: 0; }
             .btn, .warning-box { display: none; }
-            th { background: #eee !important; color: #000 !important; border: 1px solid #000; font-size: 10px; }
-            td { border: 1px solid #000; font-size: 11px; }
+            th { background: #eee !important; color: #000 !important; border: 1px solid #000; font-size: 9px; }
+            td { border: 1px solid #000; font-size: 10px; }
             .final-col { background-color: #eee !important; }
+            .penalty-col { background-color: #eee !important; }
             .footer-disclaimer { border-top: 1px solid #000; }
         }
     </style>
@@ -108,29 +106,36 @@
         <h3>۱. اطلاعات قبض اصلی (آبفا)</h3>
         <div class="input-group">
             <label>مبلغ کل پرداخت (ریال)</label>
-            <input type="number" id="totalBill" placeholder="مثلاً 38642000">
+            <input type="number" id="totalBill" placeholder="مثلاً 15000">
         </div>
         <div class="input-group">
             <label>هزینه آب‌بها (ریال)</label>
-            <input type="number" id="waterCost" placeholder="مثلاً 20022288">
+            <input type="number" id="waterCost" placeholder="مثلاً 8000">
         </div>
         <div class="input-group">
             <label>کارمزد دفع فاضلاب (ریال)</label>
-            <input type="number" id="sewageCost" placeholder="مثلاً 14386258">
+            <input type="number" id="sewageCost" placeholder="مثلاً 6000">
         </div>
         <div class="input-group">
             <label>مالیات و عوارض (ریال)</label>
-            <input type="number" id="taxCost" placeholder="مثلاً 2494375">
+            <input type="number" id="taxCost" placeholder="مثلاً 500">
         </div>
         <div class="input-group">
             <label>تکالیف قانونی (ریال)</label>
-            <input type="number" id="legalCost" placeholder="مثلاً 739200">
+            <input type="number" id="legalCost" placeholder="مثلاً 500">
         </div>
         <div class="input-group">
             <label>کارکرد کنتور اصلی (متر مکعب)</label>
-            <input type="number" id="mainMeter" placeholder="مثلاً 204">
+            <input type="number" id="mainMeter" placeholder="مثلاً 150">
         </div>
         
+        <!-- سایر هزینه‌ها -->
+        <div class="input-group" style="background: #fdf2e9; padding: 10px; border-radius: 8px; border-right: 4px solid #e67e22;">
+            <label style="margin-bottom: 5px; color: #d35400;">سایر هزینه‌ها / بدهی معوق (ریال)</label>
+            <input type="number" id="otherCosts" placeholder="مثلاً 0" value="0">
+            <small style="display:block; margin-top:5px; color:#666; font-size:11px;">اگر مبلغ کل پرداخت با جمع ریز قبض فرق داشت، اختلاف را اینجا وارد کنید.</small>
+        </div>
+
         <div class="input-group" style="background: #e8f4f8; padding: 10px; border-radius: 8px; border-right: 4px solid var(--secondary);">
             <label style="margin-bottom: 5px;">حالت تقسیم حق مشاعات (نشتی و شستشو)</label>
             <select id="sharedMode" style="direction: rtl;">
@@ -172,8 +177,10 @@
                         <th>آب‌بها<br>(ریال)</th>
                         <th>فاضلاب<br>(ریال)</th>
                         <th>مالیات<br>(ریال)</th>
+                        <th class="penalty-col">مازاد مصرف<br>(درون آب‌بها)</th>
                         <th>حق مشاعات<br>(ریال)</th>
                         <th>تکالیف قانونی<br>(ریال)</th>
+                        <th>سایر هزینه‌ها<br>(ریال)</th>
                         <th class="final-col">مبلغ کل<br>(ریال)</th>
                     </tr>
                 </thead>
@@ -215,105 +222,162 @@
     }
 
     function calculateBill() {
-        const totalWater = parseFloat(document.getElementById('waterCost').value) || 0;
-        const totalSewage = parseFloat(document.getElementById('sewageCost').value) || 0;
-        const totalTax = parseFloat(document.getElementById('taxCost').value) || 0;
-        const totalLegal = parseFloat(document.getElementById('legalCost').value) || 0;
-        const mainMeter = parseFloat(document.getElementById('mainMeter').value) || 0;
-        const pattern = parseFloat(document.getElementById('patternUsage').value);
-        const sharedMode = document.getElementById('sharedMode').value;
-        const directShared = parseFloat(document.getElementById('directSharedCost').value) || 0;
+        const totalBill = Math.max(0, parseFloat(document.getElementById('totalBill').value) || 0);
+        const totalWater = Math.max(0, parseFloat(document.getElementById('waterCost').value) || 0);
+        const totalSewage = Math.max(0, parseFloat(document.getElementById('sewageCost').value) || 0);
+        const totalTax = Math.max(0, parseFloat(document.getElementById('taxCost').value) || 0);
+        const totalLegal = Math.max(0, parseFloat(document.getElementById('legalCost').value) || 0);
+        const enteredOtherCosts = parseFloat(document.getElementById('otherCosts').value) || 0;
+        const mainMeter = Math.max(0, parseFloat(document.getElementById('mainMeter').value) || 0);
+        const pattern = Math.max(1, parseFloat(document.getElementById('patternUsage').value) || 13);
 
-        const unitRows = document.querySelectorAll('.unit-row');
-        let units = [];
-        let sumUnits = 0;
+        const unitRows = [...document.querySelectorAll('.unit-row')];
+        const units = unitRows.map((row, index) => ({
+            name: row.querySelector('.unit-name').value.trim() || `واحد ${index + 1}`,
+            usage: Math.max(0, parseFloat(row.querySelector('.unit-usage').value) || 0)
+        }));
 
-        unitRows.forEach(row => {
-            const name = row.querySelector('.unit-name').value;
-            const usage = parseFloat(row.querySelector('.unit-usage').value) || 0;
-            units.push({ name, usage });
-            sumUnits += usage;
-        });
-
-        if (units.length === 0) { alert("لطفاً حداقل یک واحد وارد کنید."); return; }
-
-        const totalVariable = totalWater + totalSewage + totalTax;
-        const basePrice = mainMeter > 0 ? (totalVariable / mainMeter) : 0;
-        
-        let sharedCost = 0;
-        if (sharedMode === 'direct_rials') {
-            sharedCost = directShared;
-        } else {
-            const sharedWater = Math.max(0, mainMeter - sumUnits);
-            sharedCost = sharedWater * basePrice;
+        if (!units.length) {
+            alert("لطفاً حداقل یک واحد وارد کنید.");
+            return;
         }
-        const sharedPerUnit = sharedCost / units.length;
-        const legalPerUnit = totalLegal / units.length;
 
-        let sumEquiv = 0;
+        const unitCount = units.length;
+        const sumUnits = units.reduce((sum, u) => sum + u.usage, 0);
+        const sharedWater = Math.max(0, mainMeter - sumUnits);
+        const baseWaterRate = mainMeter > 0 ? totalWater / mainMeter : 0;
+
+        // هزینه مصرف مشاع فقط با نرخ پایه محاسبه می‌شود و مساوی بین واحدها تقسیم می‌شود.
+        const sharedWaterTotal = Math.min(totalWater, sharedWater * baseWaterRate);
+        const sharedWaterPerUnit = sharedWaterTotal / unitCount;
+
+        // چون جدول تعرفه رسمی در دسترس نیست، ضرایب زیر صرفاً روش توزیع داخلی‌اند
+        // و ادعای بازسازی تعرفه رسمی آبفا را ندارند.
+        function progressiveWeight(usage) {
+            let remaining = Math.max(0, usage);
+            let weight = 0;
+            const tierWeights = [1, 1.5, 2, 3];
+            for (let tier = 0; tier < tierWeights.length && remaining > 0; tier++) {
+                const tierCapacity = tier === 0 ? pattern : pattern;
+                const portion = Math.min(remaining, tierCapacity);
+                weight += portion * tierWeights[tier];
+                remaining -= portion;
+            }
+            if (remaining > 0) weight += remaining * tierWeights[tierWeights.length - 1];
+            return weight;
+        }
+
         units.forEach(u => {
-            u.equivalent = u.usage <= pattern ? u.usage : pattern + ((u.usage - pattern) * 2);
-            sumEquiv += u.equivalent;
+            u.excess = Math.max(0, u.usage - pattern);
+            u.progressiveWeight = progressiveWeight(u.usage);
         });
 
-        // محاسبه قیمت هر واحد معادل (فقط برای هزینه آب و فاضلاب و مالیات)
-        const equivPrice = sumEquiv > 0 ? ((totalVariable - sharedCost) / sumEquiv) : 0;
-        
-        // نسبت‌های تفکیک هزینه‌ها
-        const ratioWater = totalWater / totalVariable;
-        const ratioSewage = totalSewage / totalVariable;
-        const ratioTax = totalTax / totalVariable;
+        // آب‌بهای باقیمانده پس از کسر مشاعات، با وزن پلکانی بین واحدها توزیع می‌شود.
+        // این نرمال‌سازی تضمین می‌کند جمع سهم آب‌بها از مبلغ واقعی آب‌بهای قبض بیشتر نشود.
+        const remainingWaterBill = Math.max(0, totalWater - sharedWaterTotal);
+        const totalProgressiveWeight = units.reduce((sum, u) => sum + u.progressiveWeight, 0);
+
+        units.forEach(u => {
+            // آب‌بهای اختصاصی واحد؛ سهم مشاعات جداگانه در ستون خودش ثبت می‌شود.
+            u.waterCost = totalProgressiveWeight > 0
+                ? remainingWaterBill * u.progressiveWeight / totalProgressiveWeight
+                : remainingWaterBill / unitCount;
+        });
+
+        // فاضلاب و مالیات با نسبت سهم آب‌بهای تخصیص‌یافته تقسیم می‌شوند؛
+        // اگر آب‌بها صفر باشد، تقسیم مساوی انجام می‌شود.
+        const allocatedWaterSum = units.reduce((sum, u) => sum + u.waterCost + u.sharedCost, 0);
+        units.forEach(u => {
+            const allocatedWater = u.waterCost + u.sharedCost;
+            const ratio = allocatedWaterSum > 0 ? allocatedWater / allocatedWaterSum : 1 / unitCount;
+            u.sewageCost = totalSewage * ratio;
+            u.taxCost = totalTax * ratio;
+            u.legalCost = totalLegal / unitCount;
+            u.sharedCost = sharedWaterPerUnit;
+        });
+
+        // مبلغ واردشده در «سایر هزینه‌ها» حفظ می‌شود؛ اختلاف تا مبلغ کل قبض نیز
+        // به‌طور مساوی در همین ستون تسویه می‌شود تا جمع نهایی دقیقاً با قبض برابر شود.
+        const knownSum = totalWater + totalSewage + totalTax + totalLegal + enteredOtherCosts;
+        const reconciliation = totalBill - knownSum;
+        const otherPerUnit = (enteredOtherCosts + reconciliation) / unitCount;
 
         const tbody = document.getElementById('resultBody');
+        const tfoot = document.getElementById('resultFooter');
         tbody.innerHTML = '';
-        let totalFinalSum = 0, totalWaterSum = 0, totalSewageSum = 0, totalTaxSum = 0, totalSharedSum = 0, totalLegalSum = 0;
 
-        units.forEach((u) => {
-            const excess = u.usage > pattern ? u.usage - pattern : 0;
-            const totalVarCost = u.equivalent * equivPrice;
-            
-            // تفکیک هزینه‌های متغیر بر اساس نسبت‌های قبض اصلی
-            const waterCost = totalVarCost * ratioWater;
-            const sewageCost = totalVarCost * ratioSewage;
-            const taxCost = totalVarCost * ratioTax;
+        const rows = units.map(u => {
+            u.waterRounded = Math.round(u.waterCost);
+            u.sewageRounded = Math.round(u.sewageCost);
+            u.taxRounded = Math.round(u.taxCost);
+            u.sharedRounded = Math.round(u.sharedCost);
+            u.legalRounded = Math.round(u.legalCost);
+            u.otherRounded = Math.round(otherPerUnit);
+            u.finalRounded = u.waterRounded + u.sewageRounded + u.taxRounded +
+                u.sharedRounded + u.legalRounded + u.otherRounded;
 
-            const finalCost = waterCost + sewageCost + taxCost + sharedPerUnit + legalPerUnit;
-            
-            totalWaterSum += Math.round(waterCost);
-            totalSewageSum += Math.round(sewageCost);
-            totalTaxSum += Math.round(taxCost);
-            totalSharedSum += Math.round(sharedPerUnit);
-            totalLegalSum += Math.round(legalPerUnit);
-            totalFinalSum += Math.round(finalCost);
+            return u;
+        });
 
+        // اصلاح اختلاف گرد کردن روی آخرین واحد، تا جمع ستون‌ها دقیقاً با مبلغ قبض برابر شود.
+        const targetBillRounded = Math.round(totalBill);
+        let currentSum = rows.reduce((sum, u) => sum + u.finalRounded, 0);
+        if (rows.length) {
+            rows[rows.length - 1].otherRounded += targetBillRounded - currentSum;
+            rows[rows.length - 1].finalRounded += targetBillRounded - currentSum;
+        }
+
+        rows.forEach(u => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${u.name}</td>
-                <td>${u.usage}</td>
-                <td>${excess}</td>
-                <td>${Math.round(waterCost).toLocaleString('fa-IR')}</td>
-                <td>${Math.round(sewageCost).toLocaleString('fa-IR')}</td>
-                <td>${Math.round(taxCost).toLocaleString('fa-IR')}</td>
-                <td>${Math.round(sharedPerUnit).toLocaleString('fa-IR')}</td>
-                <td>${Math.round(legalPerUnit).toLocaleString('fa-IR')}</td>
-                <td class="final-col">${Math.round(finalCost).toLocaleString('fa-IR')}</td>
-            `;
+            const values = [
+                u.name,
+                u.usage.toLocaleString('fa-IR'),
+                u.excess.toLocaleString('fa-IR'),
+                u.waterRounded.toLocaleString('fa-IR'),
+                u.sewageRounded.toLocaleString('fa-IR'),
+                u.taxRounded.toLocaleString('fa-IR'),
+                '—',
+                u.sharedRounded.toLocaleString('fa-IR'),
+                u.legalRounded.toLocaleString('fa-IR'),
+                u.otherRounded.toLocaleString('fa-IR'),
+                u.finalRounded.toLocaleString('fa-IR')
+            ];
+            tr.innerHTML = values.map((v, i) =>
+                `<td${i === 6 ? ' class="penalty-col"' : i === 10 ? ' class="final-col"' : ''}>${v}</td>`
+            ).join('');
             tbody.appendChild(tr);
         });
 
-        document.getElementById('resultFooter').innerHTML = `
+        const sumCol = key => rows.reduce((sum, u) => sum + u[key], 0);
+        const finalSum = rows.reduce((sum, u) => sum + u.finalRounded, 0);
+        tfoot.innerHTML = `
             <tr class="total-row">
                 <td>جمع کل</td>
-                <td>${sumUnits}</td>
-                <td>-</td>
-                <td>${totalWaterSum.toLocaleString('fa-IR')}</td>
-                <td>${totalSewageSum.toLocaleString('fa-IR')}</td>
-                <td>${totalTaxSum.toLocaleString('fa-IR')}</td>
-                <td>${totalSharedSum.toLocaleString('fa-IR')}</td>
-                <td>${totalLegalSum.toLocaleString('fa-IR')}</td>
-                <td class="final-col">${totalFinalSum.toLocaleString('fa-IR')}</td>
-            </tr>
-        `;
+                <td>${sumUnits.toLocaleString('fa-IR')}</td>
+                <td>${units.reduce((s, u) => s + u.excess, 0).toLocaleString('fa-IR')}</td>
+                <td>${sumCol('waterRounded').toLocaleString('fa-IR')}</td>
+                <td>${sumCol('sewageRounded').toLocaleString('fa-IR')}</td>
+                <td>${sumCol('taxRounded').toLocaleString('fa-IR')}</td>
+                <td class="penalty-col">داخل آب‌بها</td>
+                <td>${sumCol('sharedRounded').toLocaleString('fa-IR')}</td>
+                <td>${sumCol('legalRounded').toLocaleString('fa-IR')}</td>
+                <td>${sumCol('otherRounded').toLocaleString('fa-IR')}</td>
+                <td class="final-col">${finalSum.toLocaleString('fa-IR')}</td>
+            </tr>`;
+
+        let notice = document.getElementById('calculationNotice');
+        if (!notice) {
+            notice = document.createElement('div');
+            notice.id = 'calculationNotice';
+            notice.className = 'warning-box';
+            document.getElementById('resultsSection').insertBefore(notice, document.querySelector('#resultsSection .table-responsive'));
+        }
+        notice.textContent =
+            `مبلغ هدف قبض: ${targetBillRounded.toLocaleString('fa-IR')} ریال | ` +
+            `جمع نهایی واحدها: ${finalSum.toLocaleString('fa-IR')} ریال | ` +
+            `مصرف مشاع: ${sharedWater.toLocaleString('fa-IR')} مترمکعب؛ سهم مشاعات با نرخ پایه محاسبه و مساوی تقسیم شده است. ` +
+            `اختلاف بین ریز اقلام و مبلغ کل قبض در ستون «سایر هزینه‌ها» تسویه شده است. ` +
+            `ضرایب پلکانی این نسخه روش توزیع داخلی‌اند، نه تعرفه رسمی آبفا.`;
 
         document.getElementById('resultsSection').style.display = 'block';
         document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
