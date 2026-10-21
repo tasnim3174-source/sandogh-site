@@ -260,18 +260,28 @@
                 <label><i class="fas fa-user"></i> نام کاربری</label>
                 <input type="text" id="loginUsername" placeholder="نام کاربری خود را وارد کنید" autocomplete="username">
             </div>
-            <div class="input-group">
+                        <div class="input-group">
                 <label><i class="fas fa-lock"></i> رمز عبور</label>
                 <input type="password" id="loginPassword" placeholder="رمز عبور خود را وارد کنید" autocomplete="current-password">
                 <button type="button" onclick="togglePassword('loginPassword','loginPwdIcon')"><i id="loginPwdIcon" class="fas fa-eye"></i></button>
             </div>
             <div class="remember-me"><input type="checkbox" id="rememberMe"><label for="rememberMe">🔒 من را به خاطر بسپار</label></div>
             <button class="btn" id="loginBtn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> ورود</button>
+            
             <div style="text-align:center;margin-top:14px;font-size:0.85rem;">
                 <a onclick="openForgotPasswordModal()" style="color:var(--gradient-start);text-decoration:none;cursor:pointer;font-weight:bold;padding:8px 16px;border-radius:10px;">
                     <i class="fas fa-key"></i> رمز عبور خود را فراموش کرده‌اید؟
                 </a>
             </div>
+
+            <!-- 🆕 دکمه خدمات بدون ورود -->
+            <div style="text-align:center;margin-top:12px;">
+                <button onclick="window.open('services.html', '_blank', 'width=500,height=800,scrollbars=yes');" style="width:100%;padding:12px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:0.9rem;font-weight:800;cursor:pointer;box-shadow:0 4px 15px rgba(59,130,246,0.4);display:flex;align-items:center;justify-content:center;gap:8px;">
+                    <i class="fas fa-globe"></i>
+                    <span>خدمات بدون ورود</span>
+                </button>
+            </div>
+            <!-- 🆕 پایان دکمه خدمات -->
         </div>
     </div>
 
