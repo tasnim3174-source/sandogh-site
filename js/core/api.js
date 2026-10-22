@@ -402,73 +402,86 @@ function downloadApp() {
 }
 
 // ============================================================
-// 🆕 بررسی وضعیت دسترسی کاربر (مسدود یا بسته)
+// 🆕 بررسی وضعیت دسترسی کاربر (با استفاده از حافظه محلی)
 // ============================================================
 async function checkUserAccessStatus() {
     if (!currentUser || !currentUser.accountNumber) return;
     
+    // ۱. بررسی از حافظه محلی (لیست مسدودین)
+    var blockedList = [];
     try {
-        var url = ADMIN_URL + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber) + '&t=' + Date.now();
-        var res = await fetch(url, { cache: 'no-cache' });
-        var data = await res.json();
-        
-        if (data && data.ok) {
-            var status = data.status || 'active';
-            var reason = data.reason || '';
-            
-            if (status === 'blocked' || status === 'closed') {
-                var statusText = status === 'blocked' ? 'مسدود' : 'بسته';
-                var statusColor = status === 'blocked' ? '#f59e0b' : '#ef4444';
-                
-                var alertHtml = `
-                    <div id="accessStatusAlert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,${statusColor},${statusColor}dd);color:#fff;padding:14px 24px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:999999;font-family:inherit;font-size:0.9rem;font-weight:800;text-align:center;max-width:90%;">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        حساب شما توسط شورا ${statusText} شده است.
-                        ${reason ? '<br><span style="font-size:0.75rem;font-weight:400;opacity:0.9;">دلیل: ' + reason + '</span>' : ''}
-                        <br><span style="font-size:0.7rem;opacity:0.8;">دسترسی شما به بخش‌های مالی و خدماتی محدود شده است.</span>
-                    </div>
-                `;
-                document.body.insertAdjacentHTML('beforeend', alertHtml);
-                
-                var forbiddenSelectors = [
-                    '[onclick*="requests"]', '[onclick*="sms"]', '[onclick*="club"]',
-                    '[onclick*="reports"]', '[onclick*="support"]', '[onclick*="manageCoins"]',
-                    '[onclick*="access"]', '[onclick*="suggestions"]',
-                    '[data-page="requests"]', '[data-page="sms"]', '[data-page="club"]',
-                    '[data-page="reports"]', '[data-page="support"]', '[data-page="manageCoins"]',
-                    '[data-page="access"]', '[data-page="suggestions"]',
-                    'button[onclick*="renderPage(\'requests\')"]',
-                    'button[onclick*="renderPage(\'sms\')"]',
-                    'button[onclick*="renderPage(\'club\')"]',
-                    'button[onclick*="renderPage(\'reports\')"]',
-                    'button[onclick*="renderPage(\'support\')"]',
-                    'button[onclick*="renderPage(\'manageCoins\')"]',
-                    'button[onclick*="renderPage(\'access\')"]',
-                    'button[onclick*="renderPage(\'suggestions\')"]'
-                ];
-                
-                setTimeout(function() {
-                    forbiddenSelectors.forEach(function(selector) {
-                        document.querySelectorAll(selector).forEach(function(el) {
-                            el.style.opacity = '0.4';
-                            el.style.pointerEvents = 'none';
-                            el.style.cursor = 'not-allowed';
-                            if (el.tagName === 'BUTTON' || el.tagName === 'A') {
-                                var originalText = el.innerText || el.textContent || '';
-                                if (!originalText.includes('🔒')) {
-                                    el.innerHTML = '<i class="fas fa-lock"></i> ' + originalText;
-                                }
-                            }
-                            el.title = 'حساب شما ' + statusText + ' شده است.';
-                        });
-                    });
-                }, 1000);
-                
-                return { blocked: true, status: status, reason: reason };
+        blockedList = JSON.parse(localStorage.getItem('sandogh_blocked_users') || '[]');
+    } catch(e) {}
+    
+    var myAcc = String(currentUser.accountNumber);
+    var isBlocked = blockedList.indexOf(myAcc) > -1;
+    
+    // ۲. اگر در حافظه محلی نبود، از سرور بگیر
+    if (!isBlocked) {
+        try {
+            var url = ADMIN_URL + '?action=getUserAccessStatus&user=' + encodeURIComponent(myAcc) + '&t=' + Date.now();
+            var res = await fetch(url, { cache: 'no-cache' });
+            var data = await res.json();
+            if (data && data.ok && (data.status === 'blocked' || data.status === 'closed')) {
+                isBlocked = true;
+                // ذخیره در حافظه محلی برای دفعات بعد
+                if (blockedList.indexOf(myAcc) === -1) {
+                    blockedList.push(myAcc);
+                    localStorage.setItem('sandogh_blocked_users', JSON.stringify(blockedList));
+                }
             }
+        } catch(e) {}
+    }
+    
+    if (isBlocked) {
+        // نمایش هشدار
+        var alertHtml = `
+            <div id="accessStatusAlert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;padding:14px 24px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:999999;font-family:inherit;font-size:0.9rem;font-weight:800;text-align:center;max-width:90%;">
+                <i class="fas fa-exclamation-triangle"></i>
+                حساب شما توسط شورا مسدود شده است.
+                <br><span style="font-size:0.7rem;opacity:0.8;">دسترسی شما به بخش‌های مالی و خدماتی محدود شده است.</span>
+            </div>
+        `;
+        if (!document.getElementById('accessStatusAlert')) {
+            document.body.insertAdjacentHTML('beforeend', alertHtml);
         }
-    } catch(e) {
-        console.log('⚠️ خطا در بررسی وضعیت دسترسی:', e);
+        
+        // غیرفعال کردن کلیدهای غیرمجاز
+        var forbiddenSelectors = [
+            '[onclick*="requests"]', '[onclick*="sms"]', '[onclick*="club"]',
+            '[onclick*="reports"]', '[onclick*="support"]', '[onclick*="manageCoins"]',
+            '[onclick*="access"]', '[onclick*="suggestions"]',
+            '[data-page="requests"]', '[data-page="sms"]', '[data-page="club"]',
+            '[data-page="reports"]', '[data-page="support"]', '[data-page="manageCoins"]',
+            '[data-page="access"]', '[data-page="suggestions"]',
+            'button[onclick*="renderPage(\'requests\')"]',
+            'button[onclick*="renderPage(\'sms\')"]',
+            'button[onclick*="renderPage(\'club\')"]',
+            'button[onclick*="renderPage(\'reports\')"]',
+            'button[onclick*="renderPage(\'support\')"]',
+            'button[onclick*="renderPage(\'manageCoins\')"]',
+            'button[onclick*="renderPage(\'access\')"]',
+            'button[onclick*="renderPage(\'suggestions\')"]'
+        ];
+        
+        setTimeout(function() {
+            forbiddenSelectors.forEach(function(selector) {
+                document.querySelectorAll(selector).forEach(function(el) {
+                    el.style.opacity = '0.4';
+                    el.style.pointerEvents = 'none';
+                    el.style.cursor = 'not-allowed';
+                    if (el.tagName === 'BUTTON' || el.tagName === 'A') {
+                        var originalText = el.innerText || el.textContent || '';
+                        if (!originalText.includes('🔒')) {
+                            el.innerHTML = '<i class="fas fa-lock"></i> ' + originalText;
+                        }
+                    }
+                    el.title = 'حساب شما مسدود شده است.';
+                });
+            });
+        }, 1000);
+        
+        return { blocked: true };
     }
     
     return { blocked: false };
@@ -484,5 +497,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-    }, 5000);
+    }, 3000);
 });
