@@ -1,6 +1,6 @@
 /* ============================================================
    صندوق اتحاد - API و ارتباط با سرور
-   نسخه: 3.0 (با بررسی وضعیت دسترسی کاربر)
+   نسخه: 3.0 (لایه مسدودی تمام صفحه + تمام توابع اصلی)
    ============================================================ */
 
 // ===== توابع ورود و خروج =====
@@ -400,6 +400,7 @@ function downloadApp() {
     link.click();
     document.body.removeChild(link);
 }
+
 // ============================================================
 // 🆕 بررسی وضعیت دسترسی کاربر (لایه قرمز تمام صفحه)
 // ============================================================
@@ -421,41 +422,54 @@ async function checkUserAccessStatus() {
                 
                 var statusText = status === 'blocked' ? 'مسدود' : 'بسته';
                 
-                // ساخت لایه قرمز تمام صفحه
+                // لایه تمام صفحه با عرض و ارتفاع 100vw و 100vh
                 var overlayHtml = `
-                    <div id="accessOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95));backdrop-filter:blur(8px);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;color:#fff;font-family:inherit;touch-action:pan-y;cursor:grab;">
+                    <div id="accessOverlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(135deg, rgba(239,68,68,0.98), rgba(185,28,28,0.98));backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:99999999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;color:#fff;font-family:inherit;overflow:hidden;direction:rtl;">
                         
-                        <div style="background:rgba(0,0,0,0.3);padding:30px 20px;border-radius:24px;max-width:400px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
-                            <i class="fas fa-user-lock" style="font-size:4rem;margin-bottom:20px;opacity:0.9;"></i>
+                        <div style="background:rgba(0,0,0,0.4);padding:40px 30px;border-radius:30px;max-width:450px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.6);border:2px solid rgba(255,255,255,0.2);">
+                            <i class="fas fa-user-lock" style="font-size:5rem;margin-bottom:25px;opacity:0.9;color:#fca5a5;"></i>
                             
-                            <h2 style="font-size:1.4rem;font-weight:900;margin-bottom:15px;">دسترسی مسدود شد</h2>
+                            <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:15px;">دسترسی مسدود شد</h2>
                             
-                            <p style="font-size:0.95rem;line-height:1.8;margin-bottom:20px;opacity:0.9;">
-                                حساب شما توسط شورای صندوق <b>${statusText}</b> شده است.
+                            <p style="font-size:1rem;line-height:2;margin-bottom:25px;opacity:0.95;">
+                                حساب شما توسط شورای صندوق <b style="background:rgba(0,0,0,0.3);padding:2px 8px;border-radius:6px;">${statusText}</b> شده است.
                                 <br>
                                 در حال حاضر امکان استفاده از خدمات مالی و اپلیکیشن را ندارید.
                             </p>
                             
                             ${reason ? `
-                            <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:12px;margin-bottom:20px;font-size:0.85rem;">
-                                <b>دلیل:</b> ${reason}
+                            <div style="background:rgba(0,0,0,0.3);padding:15px;border-radius:15px;margin-bottom:25px;font-size:0.9rem;border:1px solid rgba(255,255,255,0.1);">
+                                <b>دلیل مسدودی:</b><br>
+                                <span style="opacity:0.9;">${reason}</span>
                             </div>
                             ` : ''}
                             
-                            <div style="font-size:0.8rem;opacity:0.7;margin-top:20px;">
-                                برای پیگیری با شورای صندوق تماس بگیرید.
+                            <div style="font-size:0.85rem;opacity:0.8;margin-top:20px;line-height:1.8;">
+                                برای پیگیری و رفع مسدودی با شورای صندوق تماس بگیرید.
                             </div>
                         </div>
                         
-                        <div style="position:absolute;bottom:30px;font-size:0.75rem;opacity:0.6;">
-                            <i class="fas fa-arrow-down"></i> برای خروج، انگشت خود را به سمت پایین بکشید
+                        <div style="position:absolute;bottom:40px;font-size:0.9rem;opacity:0.8;animation:bounceArrow 2s infinite;">
+                            <i class="fas fa-hand-pointer"></i> برای خروج، انگشت خود را به سمت پایین بکشید
                         </div>
+
+                        <style>
+                            @keyframes bounceArrow {
+                                0%, 100% { transform: translateY(0); }
+                                50% { transform: translateY(10px); }
+                            }
+                        </style>
                     </div>
                 `;
                 
                 document.body.insertAdjacentHTML('beforeend', overlayHtml);
                 
-                // 🆕 افزودن قابلیت کشیدن لایه با انگشت
+                // جلوگیری از اسکرول صفحه پشتی
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+                
+                // افزودن قابلیت کشیدن لایه با انگشت
                 var overlay = document.getElementById('accessOverlay');
                 var startY = 0;
                 var currentY = 0;
@@ -490,6 +504,12 @@ async function checkUserAccessStatus() {
                         overlay.style.transition = 'all 0.3s ease';
                         overlay.style.transform = 'translateY(100%)';
                         overlay.style.opacity = '0';
+                        
+                        // برگرداندن اسکرول صفحه
+                        document.body.style.overflow = '';
+                        document.body.style.position = '';
+                        document.body.style.width = '';
+                        
                         setTimeout(function() {
                             overlay.remove();
                         }, 300);
