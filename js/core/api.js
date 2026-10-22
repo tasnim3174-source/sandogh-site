@@ -400,102 +400,129 @@ function downloadApp() {
     link.click();
     document.body.removeChild(link);
 }
-
 // ============================================================
-// 🆕 بررسی وضعیت دسترسی کاربر (با استفاده از حافظه محلی)
+// 🆕 بررسی وضعیت دسترسی کاربر (لایه قرمز تمام صفحه)
 // ============================================================
 async function checkUserAccessStatus() {
     if (!currentUser || !currentUser.accountNumber) return;
     
-    // ۱. بررسی از حافظه محلی (لیست مسدودین)
-    var blockedList = [];
     try {
-        blockedList = JSON.parse(localStorage.getItem('sandogh_blocked_users') || '[]');
-    } catch(e) {}
-    
-    var myAcc = String(currentUser.accountNumber);
-    var isBlocked = blockedList.indexOf(myAcc) > -1;
-    
-    // ۲. اگر در حافظه محلی نبود، از سرور بگیر
-    if (!isBlocked) {
-        try {
-            var url = ADMIN_URL + '?action=getUserAccessStatus&user=' + encodeURIComponent(myAcc) + '&t=' + Date.now();
-            var res = await fetch(url, { cache: 'no-cache' });
-            var data = await res.json();
-            if (data && data.ok && (data.status === 'blocked' || data.status === 'closed')) {
-                isBlocked = true;
-                // ذخیره در حافظه محلی برای دفعات بعد
-                if (blockedList.indexOf(myAcc) === -1) {
-                    blockedList.push(myAcc);
-                    localStorage.setItem('sandogh_blocked_users', JSON.stringify(blockedList));
-                }
-            }
-        } catch(e) {}
-    }
-    
-    if (isBlocked) {
-        // نمایش هشدار
-        var alertHtml = `
-            <div id="accessStatusAlert" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;padding:14px 24px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:999999;font-family:inherit;font-size:0.9rem;font-weight:800;text-align:center;max-width:90%;">
-                <i class="fas fa-exclamation-triangle"></i>
-                حساب شما توسط شورا مسدود شده است.
-                <br><span style="font-size:0.7rem;opacity:0.8;">دسترسی شما به بخش‌های مالی و خدماتی محدود شده است.</span>
-            </div>
-        `;
-        if (!document.getElementById('accessStatusAlert')) {
-            document.body.insertAdjacentHTML('beforeend', alertHtml);
-        }
+        var url = ADMIN_URL + '?action=getUserAccessStatus&user=' + encodeURIComponent(currentUser.accountNumber) + '&t=' + Date.now();
+        var res = await fetch(url, { cache: 'no-cache' });
+        var data = await res.json();
         
-        // غیرفعال کردن کلیدهای غیرمجاز
-        var forbiddenSelectors = [
-            '[onclick*="requests"]', '[onclick*="sms"]', '[onclick*="club"]',
-            '[onclick*="reports"]', '[onclick*="support"]', '[onclick*="manageCoins"]',
-            '[onclick*="access"]', '[onclick*="suggestions"]',
-            '[data-page="requests"]', '[data-page="sms"]', '[data-page="club"]',
-            '[data-page="reports"]', '[data-page="support"]', '[data-page="manageCoins"]',
-            '[data-page="access"]', '[data-page="suggestions"]',
-            'button[onclick*="renderPage(\'requests\')"]',
-            'button[onclick*="renderPage(\'sms\')"]',
-            'button[onclick*="renderPage(\'club\')"]',
-            'button[onclick*="renderPage(\'reports\')"]',
-            'button[onclick*="renderPage(\'support\')"]',
-            'button[onclick*="renderPage(\'manageCoins\')"]',
-            'button[onclick*="renderPage(\'access\')"]',
-            'button[onclick*="renderPage(\'suggestions\')"]'
-        ];
-        
-        setTimeout(function() {
-            forbiddenSelectors.forEach(function(selector) {
-                document.querySelectorAll(selector).forEach(function(el) {
-                    el.style.opacity = '0.4';
-                    el.style.pointerEvents = 'none';
-                    el.style.cursor = 'not-allowed';
-                    if (el.tagName === 'BUTTON' || el.tagName === 'A') {
-                        var originalText = el.innerText || el.textContent || '';
-                        if (!originalText.includes('🔒')) {
-                            el.innerHTML = '<i class="fas fa-lock"></i> ' + originalText;
-                        }
+        if (data && data.ok) {
+            var status = data.status || 'active';
+            var reason = data.reason || '';
+            
+            if (status === 'blocked' || status === 'closed') {
+                // اگر قبلاً لایه ساخته شده، دوباره نساز
+                if (document.getElementById('accessOverlay')) return { blocked: true };
+                
+                var statusText = status === 'blocked' ? 'مسدود' : 'بسته';
+                
+                // ساخت لایه قرمز تمام صفحه
+                var overlayHtml = `
+                    <div id="accessOverlay" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, rgba(239,68,68,0.95), rgba(220,38,38,0.95));backdrop-filter:blur(8px);z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center;color:#fff;font-family:inherit;touch-action:pan-y;cursor:grab;">
+                        
+                        <div style="background:rgba(0,0,0,0.3);padding:30px 20px;border-radius:24px;max-width:400px;width:100%;box-shadow:0 20px 50px rgba(0,0,0,0.5);">
+                            <i class="fas fa-user-lock" style="font-size:4rem;margin-bottom:20px;opacity:0.9;"></i>
+                            
+                            <h2 style="font-size:1.4rem;font-weight:900;margin-bottom:15px;">دسترسی مسدود شد</h2>
+                            
+                            <p style="font-size:0.95rem;line-height:1.8;margin-bottom:20px;opacity:0.9;">
+                                حساب شما توسط شورای صندوق <b>${statusText}</b> شده است.
+                                <br>
+                                در حال حاضر امکان استفاده از خدمات مالی و اپلیکیشن را ندارید.
+                            </p>
+                            
+                            ${reason ? `
+                            <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:12px;margin-bottom:20px;font-size:0.85rem;">
+                                <b>دلیل:</b> ${reason}
+                            </div>
+                            ` : ''}
+                            
+                            <div style="font-size:0.8rem;opacity:0.7;margin-top:20px;">
+                                برای پیگیری با شورای صندوق تماس بگیرید.
+                            </div>
+                        </div>
+                        
+                        <div style="position:absolute;bottom:30px;font-size:0.75rem;opacity:0.6;">
+                            <i class="fas fa-arrow-down"></i> برای خروج، انگشت خود را به سمت پایین بکشید
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', overlayHtml);
+                
+                // 🆕 افزودن قابلیت کشیدن لایه با انگشت
+                var overlay = document.getElementById('accessOverlay');
+                var startY = 0;
+                var currentY = 0;
+                var isDragging = false;
+                
+                overlay.addEventListener('touchstart', function(e) {
+                    startY = e.touches[0].clientY;
+                    isDragging = true;
+                    overlay.style.transition = 'none';
+                    overlay.style.cursor = 'grabbing';
+                }, { passive: true });
+                
+                overlay.addEventListener('touchmove', function(e) {
+                    if (!isDragging) return;
+                    currentY = e.touches[0].clientY;
+                    var diff = currentY - startY;
+                    
+                    // فقط اجازه کشیدن به سمت پایین را بده
+                    if (diff > 0) {
+                        overlay.style.transform = 'translateY(' + diff + 'px)';
+                        overlay.style.opacity = 1 - (diff / 500); // محو شدن تدریجی
                     }
-                    el.title = 'حساب شما مسدود شده است.';
+                }, { passive: true });
+                
+                overlay.addEventListener('touchend', function(e) {
+                    isDragging = false;
+                    overlay.style.cursor = 'grab';
+                    var diff = currentY - startY;
+                    
+                    if (diff > 150) {
+                        // اگر بیشتر از ۱۵۰ پیکسل کشیده شد، لایه را پنهان کن
+                        overlay.style.transition = 'all 0.3s ease';
+                        overlay.style.transform = 'translateY(100%)';
+                        overlay.style.opacity = '0';
+                        setTimeout(function() {
+                            overlay.remove();
+                        }, 300);
+                    } else {
+                        // اگر کمتر بود، به حالت اول برگردان
+                        overlay.style.transition = 'all 0.3s ease';
+                        overlay.style.transform = 'translateY(0)';
+                        overlay.style.opacity = '1';
+                    }
                 });
-            });
-        }, 1000);
-        
-        return { blocked: true };
+                
+                return { blocked: true, status: status, reason: reason };
+            }
+        }
+    } catch(e) {
+        console.log('⚠️ خطا در بررسی وضعیت دسترسی:', e);
     }
     
     return { blocked: false };
 }
 
-// فراخوانی خودکار بعد از لاگین
+// فراخوانی خودکار بعد از ورود به منو
 document.addEventListener('DOMContentLoaded', function() {
+    // هر ۲ ثانیه چک می‌کند که کاربر لاگین کرده و در صفحه اصلی است
     setInterval(function() {
         if (typeof currentUser !== 'undefined' && currentUser && currentUser.accountNumber) {
-            if (!document.getElementById('accessStatusAlert')) {
-                if (typeof checkUserAccessStatus === 'function') {
-                    checkUserAccessStatus();
+            if (typeof currentPage !== 'undefined' && currentPage === 'menu') {
+                if (!document.getElementById('accessOverlay')) {
+                    if (typeof checkUserAccessStatus === 'function') {
+                        checkUserAccessStatus();
+                    }
                 }
             }
         }
-    }, 3000);
+    }, 2000);
 });
