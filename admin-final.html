@@ -1790,7 +1790,7 @@ async function approveSignedLoanAdmin(loanId) {
 }
 
 // ============================================================
-// 🆕 تب ۱۷: مدیریت دسترسی (مسدودی) - نسخه اصلاح‌شده
+// 🆕 تب ۱۷: مدیریت دسترسی (مسدودی)
 // ============================================================
 
 var allAccessStatuses = {};
@@ -1801,15 +1801,14 @@ async function loadAccessStatusList() {
     container.innerHTML = '<div class="loader">در حال بارگذاری...</div>';
     
     try {
-        // ۱. دریافت لیست همه اعضا از دستور getAllMembersWithPoints (شامل همه اعضا)
-        var usersRes = await fetch(URL + '?action=getAllMembersWithPoints&_=' + Date.now());
+        // ۱. دریافت لیست همه کاربران
+        var usersRes = await fetch(URL + '?action=getAllUsers&_=' + Date.now());
         var usersData = await usersRes.json();
-        
-        var usersList = [];
-        if (usersData && usersData.ok && usersData.members) {
-            usersList = usersData.members;
+        if (!usersData.ok || !usersData.users) {
+            container.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت لیست کاربران</div>';
+            return;
         }
-        
+
         // ۲. دریافت وضعیت مسدودی‌ها
         var statusRes = await fetch(URL + '?action=getAllAccessStatuses&key=' + encodeURIComponent(KEY) + '&_=' + Date.now());
         var statusData = await statusRes.json();
@@ -1821,14 +1820,7 @@ async function loadAccessStatusList() {
             });
         }
 
-        // ۳. ذخیره لیست برای رندر
-        window.__allUsersForAccess = usersList;
-        
-        if (usersList.length === 0) {
-            container.innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">👤 کاربری یافت نشد</div>';
-            return;
-        }
-        
+        window.__allUsersForAccess = usersData.users;
         renderAccessStatusTable();
         
     } catch(e) {
@@ -1843,7 +1835,7 @@ function renderAccessStatusTable() {
     
     var filtered = users.filter(function(u) {
         if (q) {
-            var searchStr = String((u.name || '') + ' ' + (u.user || '') + ' ' + (u.accountNumber || '')).toLowerCase();
+            var searchStr = String((u.firstName || '') + ' ' + (u.accountNumber || '')).toLowerCase();
             if (searchStr.indexOf(q) < 0) return false;
         }
         return true;
@@ -1857,24 +1849,23 @@ function renderAccessStatusTable() {
     var html = '<table><tr><th>#</th><th>نام</th><th>شماره حساب</th><th>وضعیت</th><th>دلیل</th><th>عملیات</th></tr>';
     
     filtered.forEach(function(u, idx) {
-        var accNum = String(u.user || u.accountNumber || '');
-        var st = allAccessStatuses[accNum] || { status: 'active', reason: '' };
+        var st = allAccessStatuses[String(u.accountNumber)] || { status: 'active', reason: '' };
         var statusColor = st.status === 'active' ? '#22c55e' : (st.status === 'blocked' ? '#f59e0b' : '#ef4444');
         var statusLabel = st.status === 'active' ? '✅ فعال' : (st.status === 'blocked' ? '⏸️ مسدود' : '🚫 بسته');
         
         html += '<tr>';
         html += '<td>' + (idx + 1) + '</td>';
-        html += '<td><b>' + (u.name || '—') + '</b></td>';
-        html += '<td style="font-family:monospace;text-align:center">' + accNum + '</td>';
+        html += '<td><b>' + (u.firstName || '—') + '</b></td>';
+        html += '<td style="font-family:monospace;text-align:center">' + (u.accountNumber || '—') + '</td>';
         html += '<td style="color:' + statusColor + ';font-weight:800;text-align:center">' + statusLabel + '</td>';
         html += '<td style="font-size:.75rem;color:rgba(255,255,255,.6)">' + (st.reason || '—') + '</td>';
         html += '<td><div style="display:flex;gap:4px;justify-content:center">';
         
         if (st.status === 'active') {
-            html += '<button onclick="changeUserAccess(\'' + accNum + '\', \'blocked\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer">⏸️ مسدود</button>';
-            html += '<button onclick="changeUserAccess(\'' + accNum + '\', \'closed\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(239,68,68,.15);color:#ef4444;cursor:pointer">🚫 بستن</button>';
+            html += '<button onclick="changeUserAccess(\'' + u.accountNumber + '\', \'blocked\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(245,158,11,.15);color:#f59e0b;cursor:pointer">⏸️ مسدود</button>';
+            html += '<button onclick="changeUserAccess(\'' + u.accountNumber + '\', \'closed\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(239,68,68,.15);color:#ef4444;cursor:pointer">🚫 بستن</button>';
         } else {
-            html += '<button onclick="changeUserAccess(\'' + accNum + '\', \'active\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer">✅ رفع مسدودی</button>';
+            html += '<button onclick="changeUserAccess(\'' + u.accountNumber + '\', \'active\')" style="padding:5px 10px;border-radius:6px;border:none;background:rgba(34,197,94,.15);color:#22c55e;cursor:pointer">✅ رفع مسدودی</button>';
         }
         
         html += '</div></td>';
@@ -1900,7 +1891,7 @@ async function changeUserAccess(accountNum, newStatus) {
         
         if (d.ok) {
             alert('✅ وضعیت کاربر با موفقیت تغییر کرد');
-            loadAccessStatusList();
+            loadAccessStatusList(); // رفرش لیست
         } else {
             alert('❌ خطا: ' + (d.error || 'نامشخص'));
         }
@@ -1908,23 +1899,12 @@ async function changeUserAccess(accountNum, newStatus) {
         alert('❌ خطای شبکه: ' + e.message);
     }
 }
-
-// 🆕 بارگذاری خودکار لیست وقتی تب ۱۷ باز می‌شود
 document.addEventListener('DOMContentLoaded', function() {
-    setInterval(function() {
-        var sec17 = document.getElementById('sec17');
-        if (sec17 && sec17.style.display === 'block') {
-            if (!window.__allUsersForAccess || window.__allUsersForAccess.length === 0) {
-                loadAccessStatusList();
-            }
-        }
-    }, 2000);
-    
     setTimeout(function() {
         if (window.UploadHistory) UploadHistory.inject();
     }, 1000);
 });
-
 console.log('✅ پنل مدیریت آماده است');
+</script>
 </body>
 </html>
