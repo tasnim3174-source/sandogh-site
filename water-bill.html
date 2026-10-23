@@ -59,6 +59,10 @@
         .final-row th { background-color: #ffeaa7 !important; color: #d35400 !important; font-size: 14px;}
         .final-row td { background-color: #fff3cd !important; color: #d35400 !important; font-size: 15px;}
 
+        /* ستون جمع ردیف */
+        .row-sum-col { background-color: #eafaf1 !important; color: #1e8449 !important; font-size: 13px; font-weight: bold; }
+        th.row-sum-col { background-color: #d5f5e3 !important; color: #1e8449 !important; text-align: center; }
+
         .tag { font-size: 11px; padding: 3px 8px; border-radius: 12px; color: #fff; display: inline-block;}
         .tag-low { background-color: #27ae60; }
         .tag-high { background-color: #c0392b; }
@@ -117,7 +121,7 @@
             <input type="number" id="taxBill" placeholder="مثلاً 200000">
         </div>
         <div class="form-group">
-            <label>مبلغ آبونمان (ریال) <span class="help-icon" data-tooltip="مبلغ ثابت ماهانه کنتور اصلی (طبق تصویر ۵۸,۵۰۰)">?</span></label>
+            <label>تکالیف قانونی (ریال) <span class="help-icon" data-tooltip="مبلغ ثابت ماهانه کنتور اصلی (طبق تصویر ۵۸,۵۰۰)">?</span></label>
             <input type="number" id="fixedFee" value="58500">
         </div>
     </div>
@@ -275,7 +279,7 @@
         globalSumFinal = sumFinal;
         globalTotalBill = totalBill;
 
-        // ساخت جدول عمودی
+        // ساخت جدول عمودی با ستون جمع هر ردیف
         let resultHTML = `<table class="vertical-table"><thead><tr><th>شرح</th>`;
         units.forEach((u, index) => {
             // دکمه پرینت برای هر واحد در هدر ستون
@@ -285,52 +289,62 @@
                 <button class="btn btn-print no-print" onclick="printSingleUnit(${index})">🖨️ پرینت این واحد</button>
             </th>`;
         });
+        // هدر ستون جمع ردیف
+        resultHTML += `<th class="row-sum-col">جمع ردیف (ریال) <span class="help-icon" data-tooltip="جمع مبالغ همان ردیف در تمام واحدها">?</span></th>`;
         resultHTML += `</tr></thead><tbody>`;
 
-        resultHTML += `<tr><th>مصرف (m³) <span class="help-icon" data-tooltip="مصرف زیرکنتور">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${u.usage.toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // تابع کمکی برای ساخت یک ردیف با ستون جمع
+        function buildRow(label, tooltip, values, isFinal) {
+            let row = `<tr${isFinal ? ' class="final-row"' : ''}><th>${label} <span class="help-icon" data-tooltip="${tooltip}">?</span></th>`;
+            let rowSum = 0;
+            values.forEach(v => {
+                rowSum += v;
+                row += `<td>${Math.round(v).toLocaleString()}</td>`;
+            });
+            row += `<td class="row-sum-col">${Math.round(rowSum).toLocaleString()}</td>`;
+            row += `</tr>`;
+            return row;
+        }
 
+        // ردیف مصرف
+        resultHTML += `<tr><th>مصرف (m³) <span class="help-icon" data-tooltip="مصرف زیرکنتور">?</span></th>`;
+        let usageSum = 0;
+        units.forEach(u => { usageSum += u.usage; resultHTML += `<td>${u.usage.toLocaleString()}</td>`; });
+        resultHTML += `<td class="row-sum-col">${usageSum.toLocaleString()}</td></tr>`;
+
+        // ردیف وضعیت
         resultHTML += `<tr><th>وضعیت <span class="help-icon" data-tooltip="در الگو یا مازاد الگو">?</span></th>`;
         units.forEach(u => {
             let statusTag = (u.usage <= S) ? '<span class="tag tag-low">در الگو</span>' : '<span class="tag tag-high">مازاد الگو</span>';
             resultHTML += `<td>${statusTag}</td>`;
         });
-        resultHTML += `</tr>`;
+        resultHTML += `<td class="row-sum-col">—</td></tr>`;
 
-        resultHTML += `<tr><th>آب‌بهای پایه <span class="help-icon" data-tooltip="هزینه پلکانی بدون جریمه">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.rawWater).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف آب‌بهای پایه
+        resultHTML += buildRow('آب‌بهای پایه', 'هزینه پلکانی بدون جریمه', units.map(u => u.rawWater), false);
 
-        resultHTML += `<tr><th>جریمه مازاد <span class="help-icon" data-tooltip="جریمه بندهای ۳-۱ و ۳-۲">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.penalties).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف جریمه مازاد
+        resultHTML += buildRow('جریمه مازاد', 'جریمه بندهای ۳-۱ و ۳-۲', units.map(u => u.penalties), false);
 
-        resultHTML += `<tr><th>آب‌بها با ضریب فصلی <span class="help-icon" data-tooltip="شامل ۲۰٪ افزایش در ماه‌های گرم">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.calcWater).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف آب‌بها با ضریب فصلی
+        resultHTML += buildRow('آب‌بها با ضریب فصلی', 'شامل ۲۰٪ افزایش در ماه‌های گرم', units.map(u => u.calcWater), false);
 
-        resultHTML += `<tr><th>آب‌بهای نهایی <span class="help-icon" data-tooltip="هماهنگ شده با قبض اصلی">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.finalWater).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف آب‌بهای نهایی
+        resultHTML += buildRow('آب‌بهای نهایی', 'هماهنگ شده با قبض اصلی', units.map(u => u.finalWater), false);
 
-        resultHTML += `<tr><th>فاضلاب <span class="help-icon" data-tooltip="سهم از کارمزد فاضلاب">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.waste).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف فاضلاب
+        resultHTML += buildRow('فاضلاب', 'سهم از کارمزد فاضلاب', units.map(u => u.waste), false);
 
-        resultHTML += `<tr><th>آبونمان <span class="help-icon" data-tooltip="تقسیم مساوی بین واحدها">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.fixed).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف تکالیف قانونی
+        resultHTML += buildRow('تکالیف قانونی', 'تقسیم مساوی بین واحدها', units.map(u => u.fixed), false);
 
-        resultHTML += `<tr><th>مالیات و عوارض <span class="help-icon" data-tooltip="سهم از مالیات قبض">?</span></th>`;
-        units.forEach(u => resultHTML += `<td>${Math.round(u.tax).toLocaleString()}</td>`);
-        resultHTML += `</tr>`;
+        // ردیف مالیات و عوارض
+        resultHTML += buildRow('مالیات و عوارض', 'سهم از مالیات قبض', units.map(u => u.tax), false);
 
-        resultHTML += `<tr class="final-row"><th>مبلغ نهایی قابل پرداخت <span class="help-icon" data-tooltip="کل مبلغی که این واحد باید بپردازد">?</span></th>`;
-        units.forEach(u => {
-            resultHTML += `<td>${Math.round(u.finalTotal).toLocaleString()}</td>`;
-        });
-        resultHTML += `</tr></tbody></table>`;
+        // ردیف نهایی
+        resultHTML += buildRow('مبلغ نهایی قابل پرداخت', 'کل مبلغی که این واحد باید بپردازد', units.map(u => u.finalTotal), true);
+
+        resultHTML += `</tbody></table>`;
 
         resultHTML += `
             <div class="summary-box">
@@ -384,7 +398,7 @@
                     <tr><th>آب‌بها با ضریب فصلی (ریال)</th><td>${Math.round(unit.calcWater).toLocaleString()}</td></tr>
                     <tr><th>آب‌بهای نهایی (ریال)</th><td>${Math.round(unit.finalWater).toLocaleString()}</td></tr>
                     <tr><th>فاضلاب (ریال)</th><td>${Math.round(unit.waste).toLocaleString()}</td></tr>
-                    <tr><th>آبونمان (ریال)</th><td>${Math.round(unit.fixed).toLocaleString()}</td></tr>
+                    <tr><th>تکالیف قانونی (ریال)</th><td>${Math.round(unit.fixed).toLocaleString()}</td></tr>
                     <tr><th>مالیات و عوارض (ریال)</th><td>${Math.round(unit.tax).toLocaleString()}</td></tr>
                     <tr class="total"><th>مبلغ نهایی قابل پرداخت (ریال)</th><td>${Math.round(unit.finalTotal).toLocaleString()}</td></tr>
                 </table>
