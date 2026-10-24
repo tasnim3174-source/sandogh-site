@@ -51,6 +51,14 @@
         .btn-pdf { background-color: #16a085; flex: 1; padding: 15px; font-size: 16px; font-weight: bold; }
         .btn-pdf:hover { background-color: #1abc9c; }
 
+        /* دکمه‌های پرینت تک‌واحد در پایین */
+        .single-print-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; padding: 15px; background: #fef9e7; border: 1px dashed #f39c12; border-radius: 8px; display: none; }
+        .single-print-buttons .title { width: 100%; font-weight: bold; color: #d35400; margin-bottom: 5px; font-size: 14px; }
+        .btn-single-print { background-color: #f39c12; font-size: 13px; padding: 8px 15px; }
+        .btn-single-print:hover { background-color: #e67e22; }
+        .btn-single-pdf { background-color: #1abc9c; font-size: 13px; padding: 8px 15px; }
+        .btn-single-pdf:hover { background-color: #16a085; }
+
         .result-box { margin-top: 25px; padding: 20px; background-color: #f8fcfb; border-right: 5px solid #1abc9c; border-radius: 5px; display: none; overflow-x: auto; }
         
         /* استایل جدول عمودی */
@@ -94,7 +102,7 @@
             .warning-box { border: 2px solid #000; background: #fff; color: #000; }
             .header-email { color: #000; }
             .footer-box { color: #000; border-top: 1px solid #000; }
-            .action-buttons { display: none !important; }
+            .action-buttons, .single-print-buttons { display: none !important; }
         }
     </style>
 </head>
@@ -161,11 +169,17 @@
     <div id="result" class="result-box">
         <h3>۳. نتیجه محاسبات (به تفکیک هر واحد)</h3>
         <div id="resultContent"></div>
-        
-        <!-- دکمه‌های پرینت و PDF -->
+
+        <!-- دکمه‌های پرینت تک‌واحد -->
+        <div class="single-print-buttons no-print" id="singlePrintButtons">
+            <div class="title">🖨️ پرینت / PDF جداگانه هر واحد:</div>
+            <!-- دکمه‌ها به صورت داینامیک اینجا اضافه می‌شوند -->
+        </div>
+
+        <!-- دکمه‌های پرینت و PDF کلی -->
         <div class="action-buttons no-print" id="actionButtons">
-            <button class="btn btn-print-all" onclick="printAll()">🖨️ پرینت صورتحساب‌ها</button>
-            <button class="btn btn-pdf" onclick="downloadPDF()">📄 دانلود فایل PDF</button>
+            <button class="btn btn-print-all" onclick="printAll()">🖨️ پرینت صورتحساب کل</button>
+            <button class="btn btn-pdf" onclick="downloadPDF()">📄 دانلود PDF کل</button>
         </div>
     </div>
 
@@ -282,7 +296,6 @@
             sumFinal += u.finalTotal;
         });
 
-        // ذخیره در متغیرهای سراسری برای استفاده در پرینت
         globalUnits = units;
         globalCorrectionFactor = correctionFactor;
         globalSumFinal = sumFinal;
@@ -294,7 +307,7 @@
             resultHTML += `<th>
                 ${u.name}
                 <br>
-                <button class="btn btn-print no-print" onclick="printSingleUnit(${index})">🖨️ پرینت این واحد</button>
+                <button class="btn btn-print no-print" onclick="printSingleUnit(${index})">🖨️ پرینت</button>
             </th>`;
         });
         resultHTML += `<th class="row-sum-col">جمع ردیف (ریال) <span class="help-icon" data-tooltip="جمع مبالغ همان ردیف در تمام واحدها">?</span></th>`;
@@ -346,6 +359,18 @@
         document.getElementById('resultContent').innerHTML = resultHTML;
         document.getElementById('result').style.display = 'block';
         document.getElementById('actionButtons').style.display = 'flex';
+
+        // ساخت دکمه‌های پرینت/PDF تک‌واحد در پایین
+        let singleBtnsHTML = `<div class="title">🖨️ پرینت / PDF جداگانه هر واحد:</div>`;
+        units.forEach((u, index) => {
+            singleBtnsHTML += `
+                <button class="btn btn-single-print" onclick="printSingleUnit(${index})">🖨️ ${u.name}</button>
+                <button class="btn btn-single-pdf" onclick="downloadSingleUnitPDF(${index})">📄 PDF ${u.name}</button>
+            `;
+        });
+        const singlePrintContainer = document.getElementById('singlePrintButtons');
+        singlePrintContainer.innerHTML = singleBtnsHTML;
+        singlePrintContainer.style.display = 'flex';
     }
 
     // تابع پرینت کل
@@ -353,30 +378,24 @@
         window.print();
     }
 
-    // تابع دانلود PDF (با استفاده از پرینت به PDF مرورگر)
+    // تابع دانلود PDF کل
     function downloadPDF() {
-        // ذخیره عنوان اصلی
         const originalTitle = document.title;
         document.title = 'قبض آب ساختمان - tasnim3174';
-
-        // فراخوانی پنجره پرینت مرورگر - کاربر می‌تواند "Save as PDF" را انتخاب کند
         window.print();
-
-        // بازگرداندن عنوان اصلی بعد از بستن پنجره پرینت
-        setTimeout(() => {
-            document.title = originalTitle;
-        }, 1000);
+        setTimeout(() => { document.title = originalTitle; }, 1000);
     }
 
-    // تابع پرینت تک واحد
-    function printSingleUnit(index) {
+    // تابع ساخت HTML صورتحساب تک‌واحد
+    function buildSingleUnitHTML(index) {
         const unit = globalUnits[index];
         const S = parseInt(document.getElementById('pattern').value);
         const status = (unit.usage <= S) ? 'در الگو' : 'مازاد الگو';
 
-        let printContent = `
+        return `
             <html dir="rtl">
             <head>
+                <meta charset="UTF-8">
                 <title>قبض آب - ${unit.name}</title>
                 <style>
                     body { font-family: Tahoma; padding: 20px; }
@@ -386,12 +405,16 @@
                     th { background-color: #f0f0f0; width: 200px; }
                     .total { font-weight: bold; background-color: #fff3cd; font-size: 18px; }
                     .footer { margin-top: 30px; font-size: 12px; text-align: center; border-top: 1px solid #000; padding-top: 10px; }
+                    .warning { background: #fff3cd; border: 2px solid #ffc107; padding: 12px; border-radius: 6px; margin-bottom: 20px; text-align: center; font-weight: bold; font-size: 13px; }
                 </style>
             </head>
             <body>
                 <div class="header">
                     <h2>صورتحساب آب‌بهای واحد مسکونی</h2>
                     <p><strong>نام واحد:</strong> ${unit.name}</p>
+                </div>
+                <div class="warning">
+                    ⚠️ این صورتحساب ابتدا باید به رویت اداره آبفا رسیده و پس از تایید به واحد ابلاغ شود.
                 </div>
                 <table>
                     <tr><th>مصرف (متر مکعب)</th><td>${unit.usage}</td></tr>
@@ -406,18 +429,34 @@
                     <tr class="total"><th>مبلغ نهایی قابل پرداخت (ریال)</th><td>${Math.round(unit.finalTotal).toLocaleString()}</td></tr>
                 </table>
                 <div class="footer">
-                    <p><strong>هشدار:</strong> این صورتحساب ابتدا باید به رویت اداره آبفا رسیده و پس از تایید به واحد ابلاغ شود.</p>
                     <p>سازنده برنامه هیچ مسئولیتی در قبال محاسبات ندارد. تمام حقوق برای tasnim3174@gmail.com محفوظ است.</p>
                 </div>
             </body>
             </html>
         `;
+    }
 
+    // پرینت تک واحد
+    function printSingleUnit(index) {
+        const html = buildSingleUnitHTML(index);
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
+        printWindow.document.write(html);
         printWindow.document.close();
         printWindow.focus();
+        setTimeout(() => { printWindow.print(); }, 500);
+    }
+
+    // دانلود PDF تک واحد
+    function downloadSingleUnitPDF(index) {
+        const unit = globalUnits[index];
+        const html = buildSingleUnitHTML(index);
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.focus();
+        // عنوان پنجره را برای نام‌گذاری PDF تنظیم می‌کنیم
         setTimeout(() => {
+            printWindow.document.title = `قبض آب - ${unit.name}`;
             printWindow.print();
         }, 500);
     }
