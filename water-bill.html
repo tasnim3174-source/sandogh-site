@@ -43,8 +43,13 @@
         /* دکمه‌های پرینت */
         .btn-print { background-color: #e67e22; font-size: 12px; padding: 5px 10px; margin-top: 5px; width: 100%; }
         .btn-print:hover { background-color: #d35400; }
-        .btn-print-all { background-color: #c0392b; margin-top: 20px; width: 100%; padding: 15px; font-size: 16px; font-weight: bold; display: none; }
+        
+        /* دکمه‌های اکشن پایین */
+        .action-buttons { display: flex; gap: 15px; margin-top: 20px; display: none; }
+        .btn-print-all { background-color: #c0392b; flex: 1; padding: 15px; font-size: 16px; font-weight: bold; }
         .btn-print-all:hover { background-color: #a93226; }
+        .btn-pdf { background-color: #16a085; flex: 1; padding: 15px; font-size: 16px; font-weight: bold; }
+        .btn-pdf:hover { background-color: #1abc9c; }
 
         .result-box { margin-top: 25px; padding: 20px; background-color: #f8fcfb; border-right: 5px solid #1abc9c; border-radius: 5px; display: none; overflow-x: auto; }
         
@@ -77,7 +82,7 @@
 
         /* استایل‌های چاپ (مخصوص PDF و پرینت) */
         @media print {
-            body { background: #fff; padding: 0; }
+            body { background: #fff; padding: 0; display: block; }
             .container { box-shadow: none; padding: 0; max-width: 100%; }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
@@ -89,6 +94,7 @@
             .warning-box { border: 2px solid #000; background: #fff; color: #000; }
             .header-email { color: #000; }
             .footer-box { color: #000; border-top: 1px solid #000; }
+            .action-buttons { display: none !important; }
         }
     </style>
 </head>
@@ -156,8 +162,11 @@
         <h3>۳. نتیجه محاسبات (به تفکیک هر واحد)</h3>
         <div id="resultContent"></div>
         
-        <!-- دکمه پرینت کلی در پایین جدول -->
-        <button class="btn btn-print-all no-print" id="btnPrintAll" onclick="printAll()">🖨️ پرینت / دانلود PDF کل صورتحساب‌ها</button>
+        <!-- دکمه‌های پرینت و PDF -->
+        <div class="action-buttons no-print" id="actionButtons">
+            <button class="btn btn-print-all" onclick="printAll()">🖨️ پرینت صورتحساب‌ها</button>
+            <button class="btn btn-pdf" onclick="downloadPDF()">📄 دانلود فایل PDF</button>
+        </div>
     </div>
 
     <!-- فوتر و حق کپی‌رایت -->
@@ -282,18 +291,15 @@
         // ساخت جدول عمودی با ستون جمع هر ردیف
         let resultHTML = `<table class="vertical-table"><thead><tr><th>شرح</th>`;
         units.forEach((u, index) => {
-            // دکمه پرینت برای هر واحد در هدر ستون
             resultHTML += `<th>
                 ${u.name}
                 <br>
                 <button class="btn btn-print no-print" onclick="printSingleUnit(${index})">🖨️ پرینت این واحد</button>
             </th>`;
         });
-        // هدر ستون جمع ردیف
         resultHTML += `<th class="row-sum-col">جمع ردیف (ریال) <span class="help-icon" data-tooltip="جمع مبالغ همان ردیف در تمام واحدها">?</span></th>`;
         resultHTML += `</tr></thead><tbody>`;
 
-        // تابع کمکی برای ساخت یک ردیف با ستون جمع
         function buildRow(label, tooltip, values, isFinal) {
             let row = `<tr${isFinal ? ' class="final-row"' : ''}><th>${label} <span class="help-icon" data-tooltip="${tooltip}">?</span></th>`;
             let rowSum = 0;
@@ -306,13 +312,11 @@
             return row;
         }
 
-        // ردیف مصرف
         resultHTML += `<tr><th>مصرف (m³) <span class="help-icon" data-tooltip="مصرف زیرکنتور">?</span></th>`;
         let usageSum = 0;
         units.forEach(u => { usageSum += u.usage; resultHTML += `<td>${u.usage.toLocaleString()}</td>`; });
         resultHTML += `<td class="row-sum-col">${usageSum.toLocaleString()}</td></tr>`;
 
-        // ردیف وضعیت
         resultHTML += `<tr><th>وضعیت <span class="help-icon" data-tooltip="در الگو یا مازاد الگو">?</span></th>`;
         units.forEach(u => {
             let statusTag = (u.usage <= S) ? '<span class="tag tag-low">در الگو</span>' : '<span class="tag tag-high">مازاد الگو</span>';
@@ -320,28 +324,13 @@
         });
         resultHTML += `<td class="row-sum-col">—</td></tr>`;
 
-        // ردیف آب‌بهای پایه
         resultHTML += buildRow('آب‌بهای پایه', 'هزینه پلکانی بدون جریمه', units.map(u => u.rawWater), false);
-
-        // ردیف جریمه مازاد
         resultHTML += buildRow('جریمه مازاد', 'جریمه بندهای ۳-۱ و ۳-۲', units.map(u => u.penalties), false);
-
-        // ردیف آب‌بها با ضریب فصلی
         resultHTML += buildRow('آب‌بها با ضریب فصلی', 'شامل ۲۰٪ افزایش در ماه‌های گرم', units.map(u => u.calcWater), false);
-
-        // ردیف آب‌بهای نهایی
         resultHTML += buildRow('آب‌بهای نهایی', 'هماهنگ شده با قبض اصلی', units.map(u => u.finalWater), false);
-
-        // ردیف فاضلاب
         resultHTML += buildRow('فاضلاب', 'سهم از کارمزد فاضلاب', units.map(u => u.waste), false);
-
-        // ردیف تکالیف قانونی
         resultHTML += buildRow('تکالیف قانونی', 'تقسیم مساوی بین واحدها', units.map(u => u.fixed), false);
-
-        // ردیف مالیات و عوارض
         resultHTML += buildRow('مالیات و عوارض', 'سهم از مالیات قبض', units.map(u => u.tax), false);
-
-        // ردیف نهایی
         resultHTML += buildRow('مبلغ نهایی قابل پرداخت', 'کل مبلغی که این واحد باید بپردازد', units.map(u => u.finalTotal), true);
 
         resultHTML += `</tbody></table>`;
@@ -356,12 +345,27 @@
 
         document.getElementById('resultContent').innerHTML = resultHTML;
         document.getElementById('result').style.display = 'block';
-        document.getElementById('btnPrintAll').style.display = 'block';
+        document.getElementById('actionButtons').style.display = 'flex';
     }
 
     // تابع پرینت کل
     function printAll() {
         window.print();
+    }
+
+    // تابع دانلود PDF (با استفاده از پرینت به PDF مرورگر)
+    function downloadPDF() {
+        // ذخیره عنوان اصلی
+        const originalTitle = document.title;
+        document.title = 'قبض آب ساختمان - tasnim3174';
+
+        // فراخوانی پنجره پرینت مرورگر - کاربر می‌تواند "Save as PDF" را انتخاب کند
+        window.print();
+
+        // بازگرداندن عنوان اصلی بعد از بستن پنجره پرینت
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
     }
 
     // تابع پرینت تک واحد
@@ -370,7 +374,6 @@
         const S = parseInt(document.getElementById('pattern').value);
         const status = (unit.usage <= S) ? 'در الگو' : 'مازاد الگو';
 
-        // ساخت یک صفحه موقت برای پرینت تک واحد
         let printContent = `
             <html dir="rtl">
             <head>
@@ -416,7 +419,6 @@
         printWindow.focus();
         setTimeout(() => {
             printWindow.print();
-            // printWindow.close(); // در صورت نیاز به بستن خودکار بعد از پرینت
         }, 500);
     }
 
