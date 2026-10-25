@@ -1,12 +1,12 @@
 /* ============================================================
    صندوق اتحاد - سیستم جامع انیمیشن‌ها و افکت‌ها
-   نسخه: 1.0
+   نسخه: 2.0 (شامل برگ‌های پاییزی)
    ============================================================ */
 
 window.Animations = (function() {
 
     // ============================================================
-    // ۱. افکت پرده‌برداری و خوش‌آمدگویی (Welcome Reveal)
+    // ۱. افکت پرده‌برداری و خوش‌آمدگویی
     // ============================================================
     function showWelcomeReveal(userName) {
         var existing = document.getElementById('welcomeScreen');
@@ -27,7 +27,6 @@ window.Animations = (function() {
 
         var screen = document.getElementById('welcomeScreen');
         
-        // باز شدن پرده
         setTimeout(function() {
             screen.style.opacity = '1';
             screen.style.clipPath = 'inset(0 0 0 0)';
@@ -43,18 +42,15 @@ window.Animations = (function() {
             }, 300);
         }, 100);
 
-        // بستن پرده بعد از ۲.۵ ثانیه
         setTimeout(function() {
             screen.style.clipPath = 'inset(0 50% 0 50%)';
             screen.style.opacity = '0';
-            setTimeout(function() {
-                screen.remove();
-            }, 800);
+            setTimeout(function() { screen.remove(); }, 800);
         }, 3000);
     }
 
     // ============================================================
-    // ۲. افکت ذرات جادویی (Magic Particles)
+    // ۲. افکت ذرات جادویی (با حرکت موس/لمس)
     // ============================================================
     var particleColors = ['#f59e0b', '#fbbf24', '#fcd34d', '#10b981', '#8b5cf6', '#ffffff'];
     var lastTime = 0;
@@ -96,7 +92,6 @@ window.Animations = (function() {
             }
         }, { passive: true });
         
-        // استایل ذرات
         var style = document.createElement('style');
         style.innerHTML = `
             .magic-particle {
@@ -115,7 +110,7 @@ window.Animations = (function() {
     }
 
     // ============================================================
-    // ۳. افکت شمارش اعداد (Animated Counters)
+    // ۳. افکت شمارش اعداد (Animated Counter)
     // ============================================================
     function animateValue(element, start, end, duration) {
         if (!element) return;
@@ -138,7 +133,7 @@ window.Animations = (function() {
     }
 
     // ============================================================
-    // ۴. افکت اسکرول نرم و ظاهر شدن (Staggered Reveal)
+    // ۴. افکت اسکرول نرم (Reveal)
     // ============================================================
     function enableStaggeredReveal(containerSelector) {
         var cards = document.querySelectorAll(containerSelector + ' .reveal-item');
@@ -155,7 +150,7 @@ window.Animations = (function() {
     }
 
     // ============================================================
-    // ۵. افکت فشرده شدن سه‌بعدی دکمه‌ها (CSS Only - No JS needed)
+    // ۵. افکت دکمه‌های سه‌بعدی (CSS Only)
     // ============================================================
     function enable3DButtons(selector) {
         var style = document.createElement('style');
@@ -173,17 +168,7 @@ window.Animations = (function() {
     }
 
     // ============================================================
-    // خروجی‌ها (API عمومی)
-    // ============================================================
-    return {
-        showWelcomeReveal: showWelcomeReveal,
-        enableMagicParticles: enableMagicParticles,
-        animateValue: animateValue,
-        enableStaggeredReveal: enableStaggeredReveal,
-        enable3DButtons: enable3DButtons
-    };
-    // ============================================================
-    // 🍂 افکت برگ‌های پاییزی
+    // ۶. افکت برگ‌های پاییزی 🍂
     // ============================================================
     var autumnCanvas, autumnCtx, autumnLeaves = [];
     var autumnColors = ['#ffb703', '#fb8500', '#e63946', '#d62828', '#f4a261', '#e76f51', '#ffd166'];
@@ -275,7 +260,7 @@ window.Animations = (function() {
         autumnAnim = requestAnimationFrame(animateAutumn);
     }
 
-    window.startAutumnLeaves = function() {
+    function startAutumnLeaves() {
         initAutumnCanvas();
         animateAutumn();
         
@@ -285,12 +270,26 @@ window.Animations = (function() {
                 autumnCanvas.height = window.innerHeight;
             }
         });
-    };
+    }
 
-    window.stopAutumnLeaves = function() {
+    function stopAutumnLeaves() {
         if (autumnAnim) cancelAnimationFrame(autumnAnim);
         if (autumnCanvas) autumnCanvas.remove();
         autumnCanvas = null;
         autumnCtx = null;
+    }
+
+    // ============================================================
+    // خروجی‌ها
+    // ============================================================
+    return {
+        showWelcomeReveal: showWelcomeReveal,
+        enableMagicParticles: enableMagicParticles,
+        animateValue: animateValue,
+        enableStaggeredReveal: enableStaggeredReveal,
+        enable3DButtons: enable3DButtons,
+        startAutumnLeaves: startAutumnLeaves,
+        stopAutumnLeaves: stopAutumnLeaves
     };
+
 })();
