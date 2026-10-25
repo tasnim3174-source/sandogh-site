@@ -405,7 +405,7 @@ function renderDashboardContent() {
         </div>
     `;
 
-    // 🆕 رندر جدول بعد از رندر داشبورد
+      // 🆕 رندر جدول بعد از رندر داشبورد
     setTimeout(function() {
         document.querySelectorAll('.tx-excel-container').forEach(function(el) {
             if (el.innerHTML.trim() === '') {
@@ -444,11 +444,10 @@ function renderDashboardContent() {
             lastTxHtml +
             approvedHtml +
             allTxnsHtml +
-            miniSmsHtml +  // 🆕 آخرین پیامک بعد از صورتحساب کامل
+            miniSmsHtml +
         '</div>' +
     '</div>';
 }
-
 // ============================================================
 // 🆕 توابع پرینت و PDF برای صورتحساب کامل
 // ============================================================
