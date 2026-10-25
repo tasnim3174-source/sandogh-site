@@ -1,7 +1,15 @@
 /* ============================================================
    صندوق اتحاد - فرم‌های آنلاین
-   نسخه: 2.0 (شامل فرم امضای وام)
+   نسخه: 2.1 (شامل فرم امضای وام و escapeHtml)
    ============================================================ */
+
+// 🆕 تابع escapeHtml
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function(c) {
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+    }).replace(/\n/g, '<br>');
+}
 
 function renderFormsContent() {
     return `
