@@ -1,10 +1,9 @@
 /* ============================================================
    صندوق اتحاد - صورتحساب و داشبورد
-   نسخه: 4.0 (اطلاعات بر اساس بزرگترین ID + صورتحساب کامل)
+   نسخه: 6.1 (نهایی - جدول + پیامک + پرینت و PDF)
    ============================================================ */
 
 function renderDashboardContent() {
-    // ۱. پیدا کردن کاربر
     const member = members.find(m => 
         String(m.id) === String(currentUser.memberId) || 
         String(m.accountNumber) === String(currentUser.accountNumber) ||
@@ -12,11 +11,9 @@ function renderDashboardContent() {
     );
     if (!member) return '<div style="text-align:center;padding:30px;">خطا: کاربر پیدا نشد</div>';
 
-    // ۲. گرفتن تراکنش‌های کاربر و مرتب‌سازی بر اساس بزرگترین ID
     const memberTxns = (transactionsByMember.get(String(member.id)) || [])
         .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
 
-    // ۳. پیدا کردن جدیدترین تراکنش (بزرگترین ID)
     let latestTx = null;
     let maxId = 0;
     memberTxns.forEach(function(tx) {
@@ -27,7 +24,6 @@ function renderDashboardContent() {
         }
     });
 
-    // ۴. استخراج اطلاعات از جدیدترین تراکنش
     const loanBalance = latestTx ? (parseFloat(latestTx['مانده وام']) || 0) : (member.loanBalance || 0);
     const paidInstallments = latestTx ? (parseFloat(latestTx['تعداد قسط پرداخت شده']) || 0) : (member.paidInstallments || 0);
     const remainingInstallments = latestTx ? (parseFloat(latestTx['تعداد قسط مانده']) || 0) : (member.remainingInstallments || 0);
@@ -35,7 +31,6 @@ function renderDashboardContent() {
     const balance = latestTx ? (parseFloat(latestTx['موجودی']) || 0) : (member.balance || 0);
     const overdueInstallments = latestTx ? Math.abs(parseFloat(latestTx['تعداد قسط معوقه']) || 0) : Math.abs(member.overdueInstallments || 0);
     
-    // ۵. محاسبه پیشرفت اقساط
     const totalInstallments = member.totalInstallments || 25;
     const progressPercent = Math.min(100, Math.round((paidInstallments / totalInstallments) * 100));
 
@@ -58,9 +53,6 @@ function renderDashboardContent() {
 
     const waitingLoanCount = window.WAITING_LOAN_COUNT || 0;
 
-    // ============================================================
-    // کارت نصب برنامه
-    // ============================================================
     const installBannerHtml = `
         <div class="dashboard-section" style="background:linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.08)); border:2px solid rgba(16,185,129,0.4); border-radius:16px; padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
             <span style="font-size:2rem; flex-shrink:0;">📲</span>
@@ -72,9 +64,6 @@ function renderDashboardContent() {
         </div>
     `;
 
-    // ============================================================
-    // کارت تغییر کاربر
-    // ============================================================
     let changeUserHtml = '';
     try {
         const cm = members.find(m => 
@@ -98,9 +87,6 @@ function renderDashboardContent() {
         }
     } catch(e) {}
 
-    // ============================================================
-    // خلاصه حساب
-    // ============================================================
     const summaryBox = `
     <div class="dashboard-section summary-section">
         <h3 class="summary-title">
@@ -144,9 +130,6 @@ function renderDashboardContent() {
     </div>
     `;
 
-    // ============================================================
-    // اطلاعات کامل وام
-    // ============================================================
     const loanInfoHtml = `
         <div class="dashboard-section" style="border-right-color:var(--danger-color);">
             <h3><i class="fas fa-hand-holding-usd" style="color:var(--danger-color);"></i> اطلاعات کامل وام و بدهی</h3>
@@ -172,9 +155,6 @@ function renderDashboardContent() {
         </div>
     `;
 
-    // ============================================================
-    // مصوبات شورا
-    // ============================================================
     const approvedHtml = `
         <div class="approved-section">
             <h3><i class="fas fa-file-contract" style="color:var(--gold-color);"></i> مصوبات شورای صندوق</h3>
@@ -187,9 +167,6 @@ function renderDashboardContent() {
         </div>
     `;
 
-    // ============================================================
-    // برنامه اقساط
-    // ============================================================
     const installmentDates = generateInstallmentDates(member.loanReceiveDate, totalInstallments);
     let installmentPlanHtml = '';
     if (installmentDates.length > 0) {
@@ -255,9 +232,6 @@ function renderDashboardContent() {
         `;
     }
 
-    // ============================================================
-    // ۵ تراکنش آخر
-    // ============================================================
     const topFiveTxns = memberTxns.slice(0, 5);
     let lastTxHtml = '';
     if (topFiveTxns.length > 0) {
@@ -283,9 +257,65 @@ function renderDashboardContent() {
         `;
     }
 
-    // ============================================================
-    // وضعیت
-    // ============================================================
+    // 🆕 آخرین پیامک ارسال شده
+    let miniSmsHtml = '';
+    if (latestTx) {
+        const amount = latestTx['مبلغ تراکنش'] || 0;
+        const loanBalance2 = latestTx['مانده وام'] || 0;
+        const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
+        const remainingInst = latestTx['تعداد قسط مانده'] || 0;
+        const transactionDate = latestTx['تاریخ تراکنش'] || '---';
+        const txName = latestTx['نام تراکنش کننده'] || '---';
+        const monthlySalary = latestTx['مقرری ماهانه'] || 0;
+        const savings = Math.round(latestTx['وضعیت پس انداز'] || 0);
+        const total = latestTx['جمع واریزی'] || 0;
+        const id = latestTx['ID'] || '---';
+        const desc = latestTx['توضیحات'] || '---';
+
+        miniSmsHtml = `
+            <div class="dashboard-section" style="border-right-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.04),rgba(13,148,136,0.04));margin-top:15px;">
+                <h3 style="font-size:1.05rem;color:var(--text-primary);margin-bottom:8px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">ID تراکنش: ${id}</div>
+                <div class="mini-sms-box-right" style="font-size:0.9rem;padding:12px 14px;line-height:1.9;">
+                    <div><span class="sms-label">نام:</span> <span class="sms-value">${member.firstName}</span></div>
+                    <div><span class="sms-label">شماره حساب:</span> <span class="sms-value">${member.accountNumber}</span></div>
+                    <div><span class="sms-label">تاریخ تراکنش:</span> <span class="sms-value">${transactionDate}</span></div>
+                    <div><span class="sms-label">نام تراکنش کننده:</span> <span class="sms-value">${txName}</span></div>
+                    <div><span class="sms-label">مبلغ تراکنش:</span> <span class="sms-value">${fmtNum(amount)} ریال</span></div>
+                    <div><span class="sms-label">مقرری ماهانه:</span> <span class="sms-value">${fmtNum(monthlySalary)}</span></div>
+                    <div><span class="sms-label">وضعیت پس‌انداز:</span> <span class="sms-value">${fmtNum(savings)}</span></div>
+                    <div><span class="sms-label">جمع واریزی:</span> <span class="sms-value">${fmtNum(total)}</span></div>
+                    <div><span class="sms-label">موجودی:</span> <span class="sms-value">${fmtNum(balance)}</span></div>
+                    <div><span class="sms-label">قسط پرداخت شده:</span> <span class="sms-value">${paidInst}</span></div>
+                    <div><span class="sms-label">قسط مانده:</span> <span class="sms-value">${remainingInst}</span></div>
+                    <div><span class="sms-label">مانده وام:</span> <span class="sms-value">${fmtNum(loanBalance2)}</span></div>
+                    <div><span class="sms-label">توضیحات:</span> <span class="sms-value">${esc(desc)}</span></div>
+                </div>
+            </div>
+        `;
+    }
+
+    // 🆕 صورتحساب کامل
+    const allTxnsHtml = `
+        <div class="dashboard-section" style="margin-top:15px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+                <h3 style="font-size:1.05rem;margin:0;">
+                    <i class="fas fa-file-invoice" style="color:#ec4899;"></i> 
+                    صورتحساب کامل (${memberTxns.length} تراکنش)
+                </h3>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button onclick="printFullStatement()" class="btn-small" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.1);color:#f59e0b;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
+                        <i class="fas fa-print"></i> پرینت
+                    </button>
+                    <button onclick="downloadFullStatementPDF()" class="btn-small" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.1);color:#ef4444;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+            <div class="tx-excel-container"></div>
+        </div>
+    `;
+
     const statusHtml =
         '<div class="dashboard-section" style="border-right-color:' + paymentColor + ';padding:14px 16px;">' +
             '<div style="display:flex;align-items:center;gap:14px;flex-wrap:nowrap;">' +
@@ -324,88 +354,15 @@ function renderDashboardContent() {
             panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
         });
         
-          // 🆕 بعد از تغییر تب، جدول را دوباره رندر کن
         setTimeout(function() {
             document.querySelectorAll('.tx-excel-container').forEach(function(el) {
                 if (el.offsetParent !== null && el.innerHTML.trim() === '') {
-                    var member = members.find(m => 
-                        String(m.id) === String(currentUser.memberId) || 
-                        String(m.accountNumber) === String(currentUser.accountNumber)
-                    );
-                    if (member) {
-                        var txns = (transactionsByMember.get(String(member.id)) || [])
-                            .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
-                        if (txns.length > 0) renderExcelTransactions(txns, el);
-                    }
+                    if (memberTxns.length > 0) renderExcelTransactions(memberTxns, el);
                 }
             });
         }, 100);
     };
 
-    // ============================================================
-    // 🆕 آخرین پیامک ارسال شده برای شما
-    // ============================================================
-    let miniSmsHtml = '';
-    if (latestTx) {
-        const amount = latestTx['مبلغ تراکنش'] || 0;
-        const loanBalance2 = latestTx['مانده وام'] || 0;
-        const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
-        const remainingInst = latestTx['تعداد قسط مانده'] || 0;
-        const transactionDate = latestTx['تاریخ تراکنش'] || '---';
-        const txName = latestTx['نام تراکنش کننده'] || '---';
-        const monthlySalary = latestTx['مقرری ماهانه'] || 0;
-        const savings = Math.round(latestTx['وضعیت پس انداز'] || 0);
-        const total = latestTx['جمع واریزی'] || 0;
-        const id = latestTx['ID'] || '---';
-        const desc = latestTx['توضیحات'] || '---';
-
-        miniSmsHtml = `
-            <div class="dashboard-section" style="border-right-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.04),rgba(13,148,136,0.04));margin-top:15px;">
-                <h3 style="font-size:1.05rem;color:var(--text-primary);margin-bottom:8px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
-                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">ID تراکنش: ${id}</div>
-                <div class="mini-sms-box-right" style="font-size:0.9rem;padding:12px 14px;line-height:1.9;">
-                    <div><span class="sms-label">نام:</span> <span class="sms-value">${member.firstName}</span></div>
-                    <div><span class="sms-label">شماره حساب:</span> <span class="sms-value">${member.accountNumber}</span></div>
-                    <div><span class="sms-label">تاریخ تراکنش:</span> <span class="sms-value">${transactionDate}</span></div>
-                    <div><span class="sms-label">نام تراکنش کننده:</span> <span class="sms-value">${txName}</span></div>
-                    <div><span class="sms-label">مبلغ تراکنش:</span> <span class="sms-value">${fmtNum(amount)} ریال</span></div>
-                    <div><span class="sms-label">مقرری ماهانه:</span> <span class="sms-value">${fmtNum(monthlySalary)}</span></div>
-                    <div><span class="sms-label">وضعیت پس‌انداز:</span> <span class="sms-value">${fmtNum(savings)}</span></div>
-                    <div><span class="sms-label">جمع واریزی:</span> <span class="sms-value">${fmtNum(total)}</span></div>
-                    <div><span class="sms-label">موجودی:</span> <span class="sms-value">${fmtNum(balance)}</span></div>
-                    <div><span class="sms-label">قسط پرداخت شده:</span> <span class="sms-value">${paidInst}</span></div>
-                    <div><span class="sms-label">قسط مانده:</span> <span class="sms-value">${remainingInst}</span></div>
-                    <div><span class="sms-label">مانده وام:</span> <span class="sms-value">${fmtNum(loanBalance2)}</span></div>
-                    <div><span class="sms-label">توضیحات:</span> <span class="sms-value">${esc(desc)}</span></div>
-                </div>
-            </div>
-        `;
-    }
-
-    // ============================================================
-    // 🆕 صورتحساب کامل با دکمه‌های پرینت و PDF
-    // ============================================================
-    const allTxnsHtml = `
-        <div class="dashboard-section" style="margin-top:15px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-                <h3 style="font-size:1.05rem;margin:0;">
-                    <i class="fas fa-file-invoice" style="color:#ec4899;"></i> 
-                    صورتحساب کامل (${memberTxns.length} تراکنش)
-                </h3>
-                <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                    <button onclick="printFullStatement()" class="btn-small" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.1);color:#f59e0b;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
-                        <i class="fas fa-print"></i> پرینت
-                    </button>
-                    <button onclick="downloadFullStatementPDF()" class="btn-small" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.1);color:#ef4444;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
-                        <i class="fas fa-file-pdf"></i> PDF
-                    </button>
-                </div>
-            </div>
-            <div class="tx-excel-container"></div>
-        </div>
-    `;
-
-      // 🆕 رندر جدول بعد از رندر داشبورد
     setTimeout(function() {
         document.querySelectorAll('.tx-excel-container').forEach(function(el) {
             if (el.innerHTML.trim() === '') {
@@ -448,8 +405,88 @@ function renderDashboardContent() {
         '</div>' +
     '</div>';
 }
+
 // ============================================================
-// 🆕 توابع پرینت و PDF برای صورتحساب کامل
+// رندر جدول تراکنش‌ها
+// ============================================================
+function renderExcelTransactions(txns, containerOrId) {
+    const container = typeof containerOrId === 'string'
+        ? document.getElementById(containerOrId)
+        : containerOrId;
+    if (!container) return;
+    if (!txns || txns.length === 0) {
+        container.innerHTML = '<p style="text-align:center;padding:16px;color:var(--text-secondary);font-size:1rem;">هیچ تراکنشی ثبت نشده</p>';
+        return;
+    }
+
+    const uniqueTxns = [];
+    const seenIds = new Set();
+    txns.forEach(tx => {
+        const id = tx['ID'] || '';
+        if (!seenIds.has(id)) { seenIds.add(id); uniqueTxns.push(tx); }
+    });
+
+    const numberColumns = ['مقرری ماهانه', 'مبلغ تراکنش', 'مبلغ قسط واریزی', 'جمع واریزی', 'موجودی', 'تعداد قسط پرداخت شده',
+        'تعداد قسط مانده', 'وضعیت پس انداز', 'مانده وام'
+    ];
+    const columns = [
+        { key: 'ID', label: 'شناسه', icon: 'fa-hashtag' },
+        { key: 'مقرری ماهانه', label: 'مقرری', icon: 'fa-money-bill' },
+        { key: 'شماره فیش', label: 'شماره فیش', icon: 'fa-file-invoice' },
+        { key: 'تاریخ تراکنش', label: 'تاریخ', icon: 'fa-calendar' },
+        { key: 'مبلغ تراکنش', label: 'مبلغ', icon: 'fa-coins' },
+        { key: 'نام تراکنش کننده', label: 'تراکنش‌کننده', icon: 'fa-user' },
+        { key: 'جمع واریزی', label: 'جمع واریزی', icon: 'fa-calculator' },
+        { key: 'موجودی', label: 'موجودی', icon: 'fa-wallet' },
+        { key: 'تعداد قسط پرداخت شده', label: 'قسط پرداخت شده', icon: 'fa-check-circle' },
+        { key: 'تعداد قسط مانده', label: 'قسط مانده', icon: 'fa-hourglass-half' },
+        { key: 'وضعیت پس انداز', label: 'پس‌انداز', icon: 'fa-piggy-bank' },
+        { key: 'مانده وام', label: 'مانده وام', icon: 'fa-hand-holding-usd' },
+        { key: 'توضیحات', label: 'توضیحات', icon: 'fa-comment' }
+    ];
+
+    let html = '<div class="excel-table-wrapper"><table class="excel-table"><thead><tr><th>فیلد</th>';
+    uniqueTxns.forEach((tx, idx) => {
+        html += `<th>تراکنش ${idx + 1}<br><small style="font-size:0.7rem;opacity:0.9;">ID: ${esc(tx['ID'] || '')}</small></th>`;
+    });
+    html += '</tr></thead><tbody>';
+
+    columns.forEach(col => {
+        html += `<tr><td><i class="fas ${col.icon}"></i> ${col.label}</td>`;
+        uniqueTxns.forEach(tx => {
+            let value = tx[col.key];
+            if (value === null || value === undefined) value = '---';
+            else if (numberColumns.includes(col.key)) {
+                const num = parseNum(value);
+                value = num !== 0 ? fmtNum(num) : '۰';
+            }
+            html += `<td>${value}</td>`;
+        });
+        html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+}
+
+function filterExcelTransactions() {
+    const search = document.getElementById('searchTx')?.value?.toLowerCase() || '';
+    const member = members.find(m => 
+        String(m.id) === String(currentUser.memberId) || 
+        String(m.accountNumber) === String(currentUser.accountNumber)
+    );
+    const allTxns = (transactionsByMember.get(String(member?.id)) || [])
+        .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
+    const filtered = search
+        ? allTxns.filter(tx => Object.values(tx).some(val => String(val).toLowerCase().includes(search)))
+        : allTxns;
+    document.querySelectorAll('.tx-excel-container').forEach(function(el) {
+        renderExcelTransactions(filtered, el);
+    });
+}
+
+// ============================================================
+// توابع پرینت و PDF برای صورتحساب کامل
 // ============================================================
 function printFullStatement() {
     var member = members.find(m => 
@@ -466,7 +503,6 @@ function printFullStatement() {
         return;
     }
     
-    // ساخت جدول HTML برای پرینت
     var html = '<html dir="rtl"><head><title>صورتحساب - ' + member.firstName + '</title>';
     html += '<style>';
     html += 'body { font-family: Tahoma, Arial, sans-serif; padding: 20px; }';
@@ -501,7 +537,6 @@ function printFullStatement() {
     
     html += '</table></body></html>';
     
-    // باز کردن پنجره پرینت
     var printWindow = window.open('', '_blank', 'width=900,height=700');
     printWindow.document.write(html);
     printWindow.document.close();
@@ -577,4 +612,40 @@ function downloadFullStatementPDF() {
     } catch(e) {
         alert('❌ خطا در ساخت PDF: ' + e.message);
     }
+}
+
+// ============================================================
+// افکت شمارش اعداد
+// ============================================================
+function initDashboardAnimations() {
+    if (!window.Animations) return;
+    
+    var balanceEl = document.querySelector('.sc-balance .sc-value');
+    if (balanceEl) {
+        var currentText = balanceEl.textContent.replace(/[^\d]/g, '');
+        var finalValue = parseInt(currentText) || 0;
+        if (finalValue > 0) {
+            balanceEl.setAttribute('data-final-value', finalValue);
+            Animations.animateValue(balanceEl, 0, finalValue, 2000);
+        }
+    }
+    
+    var debtEl = document.querySelector('.sc-debt .sc-value');
+    if (debtEl) {
+        var currentText = debtEl.textContent.replace(/[^\d]/g, '');
+        var finalValue = parseInt(currentText) || 0;
+        if (finalValue > 0) {
+            debtEl.setAttribute('data-final-value', finalValue);
+            Animations.animateValue(debtEl, 0, finalValue, 2000);
+        }
+    }
+}
+
+var originalRenderDashboard = window.renderDashboardContent;
+if (originalRenderDashboard) {
+    window.renderDashboardContent = function() {
+        var html = originalRenderDashboard.apply(this, arguments);
+        setTimeout(initDashboardAnimations, 500);
+        return html;
+    };
 }
