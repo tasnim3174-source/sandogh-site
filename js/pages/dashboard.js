@@ -53,14 +53,19 @@ function renderDashboardContent() {
 
     const waitingLoanCount = window.WAITING_LOAN_COUNT || 0;
 
-    const installBannerHtml = `
+        const installBannerHtml = `
         <div class="dashboard-section" style="background:linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.08)); border:2px solid rgba(16,185,129,0.4); border-radius:16px; padding:14px 16px; margin-bottom:12px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
             <span style="font-size:2rem; flex-shrink:0;">📲</span>
             <div style="flex:1; min-width:180px;">
                 <div style="font-size:1rem; font-weight:900; color:#10b981; margin-bottom:2px;">نصب برنامه روی گوشی</div>
                 <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.5;">دسترسی سریع‌تر با نصب روی صفحه اصلی</div>
             </div>
-            <a href="install.html" style="padding:10px 20px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border-radius:10px; font-size:0.9rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(16,185,129,0.4); flex-shrink:0; white-space:nowrap;">نصب کن</a>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button onclick="showWelcomeStatementIframe()" style="padding:10px 20px; background:linear-gradient(135deg,#3b82f6,#2563eb); color:#fff; border:none; border-radius:10px; font-size:0.9rem; font-weight:800; cursor:pointer; box-shadow:0 4px 12px rgba(59,130,246,0.4); display:flex; align-items:center; gap:6px; font-family:inherit;">
+                    <i class="fas fa-file-invoice"></i> صورتحساب من
+                </button>
+                <a href="install.html" style="padding:10px 20px; background:linear-gradient(135deg,#10b981,#059669); color:#fff; border-radius:10px; font-size:0.9rem; font-weight:800; text-decoration:none; box-shadow:0 4px 12px rgba(16,185,129,0.4); flex-shrink:0; white-space:nowrap;">نصب کن</a>
+            </div>
         </div>
     `;
 
