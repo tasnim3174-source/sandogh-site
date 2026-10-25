@@ -12,22 +12,23 @@
             font-family: 'Vazirmatn', sans-serif;
             background: transparent;
             color: #fff;
-            padding: 10px;
+            padding: 5px;
             direction: rtl;
+            overflow-x: hidden;
         }
         .modal-content {
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             border: 2px solid rgba(245,158,11,0.4);
             border-radius: 24px;
             padding: 20px;
-            max-width: 500px;
+            max-width: 480px;
             width: 100%;
             margin: 0 auto;
             box-shadow: 0 30px 80px rgba(0,0,0,0.7);
-            animation: slideUp 0.5s ease;
+            animation: slideUp 0.4s ease;
         }
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .header {
@@ -39,50 +40,53 @@
             padding-bottom: 12px;
         }
         .header-icon {
-            width: 50px; height: 50px; border-radius: 14px;
+            width: 45px; height: 45px; border-radius: 12px;
             background: linear-gradient(135deg,#f59e0b,#d97706);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: #1a1a2e;
+            font-size: 1.3rem; color: #1a1a2e;
             box-shadow: 0 4px 15px rgba(245,158,11,0.4);
             flex-shrink: 0;
         }
-        .header-title { font-weight: 900; color: #ffc94d; font-size: 1.05rem; }
-        .header-sub { font-size: 0.72rem; color: #9ca3af; }
+        .header-title { font-weight: 900; color: #ffc94d; font-size: 1rem; }
+        .header-sub { font-size: 0.7rem; color: #9ca3af; }
         
         .user-info-box {
             background: rgba(255,255,255,0.03);
-            border-radius: 14px; padding: 12px; margin-bottom: 12px;
+            border-radius: 12px; padding: 12px; margin-bottom: 12px;
             border: 1px solid rgba(255,255,255,0.08);
             display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
         }
-        .info-item { font-size: 0.78rem; }
+        .info-item { font-size: 0.75rem; }
         .info-item .lbl { color: #9ca3af; display: block; margin-bottom: 2px; }
         .info-item .val { color: #fff; font-weight: 800; font-family: monospace; }
 
-        .section-box { border-radius: 14px; padding: 12px; margin-bottom: 12px; }
-        .section-title { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-weight: 800; font-size: 0.85rem; }
-        .row-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.78rem; border-bottom: 1px dashed rgba(255,255,255,0.06); }
+        .section-box { border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+        .section-title { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; font-weight: 800; font-size: 0.8rem; }
+        .row-item { display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.75rem; border-bottom: 1px dashed rgba(255,255,255,0.06); }
         .row-item:last-child { border-bottom: none; }
         .row-item span { color: #9ca3af; }
         .row-item b { color: #fff; font-family: monospace; }
 
         .financial-box { background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(217,119,6,0.04)); border: 1px solid rgba(245,158,11,0.2); }
         .financial-box .section-title { color: #f59e0b; }
+        .transaction-box { background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(37,99,235,0.04)); border: 1px solid rgba(59,130,246,0.2); }
+        .transaction-box .section-title { color: #3b82f6; }
         .loan-box { background: linear-gradient(135deg, rgba(239,68,68,0.08), rgba(220,38,38,0.04)); border: 1px solid rgba(239,68,68,0.2); }
         .loan-box .section-title { color: #ef4444; }
         .highlight-red { color: #ef4444 !important; }
         .highlight-green { color: #10b981 !important; }
 
         .confirm-btn {
-            width: 100%; padding: 14px; border: none; border-radius: 14px;
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
             background: linear-gradient(135deg, #10b981, #059669);
-            color: #fff; font-weight: 900; font-size: 0.95rem;
+            color: #fff; font-weight: 900; font-size: 0.9rem;
             cursor: pointer; font-family: inherit;
             box-shadow: 0 6px 20px rgba(16,185,129,0.4);
             display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
         .confirm-btn:hover { transform: translateY(-2px); }
+        .confirm-btn:active { transform: translateY(1px); }
     </style>
 </head>
 <body>
@@ -100,7 +104,7 @@
             <div class="info-item"><span class="lbl">نام:</span><span class="val" id="wsName">---</span></div>
             <div class="info-item"><span class="lbl">شماره حساب:</span><span class="val" id="wsAcc">---</span></div>
             <div class="info-item"><span class="lbl">تلفن:</span><span class="val" id="wsPhone">---</span></div>
-            <div class="info-item"><span class="lbl">تاریخ آخرین تراکنش:</span><span class="val" id="wsLastDate">---</span></div>
+            <div class="info-item"><span class="lbl">آخرین تراکنش:</span><span class="val" id="wsLastDate">---</span></div>
         </div>
 
         <div class="section-box financial-box">
@@ -110,6 +114,15 @@
             <div class="row-item"><span>مبلغ تراکنش:</span> <b class="highlight-green" id="wsTxAmount">---</b></div>
             <div class="row-item"><span>موجودی فعلی:</span> <b class="highlight-green" id="wsBalance">---</b></div>
             <div class="row-item"><span>وضعیت پس‌انداز:</span> <b class="highlight-red" id="wsSavings">---</b></div>
+        </div>
+
+        <div class="section-box transaction-box">
+            <div class="section-title"><i class="fas fa-exchange-alt"></i> اطلاعات آخرین تراکنش</div>
+            <div class="row-item"><span>تاریخ تراکنش:</span> <b id="wsTxDate">---</b></div>
+            <div class="row-item"><span>نام تراکنش‌کننده:</span> <b id="wsTxTrader">---</b></div>
+            <div class="row-item"><span>جمع واریزی:</span> <b class="highlight-green" id="wsTxTotal">---</b></div>
+            <div class="row-item"><span>شماره فیش:</span> <b id="wsTxFish">---</b></div>
+            <div class="row-item"><span>توضیحات:</span> <b id="wsTxDesc">---</b></div>
         </div>
 
         <div class="section-box loan-box">
@@ -130,7 +143,6 @@
     </div>
 
 <script>
-    // خواندن اطلاعات از حافظه
     function loadStatementData() {
         var data = null;
         try {
@@ -143,29 +155,38 @@
             return;
         }
 
-        document.getElementById('wsName').textContent = data.name || '---';
-        document.getElementById('wsAcc').textContent = data.accountNumber || '---';
-        document.getElementById('wsPhone').textContent = data.phone || '---';
-        document.getElementById('wsLastDate').textContent = data.lastDate || '---';
-        
-        document.getElementById('wsPrevBalance').textContent = data.prevBalance || '---';
-        document.getElementById('wsSalary').textContent = data.salary || '---';
-        document.getElementById('wsTxAmount').textContent = data.txAmount || '---';
-        document.getElementById('wsBalance').textContent = data.balance || '---';
-        document.getElementById('wsSavings').textContent = data.savings || '---';
-        
-        document.getElementById('wsLoanAmount').textContent = data.loanAmount || '---';
-        document.getElementById('wsLoanDate').textContent = data.loanDate || '---';
-        document.getElementById('wsTotalInst').textContent = data.totalInst || '---';
-        document.getElementById('wsInstAmount').textContent = data.instAmount || '---';
-        document.getElementById('wsPaidInst').textContent = data.paidInst || '---';
-        document.getElementById('wsRemainInst').textContent = data.remainInst || '---';
-        document.getElementById('wsLastInstDate').textContent = data.lastInstDate || '---';
-        document.getElementById('wsLoanBal').textContent = data.loanBal || '---';
+        var map = {
+            wsName: data.name,
+            wsAcc: data.accountNumber,
+            wsPhone: data.phone,
+            wsLastDate: data.lastDate,
+            wsPrevBalance: data.prevBalance,
+            wsSalary: data.salary,
+            wsTxAmount: data.txAmount,
+            wsBalance: data.balance,
+            wsSavings: data.savings,
+            wsLoanAmount: data.loanAmount,
+            wsLoanDate: data.loanDate,
+            wsTotalInst: data.totalInst,
+            wsInstAmount: data.instAmount,
+            wsPaidInst: data.paidInst,
+            wsRemainInst: data.remainInst,
+            wsLastInstDate: data.lastInstDate,
+            wsLoanBal: data.loanBal,
+            wsTxDate: data.txDate,
+            wsTxTrader: data.txTrader,
+            wsTxTotal: data.txTotal,
+            wsTxFish: data.txFish,
+            wsTxDesc: data.txDesc
+        };
+
+        for (var id in map) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = map[id] || '---';
+        }
     }
 
     function closeAndGo() {
-        // اطلاع به پنجره اصلی که کاربر دکمه را زد
         if (window.parent && window.parent !== window) {
             window.parent.postMessage({ type: 'welcomeStatementClosed' }, '*');
         } else {
@@ -173,7 +194,6 @@
         }
     }
 
-    // وقتی صفحه لود شد، اطلاعات را نمایش بده
     window.addEventListener('load', loadStatementData);
 </script>
 </body>
