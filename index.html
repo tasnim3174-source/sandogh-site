@@ -1429,5 +1429,67 @@ document.addEventListener('DOMContentLoaded', function() {
         color: #e0f2fe !important;
     }
 </style>
+    <!-- 🆕 کانتینر مودال صورتحساب (iframe) -->
+<div id="welcomeStatementOverlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);z-index:99999999;align-items:center;justify-content:center;padding:10px;">
+    <iframe id="welcomeStatementFrame" src="" style="width:100%;max-width:520px;height:90vh;border:none;border-radius:24px;background:transparent;overflow:hidden;"></iframe>
+</div>
+
+<script>
+// 🆕 نمایش مودال صورتحساب
+function showWelcomeStatementIframe() {
+    if (typeof currentUser === 'undefined' || !currentUser) return;
+    
+    var member = members.find(function(m) {
+        return String(m.id) === String(currentUser.memberId) || 
+               String(m.accountNumber) === String(currentUser.accountNumber);
+    });
+    if (!member) return;
+
+    var memberTxns = (transactionsByMember.get(String(member.id)) || [])
+        .sort(function(a, b) { return (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0); });
+
+    var latestTx = memberTxns.length > 0 ? memberTxns[0] : null;
+    var previousTx = memberTxns.length > 1 ? memberTxns[1] : null;
+
+    var data = {
+        name: member.firstName || '---',
+        accountNumber: member.accountNumber || '---',
+        phone: member.phone1 || '---',
+        lastDate: latestTx ? (latestTx['تاریخ تراکنش'] || '---') : '---',
+        prevBalance: previousTx ? Number(previousTx['موجودی'] || 0).toLocaleString('fa-IR') : '---',
+        salary: latestTx ? Number(latestTx['مقرری ماهانه'] || 0).toLocaleString('fa-IR') : '---',
+        txAmount: latestTx ? Number(latestTx['مبلغ تراکنش'] || 0).toLocaleString('fa-IR') : '---',
+        balance: latestTx ? Number(latestTx['موجودی'] || 0).toLocaleString('fa-IR') : '---',
+        savings: latestTx ? Number(latestTx['وضعیت پس انداز'] || 0).toLocaleString('fa-IR') : '---',
+        loanAmount: member.mabVam1 ? Number(member.mabVam1).toLocaleString('fa-IR') : '---',
+        loanDate: member.loanReceiveDate || '---',
+        totalInst: member.totalInstallments || '---',
+        instAmount: member.installmentAmount ? Number(member.installmentAmount).toLocaleString('fa-IR') : '---',
+        paidInst: latestTx ? (latestTx['تعداد قسط پرداخت شده'] || 0) : 0,
+        remainInst: latestTx ? (latestTx['تعداد قسط مانده'] || 0) : 0,
+        lastInstDate: member.lastInstallmentDate || '---',
+        loanBal: latestTx ? Number(latestTx['مانده وام'] || 0).toLocaleString('fa-IR') : '---'
+    };
+
+    try {
+        localStorage.setItem('sandogh_welcome_statement', JSON.stringify(data));
+    } catch(e) {}
+
+    var overlay = document.getElementById('welcomeStatementOverlay');
+    var frame = document.getElementById('welcomeStatementFrame');
+    if (overlay && frame) {
+        frame.src = 'statement-modal.html?v=' + Date.now();
+        overlay.style.display = 'flex';
+    }
+}
+
+// 🆕 بستن مودال
+window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'welcomeStatementClosed') {
+        var overlay = document.getElementById('welcomeStatementOverlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+});
+</script>
 </body>
 </html>
