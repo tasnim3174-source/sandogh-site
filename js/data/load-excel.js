@@ -1,14 +1,30 @@
 /* ============================================================
    صندوق اتحاد - بارگذاری داده از اکسل
-   نسخه: 4.0 (بدون کش + محاسبه بر اساس بزرگترین ID)
+   نسخه: 4.1 (بدون کش + محاسبه بر اساس بزرگترین ID + فیلدهای پیامکی)
    ============================================================ */
 
 // ============================================================
-// توابع کمکی
+// توابع کمکی کش کاربران
 // ============================================================
-function saveUsersToCache(usersList) { try { localStorage.setItem('sandogh_users_cache', JSON.stringify({ version: 1, timestamp: Date.now(), users: usersList })); } catch (e) {} }
-function loadUsersFromCache() { try { const c = localStorage.getItem('sandogh_users_cache'); if (!c) return null; const d = JSON.parse(c); if (Date.now() - (d.timestamp || 0) > 24*60*60*1000) return null; return d.users; } catch (e) { return null; } }
-function clearUsersCache() { try { localStorage.removeItem('sandogh_users_cache'); } catch (e) {} }
+function saveUsersToCache(usersList) { 
+    try { 
+        localStorage.setItem('sandogh_users_cache', JSON.stringify({ version: 1, timestamp: Date.now(), users: usersList })); 
+    } catch (e) {} 
+}
+function loadUsersFromCache() { 
+    try { 
+        const c = localStorage.getItem('sandogh_users_cache'); 
+        if (!c) return null; 
+        const d = JSON.parse(c); 
+        if (Date.now() - (d.timestamp || 0) > 24*60*60*1000) return null; 
+        return d.users; 
+    } catch (e) { 
+        return null; 
+    } 
+}
+function clearUsersCache() { 
+    try { localStorage.removeItem('sandogh_users_cache'); } catch (e) {} 
+}
 
 // ============================================================
 // خواندن فایل اکسل از گیت‌هاب
@@ -32,7 +48,6 @@ async function parseOneExcelFile(url) {
 
         const headers = Object.keys(rows[0]);
         
-        // ذخیره اطلاعات پشتیبانی
         if (url === DATA_URL && rows.length > 0) {
             const firstRow = rows[0];
             const supportPhone = findCol(['telepon', 'تلفن', 'شماره تماس'], headers);
@@ -105,7 +120,8 @@ async function parseOneExcelFile(url) {
             kodKhabarnameh: findCol(['kod khabarnameh'], headers),
             kodTavalod: findCol(['kod tavalod'], headers),
             kodMonasebat: findCol(['kod monasebat'], headers),
-            waitingLoan: findCol(['CountOfdate ersal payamak vam', 'تعداد افراد در نوبت وام', 'waiting loan', 'نوبت وام'], headers)
+            waitingLoan: findCol(['CountOfdate ersal payamak vam', 'تعداد افراد در نوبت وام', 'waiting loan', 'نوبت وام'], headers),
+            smsActive: findCol(['پیامک واریز', 'smsActive'], headers)
         };
 
         if (url === DATA_URL) {
@@ -116,12 +132,9 @@ async function parseOneExcelFile(url) {
             window.WAITING_LOAN_COUNT = waitingLoanCount;
         }
 
-        // ============================================================
-        // 🆕 محاسبه اعضا بر اساس بزرگترین ID (جدیدترین تراکنش)
-        // ============================================================
         const membersMap = new Map();
         const txs = [];
-        const latestTxByAcc = new Map(); // ذخیره جدیدترین تراکنش هر حساب
+        const latestTxByAcc = new Map();
 
         rows.forEach((row, index) => {
             const accNum = String(row[colMap.accountNumber] || '').trim();
@@ -130,7 +143,6 @@ async function parseOneExcelFile(url) {
             const rowId = colMap.id ? String(row[colMap.id] || '') : String(index + 1);
             const txIdNum = parseInt(rowId) || 0;
 
-            // ساخت آبجکت تراکنش
             const tx = {
                 'ID': rowId,
                 'شماره حساب': accNum,
@@ -146,23 +158,27 @@ async function parseOneExcelFile(url) {
                 'تعداد قسط پرداخت شده': colMap.paidInstallments ? parseNum(row[colMap.paidInstallments]) : 0,
                 'تعداد قسط مانده': colMap.remainingInstallments ? parseNum(row[colMap.remainingInstallments]) : 0,
                 'وضعیت پس انداز': colMap.savingsStatus ? parseNum(row[colMap.savingsStatus]) : 0,
-                'پیامک واریز': colMap.kodOmomi ? (parseBool(row[colMap.kodOmomi]) ? '✅' : '❌') : '❌',
-                'پیامک اخطار': colMap.kodOverdue ? (parseBool(row[colMap.kodOverdue]) ? '❌' : '✅') : '✅',
-                'توضیحات': colMap.description ? String(row[colMap.description] || '') : '',
                 'مانده وام': colMap.loanBalanceO ? parseNum(row[colMap.loanBalanceO]) : (colMap.loanBalanceCol ? parseNum(row[colMap.loanBalanceCol]) : 0),
                 _transactionId: rowId,
                 _amount: colMap.amount ? parseNum(row[colMap.amount]) : 0,
+                smsActive: colMap.smsActive ? parseBool(row[colMap.smsActive]) : false,
+                smsOmomi: colMap.kodOmomi ? parseBool(row[colMap.kodOmomi]) : false,
+                smsKod: colMap.kodOverdue ? parseBool(row[colMap.kodOverdue]) : false,
+                smsSarparast: colMap.kodSarparast ? parseBool(row[colMap.kodSarparast]) : false,
+                smsMoavaghe: colMap.kodMoavaghe ? parseBool(row[colMap.kodMoavaghe]) : false,
+                smsMosabegheh: colMap.kodMosabegheh ? parseBool(row[colMap.kodMosabegheh]) : false,
+                smsKhabarnameh: colMap.kodKhabarnameh ? parseBool(row[colMap.kodKhabarnameh]) : false,
+                smsTavalod: colMap.kodTavalod ? parseBool(row[colMap.kodTavalod]) : false,
+                smsMonasebat: colMap.kodMonasebat ? parseBool(row[colMap.kodMonasebat]) : false
             };
             txs.push(tx);
 
-            // بررسی اینکه آیا این تراکنش جدیدترین تراکنش این حساب است یا نه
             const existingLatest = latestTxByAcc.get(accNum);
             if (!existingLatest || txIdNum > existingLatest.idNum) {
                 latestTxByAcc.set(accNum, { idNum: txIdNum, tx: tx, row: row });
             }
         });
 
-        // حالا برای هر حساب، اطلاعات عضو را از جدیدترین تراکنش می‌سازیم
         latestTxByAcc.forEach((data, accNum) => {
             const row = data.row;
             const memberId = membersMap.size + 1;
@@ -183,7 +199,6 @@ async function parseOneExcelFile(url) {
                 datMiladi: colMap.datMiladi ? String(row[colMap.datMiladi] || '').trim() : '',
                 birthDateShamsi: colMap.dateBirth ? String(row[colMap.dateBirth] || '').trim() : '',
                 active: colMap.active ? parseBool(row[colMap.active]) : true,
-                // 🆕 استفاده از مقادیر جدیدترین تراکنش
                 balance: data.tx['موجودی'],
                 currentMonthBalance: colMap.mojodiTaInLahzeh ? parseNum(row[colMap.mojodiTaInLahzeh]) : 0,
                 savingsStatus: data.tx['وضعیت پس انداز'],
@@ -208,13 +223,21 @@ async function parseOneExcelFile(url) {
                 heh2: heh2,
                 mabVam1: colMap.mabVam1 ? parseNum(row[colMap.mabVam1]) : 0,
                 tedad: colMap.tedad ? parseNum(row[colMap.tedad]) : 0,
-                isLocked: colMap.lock ? parseBool(row[colMap.lock]) : false
+                isLocked: colMap.lock ? parseBool(row[colMap.lock]) : false,
+                smsActive: data.tx.smsActive,
+                smsOmomi: data.tx.smsOmomi,
+                smsKod: data.tx.smsKod,
+                smsSarparast: data.tx.smsSarparast,
+                smsMoavaghe: data.tx.smsMoavaghe,
+                smsMosabegheh: data.tx.smsMosabegheh,
+                smsKhabarnameh: data.tx.smsKhabarnameh,
+                smsTavalod: data.tx.smsTavalod,
+                smsMonasebat: data.tx.smsMonasebat
             });
         });
 
         const membersArr = Array.from(membersMap.values());
         
-        // اتصال تراکنش‌ها به ID عضو
         const accToIdMap = new Map();
         membersArr.forEach(m => accToIdMap.set(m.accountNumber, m.id));
         txs.forEach(tx => {
@@ -286,7 +309,6 @@ async function loadMainData() {
         const oldMember = membersMap.get(newMember.accountNumber);
         if (oldMember) {
             const merged = {...oldMember};
-            // 🆕 برای فیلدهای مالی، مقدار جدید را جایگزین می‌کنیم (نه فقط بزرگتر)
             const financialFields = ['balance', 'savingsStatus', 'totalInstallments',
                                    'paidInstallments', 'overdueInstallments',
                                    'remainingInstallments', 'currentMonthBalance',
@@ -313,6 +335,12 @@ async function loadMainData() {
             merged.ramz = newMember.ramz;
             merged.isLocked = newMember.isLocked;
             merged.active = newMember.active;
+            
+            // 🆕 فیلدهای پیامکی را هم ادغام کن
+            ['smsActive', 'smsOmomi', 'smsKod', 'smsSarparast', 'smsMoavaghe', 'smsMosabegheh', 'smsKhabarnameh', 'smsTavalod', 'smsMonasebat'].forEach(function(field) {
+                if (newMember[field] !== undefined) merged[field] = newMember[field];
+            });
+            
             membersMap.set(newMember.accountNumber, merged);
         } else {
             membersMap.set(newMember.accountNumber, {...newMember});
@@ -421,6 +449,56 @@ async function forceUpdateData() {
         showToast({ type: 'success', title: 'بروزرسانی موفق', message: 'اطلاعات به‌روز شد.' });
     } catch (e) {
         console.error('خطا در بروزرسانی:', e);
+    }
+}
+
+// ============================================================
+// بارگذاری از Apps Script (fallback)
+// ============================================================
+async function parseOneExcelFromAppsScript(url) {
+    try {
+        const fullUrl = url + (url.includes('?') ? '&' : '?') + 'action=readExcel&_t=' + Date.now();
+        const response = await fetch(fullUrl, { cache: 'no-cache' });
+        const json = await response.json();
+
+        if (json.error) {
+            console.warn('⚠️ خطای Apps Script:', json.error);
+            return { members: [], transactions: [], users: [] };
+        }
+
+        const rows = json.rows || [];
+        if (!rows.length) return { members: [], transactions: [], users: [] };
+
+        const headers = Object.keys(rows[0]);
+        const colMap = {
+            accountNumber: findCol(['شماره حساب'], headers),
+            name: findCol(['name', 'نام'], headers),
+            karbari: findCol(['karbari', 'کاربری', 'username'], headers),
+            ramz: findCol(['ramz', 'رمز', 'password'], headers),
+            id: findCol(['ID', 'id'], headers)
+        };
+
+        if (!colMap.accountNumber) {
+            return { members: [], transactions: [], users: [] };
+        }
+
+        const membersArr = [];
+        rows.forEach((row, index) => {
+            const accNum = String(row[colMap.accountNumber] || '').trim();
+            if (!accNum) return;
+            membersArr.push({
+                id: index + 1,
+                firstName: colMap.name ? String(row[colMap.name] || '').trim() : '',
+                accountNumber: accNum,
+                karbari: colMap.karbari ? String(row[colMap.karbari] || '').trim() : '',
+                ramz: colMap.ramz ? String(row[colMap.ramz] || '').trim() : ''
+            });
+        });
+
+        return { members: membersArr, transactions: [], users: [] };
+    } catch (error) {
+        console.warn('⚠️ خطای Apps Script:', error.message);
+        return { members: [], transactions: [], users: [] };
     }
 }
 
