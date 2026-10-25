@@ -1,23 +1,32 @@
 /* ============================================================
    صندوق اتحاد - سامانه پیامکی
-   نسخه: 2.0
+   نسخه: 3.0 (اصلاح شده بر اساس بزرگ‌ترین ID)
    ============================================================ */
 
 function renderSmsContent() {
-    const member = members.find(m => m.id === currentUser.memberId);
-    if (!member) return '<div style="text-align:center;padding:30px;">خطا</div>';
-    const memberTxns = (transactionsByMember.get(String(member.id)) || []).sort((a, b) => parseInt(b._transactionId) - parseInt(a._transactionId));
+    // ۱. پیدا کردن کاربر
+    const member = members.find(m => 
+        String(m.id) === String(currentUser.memberId) || 
+        String(m.accountNumber) === String(currentUser.accountNumber)
+    );
+    if (!member) return '<div style="text-align:center;padding:30px;">خطا: کاربر پیدا نشد</div>';
 
+    // ۲. گرفتن تراکنش‌های کاربر و مرتب‌سازی بر اساس بزرگ‌ترین ID
+    const memberTxns = (transactionsByMember.get(String(member.id)) || [])
+        .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
+
+    // ۳. پیدا کردن جدیدترین تراکنش (بزرگ‌ترین ID)
     let latestTx = null;
     let maxId = 0;
-    memberTxns.forEach(tx => {
-        const id = parseInt(tx._transactionId) || 0;
+    memberTxns.forEach(function(tx) {
+        var id = parseInt(tx['ID']) || 0;
         if (id > maxId) {
             maxId = id;
             latestTx = tx;
         }
     });
 
+    // ۴. لیست سرویس‌های پیامکی
     const services = [
         { name: 'صورتحساب', key: 'smsActive', icon: 'fa-file-invoice-dollar', color: '#48bb78' },
         { name: 'جلسات شورا', key: 'smsKod', icon: 'fa-users-cog', color: '#9f7aea' },
@@ -42,6 +51,8 @@ function renderSmsContent() {
 
     services.forEach(s => {
         let isActive = false;
+        
+        // 🆕 خواندن وضعیت از جدیدترین تراکنش (اگر وجود داشته باشد)
         if (latestTx) {
             if (s.key === 'smsActive') isActive = latestTx.smsActive === true;
             else if (s.key === 'smsOmomi') isActive = latestTx.smsOmomi === true;
@@ -52,9 +63,22 @@ function renderSmsContent() {
             else if (s.key === 'smsKhabarnameh') isActive = latestTx.smsKhabarnameh === true;
             else if (s.key === 'smsTavalod') isActive = latestTx.smsTavalod === true;
             else if (s.key === 'smsMonasebat') isActive = latestTx.smsMonasebat === true;
+        } else {
+            // اگر تراکنشی نبود، از اطلاعات خود کاربر استفاده کن
+            if (s.key === 'smsActive') isActive = member.active === true;
+            else if (s.key === 'smsOmomi') isActive = member.smsOmomi === true;
+            else if (s.key === 'smsKod') isActive = member.smsKod === true;
+            else if (s.key === 'smsSarparast') isActive = member.smsSarparast === true;
+            else if (s.key === 'smsMoavaghe') isActive = member.smsMoavaghe === true;
+            else if (s.key === 'smsMosabegheh') isActive = member.smsMosabegheh === true;
+            else if (s.key === 'smsKhabarnameh') isActive = member.smsKhabarnameh === true;
+            else if (s.key === 'smsTavalod') isActive = member.smsTavalod === true;
+            else if (s.key === 'smsMonasebat') isActive = member.smsMonasebat === true;
         }
+        
         const statusText = isActive ? 'فعال' : 'غیرفعال';
         const statusColor = isActive ? 'var(--success-color)' : 'var(--danger-color)';
+        
         html += `
             <div class="support-card">
                 <div class="support-icon" style="background:${s.color}"><i class="fas ${s.icon}"></i></div>
