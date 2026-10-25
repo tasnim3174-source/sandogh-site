@@ -324,7 +324,7 @@ function renderDashboardContent() {
             panel.classList.toggle('active', panel.getAttribute('data-statement-panel') === tab);
         });
         
-        // 🆕 بعد از تغییر تب، جدول را دوباره رندر کن
+          // 🆕 بعد از تغییر تب، جدول را دوباره رندر کن
         setTimeout(function() {
             document.querySelectorAll('.tx-excel-container').forEach(function(el) {
                 if (el.offsetParent !== null && el.innerHTML.trim() === '') {
@@ -342,7 +342,49 @@ function renderDashboardContent() {
         }, 100);
     };
 
-    // 🆕 بخش صورتحساب کامل
+    // ============================================================
+    // 🆕 آخرین پیامک ارسال شده برای شما
+    // ============================================================
+    let miniSmsHtml = '';
+    if (latestTx) {
+        const amount = latestTx['مبلغ تراکنش'] || 0;
+        const loanBalance2 = latestTx['مانده وام'] || 0;
+        const paidInst = latestTx['تعداد قسط پرداخت شده'] || 0;
+        const remainingInst = latestTx['تعداد قسط مانده'] || 0;
+        const transactionDate = latestTx['تاریخ تراکنش'] || '---';
+        const txName = latestTx['نام تراکنش کننده'] || '---';
+        const monthlySalary = latestTx['مقرری ماهانه'] || 0;
+        const savings = Math.round(latestTx['وضعیت پس انداز'] || 0);
+        const total = latestTx['جمع واریزی'] || 0;
+        const id = latestTx['ID'] || '---';
+        const desc = latestTx['توضیحات'] || '---';
+
+        miniSmsHtml = `
+            <div class="dashboard-section" style="border-right-color:var(--teal-color);background:linear-gradient(135deg,rgba(20,184,166,0.04),rgba(13,148,136,0.04));margin-top:15px;">
+                <h3 style="font-size:1.05rem;color:var(--text-primary);margin-bottom:8px;"><i class="fas fa-sms" style="color:var(--teal-color);"></i> آخرین پیامک صورتحساب ارسالی برای شما</h3>
+                <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:6px;">ID تراکنش: ${id}</div>
+                <div class="mini-sms-box-right" style="font-size:0.9rem;padding:12px 14px;line-height:1.9;">
+                    <div><span class="sms-label">نام:</span> <span class="sms-value">${member.firstName}</span></div>
+                    <div><span class="sms-label">شماره حساب:</span> <span class="sms-value">${member.accountNumber}</span></div>
+                    <div><span class="sms-label">تاریخ تراکنش:</span> <span class="sms-value">${transactionDate}</span></div>
+                    <div><span class="sms-label">نام تراکنش کننده:</span> <span class="sms-value">${txName}</span></div>
+                    <div><span class="sms-label">مبلغ تراکنش:</span> <span class="sms-value">${fmtNum(amount)} ریال</span></div>
+                    <div><span class="sms-label">مقرری ماهانه:</span> <span class="sms-value">${fmtNum(monthlySalary)}</span></div>
+                    <div><span class="sms-label">وضعیت پس‌انداز:</span> <span class="sms-value">${fmtNum(savings)}</span></div>
+                    <div><span class="sms-label">جمع واریزی:</span> <span class="sms-value">${fmtNum(total)}</span></div>
+                    <div><span class="sms-label">موجودی:</span> <span class="sms-value">${fmtNum(balance)}</span></div>
+                    <div><span class="sms-label">قسط پرداخت شده:</span> <span class="sms-value">${paidInst}</span></div>
+                    <div><span class="sms-label">قسط مانده:</span> <span class="sms-value">${remainingInst}</span></div>
+                    <div><span class="sms-label">مانده وام:</span> <span class="sms-value">${fmtNum(loanBalance2)}</span></div>
+                    <div><span class="sms-label">توضیحات:</span> <span class="sms-value">${esc(desc)}</span></div>
+                </div>
+            </div>
+        `;
+    }
+
+    // ============================================================
+    // 🆕 صورتحساب کامل با دکمه‌های پرینت و PDF
+    // ============================================================
     const allTxnsHtml = `
         <div class="dashboard-section" style="margin-top:15px;">
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
@@ -350,6 +392,14 @@ function renderDashboardContent() {
                     <i class="fas fa-file-invoice" style="color:#ec4899;"></i> 
                     صورتحساب کامل (${memberTxns.length} تراکنش)
                 </h3>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <button onclick="printFullStatement()" class="btn-small" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(245,158,11,0.3);background:rgba(245,158,11,0.1);color:#f59e0b;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
+                        <i class="fas fa-print"></i> پرینت
+                    </button>
+                    <button onclick="downloadFullStatementPDF()" class="btn-small" style="padding:6px 12px;border-radius:8px;border:1px solid rgba(239,68,68,0.3);background:rgba(239,68,68,0.1);color:#ef4444;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.7rem;display:flex;align-items:center;gap:4px;">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                </div>
             </div>
             <div class="tx-excel-container"></div>
         </div>
@@ -394,121 +444,138 @@ function renderDashboardContent() {
             lastTxHtml +
             approvedHtml +
             allTxnsHtml +
+            miniSmsHtml +  // 🆕 آخرین پیامک بعد از صورتحساب کامل
         '</div>' +
     '</div>';
 }
 
 // ============================================================
-// رندر جدول تراکنش‌ها
+// 🆕 توابع پرینت و PDF برای صورتحساب کامل
 // ============================================================
-function renderExcelTransactions(txns, containerOrId) {
-    const container = typeof containerOrId === 'string'
-        ? document.getElementById(containerOrId)
-        : containerOrId;
-    if (!container) return;
-    if (!txns || txns.length === 0) {
-        container.innerHTML = '<p style="text-align:center;padding:16px;color:var(--text-secondary);font-size:1rem;">هیچ تراکنشی ثبت نشده</p>';
-        return;
-    }
-
-    const uniqueTxns = [];
-    const seenIds = new Set();
-    txns.forEach(tx => {
-        const id = tx['ID'] || '';
-        if (!seenIds.has(id)) { seenIds.add(id); uniqueTxns.push(tx); }
-    });
-
-    const numberColumns = ['مقرری ماهانه', 'مبلغ تراکنش', 'مبلغ قسط واریزی', 'جمع واریزی', 'موجودی', 'تعداد قسط پرداخت شده',
-        'تعداد قسط مانده', 'وضعیت پس انداز', 'مانده وام'
-    ];
-    const columns = [
-        { key: 'ID', label: 'شناسه', icon: 'fa-hashtag' },
-        { key: 'مقرری ماهانه', label: 'مقرری', icon: 'fa-money-bill' },
-        { key: 'شماره فیش', label: 'شماره فیش', icon: 'fa-file-invoice' },
-        { key: 'تاریخ تراکنش', label: 'تاریخ', icon: 'fa-calendar' },
-        { key: 'مبلغ تراکنش', label: 'مبلغ', icon: 'fa-coins' },
-        { key: 'نام تراکنش کننده', label: 'تراکنش‌کننده', icon: 'fa-user' },
-        { key: 'جمع واریزی', label: 'جمع واریزی', icon: 'fa-calculator' },
-        { key: 'موجودی', label: 'موجودی', icon: 'fa-wallet' },
-        { key: 'تعداد قسط پرداخت شده', label: 'قسط پرداخت شده', icon: 'fa-check-circle' },
-        { key: 'تعداد قسط مانده', label: 'قسط مانده', icon: 'fa-hourglass-half' },
-        { key: 'وضعیت پس انداز', label: 'پس‌انداز', icon: 'fa-piggy-bank' },
-        { key: 'مانده وام', label: 'مانده وام', icon: 'fa-hand-holding-usd' },
-        { key: 'توضیحات', label: 'توضیحات', icon: 'fa-comment' }
-    ];
-
-    let html = '<div class="excel-table-wrapper"><table class="excel-table"><thead><tr><th>فیلد</th>';
-    uniqueTxns.forEach((tx, idx) => {
-        html += `<th>تراکنش ${idx + 1}<br><small style="font-size:0.7rem;opacity:0.9;">ID: ${esc(tx['ID'] || '')}</small></th>`;
-    });
-    html += '</tr></thead><tbody>';
-
-    columns.forEach(col => {
-        html += `<tr><td><i class="fas ${col.icon}"></i> ${col.label}</td>`;
-        uniqueTxns.forEach(tx => {
-            let value = tx[col.key];
-            if (value === null || value === undefined) value = '---';
-            else if (numberColumns.includes(col.key)) {
-                const num = parseNum(value);
-                value = num !== 0 ? fmtNum(num) : '۰';
-            }
-            html += `<td>${value}</td>`;
-        });
-        html += '</tr>';
-    });
-
-    html += '</tbody></table></div>';
-    container.innerHTML = html;
-}
-
-function filterExcelTransactions() {
-    const search = document.getElementById('searchTx')?.value?.toLowerCase() || '';
-    const member = members.find(m => 
+function printFullStatement() {
+    var member = members.find(m => 
         String(m.id) === String(currentUser.memberId) || 
         String(m.accountNumber) === String(currentUser.accountNumber)
     );
-    const allTxns = (transactionsByMember.get(String(member?.id)) || [])
+    if (!member) return;
+    
+    var memberTxns = (transactionsByMember.get(String(member.id)) || [])
         .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
-    const filtered = search
-        ? allTxns.filter(tx => Object.values(tx).some(val => String(val).toLowerCase().includes(search)))
-        : allTxns;
-    document.querySelectorAll('.tx-excel-container').forEach(function(el) {
-        renderExcelTransactions(filtered, el);
+    
+    if (memberTxns.length === 0) {
+        alert('❌ هیچ تراکنشی برای پرینت وجود ندارد.');
+        return;
+    }
+    
+    // ساخت جدول HTML برای پرینت
+    var html = '<html dir="rtl"><head><title>صورتحساب - ' + member.firstName + '</title>';
+    html += '<style>';
+    html += 'body { font-family: Tahoma, Arial, sans-serif; padding: 20px; }';
+    html += 'h1 { text-align: center; font-size: 18px; margin-bottom: 10px; }';
+    html += '.info { text-align: center; font-size: 12px; margin-bottom: 20px; color: #666; }';
+    html += 'table { width: 100%; border-collapse: collapse; font-size: 10px; }';
+    html += 'th, td { border: 1px solid #333; padding: 5px; text-align: center; }';
+    html += 'th { background-color: #f0f0f0; font-weight: bold; }';
+    html += 'tr:nth-child(even) td { background-color: #f9f9f9; }';
+    html += '</style></head><body>';
+    html += '<h1>صورتحساب کامل - ' + member.firstName + '</h1>';
+    html += '<div class="info">شماره حساب: ' + (member.accountNumber || '---') + ' | تاریخ چاپ: ' + new Date().toLocaleDateString('fa-IR') + '</div>';
+    
+    html += '<table>';
+    html += '<tr><th>ردیف</th><th>شناسه</th><th>تاریخ</th><th>نام تراکنش کننده</th><th>مبلغ تراکنش</th><th>موجودی</th><th>قسط پرداخت شده</th><th>قسط مانده</th><th>پس‌انداز</th><th>مانده وام</th><th>توضیحات</th></tr>';
+    
+    memberTxns.forEach(function(tx, idx) {
+        html += '<tr>';
+        html += '<td>' + (idx + 1) + '</td>';
+        html += '<td>' + (tx['ID'] || '---') + '</td>';
+        html += '<td>' + (tx['تاریخ تراکنش'] || '---') + '</td>';
+        html += '<td>' + (tx['نام تراکنش کننده'] || '---') + '</td>';
+        html += '<td>' + Number(tx['مبلغ تراکنش'] || 0).toLocaleString('fa-IR') + '</td>';
+        html += '<td>' + Number(tx['موجودی'] || 0).toLocaleString('fa-IR') + '</td>';
+        html += '<td>' + (tx['تعداد قسط پرداخت شده'] || 0) + '</td>';
+        html += '<td>' + (tx['تعداد قسط مانده'] || 0) + '</td>';
+        html += '<td>' + Number(tx['وضعیت پس انداز'] || 0).toLocaleString('fa-IR') + '</td>';
+        html += '<td>' + Number(tx['مانده وام'] || 0).toLocaleString('fa-IR') + '</td>';
+        html += '<td>' + (tx['توضیحات'] || '---') + '</td>';
+        html += '</tr>';
     });
-}
-
-// ============================================================
-// 🆕 افکت شمارش اعداد
-// ============================================================
-function initDashboardAnimations() {
-    if (!window.Animations) return;
     
-    var balanceEl = document.querySelector('.sc-balance .sc-value');
-    if (balanceEl) {
-        var currentText = balanceEl.textContent.replace(/[^\d]/g, '');
-        var finalValue = parseInt(currentText) || 0;
-        if (finalValue > 0) {
-            balanceEl.setAttribute('data-final-value', finalValue);
-            Animations.animateValue(balanceEl, 0, finalValue, 2000);
-        }
-    }
+    html += '</table></body></html>';
     
-    var debtEl = document.querySelector('.sc-debt .sc-value');
-    if (debtEl) {
-        var currentText = debtEl.textContent.replace(/[^\d]/g, '');
-        var finalValue = parseInt(currentText) || 0;
-        if (finalValue > 0) {
-            debtEl.setAttribute('data-final-value', finalValue);
-            Animations.animateValue(debtEl, 0, finalValue, 2000);
-        }
-    }
-}
-
-var originalRenderDashboard = window.renderDashboardContent;
-if (originalRenderDashboard) {
-    window.renderDashboardContent = function() {
-        var html = originalRenderDashboard.apply(this, arguments);
-        setTimeout(initDashboardAnimations, 500);
-        return html;
+    // باز کردن پنجره پرینت
+    var printWindow = window.open('', '_blank', 'width=900,height=700');
+    printWindow.document.write(html);
+    printWindow.document.close();
+    
+    printWindow.onload = function() {
+        printWindow.print();
     };
+}
+
+function downloadFullStatementPDF() {
+    var member = members.find(m => 
+        String(m.id) === String(currentUser.memberId) || 
+        String(m.accountNumber) === String(currentUser.accountNumber)
+    );
+    if (!member) return;
+    
+    var memberTxns = (transactionsByMember.get(String(member.id)) || [])
+        .sort((a, b) => (parseInt(b['ID']) || 0) - (parseInt(a['ID']) || 0));
+    
+    if (memberTxns.length === 0) {
+        alert('❌ هیچ تراکنشی برای دانلود وجود ندارد.');
+        return;
+    }
+    
+    try {
+        var doc = new jspdf.jsPDF('l', 'mm', 'a4');
+        var pageWidth = doc.internal.pageSize.getWidth();
+        
+        doc.setFontSize(16);
+        doc.text('Statement - ' + (member.firstName || ''), pageWidth / 2, 15, { align: 'center' });
+        
+        doc.setFontSize(10);
+        doc.text('Account: ' + (member.accountNumber || '') + ' | Date: ' + new Date().toLocaleDateString('en-US'), pageWidth / 2, 22, { align: 'center' });
+        
+        var columns = [
+            { header: '#', dataKey: 'row' },
+            { header: 'ID', dataKey: 'id' },
+            { header: 'Date', dataKey: 'date' },
+            { header: 'Trader', dataKey: 'trader' },
+            { header: 'Amount', dataKey: 'amount' },
+            { header: 'Balance', dataKey: 'balance' },
+            { header: 'Paid', dataKey: 'paid' },
+            { header: 'Remaining', dataKey: 'remaining' },
+            { header: 'Savings', dataKey: 'savings' },
+            { header: 'Loan Bal', dataKey: 'loanBal' }
+        ];
+        
+        var data = memberTxns.map(function(tx, idx) {
+            return {
+                row: (idx + 1).toString(),
+                id: tx['ID'] || '',
+                date: tx['تاریخ تراکنش'] || '',
+                trader: tx['نام تراکنش کننده'] || '',
+                amount: Number(tx['مبلغ تراکنش'] || 0).toLocaleString('en-US'),
+                balance: Number(tx['موجودی'] || 0).toLocaleString('en-US'),
+                paid: (tx['تعداد قسط پرداخت شده'] || 0).toString(),
+                remaining: (tx['تعداد قسط مانده'] || 0).toString(),
+                savings: Number(tx['وضعیت پس انداز'] || 0).toLocaleString('en-US'),
+                loanBal: Number(tx['مانده وام'] || 0).toLocaleString('en-US')
+            };
+        });
+        
+        doc.autoTable({
+            columns: columns,
+            body: data,
+            startY: 28,
+            styles: { fontSize: 7, cellPadding: 1.5 },
+            headerStyles: { fillColor: [102, 126, 234], textColor: [255, 255, 255], fontSize: 8 }
+        });
+        
+        doc.save('Statement_' + (member.firstName || 'Member') + '.pdf');
+        alert('✅ فایل PDF با موفقیت دانلود شد.');
+    } catch(e) {
+        alert('❌ خطا در ساخت PDF: ' + e.message);
+    }
 }
