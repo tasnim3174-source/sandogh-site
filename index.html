@@ -1451,7 +1451,7 @@ function showWelcomeStatementIframe() {
     var latestTx = memberTxns.length > 0 ? memberTxns[0] : null;
     var previousTx = memberTxns.length > 1 ? memberTxns[1] : null;
 
-    var data = {
+        var data = {
         name: member.firstName || '---',
         accountNumber: member.accountNumber || '---',
         phone: member.phone1 || '---',
@@ -1468,9 +1468,14 @@ function showWelcomeStatementIframe() {
         paidInst: latestTx ? (latestTx['تعداد قسط پرداخت شده'] || 0) : 0,
         remainInst: latestTx ? (latestTx['تعداد قسط مانده'] || 0) : 0,
         lastInstDate: member.lastInstallmentDate || '---',
-        loanBal: latestTx ? Number(latestTx['مانده وام'] || 0).toLocaleString('fa-IR') : '---'
+        loanBal: latestTx ? Number(latestTx['مانده وام'] || 0).toLocaleString('fa-IR') : '---',
+        // 🆕 فیلدهای جدید تراکنش (اصلاح‌شده)
+        txDate: latestTx ? (latestTx['تاریخ تراکنش'] || '---') : '---',
+        txTrader: latestTx ? (latestTx['نام تراکنش کننده'] || '---') : '---',
+        txTotal: latestTx ? Number(latestTx['جمع واریزی'] || 0).toLocaleString('fa-IR') : '---',
+        txFish: latestTx ? (latestTx['شماره فیش'] || '---') : '---',
+        txDesc: latestTx && latestTx['توضیحات'] ? latestTx['توضیحات'] : '---'
     };
-
     try {
         localStorage.setItem('sandogh_welcome_statement', JSON.stringify(data));
     } catch(e) {}
