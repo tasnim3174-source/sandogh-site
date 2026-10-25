@@ -70,22 +70,7 @@ function renderRequestsContent() {
                         </button>
                     </div>
 
-                    <!-- امضای درخواست وام -->
-                    <div style="background:var(--bg-secondary);border-radius:12px;padding:14px;margin-bottom:10px;border-right:4px solid #8b5cf6;">
-                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                            <i class="fas fa-file-signature" style="font-size:1.5rem;color:#8b5cf6;"></i>
-                            <div style="flex:1;">
-                                <div style="font-weight:800;color:var(--text-primary);font-size:0.9rem;">✍️ امضای قرارداد وام</div>
-                                <div style="font-size:0.7rem;color:var(--text-secondary);">مشاهده و امضای الکترونیکی قرارداد</div>
-                            </div>
-                        </div>
-                        <button onclick="openLoanSignModal()" style="width:100%;padding:10px;border:none;border-radius:10px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;font-weight:800;cursor:pointer;font-family:tahoma;font-size:0.85rem;">
-                            ✍️ مشاهده و امضا
-                        </button>
-                    </div>
-                </div>
-
-                <!-- هدر و لیست درخواست‌های پیامکی -->
+                          <!-- هدر و لیست درخواست‌های پیامکی -->
                 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;padding-top:12px;border-top:1px solid var(--border-color);">
                     <i class="fas fa-info-circle" style="font-size:1.5rem;color:var(--gold-color);"></i>
                     <div>
