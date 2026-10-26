@@ -79,7 +79,7 @@ function openDepositWithdrawForm() {
     
     var modalHtml = `
         <div id="depositWithdrawModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(6px);">
-            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:20px;max-width:550px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:20px;max-width:550px;width:100%;max-height75vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
                 
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;">
                     <div style="display:flex;align-items:center;gap:10px;">
