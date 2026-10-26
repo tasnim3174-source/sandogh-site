@@ -7,22 +7,20 @@
     // ============================================================
     // ۱. تشخیص فصل بر اساس تاریخ شمسی
     // ============================================================
-    function getCurrentSeason() {
+        function getCurrentSeason() {
         var now = new Date();
-        var persianDate = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { 
-            year: 'numeric', month: 'numeric', day: 'numeric' 
-        }).format(now);
         
-        var parts = persianDate.split('/');
-        if (parts.length !== 3) return 'summer'; // پیش‌فرض
+        // محاسبه دقیق تاریخ شمسی با استفاده از Intl
+        var persianDate = new Intl.DateTimeFormat('en-US-u-ca-persian', { 
+            year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'Asia/Tehran'
+        }).formatToParts(now);
         
-        var month = parseInt(parts[1], 10);
+        var month = 0;
+        persianDate.forEach(function(part) {
+            if (part.type === 'month') month = parseInt(part.value, 10);
+        });
         
-        // فصل‌ها بر اساس ماه شمسی:
-        // بهار: فروردین (۱)، اردیبهشت (۲)، خرداد (۳)
-        // تابستان: تیر (۴)، مرداد (۵)، شهریور (۶)
-        // پاییز: مهر (۷)، آبان (۸)، آذر (۹)
-        // زمستان: دی (۱۰)، بهمن (۱۱)، اسفند (۱۲)
+        console.log('📅 ماه شمسی فعلی:', month);
         
         if (month >= 1 && month <= 3) return 'spring';
         if (month >= 4 && month <= 6) return 'summer';
@@ -31,7 +29,6 @@
         
         return 'summer';
     }
-
     // ============================================================
     // ۲. تعیین افکت پیش‌فرض بر اساس فصل
     // ============================================================
