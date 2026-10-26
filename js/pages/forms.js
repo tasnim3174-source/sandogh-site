@@ -1,7 +1,17 @@
 /* ============================================================
    صندوق اتحاد - فرم‌های آنلاین
-   نسخه: 3.0 (شامل فرم واریز/برداشت با تمام فیلدها)
+   نسخه: 4.0 (شامل فرم واریز/برداشت با اسکرول بهینه)
    ============================================================ */
+
+// ============================================================
+// 🆕 تابع escapeHtml (برای جلوگیری از خطای undefined)
+// ============================================================
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"']/g, function(c) {
+        return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c];
+    }).replace(/\n/g, '<br>');
+}
 
 function renderFormsContent() {
     return `
@@ -69,7 +79,7 @@ function openAccountOpeningForm() {
 }
 
 // ============================================================
-// 🆕 فرم واریز / برداشت (کامل)
+// 🆕 فرم واریز / برداشت (با اسکرول بهینه)
 // ============================================================
 function openDepositWithdrawForm() {
     var old = document.getElementById('depositWithdrawModal');
@@ -78,30 +88,30 @@ function openDepositWithdrawForm() {
     var member = members.find(m => String(m.id) === String(currentUser.memberId)) || {};
     
     var modalHtml = `
-        <div id="depositWithdrawModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(6px);">
-            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:20px;max-width:550px;width:100%;max-height70vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
+        <div id="depositWithdrawModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:10px;backdrop-filter:blur(6px);">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:15px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;-webkit-overflow-scrolling:touch;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
                 
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;">
-                    <div style="display:flex;align-items:center;gap:10px;">
-                        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#1a1a2e;">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:10px;position:sticky;top:0;background:#1a1a2e;z-index:10;">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#1a1a2e;">
                             <i class="fas fa-money-bill-wave"></i>
                         </div>
                         <div>
-                            <div style="font-weight:900;color:#ffc94d;font-size:1.1rem;">فرم واریز / برداشت</div>
-                            <div style="font-size:0.7rem;color:#9ca3af;">ثبت تراکنش جدید</div>
+                            <div style="font-weight:900;color:#ffc94d;font-size:1rem;">فرم واریز / برداشت</div>
+                            <div style="font-size:0.65rem;color:#9ca3af;">ثبت تراکنش جدید</div>
                         </div>
                     </div>
-                    <button onclick="closeDepositWithdrawModal()" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-size:1rem;font-family:tahoma;">✕</button>
+                    <button onclick="closeDepositWithdrawModal()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-size:0.9rem;font-family:tahoma;">✕</button>
                 </div>
                 
                 <!-- نوع تراکنش -->
-                <div style="margin-bottom:6px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">نوع تراکنش:</label>
-                    <div style="display:flex;gap:8px;">
-                        <button type="button" id="btnTypeDeposit" onclick="setTxType('deposit')" style="flex:1;padding:12px;border-radius:10px;border:2px solid #10b981;background:rgba(16,185,129,0.15);color:#10b981;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.9rem;">
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">نوع تراکنش:</label>
+                    <div style="display:flex;gap:6px;">
+                        <button type="button" id="btnTypeDeposit" onclick="setTxType('deposit')" style="flex:1;padding:8px;border-radius:8px;border:2px solid #10b981;background:rgba(16,185,129,0.15);color:#10b981;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.8rem;">
                             <i class="fas fa-arrow-down"></i> واریز
                         </button>
-                        <button type="button" id="btnTypeWithdraw" onclick="setTxType('withdraw')" style="flex:1;padding:12px;border-radius:10px;border:2px solid rgba(255,255,255,0.2);background:transparent;color:#9ca3af;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.9rem;">
+                        <button type="button" id="btnTypeWithdraw" onclick="setTxType('withdraw')" style="flex:1;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,0.2);background:transparent;color:#9ca3af;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.8rem;">
                             <i class="fas fa-arrow-up"></i> برداشت
                         </button>
                     </div>
@@ -109,21 +119,21 @@ function openDepositWithdrawForm() {
                 </div>
                 
                 <!-- تاریخ -->
-                <div style="margin-bottom:6px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">تاریخ واریز / برداشت:</label>
-                    <input type="text" id="txDate" value="${new Date().toLocaleDateString('fa-IR')}" placeholder="مثلاً 1405/08/24" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">تاریخ واریز / برداشت:</label>
+                    <input type="text" id="txDate" value="${new Date().toLocaleDateString('fa-IR')}" placeholder="مثلاً 1405/08/24" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.85rem;text-align:center;">
                 </div>
                 
                 <!-- مبلغ -->
-                <div style="margin-bottom:6px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">مبلغ واریز / برداشت (ریال):</label>
-                    <input type="number" id="txAmount" placeholder="مثلاً 5000000" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">مبلغ واریز / برداشت (ریال):</label>
+                    <input type="number" id="txAmount" placeholder="مثلاً 5000000" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.85rem;text-align:center;">
                 </div>
                 
                 <!-- روش واریز -->
-                <div style="margin-bottom:6px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">روش تراکنش:</label>
-                    <select id="txMethod" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:#16213e;color:#fff;font-family:inherit;font-size:0.9rem;">
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">روش تراکنش:</label>
+                    <select id="txMethod" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:#16213e;color:#fff;font-family:inherit;font-size:0.85rem;">
                         <option value="پایا">پایا</option>
                         <option value="ساتنا">ساتنا</option>
                         <option value="کارت به کارت">کارت به کارت</option>
@@ -135,29 +145,29 @@ function openDepositWithdrawForm() {
                 </div>
                 
                 <!-- مبلغ مقرری -->
-                <div style="margin-bottom:6px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">مبلغ مقرری برای هر فرد (ریال):</label>
-                    <input type="number" id="txSalary" placeholder="مثلاً 900000" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">مبلغ مقرری برای هر فرد (ریال):</label>
+                    <input type="number" id="txSalary" placeholder="مثلاً 900000" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.85rem;text-align:center;">
                 </div>
                 
                 <!-- تعداد قسط -->
-                <div style="margin-bottom:6px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">تعداد قسط برای هر فرد:</label>
-                    <input type="number" id="txInstallments" placeholder="مثلاً 2" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
+                <div style="margin-bottom:8px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">تعداد قسط برای هر فرد:</label>
+                    <input type="number" id="txInstallments" placeholder="مثلاً 2" style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.85rem;text-align:center;">
                 </div>
                 
                 <!-- توضیحات -->
-                <div style="margin-bottom:16px;">
-                    <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">توضیحات (اختیاری):</label>
-                    <textarea id="txDesc" rows="3" placeholder="مثلاً: واریز از طریق کارت به کارت..." style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;resize:vertical;"></textarea>
+                <div style="margin-bottom:12px;">
+                    <label style="display:block;color:#d1d5db;font-size:0.75rem;margin-bottom:4px;font-weight:700;">توضیحات (اختیاری):</label>
+                    <textarea id="txDesc" rows="2" placeholder="مثلاً: واریز از طریق کارت به کارت..." style="width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.85rem;resize:vertical;"></textarea>
                 </div>
                 
-                <!-- دکمه‌ها -->
-                <div style="display:flex;gap:10px;">
-                    <button onclick="submitDepositWithdraw(event)" style="flex:2;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.95rem;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
+                <!-- دکمه‌ها (Sticky در پایین) -->
+                <div style="display:flex;gap:8px;position:sticky;bottom:0;background:#1a1a2e;padding-top:10px;padding-bottom:5px;z-index:10;">
+                    <button onclick="submitDepositWithdraw(event)" style="flex:2;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.85rem;box-shadow:0 4px 15px rgba(16,185,129,0.4);">
                         <i class="fas fa-paper-plane"></i> ثبت و ارسال به شورا
                     </button>
-                    <button onclick="closeDepositWithdrawModal()" style="flex:1;padding:14px;border:1px solid rgba(255,255,255,0.2);border-radius:12px;background:rgba(255,255,255,0.05);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.9rem;">
+                    <button onclick="closeDepositWithdrawModal()" style="flex:1;padding:12px;border:1px solid rgba(255,255,255,0.2);border-radius:10px;background:rgba(255,255,255,0.05);color:#fff;font-weight:700;cursor:pointer;font-family:inherit;font-size:0.8rem;">
                         ❌ لغو
                     </button>
                 </div>
