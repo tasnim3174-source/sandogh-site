@@ -1,23 +1,22 @@
 /* ============================================================
    صندوق اتحاد - افکت‌های فصلی خودکار
-   نسخه: 1.0
+   نسخه: 2.0 (اجباری کردن افکت فصلی)
    ============================================================ */
 
 (function() {
     // ============================================================
-    // ۱. تشخیص فصل بر اساس تاریخ شمسی
+    // ۱. تشخیص فصل بر اساس تاریخ شمسی (با استفاده از زمان تهران)
     // ============================================================
-        function getCurrentSeason() {
+    function getCurrentSeason() {
         var now = new Date();
         
-        // محاسبه دقیق تاریخ شمسی با استفاده از Intl
-        var persianDate = new Intl.DateTimeFormat('en-US-u-ca-persian', { 
+        var parts = new Intl.DateTimeFormat('en-US-u-ca-persian', { 
             year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'Asia/Tehran'
         }).formatToParts(now);
         
         var month = 0;
-        persianDate.forEach(function(part) {
-            if (part.type === 'month') month = parseInt(part.value, 10);
+        parts.forEach(function(p) {
+            if (p.type === 'month') month = parseInt(p.value, 10);
         });
         
         console.log('📅 ماه شمسی فعلی:', month);
@@ -29,58 +28,30 @@
         
         return 'summer';
     }
+
     // ============================================================
     // ۲. تعیین افکت پیش‌فرض بر اساس فصل
     // ============================================================
     function getDefaultEffectForSeason(season) {
         switch (season) {
-            case 'autumn':
-                return 'leaves'; // برگ‌های پاییزی
-            case 'winter':
-                return 'snow';   // برف
-            case 'spring':
-                return 'rain';   // باران بهاری
-            case 'summer':
-                return 'stars';  // ستاره‌های تابستانی
-            default:
-                return 'stars';
+            case 'autumn':  return 'leaves';
+            case 'winter':  return 'snow';
+            case 'spring':  return 'rain';
+            case 'summer':  return 'stars';
+            default:        return 'stars';
         }
     }
 
     // ============================================================
-    // ۳. بررسی اینکه آیا کاربر تنظیمات دستی انجام داده است؟
-    // ============================================================
-    function hasUserManualSettings() {
-        try {
-            // اگر کاربر تنظیمات خودش را ذخیره کرده باشد، از آن استفاده می‌کنیم
-            var saved = localStorage.getItem('sandogh_effects_settings');
-            if (saved) {
-                var parsed = JSON.parse(saved);
-                // اگر یکی از افکت‌ها فعال بود، یعنی کاربر تنظیمات خودش را دارد
-                if (parsed.rain || parsed.snow || parsed.stars || parsed.leaves) {
-                    return true;
-                }
-            }
-        } catch(e) {}
-        return false;
-    }
-
-    // ============================================================
-    // ۴. اعمال افکت پیش‌فرض فصلی
+    // ۳. اعمال افکت پیش‌فرض فصلی (اجباری)
     // ============================================================
     function applySeasonalEffect() {
-        // اگر کاربر تنظیمات دستی دارد، کاری نکن
-        if (hasUserManualSettings()) {
-            console.log('🎨 کاربر تنظیمات دستی دارد، افکت فصلی اعمال نمی‌شود.');
-            return;
-        }
-
         var season = getCurrentSeason();
         var defaultEffect = getDefaultEffectForSeason(season);
         
-        console.log('🍂 فصل فعلی:', season, '| افکت پیش‌فرض:', defaultEffect);
+        console.log('🍂 فصل:', season, '| افکت پیش‌فرض:', defaultEffect);
 
-        // ساخت تنظیمات پیش‌فرض
+        // ساخت تنظیمات جدید (فقط افکت فصل فعال)
         var settings = {
             rain: defaultEffect === 'rain',
             snow: defaultEffect === 'snow',
@@ -88,30 +59,56 @@
             leaves: defaultEffect === 'leaves'
         };
 
+        // ذخیره در حافظه
         try {
             localStorage.setItem('sandogh_effects_settings', JSON.stringify(settings));
         } catch(e) {}
 
         // اعمال افکت‌ها
-        if (typeof window.applyEffects === 'function') {
+        if (window.EFFECTS) {
             window.EFFECTS = settings;
+        } else {
+            window.EFFECTS = settings;
+        }
+        
+        if (typeof window.applyEffects === 'function') {
             window.applyEffects();
         }
         
         if (typeof window.updateEffectButtons === 'function') {
             window.updateEffectButtons();
         }
+
+        // اگر تابع applyEffects موجود نبود، خودمان افکت را اجرا می‌کنیم
+        if (typeof window.applyEffects !== 'function') {
+            if (defaultEffect === 'leaves' && typeof window.startAutumnLeaves === 'function') {
+                window.startAutumnLeaves();
+            }
+            if (defaultEffect === 'snow' && typeof window.startSnow === 'function') {
+                window.startSnow();
+            }
+            if (defaultEffect === 'rain' && typeof window.startRain === 'function') {
+                window.startRain();
+            }
+            if (defaultEffect === 'stars' && typeof window.startStars === 'function') {
+                window.startStars();
+            }
+        }
     }
 
     // ============================================================
-    // ۵. اجرای خودکار بعد از بارگذاری صفحه
+    // ۴. اجرای خودکار بعد از بارگذاری صفحه
     // ============================================================
     window.addEventListener('load', function() {
-        // کمی صبر می‌کنیم تا بقیه اسکریپت‌ها لود شوند
-        setTimeout(applySeasonalEffect, 1500);
+        setTimeout(applySeasonalEffect, 1000);
     });
 
-    // در معرض عموم قرار می‌دهیم
+    // اجرای فوری اگر صفحه قبلاً لود شده
+    if (document.readyState === 'complete') {
+        setTimeout(applySeasonalEffect, 500);
+    }
+
+    // در معرض عموم
     window.getCurrentSeason = getCurrentSeason;
     window.applySeasonalEffect = applySeasonalEffect;
 
