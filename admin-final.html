@@ -115,7 +115,7 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
     <div class="menu-item" data-tab="13" data-role="all" onclick="showTab(13)">📤 آپلود فایل اکسل</div>
     <div class="menu-item" data-tab="14" data-role="all" onclick="showTab(14)">📨 درخواست‌های اعضا</div>
     <div class="menu-item" data-tab="15" data-role="all" onclick="showTab(15)">📩 پیام‌های اعضا</div>
-    <div class="menu-item" data-tab="16" data-role="all" onclick="showTab(16)">✍️ امضاهای وام</div>
+    <div class="menu-item" data-tab="16" data-role="all" onclick="showTab(16)">✅ تایید فرم‌ها و امضاهای وام</div>
     <div class="menu-item" data-tab="17" data-role="all" onclick="showTab(17)">🚫 مدیریت دسترسی (مسدودی)</div>
   </div>
 
@@ -436,14 +436,24 @@ tr:nth-child(even) td{background:rgba(255,255,255,.04)}
       </div>
     </div>
 
-    <div id="sec16" style="display:none">
+        <div id="sec16" style="display:none">
       <div class="box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-          <h3 style="color:#ffd700;margin:0">✍️ قراردادهای وام امضا شده</h3>
-          <button class="refresh" onclick="loadSignedLoans()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 به‌روزرسانی</button>
+          <h3 style="color:#ffd700;margin:0">✅ تایید فرم‌ها</h3>
+          <div style="display:flex;gap:6px;">
+            <button class="refresh" onclick="loadSignedLoans()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(255,215,0,.4);background:rgba(255,215,0,.08);color:#ffd700;cursor:pointer">🔄 امضاهای وام</button>
+            <button class="refresh" onclick="loadDepositWithdraws()" style="padding:8px 16px;border-radius:12px;border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.08);color:#3b82f6;cursor:pointer">🔄 واریز / برداشت</button>
+          </div>
         </div>
         
+        <!-- بخش امضاهای وام -->
         <div id="signedLoansList">
+          <div class="loader">در حال بارگذاری...</div>
+        </div>
+
+        <!-- 🆕 بخش واریز و برداشت -->
+        <div id="depositWithdrawList" style="display:none; margin-top:20px;">
+          <h4 style="color:#3b82f6;margin-bottom:12px;">💰 درخواست‌های واریز و برداشت</h4>
           <div class="loader">در حال بارگذاری...</div>
         </div>
       </div>
@@ -1904,6 +1914,85 @@ document.addEventListener('DOMContentLoaded', function() {
         if (window.UploadHistory) UploadHistory.inject();
     }, 1000);
 });
+  // ============================================================
+// 🆕 بارگذاری درخواست‌های واریز/برداشت
+// ============================================================
+async function loadDepositWithdraws() {
+    var listEl = document.getElementById('depositWithdrawList');
+    var loansEl = document.getElementById('signedLoansList');
+    
+    if (loansEl) loansEl.style.display = 'none';
+    if (listEl) {
+        listEl.style.display = 'block';
+        listEl.innerHTML = '<div class="loader">در حال بارگذاری...</div>';
+    }
+    
+    try {
+        var res = await fetch(URL + '?action=getDepositWithdraws&key=' + encodeURIComponent(KEY) + '&_=' + Date.now());
+        var d = await res.json();
+        
+        if (!d.ok || !d.deposits) {
+            listEl.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا در دریافت اطلاعات</div>';
+            return;
+        }
+
+        if (d.deposits.length === 0) {
+            listEl.innerHTML = '<div style="color:rgba(255,255,255,.5);padding:30px;text-align:center">📭 هیچ درخواستی وجود ندارد</div>';
+            return;
+        }
+
+        var html = '';
+        d.deposits.forEach(function(tx) {
+            var statusColor = tx.status === 'approved' ? '#22c55e' : (tx.status === 'rejected' ? '#ef4444' : '#f59e0b');
+            var statusText = tx.status === 'approved' ? '✅ تایید شده' : (tx.status === 'rejected' ? '❌ رد شده' : '⏳ در انتظار');
+            var typeColor = tx.type === 'deposit' ? '#10b981' : '#ef4444';
+            var typeText = tx.type === 'deposit' ? '📥 واریز' : '📤 برداشت';
+            
+            html += '<div class="req-card" style="border-right:3px solid ' + statusColor + ';">';
+            html += '<div class="req-head">';
+            html += '<div><div style="font-weight:800;color:#ffd700">👤 ' + (tx.name || 'ناشناس') + ' <span style="font-size:.7rem;color:' + typeColor + '">' + typeText + '</span></div>';
+            html += '<div style="font-size:.72rem;color:rgba(255,255,255,.5)">حساب: ' + (tx.accountNumber || '-') + ' | 📅 ' + (tx.date || '-') + '</div></div>';
+            html += '<span style="background:' + statusColor + '22;color:' + statusColor + ';padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700">' + statusText + '</span>';
+            html += '</div>';
+            
+            html += '<div style="background:rgba(255,255,255,.05);padding:10px;border-radius:8px;margin:8px 0;font-size:.82rem;line-height:1.9;">';
+            html += '<div><b>💰 مبلغ:</b> ' + Number(tx.amount || 0).toLocaleString('fa-IR') + ' ریال</div>';
+            html += '<div><b>🏦 روش:</b> ' + (tx.method || '-') + '</div>';
+            html += '<div><b>📊 مبلغ مقرری:</b> ' + Number(tx.salary || 0).toLocaleString('fa-IR') + ' ریال</div>';
+            html += '<div><b>🔢 تعداد قسط:</b> ' + (tx.installments || '-') + '</div>';
+            if (tx.description) html += '<div><b>📝 توضیحات:</b> ' + tx.description + '</div>';
+            html += '</div>';
+            
+            html += '<div class="req-actions">';
+            if (tx.status === 'pending') {
+                html += '<button class="btn-approve" onclick="resolveDepositWithdraw(\'' + tx.id + '\', \'approved\')">✅ تایید</button>';
+                html += '<button class="btn-reject" onclick="resolveDepositWithdraw(\'' + tx.id + '\', \'rejected\')">❌ رد</button>';
+            }
+            html += '</div>';
+            
+            html += '</div>';
+        });
+        
+        listEl.innerHTML = html;
+        
+    } catch(e) {
+        listEl.innerHTML = '<div style="color:#ff6b6b;padding:20px;text-align:center">❌ خطا: ' + e.message + '</div>';
+    }
+}
+
+function resolveDepositWithdraw(id, status) {
+    if (!confirm('آیا مطمئن هستید؟')) return;
+    fetch(URL + '?action=resolveDepositWithdraw&key=' + encodeURIComponent(KEY) + '&id=' + encodeURIComponent(id) + '&status=' + encodeURIComponent(status))
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                alert('✅ انجام شد');
+                loadDepositWithdraws();
+            } else {
+                alert('❌ ' + (d.error || 'خطا'));
+            }
+        });
+}
 console.log('✅ پنل مدیریت آماده است');
 </script>
 </body>
