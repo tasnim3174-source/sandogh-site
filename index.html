@@ -1498,5 +1498,21 @@ window.addEventListener('message', function(event) {
     }
 });
 </script>
+        // 🆕 اجرای افکت با بررسی دقیق‌تر
+    if (effect === 'leaves') {
+        if (typeof window.startAutumnLeaves === 'function') {
+            window.startAutumnLeaves();
+        } else if (window.Animations && typeof window.Animations.startAutumnLeaves === 'function') {
+            window.Animations.startAutumnLeaves();
+        } else {
+            console.warn('⚠️ تابع startAutumnLeaves پیدا نشد.');
+        }
+    } else if (effect === 'snow') {
+        if (typeof window.startSnow === 'function') window.startSnow();
+    } else if (effect === 'rain') {
+        if (typeof window.startRain === 'function') window.startRain();
+    } else if (effect === 'stars') {
+        if (typeof window.startStars === 'function') window.startStars();
+    }
 </body>
 </html>
