@@ -79,7 +79,7 @@ function openDepositWithdrawForm() {
     
     var modalHtml = `
         <div id="depositWithdrawModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:15px;backdrop-filter:blur(6px);">
-            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:20px;max-width:550px;width:100%;max-height75vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
+            <div style="background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(245,158,11,0.5);border-radius:20px;padding:20px;max-width:550px;width:100%;max-height70vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.7);">
                 
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:15px;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:12px;">
                     <div style="display:flex;align-items:center;gap:10px;">
@@ -95,7 +95,7 @@ function openDepositWithdrawForm() {
                 </div>
                 
                 <!-- نوع تراکنش -->
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:6px;">
                     <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">نوع تراکنش:</label>
                     <div style="display:flex;gap:8px;">
                         <button type="button" id="btnTypeDeposit" onclick="setTxType('deposit')" style="flex:1;padding:12px;border-radius:10px;border:2px solid #10b981;background:rgba(16,185,129,0.15);color:#10b981;font-weight:900;cursor:pointer;font-family:inherit;font-size:0.9rem;">
@@ -109,19 +109,19 @@ function openDepositWithdrawForm() {
                 </div>
                 
                 <!-- تاریخ -->
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:6px;">
                     <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">تاریخ واریز / برداشت:</label>
                     <input type="text" id="txDate" value="${new Date().toLocaleDateString('fa-IR')}" placeholder="مثلاً 1405/08/24" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
                 </div>
                 
                 <!-- مبلغ -->
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:6px;">
                     <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">مبلغ واریز / برداشت (ریال):</label>
                     <input type="number" id="txAmount" placeholder="مثلاً 5000000" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
                 </div>
                 
                 <!-- روش واریز -->
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:6px;">
                     <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">روش تراکنش:</label>
                     <select id="txMethod" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:#16213e;color:#fff;font-family:inherit;font-size:0.9rem;">
                         <option value="پایا">پایا</option>
@@ -135,13 +135,13 @@ function openDepositWithdrawForm() {
                 </div>
                 
                 <!-- مبلغ مقرری -->
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:6px;">
                     <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">مبلغ مقرری برای هر فرد (ریال):</label>
                     <input type="number" id="txSalary" placeholder="مثلاً 900000" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
                 </div>
                 
                 <!-- تعداد قسط -->
-                <div style="margin-bottom:12px;">
+                <div style="margin-bottom:6px;">
                     <label style="display:block;color:#d1d5db;font-size:0.8rem;margin-bottom:6px;font-weight:700;">تعداد قسط برای هر فرد:</label>
                     <input type="number" id="txInstallments" placeholder="مثلاً 2" style="width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.05);color:#fff;font-family:inherit;font-size:0.9rem;text-align:center;">
                 </div>
