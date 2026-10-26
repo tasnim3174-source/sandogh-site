@@ -1498,21 +1498,91 @@ window.addEventListener('message', function(event) {
     }
 });
 </script>
-        // 🆕 اجرای افکت با بررسی دقیق‌تر
-    if (effect === 'leaves') {
-        if (typeof window.startAutumnLeaves === 'function') {
-            window.startAutumnLeaves();
-        } else if (window.Animations && typeof window.Animations.startAutumnLeaves === 'function') {
-            window.Animations.startAutumnLeaves();
+       <script>
+// ============================================================
+// 🍂 اعمال خودکار افکت فصلی (نسخه نهایی و قطعی)
+// ============================================================
+(function() {
+    function applySeasonalEffectFinal() {
+        // تشخیص ماه شمسی
+        var now = new Date();
+        var parts = new Intl.DateTimeFormat('en-US-u-ca-persian', { 
+            year: 'numeric', month: 'numeric', day: 'numeric', timeZone: 'Asia/Tehran'
+        }).formatToParts(now);
+        
+        var month = 0;
+        parts.forEach(function(p) {
+            if (p.type === 'month') month = parseInt(p.value, 10);
+        });
+        
+        console.log('📅 ماه شمسی:', month);
+        
+        // تعیین افکت
+        var effect = 'stars';
+        if (month >= 7 && month <= 9) effect = 'leaves';
+        else if (month >= 10 && month <= 12) effect = 'snow';
+        else if (month >= 1 && month <= 3) effect = 'rain';
+        else effect = 'stars';
+        
+        console.log('🍂 افکت فصلی:', effect);
+        
+        // ذخیره تنظیمات
+        var settings = {
+            rain: effect === 'rain',
+            snow: effect === 'snow',
+            stars: effect === 'stars',
+            leaves: effect === 'leaves'
+        };
+        
+        try {
+            localStorage.setItem('sandogh_effects_settings', JSON.stringify(settings));
+        } catch(e) {}
+        
+        if (window.EFFECTS) {
+            window.EFFECTS.rain = settings.rain;
+            window.EFFECTS.snow = settings.snow;
+            window.EFFECTS.stars = settings.stars;
+            window.EFFECTS.leaves = settings.leaves;
         } else {
-            console.warn('⚠️ تابع startAutumnLeaves پیدا نشد.');
+            window.EFFECTS = settings;
         }
-    } else if (effect === 'snow') {
-        if (typeof window.startSnow === 'function') window.startSnow();
-    } else if (effect === 'rain') {
-        if (typeof window.startRain === 'function') window.startRain();
-    } else if (effect === 'stars') {
-        if (typeof window.startStars === 'function') window.startStars();
+        
+        // حذف کانواس‌های قبلی
+        ['rainCanvas', 'snowCanvas', 'starsCanvas', 'autumnCanvas'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) el.remove();
+        });
+        
+        // اجرای افکت جدید
+        if (effect === 'leaves') {
+            if (typeof window.startAutumnLeaves === 'function') {
+                window.startAutumnLeaves();
+            } else {
+                console.warn('⚠️ startAutumnLeaves وجود ندارد.');
+            }
+        } else if (effect === 'snow') {
+            if (typeof window.startSnow === 'function') window.startSnow();
+        } else if (effect === 'rain') {
+            if (typeof window.startRain === 'function') window.startRain();
+        } else if (effect === 'stars') {
+            if (typeof window.startStars === 'function') window.startStars();
+        }
+        
+        // آپدیت دکمه‌های تنظیمات
+        if (typeof window.updateEffectButtons === 'function') {
+            setTimeout(window.updateEffectButtons, 500);
+        }
     }
+
+    // اجرا بعد از لود کامل
+    if (document.readyState === 'complete') {
+        setTimeout(applySeasonalEffectFinal, 1000);
+    } else {
+        window.addEventListener('load', function() {
+            setTimeout(applySeasonalEffectFinal, 1000);
+        });
+    }
+})();
+</script>
 </body>
 </html>
