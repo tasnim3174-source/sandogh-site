@@ -68,6 +68,148 @@ function renderFormsContent() {
 
             </div>
         </div>
+        function renderFormsContent() {
+    // اگر کاربر لاگین نکرده، چیزی نشان نده
+    if (typeof currentUser === 'undefined' || !currentUser) return '<div class="info-box">لطفاً وارد شوید.</div>';
+    
+    var memberId = currentUser.memberId || currentUser.accountNumber || currentUser.username;
+
+    // بعد از رندر، تاریخچه را بارگذاری کن
+    setTimeout(function() {
+        loadFormsHistory(memberId);
+    }, 300);
+
+    return `
+        <div class="info-box" style="background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(124,58,237,0.05));border:1px solid rgba(139,92,246,0.3);">
+            <i class="fas fa-file-alt" style="color:#8b5cf6;"></i> 
+            فرم‌های آنلاین صندوق اتحاد
+        </div>
+        
+        <div class="dashboard-section" style="border-right-color:#8b5cf6;background:linear-gradient(135deg,rgba(139,92,246,0.05),rgba(124,58,237,0.02));">
+            <h3 style="color:#8b5cf6;font-size:1.1rem;margin-bottom:15px;">
+                <i class="fas fa-list"></i> لیست فرم‌ها
+            </h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;line-height:1.8;margin-bottom:20px;">
+                برای تکمیل هر فرم، روی دکمه مربوطه کلیک کنید.
+            </p>
+            
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+                
+                <!-- فرم امضای وام -->
+                <div onclick="openLoanSignModal()" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.3s;text-align:center;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(16,185,129,0.2)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
+                    <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem;color:#fff;">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <div style="font-weight:800;color:var(--text-primary);font-size:0.95rem;margin-bottom:4px;">فرم امضای وام</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">ثبت و امضای الکترونیکی قرارداد</div>
+                </div>
+
+                <!-- فرم درخواست افتتاح حساب -->
+                <div onclick="openAccountOpeningForm()" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.3s;text-align:center;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(59,130,246,0.2)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
+                    <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem;color:#fff;">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <div style="font-weight:800;color:var(--text-primary);font-size:0.95rem;margin-bottom:4px;">درخواست افتتاح حساب</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">ثبت درخواست ایجاد حساب جدید</div>
+                </div>
+
+                <!-- فرم واریز / برداشت -->
+                <div onclick="openDepositWithdrawForm()" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:16px;padding:16px;cursor:pointer;transition:all 0.3s;text-align:center;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 20px rgba(245,158,11,0.2)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='none'">
+                    <div style="width:50px;height:50px;border-radius:14px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem;color:#fff;">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div style="font-weight:800;color:var(--text-primary);font-size:0.95rem;margin-bottom:4px;">فرم واریز / برداشت</div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);">ثبت درخواست واریز یا برداشت وجه</div>
+                </div>
+
+                <!-- 🆕 جای فرم‌های بعدی -->
+                <div style="background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.1);border-radius:16px;padding:16px;text-align:center;opacity:0.5;">
+                    <div style="width:50px;height:50px;border-radius:14px;background:rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.5rem;color:#9ca3af;">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div style="font-weight:800;color:var(--text-secondary);font-size:0.95rem;margin-bottom:4px;">فرم‌های بعدی</div>
+                    <div style="font-size:0.75rem;color:var(--text-muted);">به‌زودی...</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 🆕 تاریخچه درخواست‌های من -->
+        <div class="dashboard-section" style="border-right-color:#10b981;margin-top:15px;">
+            <h3 style="color:#10b981;font-size:1.05rem;margin-bottom:12px;">
+                <i class="fas fa-history"></i> تاریخچه درخواست‌های من
+            </h3>
+            <div id="formsHistoryList">
+                <div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:0.85rem;">در حال بارگذاری...</div>
+            </div>
+        </div>
+    `;
+}
+
+// ============================================================
+// 🆕 بارگذاری تاریخچه فرم‌های کاربر
+// ============================================================
+async function loadFormsHistory(memberId) {
+    var listEl = document.getElementById('formsHistoryList');
+    if (!listEl) return;
+    
+    try {
+        var url = ADMIN_URL + '?action=getMyFormsHistory&user=' + encodeURIComponent(memberId) + '&_=' + Date.now();
+        var res = await fetch(url, { cache: 'no-cache' });
+        var data = await res.json();
+        
+        if (!data.ok || !data.history) {
+            listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:0.85rem;">📭 خطا در دریافت اطلاعات</div>';
+            return;
+        }
+        
+        if (data.history.length === 0) {
+            listEl.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary);font-size:0.85rem;">📭 هنوز درخواستی ثبت نکرده‌اید</div>';
+            return;
+        }
+        
+        var html = '';
+        data.history.forEach(function(item) {
+            var statusColor, statusIcon, statusText;
+            if (item.status === 'approved') {
+                statusColor = '#10b981';
+                statusIcon = '✅';
+                statusText = 'تایید شده';
+            } else if (item.status === 'rejected') {
+                statusColor = '#ef4444';
+                statusIcon = '❌';
+                statusText = 'رد شده';
+            } else {
+                statusColor = '#f59e0b';
+                statusIcon = '⏳';
+                statusText = 'در انتظار';
+            }
+            
+            var date = '';
+            try {
+                var d = new Date(item.timestamp);
+                date = d.toLocaleDateString('fa-IR') + ' ' + d.toLocaleTimeString('fa-IR', {hour: '2-digit', minute: '2-digit'});
+            } catch(e) {}
+            
+            html += '<div style="background:var(--bg-secondary);border-radius:10px;padding:12px;margin-bottom:8px;border-right:3px solid ' + statusColor + ';">';
+            html += '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px;">';
+            html += '<div style="font-weight:700;color:var(--text-primary);font-size:0.85rem;">' + (item.typeLabel || '') + ' - ' + (item.title || '') + '</div>';
+            html += '<div style="font-size:0.7rem;color:' + statusColor + ';font-weight:700;">' + statusIcon + ' ' + statusText + '</div>';
+            html += '</div>';
+            html += '<div style="font-size:0.7rem;color:var(--text-secondary);">📅 ' + date + '</div>';
+            if (item.method) {
+                html += '<div style="font-size:0.7rem;color:var(--text-secondary);margin-top:4px;">🏦 روش: ' + item.method + '</div>';
+            }
+            html += '</div>';
+        });
+        
+        listEl.innerHTML = html;
+        
+    } catch(e) {
+        console.log('خطا در بارگذاری تاریخچه:', e);
+        listEl.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;font-size:0.85rem;">❌ خطا در ارتباط با سرور</div>';
+    }
+}
     `;
 }
 
